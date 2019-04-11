@@ -1,0 +1,8 @@
+Package: iml-limitations.book
+Title: Limitations of Interpretable Machine Learning
+Version: 0.0.1
+Depends:
+  knitr,
+  bookdown,
+  ggplot2
+License: MIT

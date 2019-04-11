@@ -1,4 +1,28 @@
-# Seminar on Limitations of Interpretable Machine Learning Methods
+--- 
+title: "Limitations of Interpretable Machine Learning Methods"
+author: ""
+date: "`r Sys.Date()`"
+documentclass: krantz
+	bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+site: bookdown::bookdown_site
+description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
+graphics: yes
+#cover-image: images/cover.jpg
+---
+
+```{r setup, include=FALSE}
+options(
+  htmltools.dir.version = FALSE, formatR.indent = 2, width = 55, digits = 4
+)
+
+```
+
+# Preface {-}
 
 This project explains the limitations of current approaches in interpretable machine learning, such as partial dependence plots (PDP, Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
 All of those methods can be used to explain the behavior and predictions of trained machine learning models.
@@ -9,40 +33,11 @@ The interpretation methods might not work well in the following cases:
 - if the model does not correctly model causal relationships
 - if parameters of the interpretation method are not set correctly
 
-## Get started
 
-Step 0: Prerequisites
+## Structure of the book {-}
 
-Make sure you have git and R up and running on your computer.
-
-Step 1: Fork the repository on Github
-
-Step 2: Clone the repository to your machine
-
-Either use RStudio or the terminal
-
-```
-git clone git@github.com:compstat-lmu/iml_methods_limitations.git
-```
-
-Step 3: Install dependencies
-
-Start R in the project folder:
-
-```
-install.packages("devtools")
-devtools::install_dev_deps()
-```
-
-## Workflow
+TODO
 
 
-If you need some package, please also add it in the DESCRIPTION file.
 
-
-## How to cite stuff
-Put bib file into book.bib
-
-
-https://bookdown.org/yihui/bookdown/
-
+\mainmatter
