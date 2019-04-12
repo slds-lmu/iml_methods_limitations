@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*.swp
+_book
+_bookdown_files
+_main.Rmd

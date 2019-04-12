@@ -3,7 +3,7 @@ title: "Limitations of Interpretable Machine Learning Methods"
 author: ""
 date: "`r Sys.Date()`"
 documentclass: krantz
-	bibliography: [book.bib, packages.bib]
+bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: yes
