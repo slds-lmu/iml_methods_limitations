@@ -1,5 +1,5 @@
 # Causal Feature Interpretation
 
-# Directed Acyclic Graph (DAG)
+## Directed Acyclic Graph (DAG)
 
-# Types of Features
+## Types of Features
