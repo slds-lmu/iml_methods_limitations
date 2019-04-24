@@ -64,6 +64,18 @@ Additional tips
 - If your code relies on some package, make sure it is added it in the DESCRIPTION file as dependency.
 - Citations go into book.bib and can be cited in your .Rmd file via `
 
+## Workflow during group phase
+
+- Create a new branch, e.g. "pdp_chapter"
+- Open a pull request from pdp_chapter to the master and add "[WIP]" in the end of the pull request title
+- Each student of your team directly works on this branch and commits and pushes changes to e.g. pdp_chapter.
+- At the end of the group phase, remove the "[WIP]" from the title and assign one of the supervisors as reviewers.
+
+Make sure you don't get merge conflicts when working on the same file.
+You can minimize merge conflicts by
+- splitting the chapter into subchapter and each working on the subchapters
+- dividing the group into some who work on the slides, some on the chapter
+- have a good communication and work sequentially on the chapter
 
 
 ## How to cite stuff
