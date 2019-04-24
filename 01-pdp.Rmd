@@ -1,4 +1,10 @@
-# Partial Dependence Plots (PDP) 
+# Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves
+
+## Partial Dependence Plots
 
 
+
+
+
+## ICE
 
