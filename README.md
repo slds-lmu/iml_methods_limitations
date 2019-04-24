@@ -46,21 +46,31 @@ git push -u origin firstname_lastname
 
 1. Get the latest changes from the main repository `git pull origin master`
 1. Make some changes on your machine
-1. Check if the PDF compiles with R `bookdown::render_book('./', 'bookdown::pdf_book')`
-1. Check if the Website compiles with R `bookdown::render_book('./', 'bookdown::gitbook')`
+1. Recommended: Check if the PDF compiles with R `bookdown::render_book('./', 'bookdown::pdf_book')`
+1. Recommended: Check if the Website compiles with R `bookdown::render_book('./', 'bookdown::gitbook')`
 1. Add changes to be commited `git add your-file.Rmd`
 1. Commit your changes `git commit -m 'some meaningful description of your changes'`
 1. Push to your Github repository `git push origin firstname_lastname`
-1. Create a pull request on github from your branch (firstname_lastname) to the master branch
+1. If you haven't created a pull request already, create a pull request on github from your branch (firstname_lastname) to the master branch
+1. In the name of the Pull Request, write "[WIP]" in the end, which stands for work in progress.
 
+If its the end of a sprint, also do the following:
+1. Assign your supervisor and another student as reviewers
+1. Incorporate reviewer feedback (means repeating steps 1 to 7)
+1. Congrats! Your changes are now merged with the master
 
 Additional tips
 
 - If your code relies on some package, make sure it is added it in the DESCRIPTION file as dependency.
+- Citations go into book.bib and can be cited in your .Rmd file via `
+
+
 
 ## How to cite stuff
 Put bib file into book.bib
 
+## Useful Links
 
-https://bookdown.org/yihui/bookdown/
+- rmarkdown cheatsheet https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
+- More on Bookdown https://bookdown.org/yihui/bookdown/
 
