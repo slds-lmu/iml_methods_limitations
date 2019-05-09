@@ -1,6 +1,3 @@
 # Partial Dependence Plots (PDP) 
 
-Erste Besprechung am 9.5.19
-
-
-
+Erste Besprechung zu dritt am 9.5.19
