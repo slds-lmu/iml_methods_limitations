@@ -1,4 +1,8 @@
 # Local Interpretable Model-agnostic Explanations
 
+(# Sebastian start)
+So far all the interpretation methods are at the global scope of the trained model with respect to its underlying dataset, but none really gives the opportunity to interpret a single prediction on its own in a quick and easy way. This is where the method LIME (__L__ocal __I__nterpretable __M__odel-agnostic __E__xplanations) comes into play. While usually the full scope of a feature is tried to be explained, LIME doesn't even try to give an overview of how a feature acts in the whole model. Instead, we only have a single observation with its given prediction and try to "interpret locally" this prediction alone through a second, surrogate model - a "model-agnostic explanation" so to say. This model has to be easiliy interpretable for this to make sense (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original model, but we actually don't care about a global fit here - we only want to have a very local fit of the new model to the old model because we only care about a single data point - making the idea of the procedure plausible for a reasonable outcome. Later on we will discover why a reasonable outcome really shouldn't be taken granted, but for now we are going to dive a bit deeper into how and why LIME works.
 
-
+The mathematical definition of the LIME function for a datapoint whose interpretation we desire is of the following form:
+![equation](http://www.sciweavers.org/tex2img.php?eq=LIME%28x%29%20%3D%20arg%5C%2Cmin_%7Bg%20%20%5Cepsilon%20G%7D%20%5C%2C%20%5Cmathcal%7BL%7D%28f%2C%20g%2C%20%5Cpi_x%29%20%2B%20%20%5COmega%20%28g%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+(# Sebastian end)
