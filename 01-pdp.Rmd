@@ -39,7 +39,7 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 
 
 [^1]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
-[^2]: Zhao, Qingyuan, and Trevor Hastie. “Causal interpretations of black-box models.” Journal of Business & Economic Statistics, to appear. (2017).
+[^2]: Hastie, Tibshirani, Friedman. The Elements of Statistical Learning. Springer. https://web.stanford.edu/~hastie/ElemStatLearn/printings/ESLII_print12.pdf.
 
 
 
