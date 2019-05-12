@@ -1,4 +1,4 @@
-Method chapters
+# Method chapters
 •	Each method chapter should shortly (2-3 pages) describe the method: mathematical definition, how to estimate it, an example and visualizations. Also a short section on the limitations which links to the individual chapters.
 •	Team PDP describes the partial dependence plot for 1D and 2D. Closely related are individual conditional expectation curves which should be explained as well and can be used to motivated PDP.
 
