@@ -97,9 +97,8 @@
 <p><span class="math display">\[f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\]</span></p>
 <p>The partial dependence function can be estimated by averaging the actual feature values of <span class="math inline">\(x_C\)</span> in the training data at given values of <span class="math inline">\(x_S\)</span> or, in other words, it computes the marginal effect of <span class="math inline">\(x_S\)</span> on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in <span class="math inline">\(x_S\)</span> and <span class="math inline">\(x_C\)</span> are uncorrelated.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
 <p><span class="math display">\[\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})\]</span></p>
-<p>[PLOT: PDP numerical features, numerical outcome]</p>
-<p>In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of <span class="math inline">\(x_S\)</span>.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a></p>
-<p>[PLOT: PDP numerical features, multiclass outcome]</p>
+<p>[PLOT: PDP numerical features, numerical outcome] <img src="PDP_Age.jpeg" alt="PDP Class" /> In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of <span class="math inline">\(x_S\)</span>.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a></p>
+<p>[PLOT: PDP numerical features, multiclass outcome] <img src="PDP_Pclass.jpeg" alt="PDP Class" /></p>
 <p><strong>Advantages and Limitations of PD plots</strong></p>
 <p>Partial Dependence Plots are easy to compute and a poular way explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a></p>
 <p>[PLOT: PDP with two features]</p>
