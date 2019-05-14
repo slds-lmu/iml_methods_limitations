@@ -113,6 +113,7 @@ If the fidelity is high on the other hand, we should rather rethink our approach
 Summing it up we end up with the following algorithm for LIME:
 ...
 
-It is certain to say LIME has great potential, but the problems of current implementations may suggest to act with great care and to not use it for critical and time-restricting tasks as results can not be trusted for fixed neighboorhood and sampling strategy. Unfortunately it is often not possible to adjust these, which simply forces the user to time consumingly create his own implementation - unfeasable for most people.
+It is certain to say LIME has great potential, but the problems of current implementations may suggest to act with great care and to not use it for critical and time-restricting tasks as results can not be trusted for fixed neighboorhood and sampling strategy. 
+Unfortunately it is often not possible to adjust these, which simply forces the user to time consumingly create his own implementation - unfeasable for most people.
 
 (# First merge end)
