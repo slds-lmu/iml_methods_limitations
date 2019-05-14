@@ -35,6 +35,8 @@ Partial Dependence Plots are easy to compute and a poular way explain insights f
  
 [PLOT: PDP with two features]
 
+![2 Feature PDP](2_feature_pdp.jpeg)
+
 Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this assumption be violated, the partial dependence function will produce unrealistic data points. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.[^1]
 
 [PLOT: PDP with correlated features]
@@ -43,9 +45,32 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 [^1]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
 [^2]: Hastie, Tibshirani, Friedman. The Elements of Statistical Learning. Springer. https://web.stanford.edu/~hastie/ElemStatLearn/printings/ESLII_print12.pdf.
 
+# Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves
 
+## Partial Dependence Plots (PDP)
+## Individual Conditional Expectation Curves
+A formal definition:  In ICE plots, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}}$ is plotted against $x^{(i)}_S$ and $x^{(i)}_C$.[^3]
+
+
+Individual Conditional Expectation (ICE) plots display one line per instance that shows how the instance’s prediction changes when a feature changes.
+
+The equivalent to a PDP for individual data instances is called individual conditional expectation (ICE) plot (Goldstein et al. 2017)[^4]. An ICE plot visualizes the dependence of the prediction on a feature for each instance separately, resulting in one line per instance, compared to one line overall in partial dependence plots. A PDP is the average of the lines of an ICE plot. The values for a line (and one instance) can be computed by keeping all other features the same, creating variants of this instance by replacing the feature’s value with values from a grid and making predictions with the black box model for these newly created instances. The result is a set of points for an instance with the feature value from the grid and the respective predictions.
+
+
+##Centered ICE Plot
+
+There is a problem with ICE plots: Sometimes it can be hard to tell whether the ICE curves differ between individuals because they start at different predictions. A simple solution is to center the curves at a certain point in the feature and display only the difference in the prediction to this point. The resulting plot is called centered ICE plot (c-ICE). Anchoring the curves at the lower end of the feature is a good choice. The new curves are defined as:
+$$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
+
+
+## Derivative ICE Plot
+
+## Advantages and Disadvantages
+[^3]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
+[^4]: Goldstein, Alex, et al. “Peeking inside the black box: Visualizing statistical learning with plots of individual conditional expectation.” Journal of Computational and Graphical Statistics 24.1 (2015): 44-65.
 
 
 
 ## ICE
 
+![ICE](ice_plots.jpeg)
