@@ -35,6 +35,8 @@ Partial Dependence Plots are easy to compute and a poular way explain insights f
  
 [PLOT: PDP with two features]
 
+![2 Feature PDP](2_feature_pdp.jpeg)
+
 Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this assumption be violated, the partial dependence function will produce unrealistic data points. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.[^1]
 
 [PLOT: PDP with correlated features]
@@ -49,3 +51,4 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 
 ## ICE
 
+![ICE](ice_plots.jpeg)
