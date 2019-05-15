@@ -84,8 +84,8 @@ $$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
 
 ```{r}
 
-test <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/test.csv")
-train <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/train.csv")
+#test <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/test.csv")
+#train <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/train.csv")
 
 # packages
 
