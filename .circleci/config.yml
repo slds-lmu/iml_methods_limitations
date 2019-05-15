@@ -20,7 +20,7 @@ jobs:
             - "/usr/local/lib/R/site-library"
       - run:
           command: |
-            sh ~/iml_methods_limitations/build.sh 
+            sh ~/iml_methods_limitations/_build.sh 
       - store_artifacts:
           path: man/
           destination: man
