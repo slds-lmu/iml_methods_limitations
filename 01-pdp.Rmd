@@ -24,7 +24,7 @@ $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 [PLOT: PDP numerical features, numerical outcome]
 ![PDP Class](PDP_Age.jpeg)
 In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.[^2] For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
-
+ 
 [PLOT: PDP numerical features, multiclass outcome]
 ![PDP Class](PDP_Pclass.jpeg)
 
