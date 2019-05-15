@@ -1,6 +1,15 @@
+header-includes:
+   - \usepackage{bbm}
+
 # Accumulated Local Effects (ALE) 
 
 ## Motivation
+
+## Theorie
+
+## Estimation formula
+
+$$f_{j,ALE}(x) = \int_{z_{0,j}}^{x} (\sum_{k=1}^{K}   \mathbb(1)_{]z_{k-1,~j},~z_{k,~j}]}(x_j) ~ \frac{1}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[f(z_{k,j}, x_{\setminus j}^{(i)})-f(z_{k-1,j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}})~dx_j  $$
 
 ## Variations
 
