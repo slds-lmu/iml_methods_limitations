@@ -1,18 +1,19 @@
 --- 
 title: "Limitations of Interpretable Machine Learning Methods"
-author: ""
+author: ''
 date: "`r Sys.Date()`"
-documentclass: krantz
-bibliography: [book.bib, packages.bib]
-biblio-style: apalike
-link-citations: yes
 colorlinks: yes
-lot: yes
-lof: yes
-site: bookdown::bookdown_site
-description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
+bibliography:
+- book.bib
+- packages.bib
+description: Situations in which PDP, ALE, LIME, LOCO and feature importance fail.
+documentclass: krantz
 graphics: yes
-#cover-image: images/cover.jpg
+link-citations: yes
+lof: yes
+lot: yes
+site: bookdown::bookdown_site
+biblio-style: apalike
 ---
 
 ```{r setup, include=FALSE}

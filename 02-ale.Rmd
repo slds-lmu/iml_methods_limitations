@@ -1,5 +1,11 @@
 # Accumulated Local Effects (ALE) 
 
+## Motivation
 
+## Variations
 
+### Numeric features
 
+### Categorical features
+
+### 2nd order effects
