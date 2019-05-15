@@ -55,7 +55,7 @@ Still, the data for the explainer should be related to the original data so that
 This is why LIME perturbs the original data and uses a perturbed data set instead.
 The perturbed data set is much larger than the original one and supposed the better represent the (possible) feature space.
 Perturbation does not work equally well for all kind of data.
-In the case of tabular data, categorical features are much better dealt with as numerical features.
+In the case of tabular data categorical features are much better dealt with as numerical features.
 This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
 LIME's perturbation of numerical data also better captures the possible feature space. 
 However, typically numerical data is perturbed by a (gaussian) error.
