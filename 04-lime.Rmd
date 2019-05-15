@@ -50,10 +50,9 @@ Thus, it does not need to explain the data the black box model was fit on.
 The explainer wants to study the behaviour of the function modelled by the black box model.
 However, the complete behaviour of the black box model may not be featured by the training data.
 
-Hence, LIME aims to get a more complete \emph{grid} of the data in order to get a better idea on what-if scenarios.
-Still, the data for the explainer should not be too different from the original data.
-This is because in this case the input may be ill-located in space.
-Thus, LIME perturbs the original data and uses the perturbed data set instead.
+Hence, LIME aims to get a more complete \emph{grid} of the data and fill the feature space with new observations.
+Still, the data for the explainer should be related to the original data so that the data for the explainer is not ill-located in space.
+This is why LIME perturbs the original data and uses a perturbed data set instead.
 The perturbed data set is much larger than the original one and supposed the better represent the (possible) feature space.
 Perturbation does not work equally well for all kind of data.
 In the case of tabular data, categorical features are much better dealt with as numerical features.
@@ -92,9 +91,10 @@ What properties should suitable explainers have?
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
 However, we did not discuss further desired properties of these models.
 As these models have certain strong assumptions, it is unlikely that these models are capable of maintaining optimal fit to the original black box model. 
-Thus, reviewing our formula, we need a second term working against the first one: 
+Recall our formula.
+We need a second term working against the first one which constraints the optimal fit to more interpretable models: 
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
-Putting these two terms together and minimizing them gives us a trade-off between best local fit and best interpretability of our solution. 
+Putting these two terms together and minimizing them gives us a trade-off solution between best local fit and best interpretability. 
 Of course this may sound great in theory, but for a practical application a lot of non-trivial choices for each component has to be made to deliver desirable results. 
 Although this rough definition of LIME certainly makes it a challenge to implement LIME, it also gives us great freedom and flexibility of how we tackle this problem. 
 For example we see the model $f$ gives no restrictions on the other choices in the equation, which gives us the opportunity to drastically change the underlying predictive model while keeping the same interpretable model with the same complexity constraints. 
