@@ -13,9 +13,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - deps1-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
-            - deps1-{{ .Branch }}
-            - deps1-
+            - deps2-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
+            - deps2-{{ .Branch }}
+            - deps2-
       - run:
           command: |
             R -e 'devtools::install_deps(dependencies = TRUE)'
