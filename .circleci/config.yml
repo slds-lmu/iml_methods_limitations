@@ -4,6 +4,9 @@ jobs:
     working_directory: ~/main
     docker:
       - image: appsilon/ci-base:1.0
+    machine:
+      pre:
+        - apt-get install texlive-xetex
     steps:
       - run:
           command: |
