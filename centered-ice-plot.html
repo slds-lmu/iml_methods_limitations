@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="method-chapters.html">
-<link rel="next" href="partial-dependence-plots-pdp.html">
+<link rel="prev" href="individual-conditional-expectation-curves.html">
+<link rel="next" href="derivative-ice-plot.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -96,16 +96,17 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="partial-dependence-plots-pdp-and-individual-conditional-expectation-curves" class="section level1">
-<h1><span class="header-section-number">Chapter 2</span> Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves</h1> 
+<div id="centered-ice-plot" class="section level2">
+<h2><span class="header-section-number">3.3</span> Centered ICE Plot</h2>
+<p>There is a problem with ICE plots: Sometimes it can be hard to tell whether the ICE curves differ between individuals because they start at different predictions. A simple solution is to center the curves at a certain point in the feature and display only the difference in the prediction to this point. The resulting plot is called centered ICE plot (c-ICE). Anchoring the curves at the lower end of the feature is a good choice. The new curves are defined as: <span class="math display">\[\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)\]</span></p>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="method-chapters.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="partial-dependence-plots-pdp.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="individual-conditional-expectation-curves.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="derivative-ice-plot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
