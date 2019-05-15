@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/main
+    docker:
+      - image: poldrack/statsthinking21 
+    steps:
+      - run:
+          command: |
+            wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb;
+            dpkg -i pandoc-2.7.2-1-amd64.deb;
+            rm pandoc-2.7.2-1-amd64.deb
+      - checkout
+      - restore_cache:
+          keys:
+            - deps2-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
+            - deps2-{{ .Branch }}
+            - deps2-
+      - run:
+          command: |
+            R -e 'devtools::install_deps(dependencies = TRUE)'
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
+          paths:
+            - "/usr/local/lib/R/site-library"
+      - run:
+          command: |
+            sh ./_build.sh 
+      - store_artifacts:
+          path: man/
+          destination: man

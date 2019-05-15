@@ -8,3 +8,4 @@ _bookdown_files
 _main.Rmd
 *.log
 *.Rproj
+./*.html
