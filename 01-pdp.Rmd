@@ -59,8 +59,8 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 
 ```{r}
 
-test <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/test.csv")
-train <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/train.csv")
+#test <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/test.csv")
+#train <- read.csv("C:/Users/Thommy/Desktop/All/LMU/Seminar Interpretable ML/train.csv")
 
 # packages
 
