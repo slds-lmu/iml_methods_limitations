@@ -1,8 +1,62 @@
-# Permutation Feature Importance and LOCO
+---
+title: "Feature Importance"
+output: html_document
+---
 
-## Permutation Feature Importance
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+As in previous chapters already discussed, there exist a variety of methods that enable a better understanding of the relationship between features and the outcome variables, especially for complex machine learning models. For instance, Partial Dependence (PD) plots visualize the feature effects on a global, aggregated level, whereas Individual Conditional Expectation (ICE) plots unravel the average feature effect by analyzing individual observations, allowing to detect, if existing, any heterogeneous relationships. Yet, these methods do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as feature importance. This perspective becomes interesting when recalling that so far black-box machine learning models aim for predictive accuracy rather than for inference, and hence, it is persuasive to also establish agnostic-methods that focus on the performance dimension. In the following, the two most common approaches, Permutation Feature Importance (PFI) by Breiman (2001) and Leave-One-Covariate-Out (LOCO) by Lei et al. (2017), for calculating and visualizing a Feature Importance metric, are introduced. At this point, however, it is worth to clarify that the the concepts of feature effects and feature importance can by no means be ranked but rather should be considered as mutual complements that enable the interpretability from different angles. After introducing the concepts of PFI and LOCO, a brief discussion of their interpretability but also its non-negligible limitations will follow.
+
+
+
+## Permutation Feature Importance (PFI)
+
+The concept of Permutation Feature Importance was first introduced by Breiman (2001) and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature $S$, its explanatory power mitigates, as it breaks the association to the outcome variable $Y$. Therefore, if the model relied on the feature $S$, the prediction error $ e = L(y,f(X))$ of the model $f$ should increase when predicting with the permuted feature values $S_{perm}$ instead of with the initial feature values from $S$. The importance of feature $S$ is then evaluated by the increase of the prediction error which can be either determined by taking the difference $e_{perm} - e_{orig}$ or taking the ratio $e_{perm}/e_{orig}$. Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features $S_{perm}$ there is no need to retrain the model $f$. Below, a respective PFI algorithm based on Fisher, Rudin and Dominici (2018) is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.
+
+**The Permutation Feature Importance algorithm based on Fisher, Rudin, and Dominici (2018):**
+
+Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $L(y,f(X))$
+
+1. Estimate the original model error $e_{orig} = L(y,f(X))$ (e.g mean squared error)
+2. For each feature $j = 1,...,p$ do:
+    * Generate feature matrix $x_{perm}$ by permuting feature j in the data $X$
+    * Estimate error $e_{perm} = L(Y,f(X_{perm}))$ based on the predictions of the permuted data,
+    * Calculate permutation feature importance $PFI_{j} = e_{perm}/e_{orig}$. Alternatively, the difference can be used: $PFI_{j} = e_{perm} - e_{orig}$
+3. Sort features by descending FI.
+
+
 
 ## Leave-One-Covariate-Out (LOCO)
 
+The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although application of LOCO exists, where comparable to PFI, the initial values of feature $S$ are replaced by its mean, median or zero, and hence, circumvent the disadvantage of re-training the model $f$, the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model $f_{-j}$ is then compared to the prediction error resulted from the baseline model. This however, comes with the disadvantage the re-training of the model causes a disadvantage from a computational perspective, with an increasing feature space. The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out.
 
-Test
+**The Leave-One-Covariate-Out algorithm based on Lei et al. (2017):**
+
+Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $L(y,f(X))$
+
+1. Estimate the original model error $e_{orig} = L(y,f(X))$ (e.g mean squared error)
+2. For each feature $j = 1,...,p$ do:
+    * Generate feature matrix $x_{-j}$ by removing feature j in the data $X$
+    * Refit model $f_{-j}$ with data $X_{-j}$
+    * Estimate error $e_{-j} = L(Y,f_{-j}(X_{-j}))$ based on the predictions of the reduced data,
+    * Calculate LOCO Feature Importance $FI_{j} = e_{-j}/e_{orig}$. Alternatively, the difference can be used: $FI_{j} = e_{-j} - e_{orig}$
+3. Sort features by descending FI.
+
+The qualitative and quantitative interpretations correspond to the ones from the PFI results.
+
+
+
+
+## Interpretability of Feature Importance and its Limitations
+
+
+After both methods are discussed and their raison d'être is clarified, the question to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models will be now touched on. By doing so, it is necessary to also reflect upon the limitations of the model regarding the interpretability of the results. The latter will constitute the main focus in the following chapters. 
+
+First, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (i.e. Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance indicators. Secondly, both methods allow for a visualization on a global, aggregated level...
+
+
+
