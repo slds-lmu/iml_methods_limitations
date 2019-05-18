@@ -23,11 +23,13 @@ $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
 [PLOT: PDP numerical features, numerical outcome]
 ![PDP Class](PDP_Age.jpeg)
+The PDP shows that young children had the highest survival probability, with the probability sharply dropping until age 18. After this age, the decline in survival probability as age goes up is still evident, but less pronounced.
+
 In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.[^2] For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
  
 [PLOT: PDP numerical features, multiclass outcome]
 ![PDP Class](PDP_Pclass.jpeg)
-
+In the categorical PDP, it is clear that those in lower classes had a lower survival probability.
 
 **Advantages and Limitations of PD plots**
 
@@ -36,6 +38,8 @@ Partial Dependence Plots are easy to compute and a poular way explain insights f
 [PLOT: PDP with two features]
 
 ![2 Feature PDP](2_feature_pdp.jpeg)
+
+In the left PDP we see a stark difference in survival probability for female and male. While for both genders the probability goes down as age increases, this decrease is much more steep for males. In the right plot we see that the age range 0-20 has a fairly uniform probability, independent of the fare paid. From age 20 onwards, however, it is clear that those that paid the absolute lowest fare had a much lower survival probability than those that paid a high fare.
 
 Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this assumption be violated, the partial dependence function will produce unrealistic data points. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.[^1]
 
@@ -75,5 +79,5 @@ $$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
 
 ![ICE](ice_plots.jpeg)
 
-
+In the 0-50 range in the centered plot we see some variation with some individual's survival probalility increasing as the fare goes up, while decreasing for other individuals. After this the curves move more uniform, with very little changes in the 100-350 range. A small uptick in surival probality for all individuals takes place at a fare of roughly 390, before stabilizing for the rest of the range.
 
