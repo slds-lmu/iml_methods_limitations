@@ -3,14 +3,19 @@ jobs:
   build:
     working_directory: ~/main
     docker:
-      - image: appsilon/ci-base:1.0
+      - image: poldrack/statsthinking21 
     steps:
+      - run:
+          command: |
+            wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb;
+            dpkg -i pandoc-2.7.2-1-amd64.deb;
+            rm pandoc-2.7.2-1-amd64.deb
       - checkout
       - restore_cache:
           keys:
-            - deps1-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
-            - deps1-{{ .Branch }}
-            - deps1-
+            - deps2-{{ .Branch }}-{{ checksum "DESCRIPTION" }}
+            - deps2-{{ .Branch }}
+            - deps2-
       - run:
           command: |
             R -e 'devtools::install_deps(dependencies = TRUE)'
@@ -20,7 +25,7 @@ jobs:
             - "/usr/local/lib/R/site-library"
       - run:
           command: |
-            sh ~/iml_methods_limitations/_build.sh 
+            sh ./_build.sh 
       - store_artifacts:
           path: man/
           destination: man
