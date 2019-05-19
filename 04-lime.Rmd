@@ -118,25 +118,16 @@ To give things more substance we end up with the following possible algorithm fo
 
 Return: An explanation for the interpretable model $g$.
 
-<<<<<<< HEAD
-The following GIF nicely visualises the described algorithm.
-We start with only our data that is split into two classes: 1 and 0.
-Then, we fit a black box model that can perfectly distinguish between the two classes - indicated by the sinus shaped function.
-We do not perturb the data  in this case.
-(However, we may argue that our pertubation function is the identity function.)
-Now we select an observation (yellow point) for which we want an explanation.
-With respect to this observation we weight our data.
-Close observations receive higher weights.
-Then, we fit a weighted classifaction model which yields an interpretable linear decision boundary which is actually locally very similar to the black box decision boundary.
-=======
 The following GIF nicely visualises the described algorithm. 
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes - indicated by the sinus shaped function.
-We do not perturb the data (however, we may argue that our pertubation function is the identity function).
-Now, the data point, we want an explanation for, is colored yellow.
+We do not perturb the data in this case.
+(However, we may argue that our pertubation function is the identity function.)
+Now, the data point, which we want an explanation for, is coloured yellow.
 With respect to this point we weight our data by giving close observations higher weights.
-Afterwards, we fit a classifaction model based on these weights which yields an interpretable linear decision boundary. As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.
->>>>>>> a410609e8e8c2ff53a5a54bdd99f86e28327a9d5
+Afterwards, we fit a classifaction model based on these weights.
+This yields an interpretable linear decision boundary. 
+As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.
 
 ```{r echo = FALSE}
 knitr::include_graphics("images/LIME.gif")
