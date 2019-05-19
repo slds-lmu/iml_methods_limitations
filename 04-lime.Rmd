@@ -107,6 +107,7 @@ The smaller the fidelity the more we can trust our resulting model to give a goo
 If the fidelity is high on the other hand, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
 
 Summing it up we end up with the following algorithm for LIME:
+
 1. Select instance $x$ out of the original data $X$ for which we want an explanation for its prediction.
 
 2. Perturb your dataset $X$ and achieve a perturbed data set $Z$. 
@@ -118,6 +119,19 @@ Summing it up we end up with the following algorithm for LIME:
 5. Train an explainable weighted model $g$ on $Z$ and the associated predictions.
 
 Return: An explanation for the interpretable model $g$.
+
+The following GIF nicely visualises LIME. 
+We start with only our data that is split into two classes: 1 and 0.
+Then, we fit a model that can perfectly distinguish between the two classes - indicating by the sinus shaped function.
+We do not perturb the data (however, we may argue that our pertubation function is the identity function).
+Now we select an observation (yellow point) for which we want an explanation.
+With respect to this observation we weight our data.
+Close observations receive higher weights.
+Then, we fit a weighted classifaction model which yields an interpretable linear decision boundary which is actually locally very similar to the black box decision boundary.
+
+```{r echo = FALSE}
+knitr::include_graphics("images/LIME.gif")
+```
 
 Certainly LIME has great potential.
 However, as LIME is a very young (as of 2019) approach the actual implementation of LIME in software packages (e.g. R or Python) have short-comings.
