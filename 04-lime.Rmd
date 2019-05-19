@@ -120,7 +120,7 @@ Summing it up we end up with the following algorithm for LIME:
 
 Return: An explanation for the interpretable model $g$.
 
-The following GIF nicely visualises LIME. 
+The following GIF nicely visualises the described algorithm. 
 We start with only our data that is split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes - indicating by the sinus shaped function.
 We do not perturb the data (however, we may argue that our pertubation function is the identity function).
@@ -132,6 +132,8 @@ Then, we fit a weighted classifaction model which yields an interpretable linear
 ```{r echo = FALSE}
 knitr::include_graphics("images/LIME.gif")
 ```
+
+For specific examples of LIME please refer to the next two chapters or \cite{Molnar}.
 
 Certainly LIME has great potential.
 However, as LIME is a very young (as of 2019) approach the actual implementation of LIME in software packages (e.g. R or Python) have short-comings.
