@@ -7,23 +7,24 @@ output:
 
 (# First merge start)
 
-So far all the interpretation methods are at the global scope of the trained model with respect to its underlying dataset, but none really gives the opportunity to interpret a single prediction on its own in a quick and easy way. 
+So far all of the interpretation methods presented in this book are refer to the global scope of the trained model.
+However, none really gives the opportunity to interpret a model via single predictions on their own.
 This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
 LIME is a variant of so-called surrogate models.
 Surrogate models aim to imitate the black box prediction behaviour of a machine learning model. 
 Surrogate models themselves have a certain feature: they are interpretable.
-The intuition is to have an interpretable model explain the association of the features $X$ and the - by the black box model - \emph{predicted} target $\hat{y}$.
-Thus, surrogate models aim to capture the decision boundaries of the black box model without attempting to model the true association themselves.
+The intuition is to have an interpretable model that explains the association of the features $X$ and the - by the black box model - \emph{predicted} target $\hat{y}$.
+Thus, surrogate models aim to capture the decision boundaries of the black box model without attempting to model the true association itself.
 For example, we may use a neural network to solve a classification task.
 While a neural network is anything but interpretable, we may find that some of the decision boundaries are reasonably well explained by a logistic regression which in fact yields interpretable coefficients.
 
 In general there are two kinds of surrogate models: global and local surrogate models.
 In this chapter we will focus on the latter ones.
 
-The concept of local surrogate models is heavily tied to \cite{LIME} which propose local interpretable model-agnostic explanations (LIME). 
+The concept of local surrogate models is heavily tied to \cite{LIME} who propose local interpretable model-agnostic explanations (LIME). 
 Different to global surrogate models, local surrogate models such as LIME aim to rather explain single predictions by interpretable models than the whole black box model.
-They try to \emph{interpret locally} this prediction solely by a second, surrogate model - a \emph{model-agnostic explanation} so to say. 
-This model, also referred to as explainer, needs to be easiliy interpretable (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original model.
+Using LIME one tries to \emph{locally interpret} this prediction solely by a new surrogate model - a \emph{model-agnostic explanation} so to say. 
+This model, also referred to as explainer, needs to be easiliy interpretable (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original black box model.
 However, we actually don't care about a global fit in this case.
 We only want to have a very local fit of the explainer in the neighbourhood of the instance to be explained. 
 
