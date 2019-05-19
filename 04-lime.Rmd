@@ -149,6 +149,6 @@ With LIME being a very generic approach also comes the consequence that many hyp
 Hence, it is likely that in many use cases LIME explanations can hardly be trusted and should be treated with great care.
 
 The following two chapters will focus on two very significant "hyperparameters": the neighbourhood definition and the sampling strategy, and investigate how these affect the results and their interpretability.
-For this, we will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results.
+For this, we will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
 
 (# First merge end) 
