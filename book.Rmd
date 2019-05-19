@@ -1,3 +1,75 @@
+--- 
+title: "Limitations of Interpretable Machine Learning Methods"
+author: ""
+date: "`r Sys.Date()`"
+documentclass: krantz
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+site: bookdown::bookdown_site
+description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
+graphics: yes
+#cover-image: images/cover.jpg
+---
+
+# Preface {-}
+
+Placeholder
+
+
+## Structure of the book {-}
+
+<!--chapter:end:index.Rmd-->
+
+# Introduction 
+
+Here is some text
+
+## This is a smaller title
+
+We have a nice figure in Figure \@ref(fig:hello), and also a table in Table \@ref(tab:iris).
+
+```{r hello, fig.cap='Hello World!', out.width='90%'}
+par(mar = c(4, 4, 1, .1))
+plot(cars, pch = 19)
+```
+
+```{r iris}
+knitr::kable(
+  head(iris), caption = 'The boring iris data.',
+  booktabs = TRUE
+)
+```
+
+
+
+
+<!--chapter:end:00-introduction.Rmd-->
+
+# Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves
+
+## Partial Dependence Plots
+
+
+
+
+
+## ICE
+
+
+<!--chapter:end:01-pdp.Rmd-->
+
+# Accumulated Local Effects (ALE) 
+
+
+
+
+
+<!--chapter:end:02-ale.Rmd-->
+
 ---
 title: "Feature Importance"
 output: html_document
@@ -183,4 +255,26 @@ Conveniently, both methods are highly adaptable on whether using classification 
 
 
 
+
+
+<!--chapter:end:03-feature-importance.Rmd-->
+
+# Local Interpretable Model-agnostic Explanations
+
+
+
+
+<!--chapter:end:04-lime.Rmd-->
+
+`r if (knitr:::is_html_output()) '# References {-}'`
+
+```{r include=FALSE}
+# generate a BibTeX database automatically for some R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+
+<!--chapter:end:99-references.Rmd-->
 
