@@ -2,8 +2,9 @@
 
 (# First merge start)
 
-So far all of the interpretation methods presented in this book refer to the global scope of the trained model.
-However, none really gives the opportunity to interpret the single predictions of a model on their own.
+So far all of the interpretation methods presented in this book refer to the global scope of the black box model.
+However, it may be interesting to examine models locally - on the basis of
+single predictions.
 This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
 LIME is a variant of the so-called surrogate models.
 This type of models aims to imitate the black box prediction's behaviour of a machine learning model with a specific constraint: they are interpretable.
@@ -31,9 +32,7 @@ To better assess these open questions it may be helpful to study the mathematica
 
 The explainer function for a datapoint $x$, which we aim to interpret, is of the following form:
 
-\begin{equation}
-  explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)
-\end{equation}
+$$explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
 
 Let's decompose this compact, yet precise definition:
 
