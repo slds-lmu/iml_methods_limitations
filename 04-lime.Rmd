@@ -14,7 +14,7 @@ For example, we may use a neural network to solve a classification task, but, wh
 In general there are two kinds of surrogate models: global and local surrogate models.
 In this chapter we will focus on the latter ones.
 
-The concept of local surrogate models is heavily tied to \cite{LIME}, who propose local interpretable model-agnostic explanations (LIME). 
+The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
 Different to global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
 By using LIME one tries to \emph{locally interpret} this prediction solely by a new surrogate model - a \emph{model-agnostic explanation} so to say. 
 This model, also referred to as explainer, needs to be easiliy interpretable (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original black box model.
@@ -131,7 +131,7 @@ knitr::include_graphics("images/lime.gif")
 knitr::include_graphics("images/lime.png")
 ```
 
-For specific examples of LIME please refer to the next two chapters or \cite{Molnar}.
+For specific examples of LIME please refer to the next two chapters or @molnar2019.
 
 The defintion of LIME still seems after all very rough and vague.
 This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
