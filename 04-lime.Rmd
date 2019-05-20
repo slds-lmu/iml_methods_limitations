@@ -118,7 +118,7 @@ To give things more substance we end up with the following possible algorithm fo
 
 Return: An explanation for the interpretable model $g$.
 
-The following GIF nicely visualises the described algorithm. 
+The following visualisation nicely depicts the described algorithm. 
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes - indicated by the sinus shaped function.
 We do not perturb the data in this case.
@@ -129,8 +129,17 @@ Afterwards, we fit a classifaction model based on these weights.
 This yields an interpretable linear decision boundary. 
 As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.
 
-```{r echo = FALSE}
-knitr::include_graphics("images/LIME.gif")
+```{r, echo = FALSE}
+output <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+is.html = !is.null(output) && output == "html"
+```
+
+```{r, eval = is.html, echo = FALSE}
+knitr::include_graphics("images/lime.gif")
+```
+
+```{r, eval = !is.html, echo = FALSE}
+knitr::include_graphics("images/lime.png")
 ```
 
 For specific examples of LIME please refer to the next two chapters or \cite{Molnar}.
