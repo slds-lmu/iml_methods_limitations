@@ -16,19 +16,19 @@ The partial dependence function can be estimated by averaging the actual feature
 
 $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
-![PDP Class](PDP_Age.jpeg)
+![PDP Class](images/PDP_Age.jpeg)
 The PDP shows that young children had the highest survival probability, with the probability sharply dropping until age 18. After this age, the decline in survival probability as age goes up is still evident, but less pronounced.
 
 In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.[^2] For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
  
-![PDP Class](PDP_Pclass.jpeg)
+![PDP Class](images/PDP_Pclass.jpeg)
 In the categorical PDP, it is clear that those in lower classes had a lower survival probability.
 
 **Advantages and Limitations of Partial Dependence Plots**
 
 Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.[^1]
 
-![2 Feature PDP](2_feature_pdp.jpeg)
+![2 Feature PDP](images/2_feature_pdp.jpeg)
 
 In the left PDP we see a stark difference in survival probability for female and male. While for both genders the probability goes down as age increases, this decrease is much more steep for males. In the right plot we see that the age range 0-20 has a fairly uniform probability, independent of the fare paid. From age 20 onwards, however, it is clear that those that paid the absolute lowest fare had a much lower survival probability than those that paid a high fare.
 
@@ -63,7 +63,7 @@ $$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
 
 ### ICE
 
-![ICE](ice_plots.jpeg)
+![ICE](images/ice_plots.jpeg)
 
 In the 0-50 range in the centered plot we see some variation with some individual's survival probalility increasing as the fare goes up, while decreasing for other individuals. After this the curves move more uniform, with very little changes in the 100-350 range. A small uptick in surival probality for all individuals takes place at a fare of roughly 390, before stabilizing for the rest of the range.
 
