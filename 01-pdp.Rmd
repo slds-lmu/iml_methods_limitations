@@ -1,9 +1,4 @@
-# Method chapters
-•	Each method chapter should shortly (2-3 pages) describe the method: mathematical definition, how to estimate it, an example and visualizations. Also a short section on the limitations which links to the individual chapters.
-•	Team PDP describes the partial dependence plot for 1D and 2D. Closely related are individual conditional expectation curves which should be explained as well and can be used to motivated PDP.
-
-
-# Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves
+# Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) Curves
 
 ## Partial Dependence Plots (PDP)
 
@@ -17,25 +12,21 @@ While the general model function $f(x) = f(x_S, x_C)$ depends on all input varia
 $$f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$$
 
 
-The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are uncorrelated.[^2]
+The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are independent and thus uncorrelated.[^2]
 
 $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
-[PLOT: PDP numerical features, numerical outcome]
 ![PDP Class](PDP_Age.jpeg)
 The PDP shows that young children had the highest survival probability, with the probability sharply dropping until age 18. After this age, the decline in survival probability as age goes up is still evident, but less pronounced.
 
 In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.[^2] For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
  
-[PLOT: PDP numerical features, multiclass outcome]
 ![PDP Class](PDP_Pclass.jpeg)
 In the categorical PDP, it is clear that those in lower classes had a lower survival probability.
 
-**Advantages and Limitations of PD plots**
+**Advantages and Limitations of Partial Dependence Plots**
 
-Partial Dependence Plots are easy to compute and a poular way explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.[^1]
- 
-[PLOT: PDP with two features]
+Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.[^1]
 
 ![2 Feature PDP](2_feature_pdp.jpeg)
 
@@ -49,11 +40,6 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 [^1]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
 [^2]: Hastie, Tibshirani, Friedman. The Elements of Statistical Learning. Springer. https://web.stanford.edu/~hastie/ElemStatLearn/printings/ESLII_print12.pdf.
 
-
-
-# Partial Dependence Plots (PDP) and Individual Conditional Expectation Curves
-
-## Partial Dependence Plots (PDP)
 ## Individual Conditional Expectation Curves
 A formal definition:  In ICE plots, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}}$ is plotted against $x^{(i)}_S$ and $x^{(i)}_C$.[^3]
 
@@ -63,19 +49,19 @@ Individual Conditional Expectation (ICE) plots display one line per instance tha
 The equivalent to a PDP for individual data instances is called individual conditional expectation (ICE) plot (Goldstein et al. 2017)[^4]. An ICE plot visualizes the dependence of the prediction on a feature for each instance separately, resulting in one line per instance, compared to one line overall in partial dependence plots. A PDP is the average of the lines of an ICE plot. The values for a line (and one instance) can be computed by keeping all other features the same, creating variants of this instance by replacing the feature’s value with values from a grid and making predictions with the black box model for these newly created instances. The result is a set of points for an instance with the feature value from the grid and the respective predictions.
 
 
-##Centered ICE Plot
+###Centered ICE Plot
 
 There is a problem with ICE plots: Sometimes it can be hard to tell whether the ICE curves differ between individuals because they start at different predictions. A simple solution is to center the curves at a certain point in the feature and display only the difference in the prediction to this point. The resulting plot is called centered ICE plot (c-ICE). Anchoring the curves at the lower end of the feature is a good choice. The new curves are defined as:
 $$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
 
 
-## Derivative ICE Plot
+### Derivative ICE Plot
 
-## Advantages and Disadvantages
+### Advantages and Disadvantages
 [^3]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
 [^4]: Goldstein, Alex, et al. “Peeking inside the black box: Visualizing statistical learning with plots of individual conditional expectation.” Journal of Computational and Graphical Statistics 24.1 (2015): 44-65.
 
-## ICE
+### ICE
 
 ![ICE](ice_plots.jpeg)
 
