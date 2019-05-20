@@ -17,7 +17,7 @@ Thus, surrogate models aim to capture the decision boundaries of the original mo
 For example, we may use a neural network to solve a classification task, but, while a neural network is anything besides interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
 
 In general there are two kinds of surrogate models: global and local surrogate models.
-In this chapter we will focus on the latter.
+In this chapter we will focus on the latter ones.
 
 The concept of local surrogate models is heavily tied to \cite{LIME}, who propose local interpretable model-agnostic explanations (LIME). 
 Different to global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
