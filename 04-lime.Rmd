@@ -1,9 +1,4 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
-# Local Interpretable Model-agnostic Explanations
+# Local Interpretable Model-Agnostic Explanations
 
 (# First merge start)
 
@@ -46,24 +41,26 @@ $x$ can be any arbitrary (new) data point that can be represented in the same wa
 Furthermore, different types of data are possible to be used as an original set. 
 Besides the classical tabular data case, we can also interpret models trained on text data or image data. 
 However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
-Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on.
-The function fitted by this model operates in the complete feature space and can even yield predictions for instances not seen in the training data.
-Hence, we want to create a more complete \emph{grid} of the data and fill the feature space with new observations, so that we can better study the black box model's behaviour.
-Still, the data for the explainer should be related to the original data in a way for the explainer to not be ill-located in space and to not lose everything in common with the original problem.
-This is why LIME decides to perturb the original data.
-The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to be the better representative of the (possible) feature space.
+Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
+The function fit by this model operates in the complete feature space and can even yield predictions for instances not seen in the training data.
+Hence, we want to create a more complete \emph{grid} of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
+Still, the data for the explainer should be related to the original data.
+This is because we don't want the explainer to be ill-located in space so that it does not have anything in common with the original problem anymore.
+This is why in LIME we perturb the original data.
+The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
 But perturbation does not work equally well for all kind of data.
 For example, in the case of tabular data categorical features are much better dealt with as numerical features.
 This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
-LIME's perturbation of numerical data also captures the possible feature space better. 
+LIME's perturbation of numerical data also captures the possible feature space better than the original data.
 However, typically numerical data is perturbed by a (gaussian) error or binning the numerical features in categorical/ordinal ones.
 One can easily see that this way the full grid is not likely to be explored as fully as for categorical features.
-In fact, the way numerical features are handled is one of the main limitations of LIME, which however will not be discussed in detail in this book.
-In general one could say a big difficulty for LIME is the perturbation of the data itself.
-This topic will be discussed in detail in chapter X and thus not outlined here.
+In fact, the way numerical features are handled is one of the main limitations of LIME
+However, this limitation will not be discussed in detail in this book.
+Moreover, perturbation of the data itself is very critical to LIME and may be suject to criticism.
+This topic will be discussed in detail in chapter X and thus is not outlined here.
 
 Let's come back to our formula from the beginning.
-The range of the function are all possible elements $g$ in our predefined set of interpretable functions $G$. 
+The range of the function is composed by all possible elements $g$ in our predefined set of interpretable functions $G$. 
 $G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
 All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
 
@@ -72,8 +69,8 @@ The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is similar to a loss funct
 This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
 Neighbourhood is a very vague term.
 This is for good reason.
-A priori it is not clear how to specify the neighbourhood properly.
-However, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
+A priori it is not clear how to specify a neighbourhood properly.
+On the other hand, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
 Technically, there are many different options to deal with this issue.
 Weighting the observations w.r.t. their proximity to the observation that is explained seems like a good idea.
 A possible implementation of this weighting is the application of a kernel function.
@@ -81,30 +78,22 @@ The kernel can be arbitraryly parametrised.
 This leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-Furthermore, the fidelity term  gives a good idea how well our interpretable model fits the black box model in the local neighborhood around our target defined by the proximity measure.
-The smaller the fidelity the more we can trust our resulting model to give a good representation. 
-On the other hand, if the fidelity is high, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
+Furthermore, the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ gives a good idea how well our interpretable model fits the black box model in the local neighborhood around our target defined by the proximity measure.
+The smaller this term the more we can trust our resulting model to give a good local representation. 
+On the other hand, if this term is high, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
 
-Having discussed the first two open questions, what data the explainer needs and what neighbourhood refers to, we can focus on the third question:
+Having discussed the first two open questions, which data the explainer works with and what neighbourhood refers to, we can focus on the third question:
 What properties should suitable explainers have?
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
 As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
 Recall our formula.
-We need a second term working against the first one which constraints the optimal fit to more interpretable models: 
+As we want local optimal fit subjected to a certain (low) degree of model complexity, which allows interpretation, our formula needs to facilitate this aspect.
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - as an example for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
 Putting the fidelity and complexity term together and minimizing them gives us a trade-off solution between best local fit and best interpretability. 
+If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
+This means the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
 
-The defintion of LIME seems after all very rough and vague.
-This leaves us many degrees of freedom when implementing it - for the good and the bad.
-For example, we see the model $f$ gives no restrictions on the other choices in the equation, which gives us the opportunity to drastically change the underlying predictive model while keeping the same interpretable model with the same complexity constraints. 
-Maybe we already set up a LIME interpretation with a decision tree for a random forest model, but we suddenly get the idea a deep neural network could impress our clients more.
-Now, we would only have to rerun the same LIME framework with the new model and recieve a similar interpretable decision tree as before.
-Besides that, the complexity term gives us a great opportunity to restrict our final result to a certain amount of parameters. 
-If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters our final model should have to $K$. 
-This means the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give to much clutter to our interpretation.
-
-
-To give things more substance we end up with the following possible algorithm for LIME:
+Putting it all together we end up with the following (possible) algorithm for LIME:
 
 1. Get instance $x$ out of data space $X$ for which we desire an explanation for its predicted target value.
 
@@ -144,9 +133,17 @@ knitr::include_graphics("images/lime.png")
 
 For specific examples of LIME please refer to the next two chapters or \cite{Molnar}.
 
-Certainly LIME has great potential, however, as a very young (as of 2019) method, the actual implementations in software packages have short-comings.
-With LIME being a very generic approach also comes the consequence that many hyperparameters, like the neighbourhood definition or the sampling strategy, are arbitrarily chosen with no opportunity to the user to set them manually.
-Hence, it is likely that in many use cases LIME explanations can hardly be trusted and should be treated with great care.
+The defintion of LIME still seems after all very rough and vague.
+This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
+For example, we see that the model $f$ gives no restrictions on the other choices in the equation, which gives us the opportunity to drastically change the underlying predictive model while keeping the same interpretable model with the same complexity constraints. 
+Assume that we already set up a LIME interpretation with a decision tree for a random forest model, but we suddenly get the idea a deep neural network could impress our clients more.
+Now, we would only have to rerun the same LIME framework with the new model and recieve a similar interpretable decision tree as before.
+Besides that, the complexity term gives us a great opportunity to restrict our final result to a certain amount of parameters. 
+
+On the other hand, LIME being a very generic approach also means that many hyperparameters, like the neighbourhood definition or the sampling strategy, are arbitrary.
+In software implementations (R and Phyton) the user has no opportunity to set them manually.
+Hence, it is likely that in many use cases LIME explanations do not fit any given context.
+In these cases they can hardly be trusted and should be treated with great care.
 
 The following two chapters will focus on two very significant "hyperparameters": the neighbourhood definition and the sampling strategy, and investigate how these affect the results and their interpretability.
 For this, we will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
