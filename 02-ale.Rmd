@@ -24,6 +24,8 @@ The ALE (centered ALE) is defined as
 
 $$  ALE_{\hat{f},~j}(x) = \widetilde{ALE}_{\hat{f},~j}(x) - E_{X_j}[\widetilde{ALE}_{\hat{f},~j}(X_j)]$$ 
 
+TODO: where do we explain why we center and interpret the centering?
+
 
 ## Estimation Formula 
 
@@ -45,11 +47,40 @@ $$   \widehat{ALE_{\hat{f},~j}}(x) = \widehat{\widetilde{ALE}_{\hat{f},~j}}(x) -
 
 As both the centered and the uncentered ALE estimations are piecewise linear functions (integration over a step function), one can first calculate the ALE at the interval boundaries and interpolate in a second step. Therefore the folowing formula proposed by Apley with slightly changed notation will be useful:
 
-$$  \widehat{\widetilde{ALE}_{\hat{f},j}}(x) =  \sum_{k=1}^{k(x_j)}   \frac{1}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} [\hat{f}(z_{k,j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,j}, x_{\setminus j}^{(i)})].  $$
+$$  \widehat{\widetilde{ALE}}_{steps, \hat{f},j}(x) =  \sum_{k=1}^{k(x)}   \frac{1}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} [\hat{f}(z_{k,j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,j}, x_{\setminus j}^{(i)})].  $$
+This formula also returns a step function, but the values in each interval are the accumulated values of the averaged total differences in each interval.
 
-## Example, Intuition, Interpretation
+<!-- choose one -->
+Two sentences: 
+To transfer this formula to the correct estimator of the uncentered ALE one has to linearely interpolate the beginning of each interval with the last value of this estimation formula in this interval. So to start it one connects the point $(0,z_{0, j})$ with $(\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{0, j}), z_{1, j})$ and this point with $(\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{2, j}), z_{2, j})$ and so on. 
 
-As the former sections introduced the theoretical basics for the ALE, this section shall provide the reader with an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the "new" datapoints. Picture 1 gives a good intuition for this procedure. 
+Alternative more mathematically:
+To transfer this formula into the correct estimator of the uncentered ALE one has to linearely interpolate the points $(\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{k-1, j}), z_{k-1, j})$ with $(\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{k, j}), z_{k, j})$ for $k \in \{1, ..., K \}$ and $\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{0, j}) = 0$.
+<!-- choose one -->
+
+Since in this formula there is no integral, it is easier to implement.
 
 
-As the evaluation is done on relatively small intervals, on the one hand the local behaviour of the model is estimated. On the other hand the covariance structure of the features is taken in account, as only "realistic" datapoints are simulated.
+
+## Intuition, Interpretation and 
+
+As the former sections introduced the theoretical basics for the ALE, this section shall provide the reader with an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the "new" datapoints. Figure 2.1 gives a good intuition for this procedure. 
+
+![FIGURE 2.1: bla bla total differences](images/ale_estimation_intuition.png)
+
+TODO: explain it
+<!-- alternative way to include pictures: -->
+
+<!-- ```{r, eval = !is.html, echo = FALSE} -->
+<!-- knitr::include_graphics("images/lime.png") -->
+<!-- ``` -->
+
+As the evaluation is done on relatively small intervals, on the one hand the local behaviour of the model is estimated. On the other hand the covariance structure of the features is taken into account, as only "realistic" datapoints are simulated.
+
+For figure 2.1 an ALE could look like this:
+
+![FIGURE 2.2: bla bla interpretation of ALE bla bla](images/ale_example.png)
+
+TODO: interpret it ;-)
+
+Next to this case - one numeric feature of interest - in the next chapter methods and interpretation for ALE with two numeric features or one categorical feature will be looked at in detail. Furthermore we will pay attention to the size of the intervals the data is evaluatet on which can be crucual for the expressiveness of the ALE in some data and learner combinations.
