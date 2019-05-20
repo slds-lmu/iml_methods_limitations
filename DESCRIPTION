@@ -6,4 +6,5 @@ Depends:
   bookdown,
   ggplot2,
   svglite,
-  iml
+  iml,
+  ranger

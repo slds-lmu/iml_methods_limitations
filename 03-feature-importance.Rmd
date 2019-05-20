@@ -19,22 +19,20 @@ Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $
 
 <br>
 Below, it is illustrated, by a fictional, exemplary random forest model, how the permutation algorithm alters the original dataset. For each of the $M$ trees, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error. From the resulting differences in the prediction errors $\Delta e^{i}$, the average $\frac{1}{M}\sum_{i=1}^{M} \Delta e_{1}^{i} = PFI_{1}$ over all trees is calucated which can then be considered as the PFI of feature $j$.
-<br>
-
-<center>
-![](Permutation_0.jpg)
-</center> 
-
 
 <br>
 
-<center>
-![](Permutation_1.jpg)
-......
-![](Permutation_2.jpg)
-</center> 
+```{r,out.width='25%', fig.align='center', echo = FALSE, message = FALSE}
+knitr::include_graphics("images/Permutation_0.jpg")
+```
 
-&nbsp;
+
+<br>
+
+```{r,out.width="50%", fig.ali, echo = FALSE, message = FALSE, fig.show="hold"}
+knitr::include_graphics(c("images/Permutation_1.jpg","images/Permutation_2.jpg"))
+```
+
 
 <center>
 $\hspace{0.5cm}\Delta e^{(1)} = L(y,f^{(1)}(X))- L(y,f^{(1)}(X_{\text{perm}}))\hspace{1.9cm}\Delta e^{(M)} = L(y,f^{(M)}(X))- L(y,f^{(M)}(X_{\text{perm}}))$
@@ -145,19 +143,21 @@ Below, it is shown, how the LOCO algorithm alters the original dataset, whereby 
 
 <br>
 
-<center>
-![](LOCO_1.JPG)
-<center>
-
+```{r,out.width="70%", fig.align='center',echo = FALSE, message = FALSE}
+knitr::include_graphics("images/LOCO_1.jpg")
+```
 <br>
 
+
+<center>
 $L(y,f(X))- L(y,f_{-1}(X_{-1}) =  \text{Feature Importance of }x_{1}$
+<center>
 
 ...
 
-<center>
-![](LOCO_2.JPG)
-</center>
+```{r,out.width="70%", fig.align='center', echo = FALSE, message = FALSE}
+knitr::include_graphics("images/LOCO_2.jpg")
+```
 
 <br>
 <center>
