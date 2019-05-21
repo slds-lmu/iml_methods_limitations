@@ -20,12 +20,6 @@ Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $
 <br>
 Below, it is illustrated, by a fictional, exemplary random forest model, how the permutation algorithm alters the original dataset. For each of the $M$ trees, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error. From the resulting differences in the prediction errors $\Delta e^{i}$, the average $\frac{1}{M}\sum_{i=1}^{M} \Delta e_{1}^{i} = PFI_{1}$ over all trees is calucated which can then be considered as the PFI of feature $j$.
 
-<br>
-
-```{r,out.width='25%', fig.align='center', echo = FALSE, message = FALSE}
-knitr::include_graphics("images/Permutation_0.jpg")
-```
-
 
 <br>
 
@@ -42,80 +36,47 @@ $\hspace{0.5cm}\Delta e^{(1)} = L(y,f^{(1)}(X))- L(y,f^{(1)}(X_{\text{perm}}))\h
 
 <br>
 
-To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset "mtcars", which is available in R. To predict the gasoline consumption (miles per gallone), ten variables are included, whereby as the results show, the PFIs vary substantially across the variables. The depicted points correspond to the mean PFIs over all random forest iterations and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively. 
+To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset "Boston", which is available in R. To predict the house price, seven variables are included, whereby as the results show, the PFIs vary substantially across the variables. The depicted points correspond to the median PFIs over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively.  
 
 <br>
 
 <center>
 ```{r, echo = FALSE, message = FALSE, fig.height=6, fig.width=12}
 
-library(data.table)
-library(ranger)
+library(iml)
 library(ggplot2)
-library(magrittr)
+library(randomForest)
 
-data <- mtcars %>% setDT
-features <- colnames(data)[c(2:11)]
-feature_names <- c("Number of cylinders", "Displacement", "Horsepower", "Rear axle ratio", "Weight", "1/4 mile time","V/S", "Transmission", "Number of gears", "Number of carburetors")
+set.seed(040232359)
+data("Boston", package = "MASS")
+Boston <- Boston[,c(1,6,13,8,12,14,5,7)]
+rf <- randomForest(medv ~ ., data = Boston, ntree = 50)
+y = Boston$medv
+X = Boston[-which(names(Boston) == "medv")]
+mod = Predictor$new(rf, data = X, y = y)
+  # Compute feature importances as the performance drop in mean absolute error
+  imp = FeatureImp$new(mod, loss = "mae", n.repetitions = 5, compare = "ratio")
+  # Plot the results directly
+  imp.dat = imp$results
 
-## Wie viele Wiederholungen fÃÂÃÂ¼r Konfidenzintervall?
-n.conf <- 100
+  imp.dat[which(imp.dat$feature == "rm"),]$feature <- "Rooms"
+  imp.dat[which(imp.dat$feature == "lstat"),]$feature <- "Status of the Population"
+  imp.dat[which(imp.dat$feature == "dis"),]$feature <- "Employment Centers Dist."
+  imp.dat[which(imp.dat$feature == "crim"),]$feature <- "Crime Rate"
+  imp.dat[which(imp.dat$feature == "nox"),]$feature <- "Nitric Oxides conc."
+  imp.dat[which(imp.dat$feature == "age"),]$feature <- "Age"
+  imp.dat[which(imp.dat$feature == "black"),]$feature <- "Blacks"
 
-set.seed(04022019)
-mx <- matrix(data = 0, nrow = n.conf, ncol = length(features))
-colnames(mx) <- feature_names
-## 1.5 min
-for(i in 1:n.conf){
   
-  model <- ranger(mpg ~ .,
-                  data = data,
-                  # mtry = 6,
-                  # num.trees = 450,
-                  # min.node.size = 9,
-                  importance = "permutation")
+ p1 <- ggplot(data = imp.dat, aes(x = reorder(feature, importance), ymin=importance.05, ymax=importance.95)) + 
+    geom_errorbar(width=0.3, size=1, color="darkblue") + 
+    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
+    coord_flip() +
+    theme(plot.subtitle = element_text(size = 10)) +
+    labs(y = "Feature Importance (ratio MAE)", x= "") + 
+    theme(text = element_text(size = 16))
   
-  #### > Variable Importance by Permutation ####
-  ## Wenn interne Variable Importance genutzt werden soll:
-  {imp <- importance(model) %>%
-    sort(decreasing = TRUE)
-
-  vec <- vapply(features,
-         function(X){
-
-           pos <- which(names(imp) == X)
-
-           imp[pos]
-         },
-         FUN.VALUE = 0)
-
-  mx[i,] <- vec}
-}
-
-conf.intervalls <- matrix(nrow = 3, ncol = length(features))
-colnames(conf.intervalls) <- feature_names
-rownames(conf.intervalls) <- c("Minimum", "Mean", "Maximum")
-for(i in 1:length(feature_names)){
-  
-  conf.intervalls[1,i] <- quantile(mx[,i], 0.05)
-  conf.intervalls[2,i] <- mean(mx[,i])
-  conf.intervalls[3,i] <- quantile(mx[,i], 0.95)
-  
-}
-
-
-## Mit Errorbar
-conf.int <- as.data.table(conf.intervalls %>% t())
-conf.int$Variable <- feature_names
-conf.int[, Variable := ordered(Variable, levels = feature_names[order(conf.int$Mean)])]
-p1 <- ggplot(data = conf.int, aes(x=Variable, ymin=Minimum, ymax=Maximum)) + 
-  geom_errorbar(width=0.3, size=1, color="darkblue") + 
-  geom_point(mapping=aes(x=Variable, y=Mean), size=3, shape=21, fill="white") +
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Mean Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
 p1 
-
 ```
 </center>
 
