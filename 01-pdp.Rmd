@@ -7,7 +7,7 @@ The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand v
 The underlying function can be described as follows:
 
 Let $x_S$ be the set of features of interest for the PDP and $x_C$ the complement set which contains all other features.
-While the general model function $f(x) = f(x_S, x_C)$ depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C:\citep{hastie2013elements}
+While the general model function $f(x) = f(x_S, x_C)$ depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C\citep{hastie2013elements}:
 
 $$f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$$
 
@@ -17,13 +17,13 @@ The partial dependence function can be estimated by averaging the actual feature
 $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
 
-```{r echo=FALSE, out.width='80%', fig.cap="The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards."}
+```{r echo=FALSE, out.width='90%', fig.cap="The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards."}
 knitr::include_graphics('images/age_pdp.jpeg')
 ```
 
 In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.\citep{hastie2013elements} For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
 
-```{r echo=FALSE, out.width='80%', fig.cap="The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class."}
+```{r echo=FALSE, out.width='90%', fig.cap="The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class."}
 knitr::include_graphics('images/pdp_class.jpeg')
 ```
 
@@ -33,11 +33,11 @@ knitr::include_graphics('images/pdp_class.jpeg')
 
 Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{Molnar2019}
 
-```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males."}
+```{r echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males."}
 knitr::include_graphics('images/pdp_2_features_1.jpeg')
 ```
 
-```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, whilke from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare."}
+```{r echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, whilke from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare."}
 knitr::include_graphics('images/pdp_2_features_2.jpeg')
 ```
 
