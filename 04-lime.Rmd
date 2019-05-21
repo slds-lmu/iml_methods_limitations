@@ -67,9 +67,10 @@ knitr::include_graphics("images/lime.png")
 
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
-First, why and how do we perturb?
-Second, what does neighbourhood refer to?
-Third, what properties should suitable explainers have?
+First, what does neighbourhood refer to?
+Second, what properties should suitable explainers have?
+Third, what data do we use why and how do we perturb?
+
 
 To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
 The explaination for a datapoint $x$, which we aim to interpret, can be represented by the following formula:
@@ -85,23 +86,11 @@ $G$ represents the complete set of prespecified explainers.
 $G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
 All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
 The explanation has to deal with two trade-off terms when minimising: 
-The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the best fit of $g$ to the model $f$ with respect to a proximity measure $\pi_x(z)$.
+The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) fidelity.
+The optimal fit is only found with respect to a proximity measure $\pi_x(z)$.
 This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
 
-Furthermore, different types of data can be used as an original set. 
-Besides the tabular data case, we can also interpret models trained on text data or image data. 
-However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
-Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
-The function, that is modeled, operates in the complete feature space and can even yield predictions for instances not seen in the training data.
-Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
-Still, the data for the explainer should be related to the original data.
-This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
-This is why we perturb the original data.
-The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
-But perturbation does not work equally well for all kinds of data.
-Details on problems associated with pertubation will be studied in chapter X.
-
-This leads us to the second open question:
+This leads us to the first open question:
 What does neighbourhood refer to?
 Neighbourhood is a very vague term.
 This is for good reason, though.
@@ -114,20 +103,27 @@ The kernel can be arbitrarily parametrised.
 This leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-Furthermore, the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ gives a good idea how well our interpretable model fits the black box model in the local neighborhood around our target defined by the proximity measure.
-The smaller this term the more we can trust our resulting model to give a good local representation. 
-On the other hand, if this term is high, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
-
-Having discussed the first two open questions - why and how we perturb the data and what neighbourhood refers to - we can focus on the third question:
-What properties should suitable explainers have?
+We anwered the second open question - what properties suitable explainers should have - in parts.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
 As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
 Recall our formula.
 As we want local optimal fit subjected to a certain (low) degree of model complexity, which allows interpretation, our formula needs to facilitate this aspect.
-$\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - as an example for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
-Putting the fidelity and complexity term together and minimising them gives us a trade-off solution between best local fit and best interpretability. 
+Recondisering our formula, $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - as an example for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
 If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
 This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
+
+Having answered the first two open question we did not discuss the last question related to the data and pertubation, yet.
+Besides the tabular data case, we can also interpret models trained on text data or image data. 
+However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
+Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
+The function, that is modeled, operates in the complete feature space and can even yield predictions for instances not seen in the training data.
+Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
+Still, the data for the explainer should be related to the original data.
+This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
+This is why we perturb the original data.
+The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
+But perturbation does not work equally well for all kinds of data.
+Details on problems associated with pertubation will be studied in chapter X.
 
 For specific examples of LIME please refer to the next two chapters or @molnar2019.
 
