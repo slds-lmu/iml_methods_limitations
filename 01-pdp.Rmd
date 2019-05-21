@@ -33,11 +33,11 @@ knitr::include_graphics('images/pdp_class.jpeg')
 
 Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{Molnar2019}
 
-```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical feature "Age" and the categorical feature "Sex" shows that the survival probability for female passengers strongly differs from male passeners. While for both genders the probability declines as age increases, this decrease is much steeper for males."}
+```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that the survival probability for female passengers strongly differs from male passeners. While for both genders the probability declines as age increases, this decrease is much steeper for males."}
 knitr::include_graphics('images/pdp_2_features_1.jpeg')
 ```
 
-```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical features "Age" and "Fare" illustrates that the age range 0-20 has a fairly uniform probability to survive, independent of the fare paid. From age 20 onwards, however, passengers travelling at a lower fare also had a much lower survival probability than those that paid a high fare."}
+```{r echo=FALSE, out.width='80%', fig.cap="The two-dimensional PDP for the numerical features Age and Fare illustrates that the age range 0-20 has a fairly uniform probability to survive, independent of the fare paid. From age 20 onwards, however, passengers travelling at a lower fare also had a much lower survival probability than those that paid a high fare."}
 knitr::include_graphics('images/pdp_2_features_2.jpeg')
 ```
 
