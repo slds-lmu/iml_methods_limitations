@@ -72,13 +72,22 @@ Second, what does neighbourhood refer to?
 Third, what properties should suitable explainers have?
 
 To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
-The explainer function for a datapoint $x$, which we aim to interpret, is of the following form:
+The explaination for a datapoint $x$, which we aim to interpret, can be represented by the following formula:
 
-$$explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
+$$explaination\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
 
 Let's decompose this compact, yet precise definition:
 
 $x$ can be any arbitrary (new) data point that can be represented in the same way as the original data.
+This explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
+$f$ refers to the black box model we want to explain and $g$ to the explainer. 
+$G$ represents the complete set of prespecified explainers.
+$G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
+All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
+The explanation has to deal with two trade-off terms when minimising: 
+The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the best fit of $g$ to the model $f$ with respect to a proximity measure $\pi_x(z)$.
+This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
+
 Furthermore, different types of data can be used as an original set. 
 Besides the tabular data case, we can also interpret models trained on text data or image data. 
 However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
@@ -90,23 +99,7 @@ This is because we don't want the explainer to be ill-located in space having no
 This is why we perturb the original data.
 The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
 But perturbation does not work equally well for all kinds of data.
-For example, in the case of tabular data categorical features are much better dealt with as numerical features.
-This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
-LIME's perturbation of numerical data also captures the possible feature space better than the original data.
-However, typically numerical data is perturbed by simulating marginal normal distrubutions or binning the numerical features in categorical/ordinal ones.
-One can easily see that this way the full grid is not likely to be explored as fully as for categorical features.
-In fact, the way numerical features are handled by LIME is one of the main limitations of the approach.
-However, this limitation will not be discussed in detail in this book.
-Moreover, perturbation of the data itself is very critical to LIME and may be subject to criticism.
-This topic will be discussed in detail in chapter X and thus is not outlined here.
-
-Let's come back to our formula from the beginning.
-The range of the function is composed by all possible elements $g$ in our predefined set of interpretable functions $G$. 
-$G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
-All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
-The function returns the model $g$ minimizing two trade-off terms: 
-The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is similar to a loss function responsible to deliver the best fit for the model $f$ plus giving a rough idea for the fidelity of the interpretable model $g$ with respect to a proximity measure $\pi_x(z)$.
-This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
+Details on problems associated with pertubation will be studied in chapter X.
 
 This leads us to the second open question:
 What does neighbourhood refer to?
