@@ -81,7 +81,7 @@ Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise,
 
 ### ICE
 
-![ICE](images/ice_plots.jpeg)
+![ICE](images/Ice_plots.jpeg)
 
 In the 0-50 range in the centered plot we see some variation with some individual's survival probalility increasing as the fare goes up, while decreasing for other individuals. After this the curves move more uniform, with very little changes in the 100-350 range. A small uptick in surival probality for all individuals takes place at a fare of roughly 390, before stabilizing for the rest of the range.
 
