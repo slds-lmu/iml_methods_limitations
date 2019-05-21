@@ -3,8 +3,7 @@
 (# First merge start)
 
 So far all of the interpretation methods presented in this book refer to the global scope of the black box model.
-However, it may be interesting to examine models locally - on the basis of
-single predictions.
+However, it may be interesting to examine models on the basis of single predictions.
 This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
 LIME is a variant of the so-called surrogate models.
 This type of models aims to imitate the black box prediction behaviour of a machine learning model subject to a specific constraint: 
@@ -24,83 +23,13 @@ This model, also referred to as explainer, needs to be easiliy interpretable (li
 However, we actually don't care about a global fit in this case.
 We only want to have a very local fit of the explainer in the neighbourhood of the instance to be explained. 
 
-So far so good. 
-However, the previous outline was not very specific and leaves (at least) three questions.
-First, what should the input of the explainer be like?
-Second, what does neighbourhood refer to?
-Third, what properties should suitable explainers have?
-
-To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
-
-The explainer function for a datapoint $x$, which we aim to interpret, is of the following form:
-
-$$explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
-
-Let's decompose this compact, yet precise definition:
-
-$x$ can be any arbitrary (new) data point that can be represented in the same way as the original data.
-Furthermore, different types of data can be used as an original set. 
-Besides the tabular data case, we can also interpret models trained on text data or image data. 
-However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
-Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
-The function fit by this model operates in the complete feature space and can even yield predictions for instances not seen in the training data.
-Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
-Still, the data for the explainer should be related to the original data.
-This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
-This is why we perturb the original data.
-The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
-But perturbation does not work equally well for all kinds of data.
-For example, in the case of tabular data categorical features are much better dealt with as numerical features.
-This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
-LIME's perturbation of numerical data also captures the possible feature space better than the original data.
-However, typically numerical data is perturbed by a (gaussian) error or binning the numerical features in categorical/ordinal ones.
-One can easily see that this way the full grid is not likely to be explored as fully as for categorical features.
-In fact, the way numerical features are handled by LIME is one of the main limitations of the approach.
-However, this limitation will not be discussed in detail in this book.
-Moreover, perturbation of the data itself is very critical to LIME and may be subject to criticism.
-This topic will be discussed in detail in chapter X and thus is not outlined here.
-
-Let's come back to our formula from the beginning.
-The range of the function is composed by all possible elements $g$ in our predefined set of interpretable functions $G$. 
-$G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
-All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
-The function returns the model $g$ minimizing two trade-off terms: 
-The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is similar to a loss function responsible to deliver the best fit for the model $f$ plus giving a rough idea for the fidelity of the interpretable model $g$ with respect to a proximity measure $\pi_x(z)$.
-This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
-
-Neighbourhood is a very vague term.
-This is for good reason.
-A priori it is not clear how to specify a neighbourhood properly.
-On the other hand, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
-Technically, there are many different options to deal with this issue.
-Weighting the observations w.r.t. their proximity to the observation that is explained seems like a good idea.
-A possible implementation of this weighting is the application of a kernel function.
-The kernel can be arbitraryly parametrised.
-This leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
-This neighbourhood issue will be discussed in more detail in the next chapter.
-
-Furthermore, the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ gives a good idea how well our interpretable model fits the black box model in the local neighborhood around our target defined by the proximity measure.
-The smaller this term the more we can trust our resulting model to give a good local representation. 
-On the other hand, if this term is high, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
-
-Having discussed the first two open questions - which data the explainer works with and what neighbourhood refers to - we can focus on the third question:
-What properties should suitable explainers have?
-We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
-As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
-Recall our formula.
-As we want local optimal fit subjected to a certain (low) degree of model complexity, which allows interpretation, our formula needs to facilitate this aspect.
-$\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - as an example for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
-Putting the fidelity and complexity term together and minimising them gives us a trade-off solution between best local fit and best interpretability. 
-If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
-This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
-
-Putting it all together we end up with the following (possible) algorithm for LIME:
+A LIME explanation can be retrieved by the following algorithm:
 
 1. Get instance $x$ out of data space $X$ for which we desire an explanation for its predicted target value.
 
 2. Perturb your dataset $X$ and recieve a perturbed data set $Z$ of increased size. 
 
-3. Retrieve the black box model predictions for $Z$.
+3. Retrieve the black box model predictions for $Z$ using the black box model $f$.
 
 4. Weight $Z$ w.r.t. the proximity/neighbourhood to $x$.
 
@@ -112,7 +41,8 @@ The following visualisation nicely depicts the described algorithm.
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes - indicated by the sinus shaped function drawn as a black curve.
 We do not perturb the data in this case.
-(However, we may argue that our pertubation function is the identity function.)
+(However, we may argue that our pertubation function is the identity function.
+We will more formally discuss pertubation later on.)
 Now, we choose the data point, which we want an explanation for.
 It is coloured in yellow.
 With respect to this point we weight our data by giving close observations higher weights.
@@ -133,6 +63,78 @@ knitr::include_graphics("images/lime.gif")
 ```{r, eval = !is.html, echo = FALSE}
 knitr::include_graphics("images/lime.png")
 ```
+
+
+So far so good. 
+However, the previous outline was not very specific and leaves (at least) three questions.
+First, why and how do we perturb?
+Second, what does neighbourhood refer to?
+Third, what properties should suitable explainers have?
+
+To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
+The explainer function for a datapoint $x$, which we aim to interpret, is of the following form:
+
+$$explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
+
+Let's decompose this compact, yet precise definition:
+
+$x$ can be any arbitrary (new) data point that can be represented in the same way as the original data.
+Furthermore, different types of data can be used as an original set. 
+Besides the tabular data case, we can also interpret models trained on text data or image data. 
+However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
+Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
+The function, that is modeled, operates in the complete feature space and can even yield predictions for instances not seen in the training data.
+Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
+Still, the data for the explainer should be related to the original data.
+This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
+This is why we perturb the original data.
+The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
+But perturbation does not work equally well for all kinds of data.
+For example, in the case of tabular data categorical features are much better dealt with as numerical features.
+This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
+LIME's perturbation of numerical data also captures the possible feature space better than the original data.
+However, typically numerical data is perturbed by simulating marginal normal distrubutions or binning the numerical features in categorical/ordinal ones.
+One can easily see that this way the full grid is not likely to be explored as fully as for categorical features.
+In fact, the way numerical features are handled by LIME is one of the main limitations of the approach.
+However, this limitation will not be discussed in detail in this book.
+Moreover, perturbation of the data itself is very critical to LIME and may be subject to criticism.
+This topic will be discussed in detail in chapter X and thus is not outlined here.
+
+Let's come back to our formula from the beginning.
+The range of the function is composed by all possible elements $g$ in our predefined set of interpretable functions $G$. 
+$G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
+All possible decision trees of a certain depth may be a suitable choice for nominal features but unfavourable for numerical ones.
+The function returns the model $g$ minimizing two trade-off terms: 
+The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is similar to a loss function responsible to deliver the best fit for the model $f$ plus giving a rough idea for the fidelity of the interpretable model $g$ with respect to a proximity measure $\pi_x(z)$.
+This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
+
+This leads us to the second open question:
+What does neighbourhood refer to?
+Neighbourhood is a very vague term.
+This is for good reason, though.
+A priori it is not clear how to specify a neighbourhood properly.
+On the other hand, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
+Technically, there are many different options to deal with this issue.
+Weighting the observations w.r.t. their proximity to the observation that is explained seems like a good idea.
+A possible implementation of this weighting is the application of a kernel function.
+The kernel can be arbitrarily parametrised.
+This leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
+This neighbourhood issue will be discussed in more detail in the next chapter.
+
+Furthermore, the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ gives a good idea how well our interpretable model fits the black box model in the local neighborhood around our target defined by the proximity measure.
+The smaller this term the more we can trust our resulting model to give a good local representation. 
+On the other hand, if this term is high, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.
+
+Having discussed the first two open questions - why and how we perturb the data and what neighbourhood refers to - we can focus on the third question:
+What properties should suitable explainers have?
+We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
+As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
+Recall our formula.
+As we want local optimal fit subjected to a certain (low) degree of model complexity, which allows interpretation, our formula needs to facilitate this aspect.
+$\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity - as an example for decision trees tree depth or in the case of linear regression models $L_0$ norm give hard restrictions of how easy interpretation has to be. 
+Putting the fidelity and complexity term together and minimising them gives us a trade-off solution between best local fit and best interpretability. 
+If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
+This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
 
 For specific examples of LIME please refer to the next two chapters or @molnar2019.
 
