@@ -40,24 +40,40 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 [^1]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
 [^2]: Hastie, Tibshirani, Friedman. The Elements of Statistical Learning. Springer. https://web.stanford.edu/~hastie/ElemStatLearn/printings/ESLII_print12.pdf.
 
+
 ## Individual Conditional Expectation Curves
-A formal definition:  In ICE plots, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}$ is plotted against $x^{(i)}_S$ and $x^{(i)}_C$.[^3]
+While the partial dependence plots provide the average effect of a feature, the Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances. Thus, a PDP is the average of the lines of an ICE plot.[^3]
 
 
-Individual Conditional Expectation (ICE) plots display one line per instance that shows how the instance’s prediction changes when a feature changes.
-
-The equivalent to a PDP for individual data instances is called individual conditional expectation (ICE) plot (Goldstein et al. 2017)[^4]. An ICE plot visualizes the dependence of the prediction on a feature for each instance separately, resulting in one line per instance, compared to one line overall in partial dependence plots. A PDP is the average of the lines of an ICE plot. The values for a line (and one instance) can be computed by keeping all other features the same, creating variants of this instance by replacing the feature’s value with values from a grid and making predictions with the black box model for these newly created instances. The result is a set of points for an instance with the feature value from the grid and the respective predictions.
+A formal definition: consider the response function $\hat{f}$, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}$ is plotted against the observed values of $x^{(i)}_S$, while $x^{(i)}_C$ remains fixed.[^3](Goldstein et al. 2017)[^4]
 
 
-###Centered ICE Plot
-
-There is a problem with ICE plots: Sometimes it can be hard to tell whether the ICE curves differ between individuals because they start at different predictions. A simple solution is to center the curves at a certain point in the feature and display only the difference in the prediction to this point. The resulting plot is called centered ICE plot (c-ICE). Anchoring the curves at the lower end of the feature is a good choice. The new curves are defined as:
-$$\hat{f}^{(i)}_{cent} = \hat{f}^{(i)} - \mathbb{1}\hat{f}(x^a,x^{(i)}_C)$$
+In ICE plots, each line represents separately one instance and shows what would happen to the model’s prediction if the feature of a particular instance varied, holding all other features the same(c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
 
-### Derivative ICE Plot
+###Centered ICE Plot###
+Heterogeneity in the model can be difficult to distinguish when the curves have a wide range of intercepts and “stacked” on each other. The so called centered ICE plot (c-ICE) is a simple solution which removes level effects. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point. \citep{Molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
+$$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
+It is recommended that the most interpretable plots occur when the minimum or the maximum observed value is chosen.
 
-### Advantages and Disadvantages
+
+###Derivative ICE Plot###
+Another way to explore the heterogeneity is to show plots of the partial derivative
+of $\hat{f}$ with respect to $x_s$. Assume that $x_s$ does not interact
+with the other predictors in the fitted model, the prediction function can be written as:
+$$\hat{f}(x) = \hat{f}(x_s,x_C) = g(x_s) + h(x_C),$$ 
+so that $$\frac{\partial{\hat{f}(\mathbf{x})}}{\partial x_s} = g'(x_s)$$
+
+When no interactions are present in the fitted model, all curves in the d-ICE plot are equivalent, and the plot shows a single line. When interactions do exist, the derivative lines will be heterogeneous. As it can be difficult to visually assess derivatives from ICE plots, it is useful to plot an estimate of the partial derivative directly.
+
+###Advantages and Limitations of ICE Plots###
+**Advantages**
+ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences and identify subgroups and interactions between model inputs. 
+
+**Disadvantages**
+Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see to average in ICE plots. 
+
+
 [^3]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
 [^4]: Goldstein, Alex, et al. “Peeking inside the black box: Visualizing statistical learning with plots of individual conditional expectation.” Journal of Computational and Graphical Statistics 24.1 (2015): 44-65.
 
