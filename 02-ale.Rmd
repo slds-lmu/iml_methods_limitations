@@ -80,7 +80,7 @@ Figure \@ref(fig:aleEx) shows an example ALE which could match the data situtaio
 
 ```{r aleEx, fig.cap='(ref:aleExample)', echo=FALSE}
 
-knitr::include_graphics("images/ale_example.PNG")
+knitr::include_graphics("images/ale_example.png")
 ```
 (ref:aleExample) ALE on basis of 5 intervals
 
