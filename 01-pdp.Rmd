@@ -7,7 +7,7 @@ The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand v
 The underlying function can be described as follows:
 
 Let $x_S$ be the set of features of interest for the PDP and $x_C$ the complement set which contains all other features.
-While the general model function $f(x) = f(x_S, x_C)$ depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C\citep{hastie2013elements}:
+While the general model function $f(x) = f(x_S, x_C)$ depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C \citep{hastie2013elements}:
 
 $$f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$$
 
@@ -21,7 +21,7 @@ $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 knitr::include_graphics('images/age_pdp.jpeg')
 ```
 
-In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.\citep{hastie2013elements} For instance, in the plot below it is clear the passengers in 1st class had the highest probability of survival and the 3rd class passengers the lowest.
+In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
 
 ```{r echo=FALSE, out.width='90%', fig.cap="The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class."}
 knitr::include_graphics('images/pdp_class.jpeg')
