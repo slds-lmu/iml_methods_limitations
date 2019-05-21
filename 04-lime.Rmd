@@ -1,11 +1,11 @@
 # Local Interpretable Model-Agnostic Explanations
 
 When doing machine learning we always build models.
-Models are simplifications of the reality.
+Models are simplifications of reality.
 Even if the predictive power of a model may be very strong, it will still only be a model.
 However, models with high predictive capacity are most of the time not understandable by a human as seen throughout this book.
-In this case the model seems to a human as complex as the problem itself.
-The scientific approach suggests to simplify reality by a __model__. 
+In this case, the model seems to a human as complex as the problem itself.
+The scientific approach suggests simplifying reality by a __model__. 
 That means we can also simplify a model through another model.
 These simplifying models are referred to as surrogate models.
 They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint: 
@@ -14,11 +14,11 @@ More technically, a simple (interpretable) model describes the association of th
 For example, we may use a neural network to solve a classification task.
 While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
 
-In general there are two kinds of surrogate models: global and local surrogate models.
-In this chapter we will focus on the latter ones.
+In general, there are two kinds of surrogate models: global and local surrogate models.
+In this chapter, we will focus on the latter ones.
 
 The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
-Different to global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
+Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
 These interpretable models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
 However, we actually don't care about a __global__ fit in this case.
 We only want to have a very __local__ fit of the explainer in the neighbourhood of the instance whose prediction is explained. 
@@ -31,7 +31,7 @@ A LIME explanation could be retrieved by the following algorithm:
 
 2. _Perturb_ your dataset $X$ and receive a perturbed data set $Z$ of increased size. 
 
-3. Retrieve a predictions for $Z$ using the black box model $f$.
+3. Retrieve predictions for $Z$ using the black box model $f$.
 
 4. Weight $Z$ w.r.t. the proximity/neighbourhood to $x$.
 
@@ -42,13 +42,13 @@ Return: An explanation for the interpretable model $g$.
 The following visualisation nicely depicts the described algorithm for a two-dimensional classification problem. 
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes.
-This is indicated by the sinus shaped function drawn as a black curve.
+This is indicated by the sinus-shaped function drawn as a black curve.
 We do not perturb the data in this case.
-(However, we may argue that our pertubation strategy is to use the original data.
-We will more formally discuss pertubation later on.)
+(However, we may argue that our perturbation strategy is to use the original data.
+We will more formally discuss perturbation later on.)
 Now, we choose the data point, which we want an explanation for.
 It is coloured in yellow.
-With respect to this point we weight our data by giving close observations higher weights.
+With respect to this point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
 This yields an interpretable linear decision boundary - depicted by the purple line. 
@@ -59,7 +59,7 @@ output <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 is.html = !is.null(output) && output == "html"
 ```
 
-```{r, eval = is.html, echo = FALSE, fig.align = 'center', fig.cap = "Simplified GIF representation of the LIME algorithm. The GIF is in line with the description presented here."}
+```{r, eval = is.html, echo = FALSE, fig.align = 'center', fig.cap = "Simplified GIF representation of the LIME algorithm."}
 knitr::include_graphics("images/lime.gif")
 ```
 
@@ -72,7 +72,7 @@ So far so good.
 However, the previous outline was not very specific and leaves (at least) three questions.
 First, what does neighbourhood refer to?
 Second, what properties should suitable explainers have?
-Third, what data do we use why and how do we perturb this data?
+Third, what data do we use, why and how do we perturb this data?
 
 To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
 The explanation for a datapoint $x$, which we aim to interpret, can be represented by the following formula:
@@ -81,15 +81,15 @@ $$explanation\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \
 
 Let's decompose this compact, yet precise definition:
 
-$X$ can be an instance which is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
+$x$ can be an instance that is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
 The final explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
 $f$ refers to the black box model we want to explain and $g$ to the explainer. 
 $G$ represents the complete set of pre-specified explainers.
-$G$ should always be a hypothesis space featuring interpretable models, for instance linear regression of arbitrary parametrisation.
+$G$ should always be a hypothesis space featuring interpretable models, for instance, linear regression of arbitrary parametrisation.
 The explanation has to deal with two trade-off terms when minimising: 
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) fidelity.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$.
-This measure makes sure that optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
+This measure makes sure that the optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
 
 This leads us to the first open question:
 What does neighbourhood refer to?
@@ -98,36 +98,37 @@ This is for good reason, though.
 A priori it is not clear how to specify a neighbourhood properly.
 On the other hand, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
 Technically, there are many different options to deal with this issue.
-Weighting the observations w.r.t. their proximity to the observation that is explained seems like a good idea.
+Weighting the observations w.r.t. their proximity to the observation being explained seems like a good idea.
 A possible implementation of this weighting is the application of a kernel function.
 The kernel can be arbitrarily parametrised.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-We answered the second open question - what properties suitable explainers should have - in parts already.
-We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
-As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
+We already answered the second open question - what properties suitable explainers should have - in parts.
+We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
+However, we did not discuss further desired properties of these models.
+Since they have strong assumptions, it is unlikely that they are capable of maintaining an optimal fit to the original black box model. 
 Recall our formula.
 As we want local optimal fit subjected to a certain (low) degree of explainer complexity - in order to allow interpretation - our formula needs to facilitate this aspect.
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity.
-For example, for decision trees tree depth may describe the complexity.
-In the case of linear regression the $L_0$ norm may indicate how simple the interpretation has to be. 
+For example, for decision trees, tree depth may describe the complexity.
+In the case of linear regression, the $L_0$ norm may indicate how simple the interpretation has to be. 
 If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
 This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
 
-Having answered the first two open question we still have the last question related to the data and the pertubation unresolved.
+Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
 Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data. 
-However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to finally yield interpretable results.
-Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
-The function, that is modeled, operates in the complete feature space and can even yield predictions for instances not seen in the training data.
+However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
+Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data itself this model was trained on.
+The modeled function operates in the complete feature space and can even yield predictions for instances not seen in the training data.
 Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
 Still, the data for the explainer should be related to the original data.
 This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
 This is why we perturb the original data.
-But how does pertubation work?
-For categorical features pertubation may be realised by recombining all possible levels of the features while for numerical features we may draw new data out of normal distributions parametrised with the feature means and variances.
+But how does perturbation work?
+For categorical features, perturbation may be realised by recombining all possible levels of the features while for numerical features we may draw new data out of normal distributions parametrised with the feature means and variances.
 The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
-However, pertubation is associated with many practical problems when using LIME.
+However, perturbation is associated with many practical problems when using LIME.
 Details on this topic will be studied in chapter X.
 
 As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for this.
@@ -137,16 +138,14 @@ This leaves us many scientific degrees of freedom when implementing it - for the
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer $g$ with the same complexity constraints. 
 Assume that we already set up a LIME interpretation with a decision tree for a complex random forest model.
-However, then we replace the random forest by a deep neural network could.
+However, we may wish to replace the random forest by a deep neural network.
 Now, we would only have to rerun the same LIME framework with the new model and receive a similar interpretable decision tree as before.
 
-On the other hand, LIME being a very generic approach also means that many hyperparameters, like the neighbourhood definition or the sampling/pertubation strategy, are arbitrary.
-In software implementations (R and Python) the user has no opportunity to change them manually.
-The user needs to work with the default options.
-Hence, it is likely that in many use cases LIME explanations do not fit the given context.
-In these cases they can hardly be trusted and should be treated with great care.
+On the other hand, LIME being a very generic approach also means that many hyperparameters, like the neighbourhood definition or the sampling/perturbation strategy, are arbitrary.
+Hence, it is likely that in some use cases LIME explanations heavily depend on changing the hyperparameters.
+In these cases, the explanations can hardly be trusted and should be treated with great care.
 
 The following two chapters will focus on two very significant "hyperparameters": 
 the neighbourhood definition and the sampling strategy.
-They will investigate how these affect the results of the method and their interpretability and trustworthiness.
+They will investigate how these affect the results of the method and their interpretability.
 We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
