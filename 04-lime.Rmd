@@ -22,6 +22,8 @@ By using LIME one tries to _locally interpret_ this prediction solely by a new s
 This model, also referred to as explainer, needs to be easiliy interpretable (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original black box model.
 However, we actually don't care about a global fit in this case.
 We only want to have a very local fit of the explainer in the neighbourhood of the instance to be explained. 
+A single explanation can only help to understand and validate this one prediction.
+However, the model itself needs to be examined and validated by multiple (representative) LIME explanations.
 
 A LIME explanation can be retrieved by the following algorithm:
 
