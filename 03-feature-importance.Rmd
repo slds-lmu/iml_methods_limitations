@@ -4,7 +4,7 @@ As in previous chapters already discussed, there exist a variety of methods that
 
 ## Permutation Feature Importance (PFI)
 
-The concept of Permutation Feature Importance was first introduced by @breiman2001random and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature $j$, its explanatory power mitigates, as it breaks the association to the outcome variable $y$. Therefore, if the model relied on the feature $j$, the prediction error $e = L(y,f(X))$ of the model $f$ should increase when predicting with the "permuted feature" dataset $X_{perm}$ instead of with the "initial feature" dataset $X$. The importance of feature $j$ is then evaluated by the increase of the prediction error which can be either determined by taking the difference $e_{perm} - e_{orig}$ or taking the ratio $e_{perm}/e_{orig}$. Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features there is no need to retrain the model $f$. Below, a respective PFI algorithm based on @fisher2018model is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.
+The concept of Permutation Feature Importance was first introduced by @breiman2001random and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature $j$, its explanatory power mitigates, as it breaks the association to the outcome variable $y$. Therefore, if the model relied on the feature $j$, the prediction error $e = L(y,f(X))$ of the model $f$ should increase when predicting with the "permuted feature" dataset $X_{perm}$ instead of with the "initial feature" dataset $X$. The importance of feature $j$ is then evaluated by the increase of the prediction error which can be either determined by taking the difference $e_{perm} - e_{orig}$ or taking the ratio $e_{perm}/e_{orig}$. Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features there is no need to retrain the model $f$. This property constitutes computational advantages, especially in case of complex models and large feature spaces. Below, a respective PFI algorithm based on @fisher2018model is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.
 
 **The Permutation Feature Importance algorithm based on Fisher, Rudin, and Dominici (2018):**
 
@@ -12,7 +12,7 @@ Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $
 
 1. Estimate the original model error $e_{orig} = L(y,f(X))$ (e.g mean squared error)
 2. For each feature $j = 1,...,p$ do:
-    * Generate feature matrix $x_{perm}$ by permuting feature j in the data $X$
+    * Generate feature matrix $X_{perm}$ by permuting feature j in the data $X$
     * Estimate error $e_{perm} = L(y,f(X_{perm}))$ based on the predictions of the permuted data,
     * Calculate permutation feature importance $PFI_{j} = e_{perm}/e_{orig}$. Alternatively, the difference can be used: $PFI_{j} = e_{perm} - e_{orig}$
 3. Sort features by descending FI.
@@ -39,8 +39,8 @@ $PFI_{1} =  L(y,f(X_{\text{perm,1}}))-L(y,f(X))$
 knitr::include_graphics("images/Permutation_2.jpg")
 ```
 
-<center>
-$PFI_{p} = L(y,f(X_{\text{perm,p}}))- L(y,f(X))$</center>
+
+$$PFI_{p} = L(y,f(X_{\text{perm,p}}))- L(y,f(X))$$
 
 <br>
 
