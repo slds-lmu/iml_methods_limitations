@@ -172,7 +172,7 @@
 \bibliographystyle{apalike}
 
 \title{Limitations of Interpretable Machine Learning Methods}
-\date{2019-05-20}
+\date{2019-05-21}
 
 \begin{document}
 \maketitle
@@ -294,7 +294,7 @@ As in previous chapters already discussed, there exist a variety of methods that
 \hypertarget{permutation-feature-importance-pfi}{%
 \section{Permutation Feature Importance (PFI)}\label{permutation-feature-importance-pfi}}
 
-The concept of Permutation Feature Importance was first introduced by \citet{breiman2001random} and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature \(j\), its explanatory power mitigates, as it breaks the association to the outcome variable \(y\). Therefore, if the model relied on the feature \(j\), the prediction error \(e = L(y,f(X))\) of the model \(f\) should increase when predicting with the ``permuted feature'' dataset \(X_{perm}\) instead of with the ``initial feature'' dataset \(X_{orig}\). The importance of feature \(j\) is then evaluated by the increase of the prediction error which can be either determined by taking the difference \(e_{perm} - e_{orig}\) or taking the ratio \(e_{perm}/e_{orig}\). Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features there is no need to retrain the model \(f\). Below, a respective PFI algorithm based on \citet{fisher2018model} is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.
+The concept of Permutation Feature Importance was first introduced by \citet{breiman2001random} and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature \(j\), its explanatory power mitigates, as it breaks the association to the outcome variable \(y\). Therefore, if the model relied on the feature \(j\), the prediction error \(e = L(y,f(X))\) of the model \(f\) should increase when predicting with the ``permuted feature'' dataset \(X_{perm}\) instead of with the ``initial feature'' dataset \(X\). The importance of feature \(j\) is then evaluated by the increase of the prediction error which can be either determined by taking the difference \(e_{perm} - e_{orig}\) or taking the ratio \(e_{perm}/e_{orig}\). Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features there is no need to retrain the model \(f\). Below, a respective PFI algorithm based on \citet{fisher2018model} is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.
 
 \textbf{The Permutation Feature Importance algorithm based on Fisher, Rudin, and Dominici (2018):}
 
@@ -321,26 +321,25 @@ Input: Trained model \(f\), feature matrix \(X\), target vector \(y\), error mea
   Sort features by descending FI.
 \end{enumerate}
 
-Below, it is illustrated, by a fictional, exemplary random forest model, how the permutation algorithm alters the original dataset. For each of the \(M\) trees, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error. From the resulting differences in the prediction errors \(\Delta e^{i}\), the average \(\frac{1}{M}\sum_{i=1}^{M} \Delta e_{1}^{i} = PFI_{1}\) over all trees is calucated which can then be considered as the PFI of feature \(j\).
+Below, it is illustrated, by a fictional example, how the permutation algorithm alters the original dataset. For each of the \(p\) features, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error.
 
-\includegraphics{Permutation_0.jpg}
+\begin{center}\includegraphics[width=0.65\linewidth]{images/Permutation_1} \end{center}
 
-\includegraphics{Permutation_1.jpg}
-\ldots{}\ldots{}
-\includegraphics{Permutation_2.jpg}
+\(PFI_{1} = L(y,f(X_{\text{perm,1}}))-L(y,f(X))\)
 
-~
+\begin{center}\includegraphics[width=0.65\linewidth]{images/Permutation_2} \end{center}
 
-\(\hspace{0.5cm}\Delta e^{(1)} = L(y,f^{(1)}(X))- L(y,f^{(1)}(X_{\text{perm}}))\hspace{1.9cm}\Delta e^{(M)} = L(y,f^{(M)}(X))- L(y,f^{(M)}(X_{\text{perm}}))\)
+\(PFI_{p} = L(y,f(X_{\text{perm,p}}))- L(y,f(X))\)
 
-To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset ``mtcars'', which is available in R. To predict the gasoline consumption (miles per gallone), ten variables are included, whereby as the results show, the PFIs vary substantially across the variables. The depicted points correspond to the mean PFIs over all random forest iterations and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively.
+To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset ``Boston'', which is available in R via the \texttt{MASS} package. To predict the house price, seven variables are included, whereby as the results show, the PFIs vary substantially across the variables. The depicted points correspond to the median PFIs over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively (see \texttt{iml} package).
 
-\includegraphics{book_files/figure-latex/unnamed-chunk-1-1.pdf}
+\includegraphics{book_files/figure-latex/unnamed-chunk-3-1.pdf}
 
 \hypertarget{leave-one-covariate-out-loco}{%
 \section{Leave-One-Covariate-Out (LOCO)}\label{leave-one-covariate-out-loco}}
 
-The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although applications of LOCO exist, where comparable to PFI, the initial values of feature \(j\) are replaced by its mean, median or zero \citep[see][]{hall2017ideas}, and hence, circumvent the disadvantage of re-training the model \(f\), the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model \(f_{-j}\) is then compared to the prediction error resulted from the baseline model. However, re-training the model results in higher computational costs, becoming more severe with an increasing feature space. The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out. \citep[see][]{lei2018distribution}
+The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although applications of LOCO exist, where comparable to PFI, the initial values of feature \(j\) are replaced by its mean, median or zero \citep[see][]{hall2017ideas}, and hence, circumvent the disadvantage of re-training the model \(f\), the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model \(f_{-j}\) is then compared to the prediction error resulted from the baseline model. However, re-training the model results in higher computational costs, becoming more severe with an increasing feature space. Besides, as one is actually interested in assessing the Feature Importance of a fixed model \(f\), comparing the performance of a fixed model with the performance of a model \(f_{-j}\) fitted merely with a subset of the data, might raise plausible concerns \citep[see][]{molnarimlbook}.
+The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out. \citep[see][]{lei2018distribution}
 
 \textbf{The Leave-One-Covariate-Out algorithm based on Lei et al.~(2018):}
 
@@ -371,21 +370,21 @@ Input: Trained model \(f\), feature matrix \(X\), target vector \(y\), error mea
 
 Below, it is shown, how the LOCO algorithm alters the original dataset, whereby it always differs, depending on the respective feature that is left out. Note, that the qualititative and quantitative interpretations correspond the ones from the PFI method. So do the visualization tools and therefore at this point it is refrained from providing the reader with an additonal real data example.
 
-\includegraphics{LOCO_1.JPG}
+\begin{center}\includegraphics[width=0.65\linewidth]{images/LOCO_1} \end{center}
 
-\(L(y,f(X))- L(y,f_{-1}(X_{-1}) = \text{Feature Importance of }x_{1}\)
+\(L(y,f_{-1}(X_{-1}))-L(y,f(X)) = FI_{1}\)
 
 \ldots{}
 
-\includegraphics{LOCO_2.JPG}
+\begin{center}\includegraphics[width=0.65\linewidth]{images/LOCO_2} \end{center}
 
-\(L(y,f(X) - L(y,f_{-p}(X_{-p})) = \text{Feature Importance of } x_{p}\)
+\(L(y,f_{-p}(X_{-p}))-L(y,f(X)) = FI_{p}\)
 
 \hypertarget{interpretability-of-feature-importance-and-its-limitations}{%
 \section{Interpretability of Feature Importance and its Limitations}\label{interpretability-of-feature-importance-and-its-limitations}}
 
 After both methods are discussed, the question to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models will be now touched on. By doing so, it is necessary to also reflect upon the limitations of the model regarding the interpretability of the results. The latter will constitute the main focus in the following chapters.
-Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g.~Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts and do consider neither the shape of the relationship between feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure XX, PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter XX will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE. Besides, limitations appear when some features in the feature space are correlated. If so, simply breaking the relationship between a feature and the outcome variable does not necessarily reveal the true Feature Importance as the explanatory power is shifted to the remaining, correlated feature, resulting in a weakened drop in the model performance. This can also result in an erroneous ranking and hence, in incorrect conclusions. Further, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter XX will focus on this limitation by comparing the performance of PFI and LOCO for different models (e.g.~linear models or random forest) and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-meethods should be computed on training or test data. As answering that, depends highly on the research question and data, it is refrained to go in more detail at this point but will be examined and further discussed in chapter XX.
+Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g.~Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts do consider neither the shape of the relationship between the feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure XX, PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter XX will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE \citep[see][]{casalicchio2018visualizing}. Besides, two general limitations appear when some features in the feature space are correlated. First, correlation makes an isolated analysis of the explanatory power of a feature complicated which results in an erroneous ranking in Feature Importance and hence, in incorrect conclusions. Second, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter XX will focus on this limitations by comparing the performance of PFI and LOCO for different models and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-meethods should be computed on training or test data. As answering that, depends highly on the research question and data, it is refrained from going into more detail at this point but will be examined and further discussed in chapter XX.
 
 \hypertarget{local-interpretable-model-agnostic-explanations}{%
 \chapter{Local Interpretable Model-agnostic Explanations}\label{local-interpretable-model-agnostic-explanations}}
