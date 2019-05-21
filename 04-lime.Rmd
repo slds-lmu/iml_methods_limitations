@@ -21,7 +21,7 @@ The concept of local surrogate models is heavily tied to @ribeiro2016should, who
 Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
 These interpretable models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
 However, we actually don't care about a __global__ fit in this case.
-We only want to have a very __local__ fit of the explainer in the neighbourhood of the instance whose prediction is explained. 
+We only want to have a very __local__ fit of the surrogate model in the neighbourhood of the instance whose prediction is explained. 
 A single explanation can only help to understand and validate this one prediction.
 However, the model itself can be examined and validated by multiple (representative) LIME explanations.
 
@@ -126,10 +126,14 @@ Still, the data for the explainer should be related to the original data.
 This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
 This is why we perturb the original data.
 But how does perturbation work?
-For categorical features, perturbation may be realised by recombining all possible levels of the features while for numerical features we may draw new data out of normal distributions parametrised with the feature means and variances.
-The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space.
-However, perturbation is associated with many practical problems when using LIME.
-Details on this topic will be studied in chapter X.
+For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these, covering the most important subspaces of the finite feature space as a consequence.
+But this procedure is not feasible for numerical values due to an infinite space.
+In this case, we may sample new values out of an approximative distribution for each feature respectively.
+This way, we achieve a rather dense representation of the feature space for lower dimensions, but by ignoring the covariance structure we may run into the curve of dimensionality for higher dimsenions, requiring an exponential amount of samples.
+Of course, there's a computational limit for sample amounts, which may result in a rather sparse feature representation, thus giving samples a drastical influence on the coefficient stability for unstable black box models.
+(#Kommentar an Philipp, da mir das bis heute nicht klar war: "unstable models" hat mir mein chef erklärt und meint hier starke schwankungen in der prediction bei minimalen feature änderungen)
+The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
+Further details on this topic will be studied in chapter X.
 
 As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for this.
 
