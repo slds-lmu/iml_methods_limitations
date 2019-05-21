@@ -66,20 +66,25 @@ Since in this formula there is no integral, it is easier to implement.
 
 As the former sections introduced the theoretical basics for the ALE, this section shall provide the reader with an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the "new" datapoints. Figure 2.1 gives a good intuition for this procedure. 
 
-![FIGURE 2.1: bla bla total differences](images/ale_estimation_intuition.png)
+
+```{r, fig.cap='(ref:aleIntuition)', echo=FALSE}
+
+knitr::include_graphics("images/ale_estimation_intuition.PNG")
+```
+(ref:aleIntuition) bla bla total differences
 
 TODO: explain it
-<!-- alternative way to include pictures: -->
 
-<!-- ```{r, eval = !is.html, echo = FALSE} -->
-<!-- knitr::include_graphics("images/lime.png") -->
-<!-- ``` -->
 
 As the evaluation is done on relatively small intervals, on the one hand the local behaviour of the model is estimated. On the other hand the covariance structure of the features is taken into account, as only "realistic" datapoints are simulated.
 
-For figure 2.1 an ALE could look like this:
+For figure (TODO: reference) 2.1 an ALE could look like this:
 
-![FIGURE 2.2: bla bla interpretation of ALE bla bla](images/ale_example.png)
+```{r, fig.cap='(ref:aleExample)', echo=FALSE}
+
+knitr::include_graphics("images/ale_example.PNG")
+```
+(ref:aleExample) bla bla interpretation of ALE bla bla
 
 TODO: interpret it ;-)
 
