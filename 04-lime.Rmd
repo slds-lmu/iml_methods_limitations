@@ -1,13 +1,15 @@
 # Local Interpretable Model-Agnostic Explanations
 
-So far all of the interpretation methods presented in this book refer to the global scope of the black box model.
-However, it may be interesting to examine models on the basis of single predictions.
-This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
-LIME is a variant of the so-called surrogate models.
-This type of models aims to imitate the black box prediction behaviour of a machine learning model subject to a specific constraint: 
-they are interpretable.
-The intuition is to have an interpretable model that explains the association of the features $X$ and the - by the black box model - _predicted_ target $\hat{y}$.
-Thus, surrogate models aim to capture the decision boundaries of the original model without attempting to fit the true association itself.
+When doing machine learning we always build models.
+Models are a simplifications of the reality.
+Even if the predictive power of a model may be very strong, it will still only be a model.
+However, models with high predictive capacity are most of the time not interpretable as seen thoughout this book.
+In this case the model seems as complex as the problem itself to a human.
+The scientific approach suggests to simplify reality by a __model__ - a model explaining another more complex model.
+These explaining models are refered to as surrogate models.
+They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint: 
+surrogate models are interpretable.
+More technically, a simple (interpretable) model describes the association of the features $X$ and the - by the black box model - _predicted_ target $\hat{y}$.
 For example, we may use a neural network to solve a classification task.
 While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
 
@@ -76,8 +78,9 @@ $$explanation\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \
 
 Let's decompose this compact, yet precise definition:
 
-$x$ can be any arbitrary (new) data point that can be represented in the same way as the original data.
-This explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
+$x$ is the instance which we aim to receive an explanation for.
+It can be an instance which is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
+The explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
 $f$ refers to the black box model we want to explain and $g$ to the explainer. 
 $G$ represents the complete set of prespecified explainers.
 $G$ should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability.
