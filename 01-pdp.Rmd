@@ -28,7 +28,8 @@ In the categorical PDP, it is clear that those in lower classes had a lower surv
 
 Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.[^1]
 
-![2 Feature PDP](images/2_feature_pdp.jpeg)
+![2 Feature PDP](images/pdp_2_features_1.jpeg)
+![2 Feature PDP](images/pdp_2_features_2.jpeg)
 
 In the left PDP we see a stark difference in survival probability for female and male. While for both genders the probability goes down as age increases, this decrease is much more steep for males. In the right plot we see that the age range 0-20 has a fairly uniform probability, independent of the fare paid. From age 20 onwards, however, it is clear that those that paid the absolute lowest fare had a much lower survival probability than those that paid a high fare.
 
@@ -50,6 +51,7 @@ A formal definition: consider the response function $\hat{f}$, for each instance
 
 In ICE plots, each line represents separately one instance and shows what would happen to the model’s prediction if the feature of a particular instance varied, holding all other features the same (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
+![ICE](images/ice_plot.jpeg)
 
 ###Centered ICE Plot###
 Heterogeneity in the model can be difficult to distinguish when the curves have a wide range of intercepts and “stacked” on each other. The so called centered ICE plot (c-ICE) is a simple solution which removes level effects. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point. \citep{Molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
@@ -57,6 +59,9 @@ Heterogeneity in the model can be difficult to distinguish when the curves have 
 $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
 It is recommended that the most interpretable plots occur when the minimum or the maximum observed value is chosen.
 
+![C-ICE](images/c_ice_plot.jpeg)
+
+In the 0-50 range in the centered plot we see some variation with some individual's survival probalility increasing as the fare goes up, while decreasing for other individuals. After this the curves move more uniform, with very little changes in the 100-350 range. A small uptick in surival probality for all individuals takes place at a fare of roughly 390, before stabilizing for the rest of the range.
 
 ###Derivative ICE Plot###
 Another way to explore the heterogeneity is to show plots of the partial derivative
@@ -79,9 +84,8 @@ Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise,
 
 
 
-### ICE
 
-![ICE](images/Ice_plots.jpeg)
 
-In the 0-50 range in the centered plot we see some variation with some individual's survival probalility increasing as the fare goes up, while decreasing for other individuals. After this the curves move more uniform, with very little changes in the 100-350 range. A small uptick in surival probality for all individuals takes place at a fare of roughly 390, before stabilizing for the rest of the range.
+
+
 
