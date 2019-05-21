@@ -10,7 +10,6 @@ That means we can also simplify a model through another model.
 These simplifying models are referred to as surrogate models.
 They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint: 
 surrogate models are interpretable.
-More technically, a simple (interpretable) model describes the association of the features $X$ and the - by the black box model - _predicted_ target $\hat{y}$.
 For example, we may use a neural network to solve a classification task.
 While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
 
@@ -18,8 +17,8 @@ In general, there are two kinds of surrogate models: global and local surrogate 
 In this chapter, we will focus on the latter ones.
 
 The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
-Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model.
-These interpretable models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
+Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
+These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
 However, we actually don't care about a __global__ fit in this case.
 We only want to have a very __local__ fit of the surrogate model in the neighbourhood of the instance whose prediction is explained. 
 A single explanation can only help to understand and validate this one prediction.
@@ -39,7 +38,7 @@ A LIME explanation could be retrieved by the following algorithm:
 
 Return: An explanation for the interpretable model $g$.
 
-The following visualisation nicely depicts the described algorithm for a two-dimensional classification problem. 
+The visualisation below nicely depicts the described algorithm for a two-dimensional classification problem based on simulated data.
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes.
 This is indicated by the sinus-shaped function drawn as a black curve.
@@ -67,7 +66,6 @@ knitr::include_graphics("images/lime.gif")
 knitr::include_graphics("images/lime.png")
 ```
 
-
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
 First, what does neighbourhood refer to?
@@ -84,22 +82,17 @@ Let's decompose this compact, yet precise definition:
 $x$ can be an instance that is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
 The final explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
 $f$ refers to the black box model we want to explain and $g$ to the explainer. 
-$G$ represents the complete set of pre-specified explainers.
-$G$ should always be a hypothesis space featuring interpretable models, for instance, linear regression of arbitrary parametrisation.
+$G$ represents the complete hypothesis space of a given interpretable learner.
 The explanation has to deal with two trade-off terms when minimising: 
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) fidelity.
-The optimal fit is only found with respect to a proximity measure $\pi_x(z)$.
-This measure makes sure that the optimal local fit around $x$ or its neighbourhood is preferred over a global fit.
+The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
 
 This leads us to the first open question:
 What does neighbourhood refer to?
 Neighbourhood is a very vague term.
-This is for good reason, though.
-A priori it is not clear how to specify a neighbourhood properly.
-On the other hand, since we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
+This is for good reason because a priori it is not clear how to specify a neighbourhood properly.
 Technically, there are many different options to deal with this issue.
-Weighting the observations w.r.t. their proximity to the observation being explained seems like a good idea.
-A possible implementation of this weighting is the application of a kernel function.
+Weighting the observations w.r.t. their proximity to the observation being explained seems like a good idea, possibly implemented as a kernel.
 The kernel can be arbitrarily parametrised.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
@@ -113,26 +106,23 @@ As we want local optimal fit subjected to a certain (low) degree of explainer co
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity.
 For example, for decision trees, tree depth may describe the complexity.
 In the case of linear regression, the $L_0$ norm may indicate how simple the interpretation has to be. 
-If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
-This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
+The resulting LASSO model allows us to focus only on the most important features.
 
 Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
 Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data. 
 However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
-Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data itself this model was trained on.
-The modeled function operates in the complete feature space and can even yield predictions for instances not seen in the training data.
+The function modeled by the black box model operates in the complete feature space. 
+It can even yield predictions for instances not seen in the training data.
+This means that the original data does not sufficiently explore the feature space.
 Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
 Still, the data for the explainer should be related to the original data.
-This is because we don't want the explainer to be ill-located in space having nothing in common with the original problem anymore.
+Otherwise the explainer may be ill-located in space having nothing in common with the original problem anymore.
 This is why we perturb the original data.
 But how does perturbation work?
-For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these, covering the most important subspaces of the finite feature space as a consequence.
-But this procedure is not feasible for numerical values due to an infinite space.
-In this case, we may sample new values out of an approximative distribution for each feature respectively.
-This way, we achieve a rather dense representation of the feature space for lower dimensions, but by ignoring the covariance structure we may run into the curve of dimensionality for higher dimsenions, requiring an exponential amount of samples.
-Of course, there's a computational limit for sample amounts, which may result in a rather sparse feature representation, thus giving samples a drastical influence on the coefficient stability for unstable black box models.
-(#Kommentar an Philipp, da mir das bis heute nicht klar war: "unstable models" hat mir mein chef erklärt und meint hier starke schwankungen in der prediction bei minimalen feature änderungen)
-The perturbed data set, which is used to train the explainer, is much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
+This is a priori not clear at all.
+For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
+Numerical features may be drawn from a properly parametrised normal distribution.
+The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
 Further details on this topic will be studied in chapter X.
 
 As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for this.
@@ -141,15 +131,12 @@ The definition of LIME still seems after all very rough and vague.
 This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer $g$ with the same complexity constraints. 
-Assume that we already set up a LIME interpretation with a decision tree for a complex random forest model.
-However, we may wish to replace the random forest by a deep neural network.
-Now, we would only have to rerun the same LIME framework with the new model and receive a similar interpretable decision tree as before.
 
-On the other hand, LIME being a very generic approach also means that many hyperparameters, like the neighbourhood definition or the sampling/perturbation strategy, are arbitrary.
+On the other hand, LIME being a very generic approach also means that many "hyperparameters", like the neighbourhood definition or the sampling/perturbation strategy, are arbitrary.
 Hence, it is likely that in some use cases LIME explanations heavily depend on changing the hyperparameters.
 In these cases, the explanations can hardly be trusted and should be treated with great care.
 
-The following two chapters will focus on two very significant "hyperparameters": 
+The following two chapters will focus on two very significant hyperparameters: 
 the neighbourhood definition and the sampling strategy.
 They will investigate how these affect the results of the method and their interpretability.
 We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
