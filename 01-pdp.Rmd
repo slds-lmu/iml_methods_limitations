@@ -42,10 +42,10 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 
 
 ## Individual Conditional Expectation Curves
-While the partial dependence plots provide the average effect of a feature, the Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances. Thus, a PDP is the average of the lines of an ICE plot.\citep{Molnar2019}
+While the partial dependence plots provide the average effect of a feature, the Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances.\citep{Goldstein} Thus, a PDP is the average of the lines of an ICE plot.\citep{Molnar2019}
 
 
-A formal definition: consider the response function $\hat{f}$, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}$ is plotted against the observed values of $x^{(i)}_S$, while $x^{(i)}_C$ remains fixed.\citep{Molnar2019}(Goldstein et al. 2017)[^4]
+A formal definition: consider the response function $\hat{f}$, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}$ is plotted against the observed values of $x^{(i)}_S$, while $x^{(i)}_C$ remains fixed.\citep{Molnar2019}\citep{Goldstein}
 
 
 In ICE plots, each line represents separately one instance and shows what would happen to the model’s prediction if the feature of a particular instance varied, holding all other features the same(c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
@@ -64,18 +64,17 @@ with the other predictors in the fitted model, the prediction function can be wr
 $$\hat{f}(x) = \hat{f}(x_s,x_C) = g(x_s) + h(x_C),$$ 
 so that $$\frac{\partial{\hat{f}(\mathbf{x})}}{\partial x_s} = g'(x_s)$$
 
-When no interactions are present in the fitted model, all curves in the d-ICE plot are equivalent, and the plot shows a single line. When interactions do exist, the derivative lines will be heterogeneous. As it can be difficult to visually assess derivatives from ICE plots, it is useful to plot an estimate of the partial derivative directly.
+When no interactions are present in the fitted model, all curves in the d-ICE plot are equivalent, and the plot shows a single line. When interactions do exist, the derivative lines will be heterogeneous. As it can be difficult to visually assess derivatives from ICE plots, it is useful to plot an estimate of the partial derivative directly.\citep{Goldstein}
+
 
 ###Advantages and Limitations of ICE Plots###
 **Advantages**
 ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences and identify subgroups and interactions between model inputs. 
 
 **Disadvantages**
-Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see to average in ICE plots. 
+Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see to average in ICE plots.\citep{Molnar2019}
 
 
-[^3]: Molnar. "Interpretable Machine Learning". https://christophm.github.io/interpretable-ml-book/simple.html.
-[^4]: Goldstein, Alex, et al. “Peeking inside the black box: Visualizing statistical learning with plots of individual conditional expectation.” Journal of Computational and Graphical Statistics 24.1 (2015): 44-65.
 
 ### ICE
 
