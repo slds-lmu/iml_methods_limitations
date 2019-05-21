@@ -1,7 +1,5 @@
 # Local Interpretable Model-Agnostic Explanations
 
-(# First merge start)
-
 So far all of the interpretation methods presented in this book refer to the global scope of the black box model.
 However, it may be interesting to examine models on the basis of single predictions.
 This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
@@ -27,7 +25,7 @@ A LIME explanation can be retrieved by the following algorithm:
 
 1. Get instance $x$ out of data space $X$ for which we desire an explanation for its predicted target value.
 
-2. Perturb your dataset $X$ and recieve a perturbed data set $Z$ of increased size. 
+2. _Perturb_ your dataset $X$ and recieve a perturbed data set $Z$ of increased size. 
 
 3. Retrieve the black box model predictions for $Z$ using the black box model $f$.
 
@@ -37,7 +35,7 @@ A LIME explanation can be retrieved by the following algorithm:
 
 Return: An explanation for the interpretable model $g$.
 
-The following visualisation nicely depicts the described algorithm. 
+The following visualisation nicely depicts the described algorithm for a two-dimensional classification problem. 
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes - indicated by the sinus shaped function drawn as a black curve.
 We do not perturb the data in this case.
@@ -56,11 +54,11 @@ output <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 is.html = !is.null(output) && output == "html"
 ```
 
-```{r, eval = is.html, echo = FALSE}
+```{r, eval = is.html, echo = FALSE, fig.align = 'center', fig.cap = "Simplified GIF representation of the LIME algorithm. The GIF is in line with the description presented here."}
 knitr::include_graphics("images/lime.gif")
 ```
 
-```{r, eval = !is.html, echo = FALSE}
+```{r, eval = !is.html, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right."}
 knitr::include_graphics("images/lime.png")
 ```
 
@@ -71,11 +69,10 @@ First, what does neighbourhood refer to?
 Second, what properties should suitable explainers have?
 Third, what data do we use why and how do we perturb?
 
-
 To better assess these open questions it may be helpful to study the mathematical definition of $LIME$.
-The explaination for a datapoint $x$, which we aim to interpret, can be represented by the following formula:
+The explanation for a datapoint $x$, which we aim to interpret, can be represented by the following formula:
 
-$$explaination\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
+$$explanation\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)$$
 
 Let's decompose this compact, yet precise definition:
 
@@ -103,7 +100,7 @@ The kernel can be arbitrarily parametrised.
 This leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-We anwered the second open question - what properties suitable explainers should have - in parts.
+We answered the second open question - what properties suitable explainers should have - in parts already.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples, however, we did not discuss further desired properties of these models.
 As these have certain strong assumptions, it is unlikely that they are capable of maintaining optimal fit to the original black box model. 
 Recall our formula.
@@ -112,7 +109,7 @@ Recondisering our formula, $\Omega\left(g\right)$ is our complexity measure and 
 If we use $\Omega(g) = \infty \, 1_{||w_g||_0<K}$ we can set exactly the amount of interpretable parameters that our final model should have to $K$.
 This means that the result will focus on the $K$ most important parameters and fully ignore less significant ones that would give too much clutter to our interpretation.
 
-Having answered the first two open question we did not discuss the last question related to the data and pertubation, yet.
+Having answered the first two open question we still have the last question related to the data and pertubation open.
 Besides the tabular data case, we can also interpret models trained on text data or image data. 
 However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
 Additionally, it is important to understand that the explainer only aims to explain the black box model behaviour and not the data this model was trained on itself.
@@ -131,8 +128,8 @@ The defintion of LIME still seems after all very rough and vague.
 This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same interpretable model with the same complexity constraints. 
-Assume that we already set up a LIME interpretation with a decision tree for a random forest model, but we suddenly get the idea a deep neural network could impress our clients more.
-Now, we would only have to rerun the same LIME framework with the new model and recieve a similar interpretable decision tree as before.
+Assume that we already set up a LIME interpretation with a decision tree for a random forest model, but then we replace the random forest by a deep neural network could.
+Now, we would only have to rerun the same LIME framework with the new model and receive a similar interpretable decision tree as before.
 Besides that, the complexity term gives us a great opportunity to restrict our final result to a certain amount of parameters. 
 
 On the other hand, LIME being a very generic approach also means that many hyperparameters, like the neighbourhood definition or the sampling strategy, are arbitrary.
@@ -144,5 +141,3 @@ The following two chapters will focus on two very significant "hyperparameters":
 the neighbourhood definition and the sampling strategy.
 They will investigate how these affect the results of the method and their interpretability.
 We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
-
-(# First merge end) 
