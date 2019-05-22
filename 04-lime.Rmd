@@ -3,10 +3,8 @@
 When doing machine learning we always build models.
 Models are simplifications of reality.
 Even if the predictive power of a model may be very strong, it will still only be a model.
-However, models with high predictive capacity are most of the time not understandable by a human as seen throughout this book.
-In this case, the model seems to a human as complex as the problem itself.
-The scientific approach suggests simplifying reality by a __model__. 
-That means we can also simplify a model through another model.
+However, models with high predictive capacity do most of the time not seem simple to a human as seen throughout this book.
+In order to simplify a complex model we could use another model.
 These simplifying models are referred to as surrogate models.
 They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint: 
 surrogate models are interpretable.
@@ -20,9 +18,7 @@ The concept of local surrogate models is heavily tied to @ribeiro2016should, who
 Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
 These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
 However, we actually don't care about a __global__ fit in this case.
-We only want to have a very __local__ fit of the surrogate model in the neighbourhood of the instance whose prediction is explained. 
-A single explanation can only help to understand and validate this one prediction.
-However, the model itself can be examined and validated by multiple (representative) LIME explanations.
+We only want to have a very __local__ fit of the surrogate model in the proximity of the instance whose prediction is explained. 
 
 A LIME explanation could be retrieved by the following algorithm:
 
@@ -30,11 +26,11 @@ A LIME explanation could be retrieved by the following algorithm:
 
 2. _Perturb_ your dataset $X$ and receive a perturbed data set $Z$ of increased size. 
 
-3. Retrieve predictions for $Z$ using the black box model $f$.
+3. Retrieve predictions $\hat{y}_{Z}$ for $Z$ using the black box model $f$.
 
 4. Weight $Z$ w.r.t. the proximity/neighbourhood to $x$.
 
-5. Train an explainable weighted model $g$ on $Z$ and the associated predictions.
+5. Train an explainable weighted model $g$ on $Z$ and the associated predictions $\hat{y}_{Z}$.
 
 Return: An explanation for the interpretable model $g$.
 
@@ -66,6 +62,10 @@ knitr::include_graphics("images/lime.gif")
 knitr::include_graphics("images/lime.png")
 ```
 
+This way we receive a single explanation.
+This one explanation can only help to understand and validate the corresponding prediction.
+However, the model as a whole can be examined and validated by multiple (representative) LIME explanations.
+
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
 First, what does neighbourhood refer to?
@@ -80,11 +80,11 @@ $$explanation\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \
 Let's decompose this compact, yet precise definition:
 
 $x$ can be an instance that is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
-The final explanation results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
+The final explanation for $x$ results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
 $f$ refers to the black box model we want to explain and $g$ to the explainer. 
 $G$ represents the complete hypothesis space of a given interpretable learner.
 The explanation has to deal with two trade-off terms when minimising: 
-The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) fidelity.
+The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
 
 This leads us to the first open question:
@@ -92,8 +92,8 @@ What does neighbourhood refer to?
 Neighbourhood is a very vague term.
 This is for good reason because a priori it is not clear how to specify a neighbourhood properly.
 Technically, there are many different options to deal with this issue.
-Weighting the observations w.r.t. their proximity to the observation being explained seems like a good idea, possibly implemented as a kernel.
-The kernel can be arbitrarily parametrised.
+Weighting the observations w.r.t. their distance to the observation being explained seems like a good idea.
+This may possibly be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
@@ -114,18 +114,18 @@ However, some data representations (e.g. word embeddings) are not human-interpre
 The function modeled by the black box model operates in the complete feature space. 
 It can even yield predictions for instances not seen in the training data.
 This means that the original data does not sufficiently explore the feature space.
-Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations, so that we can better study the behaviour of the black box model.
+Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations so that we can better study the behaviour of the black box model.
 Still, the data for the explainer should be related to the original data.
-Otherwise the explainer may be ill-located in space having nothing in common with the original problem anymore.
+Otherwise the explainer may be ill-placed in space having nothing in common with the original problem anymore.
 This is why we perturb the original data.
 But how does perturbation work?
 This is a priori not clear at all.
 For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
-Numerical features may be drawn from a properly parametrised normal distribution.
+Numerical features may be drawn from a properly parametrised (normal) distribution.
 The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
 Further details on this topic will be studied in chapter X.
 
-As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for this.
+As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for some examples.
 
 The definition of LIME still seems after all very rough and vague.
 This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
