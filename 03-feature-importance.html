@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Feature Importance</title>
+  <meta name="description" content="Feature Importance" />
+  <meta name="generator" content="bookdown #bookdown:version# and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Feature Importance" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Feature Importance" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<!--bookdown:link_prev-->
+<!--bookdown:link_next-->
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+
+
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+<!--bookdown:title:start-->
+<div id="header">
+<h1 class="title">Feature Importance</h1>
+</div>
+<!--bookdown:title:end-->
+
+<!--bookdown:toc:start-->
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+<!--bookdown:toc2:start-->
+<ul>
+<li><a href="#permutation-feature-importance-pfi"><span class="toc-section-number">0.1</span> Permutation Feature Importance (PFI)</a></li>
+<li><a href="#leave-one-covariate-out-loco"><span class="toc-section-number">0.2</span> Leave-One-Covariate-Out (LOCO)</a></li>
+<li><a href="#interpretability-of-feature-importance-and-its-limitations"><span class="toc-section-number">0.3</span> Interpretability of Feature Importance and its Limitations</a></li>
+</ul>
+<!--bookdown:toc2:end-->
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Feature Importance</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<!--bookdown:toc:end-->
+<!--bookdown:body:start-->
+<p>As in previous chapters already discussed, there exist a variety of methods that enable a better understanding of the relationship between features and the outcome variables, especially for complex machine learning models. For instance, Partial Dependence (PD) plots visualize the feature effects on a global, aggregated level, whereas Individual Conditional Expectation (ICE) plots unravel the average feature effect by analyzing individual observations, allowing to detect, if existing, any heterogeneous relationships. Yet, these methods do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as feature importance. This perspective becomes interesting when recalling that so far black-box machine learning models aim for predictive accuracy rather than for inference, and hence, it is persuasive to also establish agnostic-methods that focus on the performance dimension. In the following, the two most common approaches, Permutation Feature Importance (PFI) by Breiman (2001) and Leave-One-Covariate-Out (LOCO) by Lei et al. (2017), for calculating and visualizing a Feature Importance metric, are introduced. At this point, however, it is worth to clarify that the the concepts of feature effects and feature importance can by no means be ranked but rather should be considered as mutual complements that enable the interpretability from different angles. After introducing the concepts of PFI and LOCO, a brief discussion of their interpretability but also its non-negligible limitations will follow.</p>
+<div id="permutation-feature-importance-pfi" class="section level2">
+<h2><span class="header-section-number">0.1</span> Permutation Feature Importance (PFI)</h2>
+<p>The concept of Permutation Feature Importance was first introduced by Breiman (2001) and applied on a random forest model. The main principle is rather straightforward and easily implemented. The idea is as follows: When permuting the values of feature <span class="math inline">\(S\)</span>, its explanatory power mitigates, as it breaks the association to the outcome variable <span class="math inline">\(Y\)</span>. Therefore, if the model relied on the feature <span class="math inline">\(S\)</span>, the prediction error $ e = L(y,f(X))$ of the model <span class="math inline">\(f\)</span> should increase when predicting with the permuted feature values <span class="math inline">\(S_{perm}\)</span> instead of with the initial feature values from <span class="math inline">\(S\)</span>. The importance of feature <span class="math inline">\(S\)</span> is then evaluated by the increase of the prediction error which can be either determined by taking the difference <span class="math inline">\(e_{perm} - e_{orig}\)</span> or taking the ratio <span class="math inline">\(e_{perm}/e_{orig}\)</span>. Note, taking the ratio can be favorable when comparing the result across different models. A feature is considered less important, if the increase in the prediction error was comparably small and the opposite if the increase was large. Thereby, it is important to note that when calculating the prediction error based on the permuted features <span class="math inline">\(S_{perm}\)</span> there is no need to retrain the model <span class="math inline">\(f\)</span>. Below, a respective PFI algorithm based on Fisher, Rudin and Dominici (2018) is outlined. Note however, that their original algorithm has a slightly different specification and was adjusted here for general purposes.</p>
+<p><strong>The Permutation Feature Importance algorithm based on Fisher, Rudin, and Dominici (2018):</strong></p>
+<p>Input: Trained model <span class="math inline">\(f\)</span>, feature matrix <span class="math inline">\(X\)</span>, target vector <span class="math inline">\(y\)</span>, error measure <span class="math inline">\(L(y,f(X))\)</span></p>
+<ol style="list-style-type: decimal">
+<li>Estimate the original model error <span class="math inline">\(e_{orig} = L(y,f(X))\)</span> (e.g mean squared error)</li>
+<li>For each feature <span class="math inline">\(j = 1,...,p\)</span> do:
+<ul>
+<li>Generate feature matrix <span class="math inline">\(x_{perm}\)</span> by permuting feature j in the data <span class="math inline">\(X\)</span></li>
+<li>Estimate error <span class="math inline">\(e_{perm} = L(Y,f(X_{perm}))\)</span> based on the predictions of the permuted data,</li>
+<li>Calculate permutation feature importance <span class="math inline">\(PFI_{j} = e_{perm}/e_{orig}\)</span>. Alternatively, the difference can be used: <span class="math inline">\(PFI_{j} = e_{perm} - e_{orig}\)</span></li>
+</ul></li>
+<li>Sort features by descending FI.</li>
+</ol>
+</div>
+<div id="leave-one-covariate-out-loco" class="section level2">
+<h2><span class="header-section-number">0.2</span> Leave-One-Covariate-Out (LOCO)</h2>
+<p>The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although application of LOCO exists, where comparable to PFI, the initial values of feature <span class="math inline">\(S\)</span> are replaced by its mean, median or zero, and hence, circumvent the disadvantage of re-training the model <span class="math inline">\(f\)</span>, the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model <span class="math inline">\(f_{-j}\)</span> is then compared to the prediction error resulted from the baseline model. This however, comes with the disadvantage the re-training of the model causes a disadvantage from a computational perspective, with an increasing feature space. The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out.</p>
+<p><strong>The Leave-One-Covariate-Out algorithm based on Lei et al. (2017):</strong></p>
+<p>Input: Trained model <span class="math inline">\(f\)</span>, feature matrix <span class="math inline">\(X\)</span>, target vector <span class="math inline">\(y\)</span>, error measure <span class="math inline">\(L(y,f(X))\)</span></p>
+<ol style="list-style-type: decimal">
+<li>Estimate the original model error <span class="math inline">\(e_{orig} = L(y,f(X))\)</span> (e.g mean squared error)</li>
+<li>For each feature <span class="math inline">\(j = 1,...,p\)</span> do:
+<ul>
+<li>Generate feature matrix <span class="math inline">\(x_{-j}\)</span> by removing feature j in the data <span class="math inline">\(X\)</span></li>
+<li>Refit model <span class="math inline">\(f_{-j}\)</span> with data <span class="math inline">\(X_{-j}\)</span></li>
+<li>Estimate error <span class="math inline">\(e_{-j} = L(Y,f_{-j}(X_{-j}))\)</span> based on the predictions of the reduced data,</li>
+<li>Calculate LOCO Feature Importance <span class="math inline">\(FI_{j} = e_{-j}/e_{orig}\)</span>. Alternatively, the difference can be used: <span class="math inline">\(FI_{j} = e_{-j} - e_{orig}\)</span></li>
+</ul></li>
+<li>Sort features by descending FI.</li>
+</ol>
+<p>The qualitative and quantitative interpretations correspond to the ones from the PFI results.</p>
+</div>
+<div id="interpretability-of-feature-importance-and-its-limitations" class="section level2">
+<h2><span class="header-section-number">0.3</span> Interpretability of Feature Importance and its Limitations</h2>
+<p>After both methods are discussed and their raison d’être is clarified, the question to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models will be now touched on. By doing so, it is necessary to also reflect upon the limitations of the model regarding the interpretability of the results. The latter will constitute the main focus in the following chapters.</p>
+<p>First, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (i.e. Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance indicators. Secondly, both methods allow for a visualization on a global, aggregated level…</p>
+</div>
+<!--bookdown:body:end-->
+            </section>
+
+          </div>
+        </div>
+      </div>
+<!--bookdown:link_prev-->
+<!--bookdown:link_next-->
+    </div>
+  </div>
+<!--bookdown:config-->
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

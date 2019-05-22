@@ -5,4 +5,7 @@ Depends:
   knitr,
   bookdown,
   ggplot2,
-  svglite
+  svglite,
+  iml,
+  randomForest
+  

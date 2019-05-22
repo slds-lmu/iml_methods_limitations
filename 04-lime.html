@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>04-lime.utf8.md</title>
+  <meta name="description" content="" />
+  <meta name="generator" content="bookdown #bookdown:version# and GitBook 2.6.7" />
+
+  <meta property="og:title" content="04-lime.utf8.md" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="04-lime.utf8.md" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<!--bookdown:link_prev-->
+<!--bookdown:link_next-->
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+
+
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+<!--bookdown:title:start-->
+<!--bookdown:title:end-->
+
+<!--bookdown:toc:start-->
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+<!--bookdown:toc2:start-->
+<ul>
+<li><a href="#local-interpretable-model-agnostic-explanations"><span class="toc-section-number">1</span> Local Interpretable Model-agnostic Explanations</a></li>
+</ul>
+<!--bookdown:toc2:end-->
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<!--bookdown:toc:end-->
+<!--bookdown:body:start-->
+<div id="local-interpretable-model-agnostic-explanations" class="section level1">
+<h1><span class="header-section-number">1</span> Local Interpretable Model-agnostic Explanations</h1>
+<p>(# First merge start)</p>
+<p>So far all the interpretation methods are at the global scope of the trained model with respect to its underlying dataset, but none really gives the opportunity to interpret a single prediction on its own in a quick and easy way.
+This is where the method LIME (local interpretable model-agnostic explanations) comes into play.
+LIME is a variant of so-called surrogate models.
+Surrogate models aim to imitate the black box prediction behaviour of a machine learning model.
+Surrogate models themselves have a certain feature: they are interpretable.
+The intuition is to have an interpretable model explain the association of the features <span class="math inline">\(X\)</span> and the - by the black box model -  target <span class="math inline">\(\hat{y}\)</span>.
+Thus, surrogate models aim to capture the decision boundaries of the black box model without attempting to model the true association themselves.
+For example, we may use a neural network to solve a classification task.
+While a neural network is anything but interpretable, we may find that some of the decision boundaries are reasonably well explained by a logistic regression which in fact yields interpretable coefficients.</p>
+<p>In general there are two kinds of surrogate models: global and local surrogate models.
+In this chapter we will focus on the latter ones.</p>
+<p>The concept of local surrogate models is heavily tied to  which propose local interpretable model-agnostic explanations (LIME).
+Different to global surrogate models, local surrogate models such as LIME aim to rather explain single predictions by interpretable models than the whole black box model.
+They try to  this prediction solely by a second, surrogate model - a  so to say.
+This model, also referred to as explainer, needs to be easiliy interpretable (like a linear regression model or a decision tree) and thus may of course not have the adaptability and flexibility of the original model.
+However, we actually don’t care about a global fit in this case.
+We only want to have a very local fit of the explainer in the neighbourhood of the instance to be explained.</p>
+<p>So far so good.
+However, the previous outline was not very specific and leaves (at least) three questions.
+First, what should the input of the explainer be like?
+Second, what does neighbourhood refer to?
+Third, what properties should suitable explainers have?</p>
+<p>To better assess these open questions it may be helpful to study the mathematical defintion of <span class="math inline">\(LIME\)</span>.</p>
+<p>The explainer function for a datapoint <span class="math inline">\(x\)</span> which we aim to interpret is of the following form:</p>
+<p><span class="math display">\[\begin{equation}
+  explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)
+\end{equation}\]</span></p>
+<p>Let’s decompose this compact, yet precise definition:
+<span class="math inline">\(x\)</span> can be virtually any (new) data that can be represented in the same way as the original data.
+Besides the classical tabular data case, we can also interprete models trained on text data or image data.
+However, some data representations (e.g. word embeddings for text data) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
+Additionally, it is important to understand that the explainer only aims to explain the black box model.
+Thus, it does not need to explain the data the black box model was fit on.
+The explainer wants to study the behaviour of the function modelled by the black box model.
+However, the complete behaviour of the black box model may not be featured by the training data.</p>
+<p>Hence, LIME aims to get a more complete  of the data and fill the feature space with new observations.
+Still, the data for the explainer should be related to the original data so that the data for the explainer is not ill-located in space.
+This is why LIME perturbs the original data and uses a perturbed data set instead.
+The perturbed data set is much larger than the original one and supposed the better represent the (possible) feature space.
+Perturbation does not work equally well for all kind of data.
+In the case of tabular data categorical features are much better dealt with as numerical features.
+This is because naturally for categorical data the full grid of possible combinations can be exhausted just by recombining all levels.
+LIME’s perturbation of numerical data also better captures the possible feature space.
+However, typically numerical data is perturbed by a (gaussian) error.
+One can easily see that this way the full grid is not likely to be explored as fully as for categorical features.
+In fact, the way numerical features are handled in LIME is one of the main limitations of LIME which however will not be discussed in detail in this book.
+As you may have observed in this section another difficulty of LIME is the perturbation of the data itself.
+This topic will be discussed in detail in chapter X and thus not further outlined within this chapter.</p>
+<p>Let’s come back to our formula:</p>
+<p><span class="math display">\[\begin{equation}
+  explainer\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)
+\end{equation}\]</span></p>
+<p>The range of the function are all possible elements <span class="math inline">\(g\)</span> in our predefined set of interpretable functions <span class="math inline">\(G\)</span>.
+<span class="math inline">\(G\)</span> should always be consciously chosen depending on the outcome one desires with heavy emphasis on straight forward interpretability - all possible decision trees of a certain depth may be a great choice for nominal features but unfavourable for numerical ones.
+Furthermore, the function returns the model <span class="math inline">\(g\)</span> minimizing two trade-off terms:
+The first term <span class="math inline">\(\mathcal{L}\left(f, g, \pi_x \right)\)</span> is similar to a loss function responsible to deliver the best fit for the model <span class="math inline">\(f\)</span> plus giving a rough idea for the fidelity of the interpretable model <span class="math inline">\(g\)</span> with respect to a proximity measure <span class="math inline">\(\pi_x(z)\)</span>.
+This measure makes sure that optimal local fit around <span class="math inline">\(x\)</span> or its neighbourhood is preferred over a global fit.
+Neighbourhood is a very vague term.
+This is for good reason.
+A priori it is not clear how to specify the neighbourhood properly.
+However, as we want to find a local model, it is important to define a neighbourhood which determines what we understand by local.
+Technically, there are many different options to deal with this issue.
+Weighting the observations w.r.t. their proximity to the observation that is explained seems like a good idea.
+A possible implementation of this weighting is the application of a kernel function.
+The kernel can be arbitraryly parametrised.
+This leaves in total many degrees of freedom which is also problematic about the neighbourhood definition.
+This neighbourhood issue will be discussed in more detail in the next chapter.</p>
+<p>Having discussed the first two open questions, what data the explainer needs and what neighbourhood refers to, we can focus on the third question:
+What properties should suitable explainers have?
+We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
+However, we did not discuss further desired properties of these models.
+As these models have certain strong assumptions, it is unlikely that these models are capable of maintaining optimal fit to the original black box model.
+Recall our formula.
+We need a second term working against the first one which constraints the optimal fit to more interpretable models:
+<span class="math inline">\(\Omega\left(g\right)\)</span> is our complexity measure and responsible to choose the model with the lowest complexity - for decision trees tree depth or in the case of linear regression models <span class="math inline">\(L_0\)</span> norm give hard restrictions of how easy interpretation has to be.
+Putting these two terms together and minimizing them gives us a trade-off solution between best local fit and best interpretability.
+Of course this may sound great in theory, but for a practical application a lot of non-trivial choices for each component has to be made to deliver desirable results.
+Although this rough definition of LIME certainly makes it a challenge to implement LIME, it also gives us great freedom and flexibility of how we tackle this problem.
+For example we see the model <span class="math inline">\(f\)</span> gives no restrictions on the other choices in the equation, which gives us the opportunity to drastically change the underlying predictive model while keeping the same interpretable model with the same complexity constraints.
+Maybe you already put up a LIME interpretation with a decision tree for a random forest model.
+Then, you suddenly got the idea that a deep neural network could impress your clients more.
+Now, you would only have to rerun the same LIME framework with the new model and recieve a similar interpretable decision tree as before.
+Besides that, the complexity term gives us a great way to restrict our final result to a certain amount of parameters.
+If we use <span class="math inline">\(\Omega(g) = \infty \, 1_{||w_g||_0&lt;K}\)</span> we can set exactly the amount of interpretable parameters our final model should have to <span class="math inline">\(K\)</span>.
+This means we can focus on the <span class="math inline">\(K\)</span> most important parameters and fully ignore smaller ones that would give to much clutter to our interpretation.
+Additionally, the fidelity term gives a good idea how well our interpretable model fits the preditive model in the local neighborhood around our target defined by the proximity measure.
+The smaller the fidelity the more we can trust our resulting model to give a good representation.
+If the fidelity is high on the other hand, we should rather rethink our approach as the result will most likely not be representative for the predictive model - not even locally.</p>
+<p>Summing it up we end up with the following algorithm for LIME:
+…</p>
+<p>It is certain to say LIME has great potential, but the problems of current implementations may suggest to act with great care and to not use it for critical and time-restricting tasks as results can not be trusted for fixed neighboorhood and sampling strategy.
+Unfortunately it is often not possible to adjust these, which simply forces the user to time consumingly create his own implementation - unfeasable for most people.</p>
+<p>(# First merge end)</p>
+</div>
+<!--bookdown:body:end-->
+            </section>
+
+          </div>
+        </div>
+      </div>
+<!--bookdown:link_prev-->
+<!--bookdown:link_next-->
+    </div>
+  </div>
+<!--bookdown:config-->
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
