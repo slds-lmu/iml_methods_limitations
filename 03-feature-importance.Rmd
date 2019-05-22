@@ -23,7 +23,6 @@ In Figure \@ref(fig:PFI) it is illustrated, by a fictional example, how the perm
 
 
 
-
 <br>
 ```{r PFI,out.width="65%", echo = FALSE, message = FALSE, fig.align='center', fig.cap="Example for Permutation Feature Importance"}
 knitr::include_graphics("images/Permutation_All.jpg")
