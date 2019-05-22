@@ -7,5 +7,5 @@ Depends:
   ggplot2,
   svglite,
   iml,
-  ranger,
   randomForest
+  
