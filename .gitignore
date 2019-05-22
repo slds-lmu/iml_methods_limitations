@@ -9,3 +9,5 @@ _main.Rmd
 *.log
 *.Rproj
 ./*.html
+book.tex
+*.html
