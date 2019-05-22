@@ -78,7 +78,7 @@ p1
 ## Leave-One-Covariate-Out (LOCO)
 
 The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although applications of LOCO exist, where comparable to PFI, the initial values of feature $j$ are replaced by its mean, median or zero [see @hall2017ideas], and hence, circumvent the disadvantage of re-training the model $f$, the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model $f_{-j}$ is then compared to the prediction error resulted from the baseline model. However, re-training the model results in higher computational costs, becoming more severe with an increasing feature space. Besides, as one is actually interested in assessing the Feature Importance of a fixed model $f$, comparing the performance of a fixed model with the performance of a model $f_{-j}$ fitted merely with a subset of the data, might raise plausible concerns [see @molnarimlbook].
-The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out. [see @lei2018distribution]
+The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out [see @lei2018distribution].
 
 **The Leave-One-Covariate-Out algorithm based on Lei et al. (2018):**
 
