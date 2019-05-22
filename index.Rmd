@@ -33,6 +33,11 @@ The interpretation methods might not work well in the following cases:
 - if the model does not correctly model causal relationships
 - if parameters of the interpretation method are not set correctly
 
+![Creative Commons License](images/by-nc-sa.png)
+
+This book is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+```
 
 ## Structure of the book {-}
 
