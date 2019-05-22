@@ -22,7 +22,7 @@ We only want to have a very __local__ fit of the surrogate model in the proximit
 
 A LIME explanation could be retrieved by the following algorithm:
 
-1. Get instance $x$ out of data space $X$ for which we desire an explanation for its predicted target value.
+1. Get instance $x$ out of the data space for which we desire an explanation for its predicted target value.
 
 2. _Perturb_ your dataset $X$ and receive a perturbed data set $Z$ of increased size. 
 
