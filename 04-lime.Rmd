@@ -105,7 +105,7 @@ Recall our formula.
 As we want local optimal fit subjected to a certain (low) degree of explainer complexity - in order to allow interpretation - our formula needs to facilitate this aspect.
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity.
 For example, for decision trees, tree depth may describe the complexity.
-In the case of linear regression, the $L_0$ norm may indicate how simple the interpretation has to be. 
+In the case of linear regression, the $L_1$ norm may indicate how simple the interpretation has to be. 
 The resulting LASSO model allows us to focus only on the most important features.
 
 Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
