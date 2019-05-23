@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Chapter 5 Local Interpretable Model-Agnostic Explanations | Limitations of Interpretable Machine Learning Methods</title>
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Chapter 5 Local Interpretable Model-Agnostic Explanations | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Local Interpretable Model-Agnostic Explanations | Limitations of Interpretable Machine Learning Methods" />
+  
+  <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+<meta name="author" content="">
+
+
+<meta name="date" content="2019-05-23">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="feature-importance.html">
+<link rel="next" href="references.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Limitations of ML Interpretability</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><i class="fa fa-check"></i><b>2</b> Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) Curves</a><ul>
+<li class="chapter" data-level="2.1" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a></li>
+<li class="chapter" data-level="2.2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>2.2</b> Individual Conditional Expectation Curves</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>3</b> Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>3.1</b> Motivation</a></li>
+<li class="chapter" data-level="3.2" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>3.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>3.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>3.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>3.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>3.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="feature-importance.html"><a href="feature-importance.html"><i class="fa fa-check"></i><b>4</b> Feature Importance</a><ul>
+<li class="chapter" data-level="4.1" data-path="feature-importance.html"><a href="feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>4.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="4.2" data-path="feature-importance.html"><a href="feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>4.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="4.3" data-path="feature-importance.html"><a href="feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>4.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="local-interpretable-model-agnostic-explanations.html"><a href="local-interpretable-model-agnostic-explanations.html"><i class="fa fa-check"></i><b>5</b> Local Interpretable Model-Agnostic Explanations</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Limitations of Interpretable Machine Learning Methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="local-interpretable-model-agnostic-explanations" class="section level1">
+<h1><span class="header-section-number">Chapter 5</span> Local Interpretable Model-Agnostic Explanations</h1>
+<p>When doing machine learning we always build models.
+Models are simplifications of reality.
+Even if the predictive power of a model may be very strong, it will still only be a model.
+However, models with high predictive capacity do most of the time not seem simple to a human as seen throughout this book.
+In order to simplify a complex model we could use another model.
+These simplifying models are referred to as surrogate models.
+They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint:
+surrogate models are interpretable.
+For example, we may use a neural network to solve a classification task.
+While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.</p>
+<p>In general, there are two kinds of surrogate models: global and local surrogate models.
+In this chapter, we will focus on the latter ones.</p>
+<p>The concept of local surrogate models is heavily tied to <span class="citation">Ribeiro, Singh, and Guestrin (<a href="#ref-ribeiro2016should" role="doc-biblioref">2016</a>)</span>, who propose local interpretable model-agnostic explanations (LIME).
+Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
+These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
+However, we actually don’t care about a <strong>global</strong> fit in this case.
+We only want to have a very <strong>local</strong> fit of the surrogate model in the proximity of the instance whose prediction is explained.</p>
+<p>A LIME explanation could be retrieved by the following algorithm:</p>
+<ol style="list-style-type: decimal">
+<li><p>Get instance <span class="math inline">\(x\)</span> out of the data space for which we desire an explanation for its predicted target value.</p></li>
+<li><p><em>Perturb</em> your dataset <span class="math inline">\(X\)</span> and receive a perturbed data set <span class="math inline">\(Z\)</span> of increased size.</p></li>
+<li><p>Retrieve predictions <span class="math inline">\(\hat{y}_{Z}\)</span> for <span class="math inline">\(Z\)</span> using the black box model <span class="math inline">\(f\)</span>.</p></li>
+<li><p>Weight <span class="math inline">\(Z\)</span> w.r.t. the proximity/neighbourhood to <span class="math inline">\(x\)</span>.</p></li>
+<li><p>Train an explainable weighted model <span class="math inline">\(g\)</span> on <span class="math inline">\(Z\)</span> and the associated predictions <span class="math inline">\(\hat{y}_{Z}\)</span>.</p></li>
+</ol>
+<p>Return: An explanation for the interpretable model <span class="math inline">\(g\)</span>.</p>
+<p>The visualisation below nicely depicts the described algorithm for a two-dimensional classification problem based on simulated data.
+We start only with our data split into two classes: 1 and 0.
+Then, we fit a model that can perfectly distinguish between the two classes.
+This is indicated by the sinus-shaped function drawn as a black curve.
+We do not perturb the data in this case.
+(However, we may argue that our perturbation strategy is to use the original data.
+We will more formally discuss perturbation later on.)
+Now, we choose the data point, which we want an explanation for.
+It is coloured in yellow.
+With respect to this point, we weight our data by giving close observations higher weights.
+We illustrate this by the size of data points.
+Afterwards, we fit a classification model based on these weighted instances.
+This yields an interpretable linear decision boundary - depicted by the purple line.
+As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<img src="images/lime.gif" alt="Simplified GIF representation of the LIME algorithm."  />
+<p class="caption">
+FIGURE 5.1: Simplified GIF representation of the LIME algorithm.
+</p>
+</div>
+<p>This way we receive a single explanation.
+This one explanation can only help to understand and validate the corresponding prediction.
+However, the model as a whole can be examined and validated by multiple (representative) LIME explanations.</p>
+<p>So far so good.
+However, the previous outline was not very specific and leaves (at least) three questions.
+First, what does neighbourhood refer to?
+Second, what properties should suitable explainers have?
+Third, what data do we use, why and how do we perturb this data?</p>
+<p>To better assess these open questions it may be helpful to study the mathematical definition of <span class="math inline">\(LIME\)</span>.
+The explanation for a datapoint <span class="math inline">\(x\)</span>, which we aim to interpret, can be represented by the following formula:</p>
+<p><span class="math display">\[explanation\left(x\right) = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f, g, \pi_x \right) + \Omega\left(g\right)\]</span></p>
+<p>Let’s decompose this compact, yet precise definition:</p>
+<p><span class="math inline">\(x\)</span> can be an instance that is entirely new to us as long as it can be represented in the same way as the training data of the black box model.
+The final explanation for <span class="math inline">\(x\)</span> results from the maximisation of the loss-like fidelity term <span class="math inline">\(\mathcal{L}\left(f, g, \pi_x \right)\)</span> and a complexity term <span class="math inline">\(\Omega\left(g\right)\)</span>.
+<span class="math inline">\(f\)</span> refers to the black box model we want to explain and <span class="math inline">\(g\)</span> to the explainer.
+<span class="math inline">\(G\)</span> represents the complete hypothesis space of a given interpretable learner.
+The explanation has to deal with two trade-off terms when minimising:
+The first term <span class="math inline">\(\mathcal{L}\left(f, g, \pi_x \right)\)</span> is responsible to deliver the optimal fit of <span class="math inline">\(g\)</span> to the model <span class="math inline">\(f\)</span> while a low <em>loss</em> is desirable indicating high (local) <em>fidelity</em>.
+The optimal fit is only found with respect to a proximity measure <span class="math inline">\(\pi_x(z)\)</span> in the neighbourhood of <span class="math inline">\(x\)</span>.</p>
+<p>This leads us to the first open question:
+What does neighbourhood refer to?
+Neighbourhood is a very vague term.
+This is for good reason because a priori it is not clear how to specify a neighbourhood properly.
+Technically, there are many different options to deal with this issue.
+Weighting the observations w.r.t. their distance to the observation being explained seems like a good idea.
+This may possibly be implemented as an arbitrarily parametrised kernel.
+However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
+This neighbourhood issue will be discussed in more detail in the next chapter.</p>
+<p>We already answered the second open question - what properties suitable explainers should have - in parts.
+We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
+However, we did not discuss further desired properties of these models.
+Since they have strong assumptions, it is unlikely that they are capable of maintaining an optimal fit to the original black box model.
+Recall our formula.
+As we want local optimal fit subjected to a certain (low) degree of explainer complexity - in order to allow interpretation - our formula needs to facilitate this aspect.
+<span class="math inline">\(\Omega\left(g\right)\)</span> is our complexity measure and responsible to choose the model with the lowest complexity.
+For example, for decision trees, tree depth may describe the complexity.
+In the case of linear regression, the <span class="math inline">\(L_1\)</span> norm may indicate how simple the interpretation has to be.
+The resulting LASSO model allows us to focus only on the most important features.</p>
+<p>Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
+Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data.
+However, some data representations (e.g. word embeddings) are not human-interpretable and must be replaced by interpretable variants (e.g. one-hot-encoded word vectors) for LIME to yield interpretable results.
+The function modeled by the black box model operates in the complete feature space.
+It can even yield predictions for instances not seen in the training data.
+This means that the original data does not sufficiently explore the feature space.
+Hence, we want to create a more complete <em>grid</em> of the data and fill the feature space with new observations so that we can better study the behaviour of the black box model.
+Still, the data for the explainer should be related to the original data.
+Otherwise the explainer may be ill-placed in space having nothing in common with the original problem anymore.
+This is why we perturb the original data.
+But how does perturbation work?
+This is a priori not clear at all.
+For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these.
+Numerical features may be drawn from a properly parametrised (normal) distribution.
+The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
+Further details on this topic will be studied in chapter X.</p>
+<p>As we did not provide any examples on the application of LIME, please refer to the next two chapters or <span class="citation">Molnar (<a href="#ref-molnar2019" role="doc-biblioref">2019</a>)</span> for some examples.</p>
+<p>The definition of LIME still seems after all very rough and vague.
+This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
+For example, we see that the model <span class="math inline">\(f\)</span> can be any machine learning model that exists.
+This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer <span class="math inline">\(g\)</span> with the same complexity constraints.</p>
+<p>On the other hand, LIME being a very generic approach also means that many “hyperparameters”, like the neighbourhood definition or the sampling/perturbation strategy, are arbitrary.
+Hence, it is likely that in some use cases LIME explanations heavily depend on changing the hyperparameters.
+In these cases, the explanations can hardly be trusted and should be treated with great care.</p>
+<p>The following two chapters will focus on two very significant hyperparameters:
+the neighbourhood definition and the sampling strategy.
+They will investigate how these affect the results of the method and their interpretability.
+We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results.</p>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-ribeiro2016should">
+<p>Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016. “Why Should I Trust You?: Explaining the Predictions of Any Classifier.” In <em>Proceedings of the 22nd Acm Sigkdd International Conference on Knowledge Discovery and Data Mining</em>, 1135–44. ACM.</p>
+</div>
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="feature-importance.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/compstat-lmu/iml_methods_limitations/edit/master/04-lime.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf", "book.epub", "book.mobi"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

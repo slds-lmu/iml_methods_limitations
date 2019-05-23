@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Limitations of Interpretable Machine Learning Methods</title>
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Limitations of Interpretable Machine Learning Methods" />
+  
+  <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+<meta name="author" content="">
+
+
+<meta name="date" content="2019-05-23">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+
+<link rel="next" href="introduction.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Limitations of ML Interpretability</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><i class="fa fa-check"></i><b>2</b> Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) Curves</a><ul>
+<li class="chapter" data-level="2.1" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a></li>
+<li class="chapter" data-level="2.2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>2.2</b> Individual Conditional Expectation Curves</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>3</b> Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>3.1</b> Motivation</a></li>
+<li class="chapter" data-level="3.2" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>3.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>3.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>3.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>3.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>3.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="feature-importance.html"><a href="feature-importance.html"><i class="fa fa-check"></i><b>4</b> Feature Importance</a><ul>
+<li class="chapter" data-level="4.1" data-path="feature-importance.html"><a href="feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>4.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="4.2" data-path="feature-importance.html"><a href="feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>4.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="4.3" data-path="feature-importance.html"><a href="feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>4.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="local-interpretable-model-agnostic-explanations.html"><a href="local-interpretable-model-agnostic-explanations.html"><i class="fa fa-check"></i><b>5</b> Local Interpretable Model-Agnostic Explanations</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Limitations of Interpretable Machine Learning Methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Limitations of Interpretable Machine Learning Methods</h1>
+<p class="date"><em>2019-05-23</em></p>
+</div>
+<div id="preface" class="section level1 unnumbered">
+<h1>Preface</h1>
+<p>This project explains the limitations of current approaches in interpretable machine learning, such as partial dependence plots (PDP, Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
+All of those methods can be used to explain the behavior and predictions of trained machine learning models.
+The interpretation methods might not work well in the following cases:</p>
+<ul>
+<li>if a model models interactions (e.g. when a random forest is used)</li>
+<li>if features strongly correlate with each other</li>
+<li>if the model does not correctly model causal relationships</li>
+<li>if parameters of the interpretation method are not set correctly</li>
+</ul>
+<div class="figure">
+<img src="images/by-nc-sa.png" alt="Creative Commons License" />
+<p class="caption">Creative Commons License</p>
+</div>
+<p>This book is licensed under the <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</p>
+<p>```</p>
+<div id="structure-of-the-book" class="section level2 unnumbered">
+<h2>Structure of the book</h2>
+<p>TODO</p>
+
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="introduction.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/compstat-lmu/iml_methods_limitations/edit/master/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf", "book.epub", "book.mobi"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
