@@ -1,9 +1,4 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
-# Accumulated Local Effects (ALE) 
+# Introduction to Accumulated Local Effects (ALE) 
 
 
 
