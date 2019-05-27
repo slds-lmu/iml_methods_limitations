@@ -46,7 +46,7 @@ It is coloured in yellow.
 With respect to this point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
-This yields an interpretable linear decision boundary - depicted by the purple line. 
+This yields an interpretable linear decision boundary -- depicted by the purple line. 
 As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.
 
 ```{r, echo = FALSE}
@@ -97,12 +97,12 @@ This may possibly be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-We already answered the second open question - what properties suitable explainers should have - in parts.
+We already answered the second open question -- what properties suitable explainers should have -- in parts.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
 However, we did not discuss further desired properties of these models.
 Since they have strong assumptions, it is unlikely that they are capable of maintaining an optimal fit to the original black box model. 
 Recall our formula.
-As we want local optimal fit subjected to a certain (low) degree of explainer complexity - in order to allow interpretation - our formula needs to facilitate this aspect.
+As we want local optimal fit subjected to a certain (low) degree of explainer complexity -- in order to allow interpretation -- our formula needs to facilitate this aspect.
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity.
 For example, for decision trees, tree depth may describe the complexity.
 In the case of linear regression, the $L_1$ norm may indicate how simple the interpretation has to be. 
@@ -122,13 +122,13 @@ But how does perturbation work?
 This is a priori not clear at all.
 For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
 Numerical features may be drawn from a properly parametrised (normal) distribution.
-The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
+The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points -- especially in sparse areas.
 Further details on this topic will be studied in chapter X.
 
 As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for some examples.
 
 The definition of LIME still seems after all very rough and vague.
-This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
+This leaves us many scientific degrees of freedom when implementing it -- for the good and for the bad.
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer $g$ with the same complexity constraints. 
 
