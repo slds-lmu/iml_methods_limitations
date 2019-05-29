@@ -24,7 +24,7 @@ In Figure \@ref(fig:PFI) it is illustrated, by a fictional example, how the perm
 
 
 <br>
-```{r PFI,out.width="65%", echo = FALSE, message = FALSE, fig.align='center', fig.cap="Example for Permutation Feature Importance. The table illustrates the second step of the algorithm of PFI in particular the permutation of the features 1 and p. As shown the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the interested feature and the target value. Based on the formular underneath the tables the PFI is calculated"}
+```{r PFI,out.width="65%", echo = FALSE, message = FALSE, fig.align='center', fig.cap="Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI in particular the permutation of the features 1 and p. As shown the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the interested feature and the target value. Based on the formular underneath the tables the PFI is calculated"}
 knitr::include_graphics("images/Permutation_All.jpg")
 ```
 
@@ -100,7 +100,7 @@ In Figure \@ref(fig:LOCO) it is shown, how the LOCO algorithm alters the origina
 
 <br>
 
-```{r LOCO,out.width="65%", fig.align='center',echo = FALSE, message = FALSE,fig.cap="Example for Leave-One-Covariate-Out Feature Importance. The table illustrates the second step of the algorithm of LOCO. As shown the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the interested feature and the target value. Based on the formular underneath the tables the PFI is calculated. "}
+```{r LOCO,out.width="65%", fig.align='center',echo = FALSE, message = FALSE,fig.cap="Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of the first and p-th feature. The dark grey columns of the original data set mark the variables that will be dropped in the next step of the calculation. This step is made to break the relationship between the interested feature and the target value. Based on the formular underneath the tables the FI of LOCO is calculated."}
 knitr::include_graphics("images/LOCO_All.jpg")
 ```
 
