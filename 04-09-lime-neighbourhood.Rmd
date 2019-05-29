@@ -1,3 +1,29 @@
 # LIME and Neighbourhood
 
-*Author: Firstname Lastname*
+*Author: Philipp Kopper*
+
+How much neighbourhood may be an issue can be illustrated in a setting very different to LIME:
+Descriptive statiistics or in particular histograms and kernel density estimations.
+The figure below illustrates histograms from a standard normal distribution.
+One can easily see that the second panel seems to be appropriate while the first one is too granular and the third one does not feature any information.
+The proper definition of the neighbourhood is in this case very crucial.
+However, a priori this definition is arbitrary.
+We can only judge on the proper definition of the neighbourhood from our experience and our expectations.
+This may work in low dimensional problems and descriptive statistics.
+However, machine learning models operate in multivariate space and mostly tackle complex associations.
+Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.
+
+This chapter reviews the neighbourhood issue w.r.t. the LIME algorithm critically.
+First of all, it describes the neighbourhood defintion absractly (section 1).
+Then, it reviews possible implementations with special emphasis on the implementation in Python and R (section 2).
+Section 3 discusses inherent problems and potential issues of the current implementations.
+In section 4 we examine the coefficient stability of LIME explanations w.r.t to altering the neighbourhood definition within an experiment in R.
+We use both, simulated and real data.
+We make use of the stability selection algorithm which is explained in section 4.1.
+Finally, section 5 concludes reviewing the take-aways of this chapter.
+
+
+
+
+
+
