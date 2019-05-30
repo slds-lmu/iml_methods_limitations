@@ -20,7 +20,7 @@ Section 3 discusses inherent problems and potential issues of the current implem
 In section 4 we examine the coefficient stability of LIME explanations w.r.t to altering the neighbourhood definition within an experiment in R.
 We use both, simulated and real data.
 We make use of the stability selection algorithm which is explained in section 4.1.
-Finally, section 5 concludes reviewing the take-aways of this chapter.
+Finally, section 5 concludes reviewing the take-aways of this chapter and proposing an improved algorithm w.r.t. the neighbourhood issue.
 
 When obtaining explanations with LIME the neighbourhood of an instance is determined when fitting the model by applying weights to instances w.r.t. proximity to the instance of interest.
 However, it is important to note that this step is already arbitrary.
@@ -28,6 +28,7 @@ However, it is important to note that this step is already arbitrary.
 This could be obtained in many other ways than weighting observations as in LIME.
 One possible alternative might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm.
 This way we would increase the density around the instance already by proper sampling. 
+In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
 In this chapter, however, we focus on the explicit implementation in LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model stability.
 
 In LIME the weighting of instances is performed using a kernel function over the distances of instances to the instance of interest.
@@ -54,6 +55,9 @@ Second, the kernel width.
 By default...
 
 
+One problem will certainly be high-dimensional data. 
+In high dimensions distance measures get increasingly less meaningful.
+Thus, the higher the dimension the less we can enforce locality.
 
 
 
