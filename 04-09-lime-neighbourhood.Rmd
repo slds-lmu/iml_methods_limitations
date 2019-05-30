@@ -22,6 +22,38 @@ We use both, simulated and real data.
 We make use of the stability selection algorithm which is explained in section 4.1.
 Finally, section 5 concludes reviewing the take-aways of this chapter.
 
+When obtaining explanations with LIME the neighbourhood of an instance is determined when fitting the model by applying weights to instances w.r.t. proximity to the instance of interest.
+However, it is important to note that this step is already arbitrary.
+@craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve model fidelity.
+This could be obtained in many other ways than weighting observations as in LIME.
+One possible alternative might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm.
+This way we would increase the density around the instance already by proper sampling. 
+In this chapter, however, we focus on the explicit implementation in LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model stability.
+
+In LIME the weighting of instances is performed using a kernel function over the distances of instances to the instance of interest.
+This leaves us two _arbitrary_ (in fact they may not be that arbitrary) choices:
+the distance and the kernel function.
+Typical distance functions applicable to statistical data analysis are based on the L0, L1 and L2 norms.
+For numerical features one tends to use either manhattan distance (L1) or euclidean distance (L2).
+For categorical features one would classically apply hamming distance (L0).
+Mixed data (data with both categorical and numerical features) usually one combines distances for numerical and categorical features.
+So does Gower's distance @Gower 
+$$ d_G $$
+or a bit more general the distance proposed by @Huang1997
+
+$$d_H$$
+with $\lamda$ steering the importance of categorical features relative to numerical ones.
+However, it is important to note that despite these mesasures it may be challenging to properly determine distances for mixed data.
+For image and text data @ribeiro2016should recommend using...
+By default...
+
+
+For the kernel function itself there are two hyperparameters to be set.
+First of all the type of the kernel.
+Second, the kernel width.
+By default...
+
+
 
 
 
