@@ -1,4 +1,6 @@
 library(mlr)
+library(lime)
+library(BBmisc)
 
 # Load the MNIST digit recognition dataset into R
 # http://yann.lecun.com/exdb/mnist/
@@ -37,3 +39,53 @@ load_mnist <- function() {
 }
 
 load_mnist()
+
+
+
+### First simulation
+set.seed(1)
+x_1 <- rnorm(300, 100, 42)
+x_2 <- rnorm(300, 10, 10)
+y <- (300 * sin(0.0002 * x_1^2) + 0.5 * x_1 + 250 + rnorm(300, 0, 70))
+plot(x_1, y)
+
+
+df <- data.frame(x_1, x_2, y)
+
+# Define the task (mlr)
+task <- makeRegrTask(data = df, target = "y")
+# Define the learner (mlr)
+learner <- makeLearner("regr.randomForest", ntree = 200)
+# Train the model (mlr)
+black_box <- train(learner, task)
+# predict
+task_pred = predict(black_box, task = task)
+# Set up LIME explanations
+explainer <- lime(df[, 1:2], black_box, bin_continuous = FALSE)
+# New df, 130 is important
+distance <- function(x) x[1, , drop = FALSE]
+new_df <- data.frame(x_1 = 130, x_2 = 0, y = 400)
+explanation <- explain(new_df[, 1:2, drop = FALSE], explainer, n_features = 1,
+                       n_permutations = 10000, kernel_width = 2,
+                       dist_fun = "euclidean")
+as.data.frame(explanation)
+
+library(lime)
+library(mlr)
+
+# index of data point we want to explain
+to_explain  = 1
+
+# create task and calculate black box model
+tsk_iris    = makeClassifTask(data = iris[-to_explain, ], target = "Species")
+learner     = makeLearner("classif.randomForest", ntree = 200, predict.type = "prob")
+black_box   = train(learner, tsk_iris)
+
+# use lime to explain new data point
+explainer   = lime(iris[-to_explain, 1:4], black_box)
+explanation = explain(iris[to_explain, 1:4],
+                      explainer,
+                      n_labels = 1,
+                      n_features = 4)
+
+plot_features(explanation)
