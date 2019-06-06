@@ -57,7 +57,9 @@ Second, the kernel width.
 By default...
 
 How crucial the kernel width is can be visualised by the graph below.
-...
+..
+More formally we can show that for the underlying data for the graph a kernel width of X results in the surrogate model featuring a coefficient of X (on average) which seems accurate within the locality. 
+However, if we increased the kernel width to XX the coefficient changes to XX (on average) which seems drastically distorted.
 
 
 ### WO?
@@ -70,24 +72,41 @@ Thus, the higher the dimension the less we can enforce locality.
 
 As the choice of the distance measure seems least arbitrary and the choice of the kernel function is not expected to have crucial impact on the neighbourhood definition, we focus on the kernel width in our experimental study.
 We evaluate the explanations of LIME with respect to altering the kernel width _ceteris paribus_. 
+We do this for both, simulated and real world data.
+For simulated data we focus on LIME's capability of finding local decision boundaries.
+For real data we emphasise coefficient stability of LIME explainers.
 
-### Expectations and study design
+We simulate for different rather simple data sets.
+In all examples we will investigate regression tasks.
+The first one exhibits solely linear relationships of the feature with the target.
+All features are moderatley correlated.
+The second one will additionally contain a non-linear effect.
+The third one features inteaction terms.
+For all of these data sets we will evaluate if LIME can find a good local model (measured by local fidelity) and we will illustrate how strongly the kernel size is responsible for this to happen.
+We will illustrate in this case how a _good_ kernel size can be determined and that it is important to set the kernel size locally.
 
-If LIME worked as it is supposed to, we would expect two things:
-First, the alternation of the kernel width should in fact affect the explanations. 
-However, in a smooth way. 
-This means that a small change in the kernel width should not affect the explanation much.
-Second, for a given kernel width we expect stable explanations for identical instances. 
-This means if we repeatedly computed LIME explanations we would expect that they are similar.
+The real data set is... 
+EXPLANATIONS WHAT IT IS
+First of all, we will show that the same problems as for simulated data persist for real data.
+When LIME is used in practise on real data, we aim that it produces consistent, or in other words stable, results.
+This means that if the input slighlty changes, we wish the explanation not to drastically change as well.
+We examine the stability of the explanations by coefficient and so-called stability paths.
+Stability paths are explained in detail below.
+We study how drastically explanations differ at different kernel sizes if we explain the nearest neighbours of the instance to be explained are used instead.
 
-To investigate these expectations we simulate data where we know the true decision boundaries that LIME is supposed to explain.
-We will work with linear, non-linear and interacted relationships in the simulated data.
-The underlying problem is a regression problem which we aim to solve with a random forest.
-We fit the black box model leave it fixed.
-Then, for all simulated data sets we obtain LIME explanations for randomly selected instances.
-We examine the development of the coefficient values corresponding to the respective kernel width.
-We do so by investigating their "stability paths".
-As 
+## Simulated data
+
+We simulate the first data set with the following R code.
+```{r simulation_1}
+
+x1 <- rnorm(100, 10, 3)
+x2 <- rnorm(100, 5, 4) + 0.1 * rnorm(100, x1, x1)
+
+```
+
+
+
+
 
 
 
