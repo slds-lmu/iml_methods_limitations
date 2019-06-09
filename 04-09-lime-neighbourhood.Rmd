@@ -3,11 +3,11 @@
 *Author: Philipp Kopper*
 
 How much neighbourhood may be an issue can be illustrated in a setting very different to LIME:
-Descriptive statiistics or in particular histograms and kernel density estimations.
-The figure below illustrates histograms from a standard normal distribution.
+Descriptive statistics or in particular kernel density estimations.
+The figure below illustrates kernel densities from a standard normal distribution.
 One can easily see that the second panel seems to be appropriate while the first one is too granular and the third one does not feature any information.
 The proper definition of the neighbourhood is in this case very crucial.
-However, a priori this definition is arbitrary.
+However, a priori - with no prior information - this definition is arbitrary.
 We can only judge on the proper definition of the neighbourhood from our experience and our expectations.
 This may work in low dimensional problems and descriptive statistics.
 However, machine learning models operate in multivariate space and mostly tackle complex associations.
@@ -45,7 +45,7 @@ So does Gower's distance @Gower
 $$ d_G $$
 or a bit more general the distance proposed by @Huang1997kproto
 
-$$d_H$$
+$$ d_H $$
 with $\lamda$ steering the importance of categorical features relative to numerical ones.
 However, it is important to note that despite these mesasures it may be challenging to properly determine distances for mixed data.
 For image and text data @ribeiro2016should recommend using...
@@ -58,7 +58,7 @@ By default...
 
 How crucial the kernel width is can be visualised by the graph below.
 ..
-More formally we can show that for the underlying data for the graph a kernel width of X results in the surrogate model featuring a coefficient of X (on average) which seems accurate within the locality. 
+We can show that for the underlying data for the graph a kernel width of X results in the surrogate model featuring a coefficient of X (on average) which seems accurate within the locality. 
 However, if we increased the kernel width to XX the coefficient changes to XX (on average) which seems drastically distorted.
 
 
@@ -81,7 +81,7 @@ In all examples we will investigate regression tasks.
 The first one exhibits solely linear relationships of the feature with the target.
 All features are moderatley correlated.
 The second one will additionally contain a non-linear effect.
-The third one features inteaction terms.
+The third one features interaction terms.
 For all of these data sets we will evaluate if LIME can find a good local model (measured by local fidelity) and we will illustrate how strongly the kernel size is responsible for this to happen.
 We will illustrate in this case how a _good_ kernel size can be determined and that it is important to set the kernel size locally.
 
@@ -98,9 +98,6 @@ We study how drastically explanations differ at different kernel sizes if we exp
 
 We simulate the first data set with the following R code.
 ```{r simulation_1}
-
-x1 <- rnorm(100, 10, 3)
-x2 <- rnorm(100, 5, 4) + 0.1 * rnorm(100, x1, x1)
 
 ```
 
