@@ -1,4 +1,37 @@
 # Partial and Individual Permutation Feature Importance
 
-*Author: firstname lastname*
-test
+*Author: Moritz Wagner*
+
+
+1) Introduce the main limitation of PFI which will be solved in this chapter
+2) Why is it interesting
+3) What are the concepts I will focus on in the following (PI plots and ICI plots)
+4) Why convenient choice? Nice way to visualize => provides a good overview 
+
+As already discussed, the concept of Permutation Feature Importance (PFI) depicts a strong tool to determine, if some assumptions hold, to what extent a feature contributes to the predicitive power of a model. However, the single metric is rather poor when aiming for a deepened understanding of Feature Importance. 
+
+Here: name so arguments for why it would be nice to assess the feature importance over ...
+
+Then: 
+
+
+## Theoretical Framework
+
+theortical formular
+
+algorithm for  PI and ICI 
+
+
+## Simulation and Real Life Data
+
+
+## Discussion and Implementation of New Concepts
+
+Reason for discussion: 
+as it is a rather easy complement of the so far considered ICI plots with a different angle/perspective.
+BUT: not clear so far to what extent that delivers indeed new insights.
+  Maybe Boston Housing: predictor age?
+dICI plots and c-ICI (centered ICI plots)
+
+d-ICI: when the curves have a wide range of intercepts .. then hard to detect any heterogeneity in the Feature Importance..
+Question: Is this the same problem for Feature Importance or is this canceled out?
