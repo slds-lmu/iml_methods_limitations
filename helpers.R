@@ -43,23 +43,27 @@ feature_growth <- function(data, target, repeats = 10L, dim_increment = 10L, see
   
   # dimension of feature space
   p_max = ncol(data) - 1L
-  feature_names = names(data[-which(names(data) == target)])
-  
+  feature_names = names(data[names(data) != target])
+
+  # move target variable to the end
+  data_sort           = data[names(data) != target]
+  data_sort[[target]] = data[[target]]
+
   # iterate over amount of feature dimensions
   outer_return = lapply(
     seq(2L, p_max, by = dim_increment),
     function(p) {
       # sample point to remove selection-bias
       to_explain = sample(nrow(data), 1L)
-      train_data = data[-to_explain, 1L:p]
-      target_pt  = data[ to_explain, 1L:p]
+      train_data = data_sort[-to_explain, 1L:p]
+      target_pt  = data_sort[ to_explain, 1L:p]
       
-      train_data$y = data[[target]][-to_explain]
+      train_data[[target]] = data_sort[[target]][-to_explain]
       
-      task      = makeClassifTask(data = train_data, target = "y")
+      task      = makeClassifTask(data = train_data, target = target)
       learner   = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
       black_box = train(learner, task)
-      explainer = lime(train_data, black_box)
+      explainer = lime(train_data[1L:p], black_box)
       
       # create sequence of "n_feature" arguments
       n_feat_seq = seq(1L, p, by = dim_increment)
@@ -91,6 +95,89 @@ feature_growth <- function(data, target, repeats = 10L, dim_increment = 10L, see
           
         }
       )
+      # output progress
+      log = sprintf("%2.2f/1.00 done", (p-1)/(p_max-1))
+      print(log)
+      # transpose matrix and transform to dataframe
+      as.data.frame(t(inner_return))
+    }
+  )
+  # concatenate dataframes
+  data.table::rbindlist(outer_return)
+}
+
+
+permutation_growth = function(
+  data,
+  target,
+  repeats = 10L,
+  permutation_seq = c(2500L, 5000L, 10000L),
+  dim_increment = 10L,
+  seed = 123L
+  ) {
+  
+  set.seed(seed)
+
+  # dimension of feature space
+  p_max = ncol(data) - 1L
+  feature_names = names(data[names(data) != target])
+  
+  # create sequence of "n_feature" arguments
+  n_feat_seq = seq(1L, p_max, by = dim_increment)
+  n_feat_seq = rep(n_feat_seq, each = repeats)
+  
+  # move target variable to the end
+  train_data           = data[names(data) != target]
+  train_data[[target]] = data[[target]]
+  
+  task      = makeClassifTask(data = train_data, target = target)
+  learner   = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
+  black_box = train(learner, task)
+  explainer = lime(train_data[1L:p_max], black_box)
+  
+  
+  # iterate over sequence of permutation amount
+  outer_return = lapply(
+    permutation_seq,
+    function(n_permutations) {
+      
+      # iterate over sequence of "n_feature" arguments
+      inner_return = sapply(
+        n_feat_seq,
+        function(n_features) {
+          
+          # sample point to remove selection-bias
+          to_explain = sample(nrow(data), 1L)
+          # due to computational reasons a point of the train_data is picked
+          # the optimistic effect is minimal for high amount of train_data
+          target_pt  = train_data[to_explain, 1L:p_max]
+          
+          feat_return        = rep(NA, p_max)
+          names(feat_return) = feature_names
+
+          explanation = explain(
+            target_pt,
+            explainer,
+            n_labels = 1L,
+            n_features = n_features,
+            n_permutations = n_permutations
+          )
+          
+          to_update = names(feat_return) %in% explanation$feature
+          feat_return[to_update] = explanation$feature_weight
+          
+          c(
+            n_permutations = n_permutations,
+            n_features = n_features,
+            feat_return
+          )
+          
+        }
+      )
+      # output progress
+      frac = which(n_permutations == permutation_seq) / length(permutation_seq)
+      log = sprintf("%2.2f/1.00 done", frac)
+      print(log)
       # transpose matrix and transform to dataframe
       as.data.frame(t(inner_return))
     }

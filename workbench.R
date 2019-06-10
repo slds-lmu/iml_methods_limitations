@@ -99,8 +99,6 @@ mean(abs(
 )) 
 # 1v2 - 0.0021; 04v59 - 0.0034
 
-explanation2$feature_desc[150] == explanation3$feature_desc[150]
-explanation2$feature == explanation3$feature
 
-
-result = feature_growth(iris, "Species", dim_increment = 1)
+result1 = feature_growth(iris, "Species", dim_increment = 1)
+result2 = permutation_growth(iris, "Species", dim_increment = 1)
