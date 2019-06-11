@@ -7,14 +7,14 @@ Descriptive statistics or in particular kernel density estimations.
 The figure below illustrates kernel densities from a standard normal distribution.
 One can easily see that the second panel seems to be appropriate while the first one is too granular and the third one does not feature any information.
 The proper definition of the neighbourhood is in this case very crucial.
-However, a priori - with no prior information - this definition is arbitrary.
+However, with no prior information this definition is arbitrary.
 We can only judge on the proper definition of the neighbourhood from our experience and our expectations.
 This may work in low dimensional problems and descriptive statistics.
 However, machine learning models operate in multivariate space and mostly tackle complex associations.
 Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.
 
 This chapter reviews the neighbourhood issue w.r.t. the LIME algorithm critically.
-First of all, it describes the neighbourhood defintion absractly (section 1).
+First of all, it describes the neighbourhood defintion abstractly (section 1).
 Then, it reviews possible implementations with special emphasis on the implementation in Python and R (section 2).
 Section 3 discusses inherent problems and potential issues of the current implementations.
 In section 4 we examine the coefficient stability of LIME explanations w.r.t to altering the neighbourhood definition within an experiment in R.
@@ -96,10 +96,7 @@ We study how drastically explanations differ at different kernel sizes if we exp
 
 ## Simulated data
 
-We simulate the first data set with the following R code.
-```{r simulation_1}
 
-```
 
 
 
