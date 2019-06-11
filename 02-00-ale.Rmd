@@ -11,7 +11,7 @@ As seen in section 2 PDPs don't work well as soon as two or more features are co
 
 The uncentered ALE with respect to a starting point $z_{0, j}$ is defined by [@Apley2016] as
 $$  \widetilde{ALE}_{\hat{f},~j}(x) = \hat{f}_{x_j,ALE}(x) = \int_{z_{0,~j}}^{x} E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j = z_j]~dz_j,$$
-where $\hat{f}$ is an arbitrary prediction function on the featurespace $X = (X_j,X_c)$ (with feature of interest $X_j$ and other features $X_c$) as well as its j-th partial derivative $\hat{f}^j(*,*)$.
+where $\hat{f}$ is an arbitrary prediction function on the featurespace, as well as $\hat{f}^j(*,*)$ its j-th partial derivative. In this context $X_j$ is the feature of interest while $X_c$ represents the other features.
 
 ### Centering
 
@@ -27,14 +27,15 @@ The centering makes sense as it helps interpreting the ALE in a reasonable way. 
 Since this theoretical formula is of no use for a blackbox model with unknown or even non existing gradients, an approximative approach will be used.
 The uncentered ALE can be approximated by the formula 
 
-$$ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}   1_{]z_{k-1,~j},~z_{k,~j}]}(x_j)~ \frac{1}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  $$
+$$ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}    \frac{1_{I_k}(x_j)}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  $$
 
-In a first step the relevant dimension of the feature space is divided into K intervals beginning with the starting point $z_{0, j}$. As it is not clear how to exactly divide the feature space, section 3.x deals with that question. The upper boundary of the k-th interval is denoted by $z_{k, ~j}$ as well as the lower boundary by $z_{k-1, ~j}$. $N_j(k)$ denotes the k-th interval, i.e. $]z_{k-1,~j}, z_{k,~j}]$ and $n_j(k)$ the total number of observations having the j-value within this interval. $x_j^{(i)}$ is the j-value of the i-th observation and correspondingly $x_{\setminus j}^{(i)}$ the values of the other features. The term on the right approximates the expected partial derivative within each interval. 
+In a first step the relevant dimension of the feature space is divided into K intervals beginning with the starting point $z_{0, j}$. As it is not clear how to exactly divide the feature space, section 3.x deals with that question. The upper boundary of the k-th interval is denoted by $z_{k, ~j}$ as well as the lower boundary by $z_{k-1, ~j}$. The half open interval $]z_{k-1,~j},~z_{k,~j}]$ is defined as $I_k$. $N_j(k)$ denotes the k-th interval, i.e. $]z_{k-1,~j}, z_{k,~j}]$ and $n_j(k)$ the total number of observations having the j-value within this interval. $x_j^{(i)}$ is the j-value of the i-th observation and correspondingly $x_{\setminus j}^{(i)}$ the values of the other features. The term on the right approximates the expected partial derivative within each interval. 
 Therefore each instance within an interval is shifted to the upper and lower limit of the interval and the total difference of the prediction is calculated. Devided by the length of the interval this is a reasonable approximation for the "local" effect on the prediction, if the feature of interest changes (cet. par.).
 By averaging these approximations over all observations within the k-th interval, we recieve a rough estimator for the term $E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j \in N_j(k)]$, which we take as constant effect for the k-th interval. 
 By integrating over this step function, which represents the locally estimated derivatives, the (local) changes are accumulated. Thats why the name Accumulated Local Effects is quite reasonable.
 The approximative formula for the centered ALE follows directly as
-$$   \widehat{ALE}_{\hat{f},~j}(x) = \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) - \frac{1}{n} \sum_{i=1}^{n} \widehat{\widetilde{ALE}}_{\hat{f},~j}(x_j^{(i)})~. 
+
+$$ \widehat{ALE}_{\hat{f},~j}(x) = \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) - \frac{1}{n} \sum_{i=1}^{n} \widehat{\widetilde{ALE}}_{\hat{f},~j}(x_j^{(i)})~. 
  $$
 
 
@@ -57,7 +58,7 @@ Since in this formula there is no integral, it is easier to implement.
 As the former sections introduced the theoretical basics for the ALE, this section shall provide an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the "new" data points. Figure \@ref(fig:dataALE) first offered by [@molnar2019] gives a good intuition for this procedure. 
 
 
-```{r dataALE, fig.cap='(ref:aleIntuition)', echo=FALSE}
+```{r dataALE, fig.cap='(ref:aleIntuition)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_estimation_intuition.PNG")
 ```
@@ -73,7 +74,7 @@ In a last step the uncentered ALE is centered, i.e. shifted by a constant such t
 
 Figure \@ref(fig:aleEx) shows an example ALE which could match the data situtaion of Figure \@ref(fig:dataALE) :
 
-```{r aleEx, fig.cap='(ref:aleExample)', echo=FALSE}
+```{r aleEx, fig.cap='(ref:aleExample)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_example.png")
 ```
