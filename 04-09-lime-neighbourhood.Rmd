@@ -33,7 +33,6 @@ One possible alternative might be to combine steps 2 (sampling) and 4 (weighting
 This way we would increase the density around the instance already by proper sampling. 
 In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
 In this chapter, however, we focus on the explicit implementation in LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model stability.
-This can be seen as a motivation for @laugel2018defining.
 
 In LIME the weighting of instances is performed using a kernel function over the distances of instances to the instance of interest.
 This leaves us two _arbitrary_ (in fact they may not be that arbitrary) choices:
@@ -43,19 +42,21 @@ For numerical features one tends to use either manhattan distance (L1) or euclid
 For categorical features one would classically apply hamming distance (L0).
 Mixed data (data with both categorical and numerical features) usually one combines distances for numerical and categorical features.
 So does Gower's distance @Gower 
-$$ d_G $$
+
+$$ d_G(x_i, x_j) = \sum_{p = 1} ^ {P} \frac{d_{euc}(x_{p, i}, x_{p, j})}{ 
+range(x_p)} $$
 or a bit more general the distance proposed by @Huang1997kproto
 
-$$ d_H $$
-with $\lambda$ steering the importance of categorical features relative to numerical ones.
-However, it is important to note that despite these mesasures it may be challenging to properly determine distances for mixed data.
-For image and text data @ribeiro2016should recommend using...
-By default...
+$$ d_H(x_i, x_j) = d_{euc}(x_i, x_j) + \lambda d_{ham}(x_i, x_j) $$
+
+with $d_{euc}$ refering to the euclidean distance and $d_{ham}$ to the hamming distance.
+$\lambda$ steers the importance of categorical features relative to numerical ones.
+However, it is important to note that despite these mesasures it may be challenging to properly determine distances for mixed data properly. @ribeiro2016should recommend using cosine distance for text, euclidean distance for images.
 
 For the kernel function itself there are two hyperparameters to be set.
 First of all the type of the kernel.
 Second, the kernel width.
-By default...
+By default the R implementation implements an exponential kernel where the kernel width equls the square root of the number of features.
 
 As the choice of the distance measure seems least arbitrary and the choice of the kernel function is not expected to have crucial impact on the neighbourhood definition, we focus on the kernel width in our experimental study.
 However, it is very important to notice that practically the distance measure may interact with the kernel width.
@@ -64,25 +65,25 @@ We observed that this property may have some undesired properties as global mode
 We suggest to implement a kernel function also for the Gower distance.
 We are currently working on this issue in collaboration with the package owner.
 
-
 ## The Problem in a one-dimensional setting
 
 How crucial the kernel width is can be illustrated by a very simple example.
 We simulate data with one target and two features.
 One feature is purely noise and the other one has a non-linear sinus-like effect on the target.
-If we plot the influential feature on the x-axis and the target on the y-axis we can observe this pattern in figure X.
-Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predicitve surface.
-In fact, we observe that the predictions of the random forest look very accurate in figure Y.
+If we plot the influential feature on the x-axis and the target on the y-axis we can observe this pattern in figure 1.
+Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predictive surface.
+In fact, we observe that the predictions of the random forest look very accurate in figure 2.
 LIME could now be used to explain this random forest locally.
 "Good" local models would look very different w.r.t. the value of the feature.
 We could describe the data locally well by piece-wise linear models.
-This is depicted in the figure Y as well.
+This is depicted in the figure 3.
 LIME should be able to find these good local explanations given the right kernel size.
 Let's select one instance that is close to the predictive surface. 
-This particular instance can be linearly described by a linear regression with intercept X and slope X.
+We indicate this by the green point in figure 4.
+This particular instance can be linearly described by a linear regression with intercept $62$ and slope $- 4.5$.
 If we set the kernel width to X, we actually fit this local model (on average).
-This can be seen in figure Z.
-However, if we increased the kernel width to X the coefficient changes to XX (on average) which seems drastically distorted as observed in figure Z as well.
+This can be seen by the red line in figure 4.
+However, if we increased the kernel width to X the coefficient changes to XX (on average) which seems drastically distorted as observed in figure 4 as well.
 
 More systematically we review explanations resulting from altering the kernel size in figure X2. 
 We average over many different models to achieve more robust local models.
@@ -120,6 +121,8 @@ In the third one the true assocations are linear but only affect the target with
 This should examine LIME's ability to determin local feature importance.
 For all three data sets we expect the kernel width to have crucial impact on the resulting explainer.
 However, for the global linear relationships we expect the weakest dependency because the true local model and the true global model are identical.
+
+We refrain from simulating more complex data sets as we strongly favour that the true marginal predicitive surface is human interpretable.
 
 #### Global Linear Relationships
 
