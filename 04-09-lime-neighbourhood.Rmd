@@ -47,7 +47,7 @@ $$ d_G $$
 or a bit more general the distance proposed by @Huang1997kproto
 
 $$ d_H $$
-with $\lamda$ steering the importance of categorical features relative to numerical ones.
+with $\lambda$ steering the importance of categorical features relative to numerical ones.
 However, it is important to note that despite these mesasures it may be challenging to properly determine distances for mixed data.
 For image and text data @ribeiro2016should recommend using...
 By default...
