@@ -14,6 +14,7 @@ However, machine learning models operate in multivariate space and mostly tackle
 Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.
 
 This chapter reviews the neighbourhood issue w.r.t. the LIME algorithm critically.
+The objective of this chapter is more to outline this particular issue and not to suggest solutions for it.
 First of all, it describes the neighbourhood defintion abstractly (section 1).
 Then, it reviews possible implementations with special emphasis on the implementation in Python and R (section 2).
 Section 3 discusses inherent problems and potential issues of the current implementations.
@@ -56,34 +57,78 @@ First of all the type of the kernel.
 Second, the kernel width.
 By default...
 
-How crucial the kernel width is can be visualised by the graph below.
-..
-We can show that for the underlying data for the graph a kernel width of X results in the surrogate model featuring a coefficient of X (on average) which seems accurate within the locality. 
-However, if we increased the kernel width to XX the coefficient changes to XX (on average) which seems drastically distorted.
-
-
-### WO?
-Another problem will certainly be high-dimensional data. 
-In high dimensions distance measures increasingly become less meaningful (curse of dimensionality).
-Thus, the higher the dimension the less we can enforce locality.
-### ENDE WO?
-
-## Experimental study 
-
 As the choice of the distance measure seems least arbitrary and the choice of the kernel function is not expected to have crucial impact on the neighbourhood definition, we focus on the kernel width in our experimental study.
-We evaluate the explanations of LIME with respect to altering the kernel width _ceteris paribus_. 
-We do this for both, simulated and real world data.
-For simulated data we focus on LIME's capability of finding local decision boundaries.
-For real data we emphasise coefficient stability of LIME explainers.
+However, it is very important to notice that practically the distance measure may interact with the kernel width.
+This is because as of the current implementation in R Gower distance does not apply any kernel as it already returns scaled distances.
+We observed that this property may have some undesired properties as global models seem to be preferred over local models.
+We suggest to implement a kernel function also for the Gower distance.
+We are currently working on this issue in collaboration with the package owner.
 
-We simulate for different rather simple data sets.
-In all examples we will investigate regression tasks.
-The first one exhibits solely linear relationships of the feature with the target.
-All features are moderatley correlated.
-The second one will additionally contain a non-linear effect.
-The third one features interaction terms.
-For all of these data sets we will evaluate if LIME can find a good local model (measured by local fidelity) and we will illustrate how strongly the kernel size is responsible for this to happen.
-We will illustrate in this case how a _good_ kernel size can be determined and that it is important to set the kernel size locally.
+
+## The Problem in a one-dimensional setting
+
+How crucial the kernel width is can be illustrated by a very simple example.
+We simulate data with one target and two features.
+One feature is purely noise and the other one has a non-linear sinus-like effect on the target.
+If we plot the influential feature on the x-axis and the target on the y-axis we can observe this pattern in figure X.
+Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predicitve surface.
+In fact, we observe that the predictions of the random forest look very accurate in figure Y.
+LIME could now be used to explain this random forest locally.
+"Good" local models would look very different w.r.t. the value of the feature.
+We could describe the data locally well by piece-wise linear models.
+This is depicted in the figure Y as well.
+LIME should be able to find these good local explanations given the right kernel size.
+Let's select one instance that is close to the predictive surface. 
+This particular instance can be linearly described by a linear regression with intercept X and slope X.
+If we set the kernel width to X, we actually fit this local model (on average).
+This can be seen in figure Z.
+However, if we increased the kernel width to X the coefficient changes to XX (on average) which seems drastically distorted as observed in figure Z as well.
+
+More systematically we review explanations resulting from altering the kernel size in figure X2. 
+We average over many different models to achieve more robust local models.
+We do that because we observe some coefficent variation resulting from the (random) sampling.
+In figure X2 we see these averaged models for XXX different kernel sizes.
+We observe that the larger we set the kernel size, the more we converge to a linear model that operates globally.
+This is very intuitive and complies with the idea of a weighted local regression.
+
+Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with positive slope in figure X3.
+We observe a similar behaviour.
+
+This behaviour is not necessarily a problem but only a property of the LIME.
+However, it is problematic that the appropriate kernel size is not a priori clear.
+Additionally, there is no straight forward way to determine a good kernel width for a given observation to be explained.
+The only generic goodness-of-fit criterion of LIME, model fidelity, is endogenous w.r.t. the kernel size.
+If we set the kernel size very small there will be many models with extremely good local fit as local refers only to a single observation.
+
+## The problem in more complex settings
+
+The previous setting was trivial for LIME.
+We could visualise the predicitve surface.
+This means that interpretability was largely given in the first place.
+We will study our problem in more complex settings to show that the problem persists.
+We will do so by examining simulated and real data.
+
+### Simulated data
+
+We simulate data with multiple numeric features and a numeric target.
+We assume the features to originate from a multivariate normal distribution where all features are moderately correlated.
+Note that the choice of the normal distribution to be consistent with the assumptions within LIME.
+We simulate three different data sets. 
+In the first one the true associations are linear.
+In the second one we exchange one of the linear associations with a non-linear one.
+In the third one the true assocations are linear but only affect the target within a sub interval of the feature domain.
+This should examine LIME's ability to determin local feature importance.
+For all three data sets we expect the kernel width to have crucial impact on the resulting explainer.
+However, for the global linear relationships we expect the weakest dependency because the true local model and the true global model are identical.
+
+#### Global Linear Relationships
+
+#### Global Non-Linearity
+
+#### Local Linear Relationships
+
+
+### Real data
 
 The real data set is... 
 EXPLANATIONS WHAT IT IS
@@ -94,7 +139,7 @@ We examine the stability of the explanations by coefficient and so-called stabil
 Stability paths are explained in detail below.
 We study how drastically explanations differ at different kernel sizes if we explain the nearest neighbours of the instance to be explained are used instead.
 
-## Simulated data
+
 
 
 
