@@ -71,16 +71,31 @@ How crucial the kernel width is can be illustrated by a very simple example.
 We simulate data with one target and two features.
 One feature is purely noise and the other one has a non-linear sinus-like effect on the target.
 If we plot the influential feature on the x-axis and the target on the y-axis we can observe this pattern in figure 1.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Non-linear univariate relationship."}
+knitr::include_graphics("images/04-09-01.png")
+```
+
 Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predictive surface.
 In fact, we observe that the predictions of the random forest look very accurate in figure 2.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Random Forest Predictions."}
+knitr::include_graphics("images/04-09-02.png")
+```
+
 LIME could now be used to explain this random forest locally.
 "Good" local models would look very different w.r.t. the value of the feature.
 We could describe the data locally well by piece-wise linear models.
 This is depicted in the figure 3.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Non-linear univariate relationship linearly interpolated."}
+knitr::include_graphics("images/04-09-03.png")
+```
+
 LIME should be able to find these good local explanations given the right kernel size.
 Let's select one instance that is close to the predictive surface. 
 We indicate this by the green point in figure 4.
-This particular instance can be linearly described by a linear regression with intercept $62$ and slope $- 4.5$.
+This particular instance can be linearly described by a linear regression with intercept $62$ and slope $-4.5$.
 If we set the kernel width to X, we actually fit this local model (on average).
 This can be seen by the red line in figure 4.
 However, if we increased the kernel width to X the coefficient changes to XX (on average) which seems drastically distorted as observed in figure 4 as well.
