@@ -14,6 +14,8 @@ While a neural network is anything but interpretable, we may find that some of t
 In general, there are two kinds of surrogate models: global and local surrogate models.
 In this chapter, we will focus on the latter ones.
 
+## Local Surrogate Models and LIME
+
 The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
 Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
 These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
@@ -66,6 +68,8 @@ This way we receive a single explanation.
 This one explanation can only help to understand and validate the corresponding prediction.
 However, the model as a whole can be examined and validated by multiple (representative) LIME explanations.
 
+## how LIME works in detail
+
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
 First, what does neighbourhood refer to?
@@ -87,6 +91,8 @@ The explanation has to deal with two trade-off terms when minimising:
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
 
+### The Neighbourhood
+
 This leads us to the first open question:
 What does neighbourhood refer to?
 Neighbourhood is a very vague term.
@@ -96,6 +102,8 @@ Weighting the observations w.r.t. their distance to the observation being explai
 This may possibly be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
+
+### What make a good explainer?
 
 We already answered the second open question -- what properties suitable explainers should have -- in parts.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
@@ -107,6 +115,8 @@ $\Omega\left(g\right)$ is our complexity measure and responsible to choose the m
 For example, for decision trees, tree depth may describe the complexity.
 In the case of linear regression, the $L_1$ norm may indicate how simple the interpretation has to be. 
 The resulting LASSO model allows us to focus only on the most important features.
+
+### Sampling and pertubation
 
 Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
 Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data. 
