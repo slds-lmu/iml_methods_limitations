@@ -95,26 +95,44 @@ knitr::include_graphics("images/04-09-03.png")
 LIME should be able to find these good local explanations given the right kernel size.
 Let's select one instance that is close to the predictive surface. 
 We indicate this by the green point in figure 4.
-This particular instance can be linearly described by a linear regression with intercept $62$ and slope $-4.5$.
-If we set the kernel width to X, we actually fit this local model (on average).
-This can be seen by the red line in figure 4.
-However, if we increased the kernel width to X the coefficient changes to XX (on average) which seems drastically distorted as observed in figure 4 as well.
+This particular instance can be linearly described by a linear regression with approximately intercept $60$ and slope $-4.5$.
+If we set the kernel width to $0.08$, we actually fit this local model (on average).
+This is indicated by the red line in figure 4.
+However, if we increased the kernel width to $2$ the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure 4.
+The second line does not seem to fit a local linear model but rather a global one.
 
-More systematically we review explanations resulting from altering the kernel size in figure X2. 
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data."}
+knitr::include_graphics("images/04-09-05.png")
+```
+
+More systematically we review explanations resulting from altering the kernel size in figure 5. 
 We average over many different models to achieve more robust local models.
 We do that because we observe some coefficent variation resulting from the (random) sampling.
-In figure X2 we see these averaged models for XXX different kernel sizes.
+In figure 5 we see these averaged models for 8 different kernel sizes.
 We observe that the larger we set the kernel size, the more we converge to a linear model that operates globally.
+In fact, the largest three kernel sizes ($0.5$, $1$ and $2$) appear very global while $0.005$, $0.05$ and $0.1$ seem to fit good local models.
+$0.25$ and $0.3$ are neither global nor very local.
 This is very intuitive and complies with the idea of a weighted local regression.
 
-Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with positive slope in figure X3.
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
+knitr::include_graphics("images/04-09-05-1.png")
+```
+
+Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with positive slope in figure 6.
 We observe a similar behaviour.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
+knitr::include_graphics("images/04-09-06.png")
+```
 
 This behaviour is not necessarily a problem but only a property of the LIME.
 However, it is problematic that the appropriate kernel size is not a priori clear.
 Additionally, there is no straight forward way to determine a good kernel width for a given observation to be explained.
 The only generic goodness-of-fit criterion of LIME, model fidelity, is endogenous w.r.t. the kernel size.
 If we set the kernel size very small there will be many models with extremely good local fit as local refers only to a single observation.
+In our examples it looks as if a very small kernel sizes should be prefered.
+A small kernel width indeed guarantees local fit.
+But what a small kernel width is also strongly depends on the dimensionality and complexity of the problem.
 
 ## The problem in more complex settings
 
