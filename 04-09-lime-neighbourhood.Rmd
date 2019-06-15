@@ -131,7 +131,7 @@ Additionally, there is no straight forward way to determine a good kernel width 
 The only generic goodness-of-fit criterion of LIME, model fidelity, is endogenous w.r.t. the kernel size.
 If we set the kernel size very small there will be many models with extremely good local fit as local refers only to a single observation.
 In our examples it looks as if a very small kernel sizes should be prefered.
-A small kernel width indeed guarantees local fit.
+A small kernel width indeed grants local fit.
 But what a small kernel width is also strongly depends on the dimensionality and complexity of the problem.
 
 ## The problem in more complex settings
@@ -159,10 +159,54 @@ We refrain from simulating more complex data sets as we strongly favour that the
 
 #### Global Linear Relationships
 
-#### Global Non-Linearity
+We simulate data where the true predicitve surface is a hyperplane.
+Good machine learning models should be able to approximate the hyperplane.
+This case is somewhat trivial because LIME.
+The most suitable model for this data would be linear regression which is interpretable in the first place.
+However, LIME can be easily tested in this controlled environment.
+We know the true local coefficients as they equal to the global ones.
+Thus, we can evaluate the goodness of the kernel width appropriatley.
+
+The simulated data looks as follows:
+The feature space consists of three features ($x_1$, $x_2$, $x_3$).
+All originate from a multivariate Gaussian distribution with mean $\mu$ and covariance $\Sigma$.
+$\mu$ is set to be $5$ for all features and $\Sigma$ incorporates moderate correlation.
+The true relationship of the features on the target $y$ is described by:
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
+We set the coefficients to be...
+
+We use a random forest as black box model.
+
+We choose random observations and compute the local LIME model for each one w.r.t. different kernel sizes.
+In this case we assume that the kernel size may be infinitely large as the global model should equal good local models.
+However, if the kernel width is set too small we may fit too much noise.
+
+The table below indicates the local parameters for one of the selected observations for different kernel sizes.
+Note that this is representative for all observations.
+
+...
 
 #### Local Linear Relationships
 
+We may induce non-linearity by different means.
+However, first of all it seems interesting to study how the kernel width affects LIME explanations in a very simple setting of non-linearity:
+The features only affect the target locally linearly, as expressed by:
+
+$$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 1_{x_2>c_2}+ \beta_3 x_3 + \epsilon $$
+
+where $x_1$ and $x_2$ only affect $y$ within the given interval.
+We again fit a random forest which can deal with this property.
+LIME should be able to detect this as well given the right kernel.
+To illustrate this we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predicitve surface. 
+
+...
+
+We outlined earlier that with an increasing dimensionality the same kernel width will correspond to a different locality.
+If we add new features, we should observe this. 
+The kernel width needs to be larger for higher dimensionality in order to fit appropriate local models.
+
+#### Global Non-Linearity
 
 ### Real data
 
