@@ -1,12 +1,89 @@
 library(mlr)
+# devtools::install_github('pkopper/lime')
 library(lime)
 library(BBmisc)
+library(mlbench)
+library(ggplot2)
 source("helpers.R", local = TRUE)
 
 # create "mnist" object in
 load_mnist()
 
+set.seed(5)
+mnist_2 = mnist[sample(10000), ]
+#mnist_2 = mnist[mnist$y %in% c(0,8), ]
+mnist_2$y[mnist_2$y %in% 0:4] = 0L
+mnist_2$y[mnist_2$y %in% 5:9] = 1L
+mnist_2 = mnist_2[, sapply(mnist_2, var) != 0]
+pts_to_predict = mnist_2[sample(nrow(mnist_2), 10), ]
 
+result = permutation_growth(
+  mnist_2, "y", pts_to_predict, type = "classif",
+  dim_increment = 300,
+  permutation_seq = c(100, 1000)
+)
+
+data(BostonHousing)
+
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+boston = boston[!duplicated(boston$lstat), ]#c("lstat", "medv")]
+
+P = 10
+bostp = as.data.frame(sapply(1:P, function(i) (boston$lstat^i)))
+names(bostp) = paste0("lstat_", 1:P)
+bostp$medv = boston$medv
+btask <- makeRegrTask(data = bostp, target = "medv")
+regr_model <- makeLearner("regr.lm")
+black_box <- mlr::train(regr_model, btask)
+x_grid = 1:4000 / 100
+x_feat = as.data.frame(sapply(1:P, function(i) (x_grid^i)))
+names(x_feat) = paste0("lstat_", 1:P)
+y_pred = predict(black_box, newdata = x_feat)
+
+
+btask = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
+regr_model = makeLearner("regr.extraTrees", nodesize = 1, ntree = 1)
+#regr_model = makeLearner("regr.svm", degree = 200, cost = 500)
+black_box <- mlr::train(regr_model, btask)
+x_grid = 1:4000 / 100
+y_pred = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+#model <- lm(data = boston, medv ~ poly(lstat, P))
+#x_grid <- 1:4000 / 100
+#y_pred <- predict.lm(model, newdata = data.frame(lstat = x_grid))
+
+ggplot(data = boston, aes(y = medv, x = lstat)) +
+  geom_point() +
+  geom_line(data = data.frame(x_grid, y_pred=y_pred$data$response), aes(x = x_grid, y = y_pred)) +
+  ylim(c(0,50))
+
+#model = lm(data = boston, medv ~ poly(lstat, 15) + crim)
+#class(model) = c(class(model), "lime_regressor")
+#model = caret::train(x = boston[c("lstat")], y = boston[["medv"]], method = "lm")
+explainer = lime(boston[c("lstat")], black_box, bin_continuous = FALSE, use_density = FALSE)
+
+explanation = explain(
+  data.frame(lstat=boston[c("lstat")][1,]),
+  explainer,
+  n_labels = 1L,
+  dist_fun = "euclidean",
+  n_features = 1L#,
+#  n_permutations = 10L
+)
+
+
+data(BostonHousing)
+
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+boston = boston[!duplicated(boston$lstat), ]#c("lstat", "medv")]
+pts_to_predict = BostonHousing[sample(nrow(BostonHousing), 10), c("lstat", "medv")]
+result = permutation_growth(
+  boston, "medv", pts_to_predict,
+  "lstat", type = "regr",
+  permutation_seq = c(100,1000)
+)
 
 ### First simulation
 set.seed(1)

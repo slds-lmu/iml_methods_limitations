@@ -110,14 +110,13 @@ feature_growth <- function(data, target, repeats = 10L, dim_increment = 10L, see
 permutation_growth = function(
   data,
   target,
+  pts_to_predict,
+  type,
   repeats = 10L,
   permutation_seq = c(2500L, 5000L, 10000L),
-  dim_increment = 10L,
-  seed = 123L
+  dim_increment = 10L
   ) {
   
-  set.seed(seed)
-
   # dimension of feature space
   p_max = ncol(data) - 1L
   feature_names = names(data[names(data) != target])
@@ -130,8 +129,16 @@ permutation_growth = function(
   train_data           = data[names(data) != target]
   train_data[[target]] = data[[target]]
   
-  task      = makeClassifTask(data = train_data, target = target)
-  learner   = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
+  
+  if (type == "classif") {
+    task = makeClassifTask(data = train_data, target = target)
+    learner = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
+    
+  } else {
+    task = makeRegrTask(data = train_data, target = target)
+    learner = makeLearner("regr.randomForest", ntree = 20L)
+  }
+  
   black_box = train(learner, task)
   explainer = lime(train_data[1L:p_max], black_box)
   
@@ -146,36 +153,117 @@ permutation_growth = function(
         n_feat_seq,
         function(n_features) {
           
-          # sample point to remove selection-bias
-          to_explain = sample(nrow(data), 1L)
-          # due to computational reasons a point of the train_data is picked
-          # the optimistic effect is minimal for high amount of train_data
-          target_pt  = train_data[to_explain, 1L:p_max]
+          feat_return        = rep(NA, p_max)
+          names(feat_return) = feature_names
+          
+          apply(
+            pts_to_predict,
+            MARGIN = 1,
+            function(target_pt) {
+              
+              explanation = explain(
+                as.data.frame(t(target_pt[1:p_max])),
+                explainer,
+                n_labels = 1L,
+                n_features = p_max,
+                n_permutations = n_permutations
+              )
+              
+              to_update = names(feat_return) %in% explanation$feature
+              feat_return[to_update] = explanation$feature_weight
+              names(target_pt) = paste0("data_", feature_names)
+              
+              c(
+                n_features = n_features,
+                n_permutations = n_permutations,
+                target_pt,
+                feat_return
+              )
+            }
+          )
+        }
+      )
+      # output progress
+      frac = which(n_permutations == permutation_seq) / length(permutation_seq)
+      log = sprintf("%2.2f/1.00 done", frac)
+      print(log)
+      # transpose matrix and transform to dataframe
+      as.data.frame(t(inner_return))
+    }
+  )
+  # concatenate dataframes
+  data.table::rbindlist(outer_return)
+}
+
+
+complexity_growth = function(
+  data,
+  target,
+  pts_to_predict,
+  covariable,
+  repeats = 10L,
+  seed = 123L,
+  n_permutations = 10,
+  max_degree = 15,
+  repetitions = 10
+) {
+  
+  set.seed(seed)
+  
+  pts_to_predict = apply(
+    pts_to_predict,
+    MARGIN = 2,
+    function(col) rep(col, repetitions)
+  )
+  
+  # dimension of feature space
+  p_max = ncol(data) - 1L
+  feature_names = names(data[names(data) != target])
+  
+  # move target variable to the end
+  train_data           = data[names(data) != target]
+  train_data[[target]] = data[[target]]
+  
+  # iterate over sequence of polynomial degrees
+  outer_return = lapply(
+    1:max_degree,
+    function(degree) {
+
+      model = lm(data = train_data, medv ~ poly(get(covariable), degree))
+      class(model) = c(class(model), "lime_regressor")
+      explainer = lime(train_data[1L:p_max], model)
+      
+      inner_return = apply(
+        pts_to_predict,
+        MARGIN = 1,
+        function(target_pt) {
           
           feat_return        = rep(NA, p_max)
           names(feat_return) = feature_names
 
           explanation = explain(
-            target_pt,
+            as.data.frame(t(target_pt[1:p_max])),
             explainer,
             n_labels = 1L,
-            n_features = n_features,
+            n_features = p_max,
             n_permutations = n_permutations
           )
           
           to_update = names(feat_return) %in% explanation$feature
           feat_return[to_update] = explanation$feature_weight
+          names(target_pt) = paste0("data_", feature_names)
           
           c(
+            degree = degree,
             n_permutations = n_permutations,
-            n_features = n_features,
+            target_pt,
             feat_return
           )
           
         }
       )
       # output progress
-      frac = which(n_permutations == permutation_seq) / length(permutation_seq)
+      frac = degree / max_degree
       log = sprintf("%2.2f/1.00 done", frac)
       print(log)
       # transpose matrix and transform to dataframe
