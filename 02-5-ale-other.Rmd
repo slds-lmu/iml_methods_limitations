@@ -1,3 +1,18 @@
 # ALE Intervals, Piece-Wise Constant Models and Categorical Features
 
-*Author: firstname lastname*
+*Author: Nikolas Fritz*
+As mentioned in the fomrer section the choice of intervals an starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
+## How to choose the number and/or length of the intervals
+
+Before investigating the choice of intervals one should be clear about in how far they influence the estimation. On the one hand for a given interval the ALE estimation will be linear due to the expected constant effect within this interval.
+Remember that within each interval the local effect within this interval was calculated by the mean total difference of the prediction when shifting the variable of interest form th lower interval boundary to the upper one. This leads by definition to a constant effect within this interval that results in a linear function when integrating over the interval.   
+It seems obvious that the ALE estimation (within a certain interval) can only be as good as a linear approximation to the "real"  and usually unknown prediction function can be.
+### State of the art
+### General Problems
+### Problems with piece-wise constant models
+### Outlook 
+
+## Categorical Features
+### Ordering the features
+### Changes of the ALE due to diffrent orders
+### Interpretation
