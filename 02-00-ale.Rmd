@@ -80,7 +80,7 @@ knitr::include_graphics("images/ale_example.png")
 ```
 (ref:aleExample) ALE on basis of 5 intervals
 
-To understand the interpretation of the ALE it can be usefull to first have a look on the intuition behind the uncentered ALE.
+To understand the interpretation of the ALE it can be usefull to first have a look at the intuition behind the uncentered ALE.
 If the value of the uncentered ALE at $x_1 = 2$ equals $1$, this means that if one samples a data point from the joint distribution of both features but only knows that $x_1 = 2$, one would expect the prediction to be 1 higher than the average prediction for  realistic data points at $x_1 = z_{0,1}$ (i.e. data points sampled from the conditional distribution at $x_1 = z_{0,1}$). This expectation strongly depends on the reference point $z_{0,1}$, which per definition is smaller than the smallest $x_1$-value of the data.
 By substracting the expectation of the uncentered ALE - which is the mean difference of the prediction of a data point from the joint distibution to the prediction of a realistic data point(i.e. from the conditional distribution) at $x_1 = z_{0,1}$ - the interpretation becomes a lot easier. If the value of the (centered) ALE at $x_1 = 2$ equals for example $2$, this means that, if one samples a data point from the joint distribution of both features and $x_1$ equals 2, one would expect the prediction to be 2 higher than the average prediction for an average data point of the joint distribution.          
 
