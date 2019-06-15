@@ -27,7 +27,7 @@ library(randomForest)
 ## Return:
 ## Estimation results from Decision Tree or Random Forest
 
-PFI_interaction_identifier <- function(pfi, data, features, model = "Decision Tree", tree_depth){
+PFI_interaction_identifier <- function(pfi, data, features, model = "Decision Tree", tree_depth, n_tree){
   ## include assertions
   ##if (getOption("warn") > 0) {
   ##  stopifnot(
@@ -50,8 +50,10 @@ PFI_interaction_identifier <- function(pfi, data, features, model = "Decision Tr
     ici.integral <- ici[, lapply(.SD, mean, na.rm = TRUE), .SDcols = mid, by = "row.id"]
     data[, paste0("imp", feat)] <- ici.integral$mse
   }
-  data <- data
   
+  data <- data
+  print(colnames(data))
+  print(is.data.frame(data))
   
   n_features <- length(features)
   formular <- list(length(n_features))
@@ -63,16 +65,15 @@ PFI_interaction_identifier <- function(pfi, data, features, model = "Decision Tr
     
     ## loop through formular
     ## and fit model for each feature respectively
-    for(i in 1:n_features){
+    for(feat in features){
       
-      var_name <- colnames(test)[i]
-      var_imp <- paste0("imp", var_name)
-      var_index_pfi <- which(unique(pfi$features) == var_name)
+      var_imp <- paste0("imp", feat)
+      var_index_pfi <- which(unique(pfi$features) == feat)
       var_predict <- paste(unique(pfi$features)[-var_index_pfi], collapse = " + ")
       
       
-      formular[[i]] <- paste(var_imp, " ~ ", var_predict)
-      model_results[[i]] <- rpart(formular[[i]], data = data, maxdepth = tree_depth)
+      formular[[feat]] <- paste(var_imp, " ~ ", var_predict)
+      model_results[[feat]] <- rpart(formular[[feat]], data = data, maxdepth = tree_depth)
       
     }
     
@@ -81,35 +82,57 @@ PFI_interaction_identifier <- function(pfi, data, features, model = "Decision Tr
   
   if(model == "RandomForest"){
     
-    for(i in 1:n_features){
-      
+    for(feat in features){
+    
+    var_index_pfi <- which(unique(pfi$features) == feat) 
+    var_predict <- as.vector(unique(pfi$features)[-var_index_pfi])
+    var_imp <- paste0("imp", feat)
+    data_variables <- c(var_predict, var_imp)
+    data_RF <- data[, data_variables]
       ## Create Learner: Specify the machine learning algorithm with the mlr package
       
-      lrn <- makeLearner("regr.randomForest", ntree = 100)
+    lrn <- makeLearner("regr.randomForest", ntree = n_tree)
       
-      ## Create Task: Create regression task for mlr
+    ## Create Task: Create regression task for mlr
       
-      task <- makeRegrTask(data = X, target = "y")
+    task <- makeRegrTask(data = data_RF, target = var_imp)
+      
+    mod <- train(lrn, task, subset = NULL)
+    
+    task.pred <- predict(mod, task = task)
+    performance <- performance(task.pred)
       
     }
     
   }
   
+  
   print(head(data))
   print(formular)
   print(model_results)
-  
+  print(mod)
+  print(task.pred)
+  print(performance)
 }
+
+### test code snippets
+
+
+
+
 
 
 #### test line
 
-PFI_interaction_identifier(pfi, data = test, features = c("X_1", "X_2"), tree_depth = 1)
+PFI_interaction_identifier(pfi, data = test, features = c("X_1", "X_2"), model = "Decision Tree", tree_depth = 1)
+PFI_interaction_identifier(pfi, data = test, features = c("X_1", "X_2"), model = "RandomForest", n_tree = 10)
 
 
 ## plot results from PFI_interaction_identifier
-plot_interaction_detect <- function(){
+plot_interaction_detect <- function(data, method){
   
+  
+  plot(as.party(rp))
 }
 
 
@@ -117,7 +140,6 @@ plot_interaction_detect <- function(){
 
 
 
-rp <- rpart(impX_1 ~ X_2 + X_3, data = test, maxdepth = 1)
-plot(as.party(rp))
+
 
 

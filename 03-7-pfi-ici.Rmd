@@ -3,8 +3,25 @@
 *Author: Moritz Wagner*
 
 
+The introducing chapter already took up several problems of the concept of Permutation Feature Importance (PFI). Among others, the one-dimensional nature of the metric poses a limitation, especially if one is interested in a more detailed analysis of the Feature Importance of a specific feature. Here, it might be of special interest to investigate whether the importance of a feature varies within its range of values. Pursuing this objective, a visualization tool where the different values of the respective feature are plotted on the x-axis and the varying Feature Importance metric on the y-axis, seems to be promising. Partial Importance (PI) plots visualize the average partial importance of a feature, by marginalizing over all other features in the feature space
+
+
+Convenience of the concepts:
+
+As these concepts are already established in the literature, this chapter will mainly focus on the 
+As Cassalicio (XXXX) noted, the exchangability  
+
+averaging the ICI curves across observations yields a PI curve, and integrating the PI curve with respect to the distribution of the considered feature results in the global Feature Importance
+
+These subgroup analyses are only enabled when the aggregated measure is broken down into its individual observations. Pursuing this objective, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) will be introduced. 
+
+
+Note, these methods are conceptually highly comparable to the already discussed Partial Dependence (PD) and Individual Conditional Expectation (ICE) methods, so the reader should already be familiarised with the main principles. 
+
+
+
 1) Introduce the main limitation of PFI which will be solved in this chapter
-2) Why is it interesting
+2) Why is it interesting?
 3) What are the concepts I will focus on in the following (PI plots and ICI plots)
 4) Why convenient choice? Nice way to visualize => provides a good overview 
 
@@ -14,18 +31,29 @@ Here: name so arguments for why it would be nice to assess the feature importanc
 
 Then: 
 
+This chapter proceeds as follows.
+
+
+The following chapters are structured as follows: First, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) plots are theoretically introduced. This shall provide the reader with an in-depth understanding of how the feature importance of a feature can be visualized, both on a global and local level. Further it will be shown that these concepts are essential when conduction any subgroup analyses.
+The introduction of these concepts are essential to further understand how they can be used to apply subgroup analyses within the data. These analyses can then be used to potentially detect any interactione effects between predictor variables which might confound the initial results on measuring feature importance. 
+
+
 
 ## Theoretical Framework
 
-theortical formular
+Explain theory behind Partial Importance and Individual Conditional Importance, but not too exhaustive. 
+=> just rewrite content from Cassaliccio (XXXX)
 
 algorithm for  PI and ICI 
 
 
-## Simulation and Real Life Data
+## The usefulness of Partial Importance and Individual Conditional Importance: Insights gained through simulations
 
 
-## Discussion and Implementation of New Concepts
+## Application on Real Data
+
+
+## Discussion and Outlook
 
 Reason for discussion: 
 as it is a rather easy complement of the so far considered ICI plots with a different angle/perspective.
@@ -35,3 +63,20 @@ dICI plots and c-ICI (centered ICI plots)
 
 d-ICI: when the curves have a wide range of intercepts .. then hard to detect any heterogeneity in the Feature Importance..
 Question: Is this the same problem for Feature Importance or is this canceled out?
+
+
+Discuss Problems:
+Focus on interaction effects.
+ICI plots enable to get a first hint on whether interaction effects exist. 
+However, visualization does not give a perfect clue on whether interaction effects indeed exists.
+Because, it could be also the case that shape of the effect ist just not linear and has instead a rather weird form 
+
+
+But still a problem: 
+One has to have a good clue on when interaction effects exist!
+One should have good hint on how a certain interaction between two variables is structured!
+
+So concept definitely not bullet proof
+=> introduce concept of d-ICI 
+=> Question: Is this a better and more reliable concept to detect interaction effects?
+
