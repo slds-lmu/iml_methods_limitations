@@ -1,14 +1,59 @@
 # ALE Intervals, Piece-Wise Constant Models and Categorical Features
 
 *Author: Nikolas Fritz*
-As mentioned in the fomrer section the choice of intervals an starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
+
+
+As mentioned in the former section the choice of intervals an starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
 ## How to choose the number and/or length of the intervals
 
 Before investigating the choice of intervals one should be clear about in how far they influence the estimation. On the one hand for a given interval the ALE estimation will be linear due to the expected constant effect within this interval.
-Remember that within each interval the local effect within this interval was calculated by the mean total difference of the prediction when shifting the variable of interest form th lower interval boundary to the upper one. This leads by definition to a constant effect within this interval that results in a linear function when integrating over the interval.   
-It seems obvious that the ALE estimation (within a certain interval) can only be as good as a linear approximation to the "real"  and usually unknown prediction function can be.
+Remember that within each interval the local effect within this interval was calculated by the mean total difference of the prediction when shifting the variable of interest from the lower interval boundary to the upper one. This leads by definition to a constant effect within this interval that results in a linear function when integrating over the interval.   
+It seems obvious that the ALE estimation (within a grid interval) can only be as good as a linear approximation for the "real" and usually unknown prediction function (TODO: check that!) can be. Therefore it is crucial for a good estimation to have small enough intervals especially in regions where the prediction function is shaky or far from linear (i.e high second derivatives) with respect to the feature of interest.
+On the other hand to get stable estimations for a grid interval its important to have a sufficient high number of datapoints within the interval. This means that the intervals shouldn't become too small so that they would contain only a few data points. (Note that this is only true if the other features have an influence on the local effect of the prediction function. If they dont, any data point within the grid interval would lead to the same predictions at the interval boundarys)
+Thats why there is a natural trade of between a small interval width and the number of the contained data points. 
+
+  
 ### State of the art
-### General Problems
+So the question is how to optimally choose the grid intervals. Should they all be of the same width containing a different number of datapoints? Should they all contain the same or at least a similar number of datapoints, accepting different interval sizes. Or could there even be a better solution in between the two concepts?
+Within the iml-package which is one of two implementations of ALE-plots the choosen method is the second one. The quantiles of the distribution of the feature are used as the grid that defines the intervals. That means the length of the intervals depends on the choosen grid size and the given feature distribution.
+
+In the following section some examples with artificial data sets are provided, that should help to get a better feeling for the different deterministic factors that influnce the goodness of the ALE estimation.
+
+### ALE Approximations 
+
+In the following section, we only consider two dimensional data sets, of continious features $x_1$ and $x_2$ with a certain correlation. Furthermore we use some exemplary prediction functions which are differentiable such that we can calculate the theoratical ALE (see section XX formula XX) and use it to evaluate the goodness of the estimated ALE-curve. As we want to isolate some of the above mentioned influencial factors, we start with some easy examples adding step by step more complexity to the probem. 
+#### Example 1
+
+In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e. $X_1 \thicksim \textit{U}(0,10) $. Furthermore we assume the conditional distribution of the feature $x_2$ given $x_1$ to be also uniform on the interval $[x_1 - 3, x_1 + 3 ]$, i.e. $X_2 \vert X_1 = x_1 \thicksim \textit{U}(x_1 - 3, x_1 + 3 ) $. Sampling 100 data points from this distribution yields the first dataset.
+
+```{r dataALE, fig.cap='(ref:Dataset1)', out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_Dataset1.PNG")
+```
+(ref:Dataset1)The correlation is clearly recognizable.
+
+Why we only made assumptions about the conditional distributon of $X_2$ and not on the joint distribution of $(X_1,X_2)$ gets clearer once we take a look on the calculation of the theoratical ALE. Therefore we first asume the prediction function $\hat{f}_1 (x_1, x_2) =  (x_1-4)(x_1-5)(x_1-6) + x_2^3$. Due to the special structure of $f_1$ the partial derivative with respect to $x_1$ is a polynomial of degree 2 which doesn't depend on $x_2$, concretley $\hat{f}^1(x_1,x_2) = 3x^2 -30x +74$.  
+Now we can calculate the theoratical (uncentered) ALE:
+$$(1)~~~~\widetilde{ALE}_{\hat{f},1}(x) = \int_{z_{0,1}}^x E_{X_2\vert X_1= Z_1}[\hat{f}^1(x_1,x_2)]~dz~~~=$$
+$$(2)~~~~ \int_{z_{0,1}}^x \int p_{X_2\vert X_1}(x_2)\hat{f}^1(z,x_2)~dx_2~dz~~~=$$
+$$(3)~~~~ \int_{z_{0,1}}^x \hat{f}^1(z,x_2)\int p_{X_2\vert X_1}(x_2)~dx_2~dz~~~=$$
+
+$$(4)~~~~ \int_{z_{0,1}}^x \hat{f}^1(z,x_2)~dz~~~=$$
+$$(5)~~~~ \int_{z_{0,1}}^x  3z^2 -30z +74~dz~~~=$$
+$$(6)~~~~ [z^3 -15z^2 +74z + c]_{z_{0,1}}^x~~~=$$
+
+$$(7)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 - 15 z_{0,1}^2 + 74z_{0,1}~~~$$
+To get the centered ALE we have to calculate:
+
+$$(8)~~~~ALE_{\hat{f},1}(x) = \widetilde{ALE}_{\hat{f},1}(x) - E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~=$$
+$$(9)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 - 15 z_{0,1}^2 + 74z_{0,1} - E[X_1^3 -15X_1^2 +74X_1 - z_{0,1} ^ 3 - 15 z_{0,1}^2 + 74z_{0,1}] ~~~=$$
+$$(10)~~~~ x^3 -15x^2 +74x - E[X_1^3 -15X_1^2 +74X_1] ~~~=$$
+$$(11)~~~~ x^3 -15x^2 +74x - E[X_1^3] +15E[X_1^2] -74E[X_1] ~~~=$$
+$$(11)~~~~ x^3 -15x^2 +74x - 250 +15 * (100/3) -74* 5 ~~~=$$
+$$(11)~~~~ x^3 -15x^2 +74x  -120~~~$$
+
+
+
 ### Problems with piece-wise constant models
 ### Outlook 
 
