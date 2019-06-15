@@ -91,7 +91,7 @@ The explanation has to deal with two trade-off terms when minimising:
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
 
-### The Neighbourhood
+### Neighbourhood
 
 This leads us to the first open question:
 What does neighbourhood refer to?
@@ -103,7 +103,7 @@ This may possibly be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-### What make a good explainer?
+### What makes a good explainer?
 
 We already answered the second open question -- what properties suitable explainers should have -- in parts.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
@@ -116,7 +116,7 @@ For example, for decision trees, tree depth may describe the complexity.
 In the case of linear regression, the $L_1$ norm may indicate how simple the interpretation has to be. 
 The resulting LASSO model allows us to focus only on the most important features.
 
-### Sampling and pertubation
+### Sampling and perturbation
 
 Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
 Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data. 
