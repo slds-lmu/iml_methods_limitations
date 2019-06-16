@@ -2,7 +2,7 @@
 
 ## Partial Dependence Plots (PDP)
 
-The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. It maps the marginal effect of the selected variable(s) and can reveal the nature of dependence structure between target and individual feature variable.\citep{molnar2019}
+The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can reveal the nature of dependence structure. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between predicted response and individual feature variable.\citep{molnar2019}
 
 The underlying function can be described as follows:
 
@@ -12,18 +12,18 @@ While the general model function $f(x) = f(x_S, x_C)$ depends on all input varia
 $$f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$$
 
 
-The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are independent and thus uncorrelated.\citep{hastie2013elements}
+The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. An exemplary plot - based on the 'Titanic' data set which contains information on 2224 passengers and crew members - is given in figure \ref{plot1}. In order to derive realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are independent and thus uncorrelated.\citep{hastie2013elements}
 
 $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
 
-```{r echo=FALSE, out.width='90%', fig.cap="The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards."}
+```{r plot1, echo=FALSE, out.width='90%', fig.cap="The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards."}
 knitr::include_graphics('images/age_pdp.jpeg')
 ```
 
-In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e. it shows the probability for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
+In classification problems with probability outputs, such as the probability to survive the sinking of the Titanic in 1912 depending on the passenger class as shown in \ref{plot2}, the partial dependence function is modeled separately for all of the K different classes. It shows the probability for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
 
-```{r echo=FALSE, out.width='90%', fig.cap="The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class."}
+```{r plot2, echo=FALSE, out.width='90%', fig.cap="The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class."}
 knitr::include_graphics('images/pdp_class.jpeg')
 ```
 
@@ -31,13 +31,13 @@ knitr::include_graphics('images/pdp_class.jpeg')
 
 **Advantages and Limitations of Partial Dependence Plots**
 
-Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019}
+Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \ref{plot3} shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) already degrades the interpretability with its colour intensity scale as shown in \ref{plot4}. 
 
-```{r echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males."}
+```{r plot3, echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males."}
 knitr::include_graphics('images/pdp_2_features_1.jpeg')
 ```
 
-```{r echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, whilke from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare."}
+```{r plot4, echo=FALSE, out.width='100%', fig.cap="The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, while from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare."}
 knitr::include_graphics('images/pdp_2_features_2.jpeg')
 ```
 
@@ -47,7 +47,7 @@ Drawing a PDP with one or two feature variables allows a straight-forward interp
 
 
 ## Individual Conditional Expectation Curves
-While the partial dependence plots provide the average effect of a feature, the Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances. Thus, a PDP is the average of the lines of an ICE plot.\citep{molnar2019}
+While partial dependence plots provide the average effect of a feature, Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances. Thus, a PDP is the average of the lines of an ICE plot.\citep{molnar2019}
 
 
 A formal definition: consider the response function $\hat{f}$, for each instance in ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$, the curve $\hat{f}_S^{(i)}$ is plotted against the observed values of $x^{(i)}_S$, while $x^{(i)}_C$ remains fixed.\citep{molnar2019}\citep{Goldstein2013}
@@ -63,6 +63,7 @@ knitr::include_graphics('images/ice_plot.jpeg')
 Heterogeneity in the model can be difficult to distinguish when the curves have a wide range of intercepts and “stacked” on each other. The so called centered ICE plot (c-ICE) is a simple solution which removes level effects. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point. \citep{molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
 
 $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
+Experience has shown that the most interpretable plots occur when the anchor point $x^a$ is chosen as minimum or maximum of the observed values.
 It is recommended that the most interpretable plots occur when the minimum or the maximum observed value is chosen.
 
 
@@ -88,6 +89,6 @@ When no interactions are present in the fitted model, all curves in the d-ICE pl
 ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences and identify subgroups and interactions between model inputs. 
 
 **Disadvantages**
-Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see to average in ICE plots.\citep{molnar2019}
+Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see the average in ICE plots.\citep{molnar2019}
 
 
