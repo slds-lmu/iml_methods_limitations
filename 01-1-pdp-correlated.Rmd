@@ -1,4 +1,72 @@
 # PDP and Correlated Features
 
-*Author: firstname lastname*
+*Author: Veronika Kronseder*
+
+##	Problem Description 
+-	Black box algorithms use training data to generate a model that maps the features to the fitted values. However, it is often difficult to understand how exactly the model uses x to generate predictions. \citep{Goldstein2013} 
+-	PDP and ICE plots are graphical tools to visualize the impact of individual features, which helps to investigate the underlying mechanisms. 
+\newline
+
+###	Correlated Features
+-	Partial dependence function as such represents the effect of $x_S$ on $f(x)$ after accounting for the average effects of the variables in $x_C$ on $f(x)$ and NOT the effect of $x_S$ ignoring the effects of $x_C$. The latter is given by the conditional expectation $\tilde{f}_S(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)|x_S]$ which will only be the same as the estimation of the partial dependence function if the features $x_S$ and $x_C$ are independent. \citep{hastie2013elements}
+-	Major assumption to produce meaningful PDPs: independence of features. A violation of the assumption means that the features are correlated. 
+-	Effect of $x_S$ can be additive or multiplicative; conditional expectation will not produce the effect in either case. \citep{hastie2013elements} 
+-	Computation of PDP with correlated features may lead to unrealistic data points. Example: … 
+\newline
+
+###	Extrapolation
+-	Computation of PDP by evaluating the model $\hat{f}(x)$ at the observed data points for $x_S$, calculating the mean and then joining the points by lines. Parts between the observed points are extrapolations. \citep{Goldstein2013}
+-	Extrapolation is not necessarily realistic for unobserved areas. 
+-	Nature of black-box modelling makes it impossible to retrace what the extrapolation looks like. \citep{Goldstein2013} 
+
+##	Demonstration 
+###	Simulated Data
+-	(positively and negatively?) correlated features
+-	Numeric variables 
+-	Categorical variables 
+-	Artificially produce unobserved area to demonstrate extrapolation???
+
+```{r}
+library(mvtnorm) 
+library(ggplot2)
+library(ggcorrplot)
+
+# Correlated numerical features 
+mu_1 <- 1
+mu_2 <- 20
+var_1 <- 5
+var_2 <- 10
+cov_12 <- 0.85*sqrt(var_1)*sqrt(var_2)
+
+data <- as.data.frame(rmvnorm(n = 10000, mean = c(mu_1, mu_2), sigma = matrix(c(var_1, cov_12, cov_12, var_2), nrow=2)))
+colnames(data) <- c("numeric_1", "numeric_2")
+
+cov(data)
+mat <- cor(data)
+
+ggcorrplot(mat,lab = TRUE, method = "square", outline.col = "white", tl.cex = 12, show.legend=F, tl.col="black") + theme_bw(base_size=12) + theme(legend.position="none", axis.title = element_blank(),plot.title = element_text(hjust = 0.5, size=15), axis.text = element_text(colour = "black", face="bold", size=12),axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Correlated categorical features 
+
+
+```
+
+
+###	Real Data
+-	Home Insurance Data
+-	Boston/Melbourne Housing
+
+##	Discussion of solutions 
+###	Correlated Features
+-	M-Plots: average over conditional distribution of the feature. Problem: avoids predictions of unlikely data instances, BUT mixes the effect of a feature wit effects of all correlated features \citep{molnar2019}
+-	ALE Plots: average over changes in predictions (based on conditional distribution) and accumulate them over the grid leads to pure effects (not mixed with effect of correlated features) \citep{molnar2019}
+-	
+###	Extrapolation
+-	ICE Plot: marking each curve at observed point helps to assess presence and nature of extrapolations \citep{Goldstein2013}
+-	PDP: indicators for data points on the x-axis \citep{molnar2019}
+
+
+
+
 
