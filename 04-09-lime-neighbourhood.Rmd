@@ -177,6 +177,8 @@ $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
 We set the coefficients to be...
 
 We use a random forest as black box model.
+Below we indicate the test set performance of the model in figure X.
+It seems as if the random forest largely succeeds in finding the true association between the features and the target.
 
 We choose random observations and compute the local LIME model for each one w.r.t. different kernel sizes.
 In this case we assume that the kernel size may be infinitely large as the global model should equal good local models.
@@ -185,9 +187,15 @@ However, if the kernel width is set too small we may fit too much noise.
 The table below indicates the local parameters for one of the selected observations for different kernel sizes.
 Note that this is representative for all observations.
 
-...
+We observe that too small kernel widths are not able to reproduce the global predictive surface.
+However, moderately all kinds of kernel widths from moderate size to very large kernels fit very similar models which are all very close to the _true_ model where __qualitative__ model explanations remain identical.
+
+This means that for predicitive surfaces that correspond to linear relationships the kernel width is a non-critical parameter.
 
 #### Local Linear Relationships
+
+For non-linear relationships we have already seen that the kernel width is more crucial.
+Thus, we aim to study the behaviour of the explanations w.r.t. the kernel size where the true associations are non-linear or _local_.
 
 We may induce non-linearity by different means.
 However, first of all it seems interesting to study how the kernel width affects LIME explanations in a very simple setting of non-linearity:
@@ -197,7 +205,7 @@ $$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 1_{x_2>c_2}+ \beta_3 x_3 
 
 where $x_1$ and $x_2$ only affect $y$ within the given interval.
 We again fit a random forest which can deal with this property.
-LIME should be able to detect this as well given the right kernel.
+LIME should be able to detect this as well -- given the right kernel.
 To illustrate this we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predicitve surface. 
 
 ...
