@@ -174,23 +174,27 @@ $\mu$ is set to be $5$ for all features and $\Sigma$ incorporates moderate corre
 The true relationship of the features on the target $y$ is described by:
 
 $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
-We set the coefficients to be...
+We set the true coefficients to be $\beta_1 = 4$, $\beta_2 = -3$, $\beta_1 = 5$.
 
 We use a random forest as black box model.
-Below we indicate the test set performance of the model in figure X.
+Below we indicate the test set performance of the model in figure 7.
 It seems as if the random forest largely succeeds in finding the true association between the features and the target.
 
 We choose random observations and compute the local LIME model for each one w.r.t. different kernel sizes.
 In this case we assume that the kernel size may be infinitely large as the global model should equal good local models.
 However, if the kernel width is set too small we may fit too much noise.
+Hence, in this case we may find no good local models.
 
-The table below indicates the local parameters for one of the selected observations for different kernel sizes.
+The figures below (figure 8) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
 Note that this is representative for all observations.
 
-We observe that too small kernel widths are not able to reproduce the global predictive surface.
+We observe that too small kernel widths are not able to reproduce the global predictive surface at all.
 However, moderately all kinds of kernel widths from moderate size to very large kernels fit very similar models which are all very close to the _true_ model where __qualitative__ model explanations remain identical.
+We further notice that LIME does not converge to the true global model but a shrunk version of it. 
+This can be reasoned by the regularisation applied in LIME (?).
 
-This means that for predicitive surfaces that correspond to linear relationships the kernel width is a non-critical parameter.
+These results allow to conclude that for predicitive surfaces corresponding to linear relationships, the kernel width is a non-critical parameter.
+However, this case may be seen as trivial for most users of LIME.
 
 #### Local Linear Relationships
 
@@ -205,7 +209,7 @@ $$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 1_{x_2>c_2}+ \beta_3 x_3 
 
 where $x_1$ and $x_2$ only affect $y$ within the given interval.
 We again fit a random forest which can deal with this property.
-LIME should be able to detect this as well -- given the right kernel.
+LIME should be able to detect this as well -- given an appropriate kernel.
 To illustrate this we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predicitve surface. 
 
 ...
