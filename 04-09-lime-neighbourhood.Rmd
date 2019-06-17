@@ -190,9 +190,10 @@ However, if the kernel width is set too small we may fit too much noise.
 Hence, in this case we may find no good local models.
 
 The figures below (figure 8) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
+The three vertical line indicate the true global coefficients.
 Note that this is representative for all observations.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Coefficients for different kernel widhts."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Coefficients for different kernel widhts."}
 knitr::include_graphics("images/04-09-08-1.png")
 knitr::include_graphics("images/04-09-08-2.png")
 knitr::include_graphics("images/04-09-08-3.png")
@@ -220,14 +221,30 @@ $$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 1_{x_2>c_2}+ \beta_3 x_3 
 
 where $x_1$ and $x_2$ only affect $y$ within the given interval.
 We again fit a random forest which can deal with this property.
-LIME should be able to detect this as well -- given an appropriate kernel.
+LIME should be able to detect this as well -- given an appropriate kernel for each observation.
 To illustrate this we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predicitve surface. 
+We set $\beta_1 = 4$, $\beta_2 = -3$, $\beta_1 = 5$ and $c_1 = 6$ and $c_2 = 4$.
 
-...
+Representative now means we should investigate observations the following properties:
+1. $x_1 < 6$ and $x_2 < 4$.
+2. $x_1 > 6$ and $x_2 < 4$.
+3. $x_1 < 6$ and $x_2 > 4$.
+4. $x_1 > 6$ and $x_2 > 4$.
+We think these observations are best explained in areas with reasonable margin to $c_1$ and $c_2$.
 
-We outlined earlier that with an increasing dimensionality the same kernel width will correspond to a different locality.
-If we add new features, we should observe this. 
-The kernel width needs to be larger for higher dimensionality in order to fit appropriate local models.
+Below we depict the coefficient paths for four representative observations.
+We can clearly see that in this case we cannot simply set an arbitrary kernel width.
+The true local coefficients are only approximated well within a narrow interval of the kernel width.
+As before, we observe that a too small kernel width however produces non-meaningful coefficients.
+Additionally, we observe that for lower kernel widths, the local models are rather volatile (see figure).
+
+Hence, we aim to better investigate this volatility.
+We display the mean and the confidence intervals of the coefficients from 100 different models for different kernel sizes in figure X.
+For very low kernel widths we observe a massive volatility which decreases to an acceptable level only after $0.25$ for all covariates.
+
+We observe that there is a trade-off between stable coefficients and locality.
+In our analysis it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
+Mathematically speaking, we aim the minimal kernel size that satisfies a volatility condition.
 
 #### Global Non-Linearity
 
