@@ -37,9 +37,14 @@ load_mnist = function() {
 
 #' @return dataframe of feature weights
 #' @example result = feature_growth(iris, "Species", dim_increment = 1)
-feature_growth <- function(data, target, repeats = 10L, dim_increment = 10L, seed = 123) {
-  
-  set.seed(seed)
+feature_growth <- function(
+  data,
+  target,
+  pts_to_predict,
+  type,
+  repeats = 10L,
+  dim_increment = 10L
+  ) {
   
   # dimension of feature space
   p_max = ncol(data) - 1L
@@ -48,58 +53,84 @@ feature_growth <- function(data, target, repeats = 10L, dim_increment = 10L, see
   # move target variable to the end
   data_sort           = data[names(data) != target]
   data_sort[[target]] = data[[target]]
+  
+  # remove the target variable from points for interpretation
+  pts_to_predict = pts_to_predict[names(pts_to_predict) != target]
 
   # iterate over amount of feature dimensions
   outer_return = lapply(
     seq(2L, p_max, by = dim_increment),
     function(p) {
-      # sample point to remove selection-bias
-      to_explain = sample(nrow(data), 1L)
-      train_data = data_sort[-to_explain, 1L:p]
-      target_pt  = data_sort[ to_explain, 1L:p]
       
-      train_data[[target]] = data_sort[[target]][-to_explain]
+      # define train data based on iterated dimension
+      train_data           = data_sort[, 1L:p]
+      train_data[[target]] = data_sort[[target]]
       
-      task      = makeClassifTask(data = train_data, target = target)
-      learner   = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
+      # define task and learner based on data type
+      if (type == "classif") {
+        task = makeClassifTask(data = train_data, target = target)
+        learner = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
+        
+      } else if (type == "regr") {
+        task = makeRegrTask(data = train_data, target = target)
+        learner = makeLearner("regr.randomForest", ntree = 20L)
+        
+      } else {
+        stop("Wrong type, buddy")
+      }
+      
       black_box = train(learner, task)
-      explainer = lime(train_data[1L:p], black_box)
+      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, use_density = FALSE)
       
       # create sequence of "n_feature" arguments
       n_feat_seq = seq(1L, p, by = dim_increment)
       n_feat_seq = rep(n_feat_seq, each = repeats)
       
       # iterate over sequence of "n_feature" arguments
-      inner_return = sapply(
+      inner_return = lapply(
         n_feat_seq,
         function(n_features) {
           
           feat_return        = rep(NA, p_max)
           names(feat_return) = feature_names
           
-          explanation = explain(
-            target_pt,
-            explainer,
-            n_labels = 1L,
-            n_features = n_features
+          # iterate over all points for interpretation
+          inner_inner = apply(
+            pts_to_predict,
+            MARGIN = 1,
+            function(target_pt) {
+              
+              explanation = explain(
+                as.data.frame(t(target_pt[1:p])),
+                explainer,
+                n_labels = 1L,
+                n_features = n_features,
+                dist_fun = "euclidian",
+                kernel_width = 100
+              )
+              
+              to_update = names(feat_return) %in% explanation$feature
+              feat_return[to_update] = explanation$feature_weight
+              names(target_pt) = paste0("data_", feature_names)
+              
+              c(
+                p = p,
+                n_features = n_features,
+                target_pt,
+                feat_return
+              )
+            }
           )
-          
-          to_update = names(feat_return) %in% explanation$feature
-          feat_return[to_update] = explanation$feature_weight
-          
-          c(
-            p = p,
-            n_features = n_features,
-            feat_return
-          )
-          
+          # transform from matrix to dataframe
+          as.data.frame(t(inner_inner))
         }
       )
+
       # output progress
       log = sprintf("%2.2f/1.00 done", (p-1)/(p_max-1))
       print(log)
-      # transpose matrix and transform to dataframe
-      as.data.frame(t(inner_return))
+      # concatenate dataframes
+      data.table::rbindlist(inner_return)
     }
   )
   # concatenate dataframes
@@ -129,18 +160,21 @@ permutation_growth = function(
   train_data           = data[names(data) != target]
   train_data[[target]] = data[[target]]
   
-  
+  # define task and learner based on data type
   if (type == "classif") {
     task = makeClassifTask(data = train_data, target = target)
     learner = makeLearner("classif.randomForest", ntree = 20L, predict.type = "prob")
     
-  } else {
+  } else if (type == "regr") {
     task = makeRegrTask(data = train_data, target = target)
     learner = makeLearner("regr.randomForest", ntree = 20L)
+    
+  } else {
+    stop("Wrong type, buddy")
   }
   
   black_box = train(learner, task)
-  explainer = lime(train_data[1L:p_max], black_box)
+  explainer = lime(train_data[1L:p_max], black_box, bin_continuous = FALSE, use_density = FALSE)
   
   
   # iterate over sequence of permutation amount
@@ -156,6 +190,7 @@ permutation_growth = function(
           feat_return        = rep(NA, p_max)
           names(feat_return) = feature_names
           
+          # iterate over all points for interpretation
           apply(
             pts_to_predict,
             MARGIN = 1,
@@ -166,7 +201,8 @@ permutation_growth = function(
                 explainer,
                 n_labels = 1L,
                 n_features = p_max,
-                n_permutations = n_permutations
+                n_permutations = n_permutations,
+                dist_fun = "euclidian"
               )
               
               to_update = names(feat_return) %in% explanation$feature

@@ -1,5 +1,6 @@
 library(mlr)
 # devtools::install_github('pkopper/lime')
+# devtools::install_github('thomasp85/lime')
 library(lime)
 library(BBmisc)
 library(mlbench)
@@ -14,7 +15,10 @@ mnist_2 = mnist[sample(10000), ]
 #mnist_2 = mnist[mnist$y %in% c(0,8), ]
 mnist_2$y[mnist_2$y %in% 0:4] = 0L
 mnist_2$y[mnist_2$y %in% 5:9] = 1L
+# remove variables with no variance
 mnist_2 = mnist_2[, sapply(mnist_2, var) != 0]
+# remove variables where >= 99% entries are equal
+mnist_2 = mnist_2[, sapply(mnist_2, function(x) max(table(x))/length(x)) < 0.99]
 pts_to_predict = mnist_2[sample(nrow(mnist_2), 10), ]
 
 result = permutation_growth(
@@ -22,6 +26,13 @@ result = permutation_growth(
   dim_increment = 300,
   permutation_seq = c(100, 1000)
 )
+saveRDS(result, "perm_300_100_1000")
+
+result = feature_growth(
+  mnist_2, "y", pts_to_predict, type = "classif",
+  dim_increment = 300
+)
+saveRDS(result, "feat_300")
 
 data(BostonHousing)
 
@@ -179,3 +190,93 @@ mean(abs(
 
 result1 = feature_growth(iris, "Species", dim_increment = 1)
 result2 = permutation_growth(iris, "Species", dim_increment = 1)
+
+
+#
+plot_lime = function(model_stability = 50, sample_seed, kernel_width = 900, sample_size = 10) {
+  
+  # create ground truth
+  black_box = function(x) sin(x / model_stability)
+  x = 1:1000
+  y = black_box(x)
+
+  # randomly pick data point to explain
+  set.seed(1)
+  
+  x_ex = runif(1, 1, 1000)
+  y_ex = black_box(x_ex)
+  
+  # sample new data points
+  set.seed(sample_seed)
+  
+  x_samp = runif(sample_size, 1, 1000) #rnorm(size, x_ex, 10)
+  y_samp = black_box(x_samp)
+  data   = data.frame(x = x_samp, y = y_samp)
+  
+  # gaussian kernel
+  weights = exp(-(((x_samp - x_ex)^2) / kernel_width))
+  
+  model  = lm(y ~ x, data = data, weights = weights)
+  y_pred = predict(model, newdata = data.frame(x = x))
+  
+  ggplot(data = NULL, aes(y = y, x = x)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
+    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(-1.5, 1.5))
+
+}
+
+plot_lime(sample_seed = 2, model_stability = 200, kernel_width = 900)
+plot_lime(sample_seed = 1, model_stability = 200, kernel_width = 900)
+plot_lime(sample_seed = 2, model_stability = 50, kernel_width = 900)
+plot_lime(sample_seed = 1, model_stability = 50, kernel_width = 900)
+plot_lime(sample_seed = 2, model_stability = 50, kernel_width = 900, sample_size = 100)
+plot_lime(sample_seed = 1, model_stability = 50, kernel_width = 900, sample_size = 100)
+plot_lime(sample_seed = 2, model_stability = 50, kernel_width = 9000)
+plot_lime(sample_seed = 1, model_stability = 50, kernel_width = 9000)
+
+
+plot_better_lime = function(model_stability = 50, sample_seed, kernel_width = 900, sample_size = 10) {
+  
+  # create ground truth
+  black_box = function(x) sin(x / model_stability)
+  x = 1:1000
+  y = black_box(x)
+  
+  # randomly pick data point to explain
+  set.seed(1)
+  
+  x_ex = runif(1, 1, 1000)
+  y_ex = black_box(x_ex)
+  
+  # sample new data points
+  set.seed(sample_seed)
+  
+  x_samp = rnorm(size, x_ex, sqrt(kernel_width))
+  y_samp = black_box(x_samp)
+  data   = data.frame(x = x_samp, y = y_samp)
+  
+  model  = lm(y ~ x, data = data)
+  y_pred = predict(model, newdata = data.frame(x = x))
+  
+  ggplot(data = NULL, aes(y = y, x = x)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
+    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(-1.5, 1.5))
+  
+}
+
+plot_better_lime(sample_seed = 2, model_stability = 50, kernel_width = 900)
+plot_better_lime(sample_seed = 1, model_stability = 50, kernel_width = 900)
+plot_better_lime(sample_seed = 2, model_stability = 50, kernel_width = 9000)
+plot_better_lime(sample_seed = 1, model_stability = 50, kernel_width = 9000)
