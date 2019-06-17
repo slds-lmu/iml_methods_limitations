@@ -1,3 +1,9 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+  keep_tex: true
+---
 # PDP and Correlated Features
 
 *Author: Veronika Kronseder*
