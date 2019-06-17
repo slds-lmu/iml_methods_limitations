@@ -72,14 +72,14 @@ We simulate data with one target and two features.
 One feature is purely noise and the other one has a non-linear sinus-like effect on the target.
 If we plot the influential feature on the x-axis and the target on the y-axis we can observe this pattern in figure 1.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Non-linear univariate relationship."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship."}
 knitr::include_graphics("images/04-09-01.png")
 ```
 
 Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predictive surface.
 In fact, we observe that the predictions of the random forest look very accurate in figure 2.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Random Forest Predictions."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random Forest Predictions."}
 knitr::include_graphics("images/04-09-02.png")
 ```
 
@@ -88,7 +88,7 @@ LIME could now be used to explain this random forest locally.
 We could describe the data locally well by piece-wise linear models.
 This is depicted in the figure 3.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Non-linear univariate relationship linearly interpolated."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship linearly interpolated."}
 knitr::include_graphics("images/04-09-03.png")
 ```
 
@@ -101,7 +101,7 @@ This is indicated by the red line in figure 4.
 However, if we increased the kernel width to $2$ the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure 4.
 The second line does not seem to fit a local linear model but rather a global one.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for univariately non-linear data."}
 knitr::include_graphics("images/04-09-05.png")
 ```
 
@@ -114,14 +114,14 @@ In fact, the largest three kernel sizes ($0.5$, $1$ and $2$) appear very global 
 $0.25$ and $0.3$ are neither global nor very local.
 This is very intuitive and complies with the idea of a weighted local regression.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
 knitr::include_graphics("images/04-09-05-1.png")
 ```
 
 Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with positive slope in figure 6.
 We observe a similar behaviour.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
 knitr::include_graphics("images/04-09-06.png")
 ```
 
@@ -180,7 +180,7 @@ We use a random forest as black box model.
 Below we indicate the test set performance of the model in figure 7.
 It seems as if the random forest largely succeeds in finding the true association between the features and the target.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Simulated data: Model evaluation for random forest."}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Model evaluation for random forest."}
 knitr::include_graphics("images/04-09-07.png")
 ```
 
