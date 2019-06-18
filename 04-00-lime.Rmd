@@ -139,11 +139,15 @@ Further details on this topic will be studied in chapter X.
 
 A fully implemented example of LIME can be seen in the following code block with its resulting plot. In the latter we can observe how much each feature contributes to the surrogate model's prediction and to what extend this prediction offers a good fit on the black box model ('Explanation Fit' between 0 and 1).
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', out.width = '99%', fig.cap = "Basic example of a LIME application. We create a black box model on the iris dataset without the first data point and then explain the prediction of this point with LIME."}
-required_packages <- c("lime", "mlr")
-install_these <- 
+```{r, eval = TRUE, echo = FALSE, warning = FALSE}
+required_packages = c("lime", "mlr")
+install_these =
   required_packages[!(required_packages %in% installed.packages())]
 if (length(install_these) > 0) install.packages(install_these)
+```
+
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', out.width = '99%', fig.cap = "Basic example of a LIME application. We create a black box model on the iris dataset without the first data point and then explain the prediction of this point with LIME."}
 library(lime)
 library(mlr)
 
