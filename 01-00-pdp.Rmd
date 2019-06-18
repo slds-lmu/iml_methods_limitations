@@ -11,21 +11,21 @@ While the general model function $f(x) = f(x_S, x_C)$ depends on all input varia
 
 $$f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$$
 
-The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are independent and thus uncorrelated.\citep{hastie2013elements}
+The partial dependence function can be estimated by averaging the actual feature values of $x_C$ in the training data at given values of $x_S$ or, in other words, it computes the marginal effect of $x_S$ on the prediction. In order to obtain realistic results, a major assumption of the PDP is that the features in $x_S$ and $x_C$ are independent and thus uncorrelated.\citep{hastie2013elements}
 
 $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 
-An exemplary plot based on the 'Titanic' data set which contains information on 2224 passengers and crew members is given in figure \@ref(fig:plot1).
+An example of a PDP based on the 'Titanic' data set, which contains information on the fate of 2224 passengers and crew members during the Titanic's maiden voyage, is given in figure \@ref(fig:plot1).
 
 ```{r plot1, echo=FALSE, out.width='80%', fig.cap="PDP for predicted survival probability and numeric feature variable 'Age'. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_1.pdf')
 ```
 
-In classification problems with probability outputs, such as the 'Titanic' example, the partial dependence function is modeled separately for all of the K different classes. It maps the predictions for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
+When a feature is categorical, rather than continuous, the partial dependence function is modeled separately for all of the K different classes of said feature. It maps the predictions for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
 
-For categorical features, the partial dependence function and the resulting plot are produced by replacing all observed $x_S$-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, \@ref(fig:plot2) shows the partial dependence for the survival probability prediction model and the categorical feature 'passenger class'.
+For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed $x_S$-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, \@ref(fig:plot2) shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature 'passenger class'.
 
-```{r plot2, echo=FALSE, out.width='80%', fig.cap="The classification PDP for survival probability and passenger class reveals that passengers in lower classes also had a lower probability to survive than those in a higher class.", fig.align= 'center'}
+```{r plot2, echo=FALSE, out.width='80%', fig.cap="The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_2.pdf')
 ```
 
@@ -33,17 +33,17 @@ knitr::include_graphics('images/PDP_Plot_2.pdf')
 
 ## Advantages and Limitations of Partial Dependence Plots
 
-Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in \@ref(fig:plot4). 
+Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in \@ref(fig:plot4). 
 
-```{r plot3, echo=FALSE, out.width='90%', fig.cap="Two-dimensional PDP for survival probility prediction model and numerical feature 'Age' together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders an that the decrease is much steeper for males.", fig.align= 'center'}
+```{r plot3, echo=FALSE, out.width='90%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_3.pdf')
 ```
 
-```{r plot4, echo=FALSE, out.width='100%', fig.cap="Two-dimensional PDP for survival probility prediction model and numerical features 'Age' and 'Fare'. The PDP illustrates that survival probability of younger passengers is fairly uniform, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.", fig.align= 'center'}
+```{r plot4, echo=FALSE, out.width='100%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_4.pdf')
 ```
 
-Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should the independence assumption be violated, the partial dependence function will produce unrealistic data points. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.\citep{molnar2019}
+Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.\citep{molnar2019}
 
 
 ## Individual Conditional Expectation Curves
@@ -59,7 +59,7 @@ knitr::include_graphics('images/PDP_Plot_5.pdf')
 
 
 ###Centered ICE Plot###
-It can be difficult to disclose heterogeneity in the model if the curves are are stacked and/or have a wide range of intercepts. The so called centered ICE plot (c-ICE plot) is a simple solution to remove such level effects. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point.\citep{molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
+It can be difficult to observe heterogeneity in the model if the curves are stacked or have a wide range of intercepts. The so called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point.\citep{molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
 
 $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
 Experience has shown that the most interpretable plots occur when the anchor point $x^a$ is chosen as minimum or maximum of the observed values.
@@ -87,4 +87,4 @@ When no interactions are present in the fitted model, all curves in the d-ICE pl
 ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences. This may help to identify subgroups and interactions between model inputs. 
 
 **Disadvantages**
-Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there would be a problem of overplotting and you would see nothing. Secondly, just like PDPs, ICE plots for correlated features may produce invalid data points. Finally, without additionally plotting the PDP it might be difficult to see the average in ICE plots.\citep{molnar2019}
+Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there would be a problem of overplotting and it would be hard to distinguish anything in the plot. Secondly, just like PDPs, ICE plots for correlated features may produce invalid data points. Finally, without additionally plotting the PDP it might be difficult to see the average in ICE plots.\citep{molnar2019}
