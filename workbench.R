@@ -53,21 +53,7 @@ names(x_feat) = paste0("lstat_", 1:P)
 y_pred = predict(black_box, newdata = x_feat)
 
 
-btask = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
-regr_model = makeLearner("regr.extraTrees", nodesize = 1, ntree = 1)
-#regr_model = makeLearner("regr.svm", degree = 200, cost = 500)
-black_box <- mlr::train(regr_model, btask)
-x_grid = 1:4000 / 100
-y_pred = predict(black_box, newdata = data.frame(lstat=x_grid))
 
-#model <- lm(data = boston, medv ~ poly(lstat, P))
-#x_grid <- 1:4000 / 100
-#y_pred <- predict.lm(model, newdata = data.frame(lstat = x_grid))
-
-ggplot(data = boston, aes(y = medv, x = lstat)) +
-  geom_point() +
-  geom_line(data = data.frame(x_grid, y_pred=y_pred$data$response), aes(x = x_grid, y = y_pred)) +
-  ylim(c(0,50))
 
 #model = lm(data = boston, medv ~ poly(lstat, 15) + crim)
 #class(model) = c(class(model), "lime_regressor")
@@ -89,6 +75,7 @@ data(BostonHousing)
 set.seed(5)
 boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
 boston = boston[!duplicated(boston$lstat), ]#c("lstat", "medv")]
+
 pts_to_predict = BostonHousing[sample(nrow(BostonHousing), 10), c("lstat", "medv")]
 result = permutation_growth(
   boston, "medv", pts_to_predict,
@@ -103,26 +90,6 @@ x_2 <- rnorm(300, 10, 10)
 y <- (300 * sin(0.0002 * x_1^2) + 0.5 * x_1 + 250 + rnorm(300, 0, 70))
 plot(x_1, y)
 
-
-df <- data.frame(x_1, x_2, y)
-
-# Define the task (mlr)
-task <- makeRegrTask(data = df, target = "y")
-# Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 200)
-# Train the model (mlr)
-black_box <- train(learner, task)
-# predict
-task_pred = predict(black_box, task = task)
-# Set up LIME explanations
-explainer <- lime(df[, 1:2], black_box, bin_continuous = FALSE)
-# New df, 130 is important
-distance <- function(x) x[1, , drop = FALSE]
-new_df <- data.frame(x_1 = 130, x_2 = 0, y = 400)
-explanation <- explain(new_df[, 1:2, drop = FALSE], explainer, n_features = 1,
-                       n_permutations = 10000, kernel_width = 2,
-                       dist_fun = "euclidean")
-as.data.frame(explanation)
 
 
 to_explain  = iris[ 1, 1:4]
@@ -192,6 +159,28 @@ result1 = feature_growth(iris, "Species", dim_increment = 1)
 result2 = permutation_growth(iris, "Species", dim_increment = 1)
 
 
+data(BostonHousing)
+
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+boston = boston[!duplicated(boston$lstat), ]#c("lstat", "medv")]
+
+btask = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
+regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
+#regr_model = makeLearner("regr.svm", degree = 200, cost = 500)
+black_box <- mlr::train(regr_model, btask)
+x_grid = 1:4000 / 100
+y_pred = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+#model <- lm(data = boston, medv ~ poly(lstat, P))
+#x_grid <- 1:4000 / 100
+#y_pred <- predict.lm(model, newdata = data.frame(lstat = x_grid))
+
+ggplot(data = boston, aes(y = medv, x = lstat)) +
+  geom_point() +
+  geom_line(data = data.frame(x_grid, y_pred=y_pred$data$response), aes(x = x_grid, y = y_pred)) +
+  ylim(c(0,50))
+
 #
 plot_lime = function(model_stability = 50, sample_seed, kernel_width = 900, sample_size = 10) {
   
@@ -200,25 +189,25 @@ plot_lime = function(model_stability = 50, sample_seed, kernel_width = 900, samp
   x = 1:1000
   y = black_box(x)
 
-  # randomly pick data point to explain
   set.seed(1)
-  
+  # randomly pick data point to explain
   x_ex = runif(1, 1, 1000)
   y_ex = black_box(x_ex)
   
-  # sample new data points
   set.seed(sample_seed)
-  
-  x_samp = runif(sample_size, 1, 1000) #rnorm(size, x_ex, 10)
+  # sample new data points
+  x_samp = runif(sample_size, 1, 1000)
   y_samp = black_box(x_samp)
   data   = data.frame(x = x_samp, y = y_samp)
   
-  # gaussian kernel
-  weights = exp(-(((x_samp - x_ex)^2) / kernel_width))
+  # apply gaussian kernel to receive weights
+  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
   
+  # fit surrogate model and get predictions
   model  = lm(y ~ x, data = data, weights = weights)
   y_pred = predict(model, newdata = data.frame(x = x))
   
+  # visualize everything
   ggplot(data = NULL, aes(y = y, x = x)) +
     geom_line(color = "#00C5CD", size = 1.5) +
     geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
@@ -248,22 +237,23 @@ plot_better_lime = function(model_stability = 50, sample_seed, kernel_width = 90
   x = 1:1000
   y = black_box(x)
   
-  # randomly pick data point to explain
   set.seed(1)
-  
+  # randomly pick data point to explain
   x_ex = runif(1, 1, 1000)
   y_ex = black_box(x_ex)
   
-  # sample new data points
-  set.seed(sample_seed)
   
+  set.seed(sample_seed)
+  # sample new data points
   x_samp = rnorm(size, x_ex, sqrt(kernel_width))
   y_samp = black_box(x_samp)
   data   = data.frame(x = x_samp, y = y_samp)
   
+  # fit surrogate model and get predictions
   model  = lm(y ~ x, data = data)
   y_pred = predict(model, newdata = data.frame(x = x))
   
+  # visualize everything
   ggplot(data = NULL, aes(y = y, x = x)) +
     geom_line(color = "#00C5CD", size = 1.5) +
     geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +

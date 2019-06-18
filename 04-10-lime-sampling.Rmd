@@ -24,7 +24,7 @@ If we now do some small changes of notations, the task of calculating the LIME e
 $$ g^* = \arg\min_{g \epsilon G} \sum_{i=1}^{n'} \pi_{x'}(x^{(i)}) \times L\Big( f^*\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big) + \lambda \times J(g) $$
 
 with $\Omega\left(g\right) := \lambda \times J(g)$ and $\mathcal{L}\left(f, g, \pi_{x'} \right) := \sum_{i=1}^{n'} \pi_{x'}(x^{(i)}) \times L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big)$.
-Besides the fact of $G$ being supposed to only hold easily interpretable functions compared to $\mathcal{H}$ offering a wider range of models, the difference between fitting a LIME model and a normal supervised model can be precisely indentified to three parts.
+Besides the fact of $G$ being supposed to only hold easily interpretable functions compared to $\mathcal{H}$, the difference between fitting a LIME model and a normal supervised model can be precisely indentified to three parts.
 The first is the replacement of the original target variable $y$ with the response $ŷ := f^*\big(x^{(i)} \big)$ of the black box model.
 This means nothing more besides the fact that we do not care about our original target variable anymore.
 We just don't, it's gone.
@@ -113,19 +113,402 @@ Fortunately in practice one can at least give a good approximation of the lower 
 - instability of coefficients
 
 
-## Numerical features and learner instability
+## Understanding basic LIME
+
+- using continuous, convex black box model
+
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation"}
+
+# default input parameters
+model_smoothness = 270
+kernel_width     = 900
+sample_seed      = 2
+sample_size      = 10
+
+# create ground truth of simulated black box model
+black_box = function(x) sin(x / model_smoothness)
+x = 1:1000
+y = black_box(x)
+
+set.seed(1)
+# randomly pick data point to explain
+x_ex = runif(1, 1, 1000)
+y_ex = black_box(x_ex)
 
 
-## Proposing removal of proximity measure with new sampling strategy
+### start of LIME
+
+set.seed(sample_seed)
+# sample new data points uniformly
+x_samp  = runif(sample_size, 1, 1000)
+y_samp  = black_box(x_samp)
+samples = data.frame(x = x_samp, y = y_samp)
+  
+# apply gaussian kernel to receive proximity weights
+proximity = exp( - (x_samp - x_ex)^2 / kernel_width )
+  
+# fit interpretable model
+model = lm(y ~ x, data = samples, weights = proximity)
+
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
+install_these = req_packages[!(req_packages %in% installed.packages())]
+
+if (length(install_these) > 0) install.packages(install_these)
+library(ggplot2)
+
+plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sample_size = 10) {
+  
+  # create ground truth
+  black_box = function(x) sin(x / model_smoothness)
+  x = 1:1000
+  y = black_box(x)
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 1000)
+  y_ex = black_box(x_ex)
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = runif(sample_size, 1, 1000)
+  y_samp = black_box(x_samp)
+  data   = data.frame(x = x_samp, y = y_samp)
+  
+  # apply gaussian kernel to receive weights
+  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data, weights = weights)
+  y_pred = predict(model, newdata = data.frame(x = x))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(y = y, x = x)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
+    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(-1.5, 1.5)) +
+    ylab("target") +
+    xlab("feature")
+
+}
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 
-## Datasets used in experiments
+plot_lime(sample_seed = 2)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 1)
+  
+```
+
+- using continuous, non-convex black box model
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 2, model_smoothness = 50)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 1, model_smoothness = 50)
+  
+```
+
+- increase of sampling size helps
+- not feasable for higher dimensions (curse of dimensionality)
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 2, model_smoothness = 50, sample_size = 100)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
+  
+```
+
+- quick sanity check: kernel width doesn't help (careful about intersections with philipp)
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 2, model_smoothness = 50, kernel_width = 9000)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
+  
+```
+
+## Proposing replacement of proximity measure with new sampling strategy
+
+- extreme increase of sampling efficiency
+- show mathematically risk minimization of uniform sample + gaussian kernel is the same as normal sample + no kernel with kernel width equal to variance of normal distribution
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+plot_better_lime = function(model_smoothness = 50, sample_seed, kernel_width = 900, sample_size = 10) {
+  
+  # create ground truth
+  black_box = function(x) sin(x / model_smoothness)
+  x = 1:1000
+  y = black_box(x)
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 1000)
+  y_ex = black_box(x_ex)
+  
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = rnorm(sample_size, x_ex, sqrt(kernel_width))
+  y_samp = black_box(x_samp)
+  data   = data.frame(x = x_samp, y = y_samp)
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data)
+  y_pred = predict(model, newdata = data.frame(x = x))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(y = y, x = x)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
+    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(-1.5, 1.5)) +
+    ylab("target") +
+    xlab("feature")
+
+}
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_better_lime(sample_seed = 2, model_smoothness = 50, sample_size = 10)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_better_lime(sample_seed = 1, model_smoothness = 50, sample_size = 10)
+  
+```
+
+### Non-continuous, non-convex black box models
+
+(- keep kernel width constant to stay out of philipps topic)
+- sampled boston housing data: medv ~ lstat
+- decision tree with node size = 1 (overfitting + non-smoothness)
+- random forest with more trees and higher node size still non-continuous, but less overfitting
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
+
+library(mlbench)
+library(mlr)
+
+data(BostonHousing)
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+
+# create task and leaner
+btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
+regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
+# run model and get prediction surface
+black_box  = train(regr_model, btask)
+x_grid     = 1:4000 / 100
+y_pred     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+# visualize results
+ggplot() +
+  geom_line(
+    data = data.frame(x_grid, y_pred=y_pred$data$response),
+    aes(x = x_grid, y = y_pred),
+    color = "#00C5CD",
+    size  = 1.5
+  ) +
+  geom_point(data = boston, aes(y = medv, x = lstat)) +
+  ylim(c(0,50)) +
+  theme_minimal() +
+  ylab("target (medv)") +
+  xlab("feature (lstat)")
+
+```
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+# EVALUATE ABOVE CELL FIRST
+plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 25, sample_size = 10) {
+  
+  # create grid
+  x_grid     = 1:4000 / 100
+  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 40)
+  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
+  y_ex = yret$data$response
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = runif(sample_size, 1, 40)
+  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
+  data   = data.frame(x = x_samp, y = y_samp$data$response)
+  
+  # apply gaussian kernel to receive weights
+  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data, weights = weights)
+  y_pred = predict(model, newdata = data.frame(x = x_grid))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = data, aes(x = x, y = y)) +
+    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(0, 50)) +
+    ylab("target") +
+    xlab("feature")
+
+}
+
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime_boston(sample_seed = 1, kernel_width = 1)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime_boston(sample_seed = 2, kernel_width = 1)
+  
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+# EVALUATE ABOVE CELLS FIRST!
+plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 900, sample_size = 10) {
+  
+  # create grid
+  x_grid     = 1:4000 / 100
+  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 40)
+  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
+  y_ex = yret$data$response
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = rnorm(sample_size, x_ex, sqrt(kernel_width))
+  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
+  data   = data.frame(x = x_samp, y = y_samp$data$response)
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data)
+  y_pred = predict(model, newdata = data.frame(x = x_grid))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = data, aes(x = x, y = y)) +
+    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    ylim(c(0, 50)) +
+    ylab("target") +
+    xlab("feature")
+  
+}
+
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_better_lime_boston(sample_seed = 1, kernel_width = 1)
+  
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_better_lime_boston(sample_seed = 2, kernel_width = 1)
+  
+```
+
+- new sampling strategy still works with extreme small kernel width
+- but losses surrounding information (as possibly intended)
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_better_lime_boston(sample_seed = 2, kernel_width = 0.01)
+  
+```
+
+- catastrophic failure of global sampling with low kernel width
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+plot_lime_boston(sample_seed = 2, kernel_width = 0.01)
+  
+```
+
+
+
+(#### Datasets used in experiments (remove this chapter and introduce on-the-fly)
 - mnist as high dimensional classification with numerical features
 - boston as low dimensional regression with numerical features
 - transformed mnist as high dimensional classification with binary features
 - mental health data as mid dimensional classification/regression with categorical features
 https://www.kaggle.com/osmi/mental-health-in-tech-survey/downloads/mental-health-in-tech-survey.zip/3
-
+)
 
 ## Influence of feature dimension
 - Curse of dimensionality
@@ -145,12 +528,4 @@ https://www.kaggle.com/osmi/mental-health-in-tech-survey/downloads/mental-health
 
 ### Numerical features
 
-
-## Influence of black box stability
-
-(stability in terms of learning theory)
-
-### Categorical features
-
-### Numerical features
 
