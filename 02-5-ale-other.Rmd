@@ -54,3 +54,28 @@ p + ggplot2::geom_point() +
 knitr::include_graphics("images/ALE_2_Dataset1.PNG")
 ```
 (ref:DatasetALE1)The correlation is clearly recognizable.
+
+Why we only made assumptions about the conditional distributon of $X_2$ and not on the joint distribution of $(X_1,X_2)$ gets clearer once we take a look on the calculation of the theoratical ALE. Therefore we first asume the prediction function $\hat{f}_1 (x_1, x_2) =  (x_1-4)(x_1-5)(x_1-6) + x_2^3$. Due to the special structure of $f_1$ the partial derivative with respect to $x_1$ is a polynomial of degree 2 which doesn't depend on $x_2$, concretley $\hat{f}^1(x_1,x_2) = 3x_1^2 -30x_1 +74$.  
+Now we can calculate the theoratical (uncentered) ALE:
+$$(1)~~~~\widetilde{ALE}_{\hat{f},1}(x) = \int_{z_{0,1}}^x E_{X_2\vert X_1= Z_1}[\hat{f}^1(x_1,x_2)]~dz~~~=$$
+$$(2)~~~~ \int_{z_{0,1}}^x \int p_{X_2\vert X_1 = z }(x_2)\hat{f}^1(z,x_2)~dx_2~dz~~~=$$
+$$(3)~~~~ \int_{z_{0,1}}^x \hat{f}^1(z,x_2)\int p_{X_2\vert X_1=z}(x_2)~dx_2~dz~~~=$$
+
+$$(4)~~~~ \int_{z_{0,1}}^x \hat{f}^1(z,x_2)~dz~~~=$$
+$$(5)~~~~ \int_{z_{0,1}}^x  3z^2 -30z +74~dz~~~=$$
+$$(6)~~~~ [z^3 -15z^2 +74z + c]_{z_{0,1}}^x~~~=$$
+
+$$(7)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}~~~$$
+Herby $p_{X_2\vert X_1=z}(x_2)$ notates the conditional density of $X_2\vert X_1$ for $x_1 = z$.
+Step (3) makes use of the fact that $\hat{f}^1(x_1,x_2)$ doesn't depend on $x_2$ and in Step (4) the integral over the density gives 1.
+To get the centered ALE we have to calculate:
+
+$$(8)~~~~ALE_{\hat{f},1}(x) = \widetilde{ALE}_{\hat{f},1}(x) - E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~=$$
+$$(9)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1} - E[X_1^3 -15X_1^2 +74X_1 - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}] ~~~=$$
+$$(10)~~~~ x^3 -15x^2 +74x - E[X_1^3 -15X_1^2 +74X_1] ~~~=$$
+$$(11)~~~~ x^3 -15x^2 +74x - E[X_1^3] +15E[X_1^2] -74E[X_1] ~~~=$$
+$$(12)~~~~ x^3 -15x^2 +74x - 250 +15 * (100/3) -74* 5 ~~~=$$
+$$(13)~~~~ x^3 -15x^2 +74x  -120~~~$$
+In Step (12) the formula for the moments of the uniform distribution which are given by $m_k = \frac{1}{k+1}\sum_{i=0}^k a^i b^{k-i}$ was used.
+Knowing the theoretical ALE-curve we can have a look on the behaviour of the estimated ALE for different grid sizes. Plot XX shows the theoretical AlE and the estimations for grid sizes 2, 3, 5, and 10. 
+
