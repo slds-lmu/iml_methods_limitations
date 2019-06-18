@@ -386,6 +386,12 @@ p + ggplot2::geom_point() +
 
 ```
 
+```{r datasetALE2,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_dataset2.PNG")
+```
+Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)*x_2$
+
 
 Wip
 
