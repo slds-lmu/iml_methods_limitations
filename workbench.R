@@ -270,3 +270,47 @@ plot_better_lime(sample_seed = 2, model_stability = 50, kernel_width = 900)
 plot_better_lime(sample_seed = 1, model_stability = 50, kernel_width = 900)
 plot_better_lime(sample_seed = 2, model_stability = 50, kernel_width = 9000)
 plot_better_lime(sample_seed = 1, model_stability = 50, kernel_width = 9000)
+
+
+# removing categorical feature
+boston     <- BostonHousing[, -4]
+boston     <- as.data.frame(lapply(boston, function(x) x/sd(x)))
+btask      <- makeRegrTask(data = boston, target = "medv")
+regr_model <- makeLearner("regr.ranger")
+black_box  <- train(regr_model, btask)
+explainer  <- lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
+
+data_point <- as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes <- sapply(1:100, function(k) {
+  interim <- explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l <- interim$feature_weight
+  names(weights_l) <- interim$feature
+  weights_l
+})
+
+
+means <- apply(limes, MARGIN = 1, mean)
+sds <- apply(limes, MARGIN = 1, sd)
+
+
+nice_plot <- function(means, sds, headline, color1, color2) {
+
+  ggplot(data = NULL, aes(x = names(means), y = means)) +
+    geom_bar(stat = "identity", fill = color1) +
+    geom_errorbar(aes(ymin = means - sds, ymax = means + sds), color = color2, width = 0.4, size = 1.2, alpha = 0.7) +
+    theme_minimal() +
+    theme(
+      text = element_text(size = 15),
+      axis.title.x = element_text(vjust = -4),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
+    xlab("Feature") +
+    ylab("Weight")
+}
+
+
+filename <- paste0("images/boston_100iter_standard.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME", rgb(135/255, 150/255, 40/255), rgb(70/255, 95/255, 25/255))
+dev.off()

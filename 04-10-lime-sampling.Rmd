@@ -264,6 +264,572 @@ plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
   
 ```
 
+## Sampling stability
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+
+nice_plot = function(means, sds, headline, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight") {
+
+  ggplot(data = NULL, aes(x = names(means), y = means)) +
+    geom_bar(stat = "identity", fill = color1) +
+    geom_errorbar(aes(ymin = means - sds, ymax = means + sds), color = color2, width = 0.4, size = 1.2, alpha = 0.7) +
+    theme_minimal() +
+    theme(
+      text = element_text(size = 15),
+      axis.title.x = element_text(vjust = -4),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
+    xlab(xlab) +
+    ylab(ylab)
+}
+
+# removing categorical feature
+boston     = BostonHousing[, -4]
+# normalizing standard deviation to make coefficients comparable
+boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
+
+plots = lapply(names(boston[-ncol(boston)]), function(feat) qplot(get(feat), medv, data = boston, ylab = "", xlab = feat))
+args = paste0("plots[[", 1:12, "]]", collapse = ", ")
+grid_plot_func = paste0("gridExtra::grid.arrange(", args, ", nrow = 3)")
+
+filename = paste0("images/boston.png")
+png(filename, width = 700, height = 500)
+eval(parse(text = grid_plot_func))
+dev.off()
+
+btask      = makeRegrTask(data = boston, target = "medv")
+
+# normal non-continuous model
+regr_model = makeLearner("regr.ranger")
+black_box  = train(regr_model, btask)
+explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
+
+# pick mean of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_100iter_standard.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_100iter_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+# pick max of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_100iter_outlier.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_100iter_outlier_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+# switch to bins
+explainer  = lime(boston[, -ncol(boston)], black_box)
+
+# pick mean of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_100iter_bins.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_100iter_bins_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+# pick max of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_100iter_bins_outlier.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_100iter_bins_outlier_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+### LINEAR MODEL
+regr_model = makeLearner("regr.lm")
+black_box  = train(regr_model, btask)
+explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
+
+# pick mean of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_lm.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_lm_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+# pick max of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_lm_outlier.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_lm_outlier_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+# switch to bins
+explainer  = lime(boston[, -ncol(boston)], black_box)
+
+# pick mean of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_lm_bins.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_lm_bins_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+# pick max of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_lm_bins_outlier.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_lm_bins_outlier_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+### OVERFITTING MODEL
+regr_model = makeLearner("regr.ranger", num.trees = 1, min.node.size = 1)
+black_box  = train(regr_model, btask)
+explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
+
+# pick mean of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_tree.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_tree_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+
+# pick max of each feature as data point
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+# set index of datapoint to use
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
+  weights_l
+})
+
+
+means = apply(limes, MARGIN = 1, mean)
+sds   = apply(limes, MARGIN = 1, sd)
+
+
+filename = paste0("images/boston_tree_outlier.png")
+png(filename, width = 700, height = 500)
+nice_plot(means, sds, "LIME")
+dev.off()
+
+means_scaled = means / means
+sds_scaled   = sds / abs(means)
+
+filename = paste0("images/boston_tree_outlier_scaled.png")
+png(filename, width = 700, height = 500)
+nice_plot(means_scaled, sds_scaled, "LIME", ylab = "Weight / weight")
+dev.off()
+
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of each numerical feature compared to target 'medv' in the boston housing dataset"}
+knitr::include_graphics("images/boston.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_standard.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_bins.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_bins_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_bins_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_100iter_bins_outlier_scaled.png")
+```
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_outlier_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_bins.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_bins_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_bins_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_lm_bins_outlier_scaled.png")
+```
+
+
+### Non-continuous, non-convex black box models
+
+(- keep kernel width constant to stay out of philipps topic)
+- sampled boston housing data: medv ~ lstat
+- decision tree with node size = 1 (overfitting + non-smoothness)
+- random forest with more trees and higher node size still non-continuous, but less overfitting
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
+
+### EVALUATE THIS CELL TO MAKE FUNCTIONS BELOW WORK
+
+library(mlbench)
+library(mlr)
+
+data(BostonHousing)
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+
+# create task and leaner
+btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
+regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
+# run model and get prediction surface
+black_box  = train(regr_model, btask)
+x_grid     = 1:4000 / 100
+y_pred     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+# visualize results
+plot = ggplot() +
+  geom_line(
+    data = data.frame(x_grid, y_pred=y_pred$data$response),
+    aes(x = x_grid, y = y_pred),
+    color = "#00C5CD",
+    size  = 1.5
+  ) +
+  geom_point(data = boston, aes(y = medv, x = lstat)) +
+  ylim(c(0, 50)) +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 15),
+    axis.title.x = element_text(vjust = -4),
+    plot.margin = ggplot2::margin(20,20,30,20)
+  ) +
+  ylab("target (medv)") +
+  xlab("feature (lstat)")
+
+filename = paste0("images/boston_sampled_tree.png")
+png(filename, width = 700, height = 500)
+plot
+dev.off()
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree.png")
+```
+
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+# EVALUATE ABOVE CELL FIRST
+plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 25, sample_size = 10) {
+  
+  # create grid
+  x_grid     = 1:4000 / 100
+  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 40)
+  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
+  y_ex = yret$data$response
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = runif(sample_size, 1, 40)
+  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
+  data   = data.frame(x = x_samp, y = y_samp$data$response)
+  
+  # apply gaussian kernel to receive weights
+  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data, weights = weights)
+  y_pred = predict(model, newdata = data.frame(x = x_grid))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = data, aes(x = x, y = y)) +
+    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    theme(
+      text = element_text(size = 15),
+      axis.title.x = element_text(vjust = -4),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
+    ylim(c(0, 50)) +
+    ylab("target") +
+    xlab("feature")
+
+}
+
+```
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+filename = paste0("images/boston_sampled_tree_fst.png")
+png(filename, width = 700, height = 500)
+plot_lime_boston(sample_seed = 1, kernel_width = 1)
+dev.off()
+  
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_fst.png")
+```
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+filename = paste0("images/boston_sampled_tree_snd.png")
+png(filename, width = 700, height = 500)
+plot_lime_boston(sample_seed = 2, kernel_width = 1)
+dev.off()
+  
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_snd.png")
+```
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_tree.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_tree_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_tree_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_tree_outlier_scaled.png")
+```
+
+
 ## Proposing replacement of proximity measure with new sampling strategy
 
 - extreme increase of sampling efficiency
@@ -325,107 +891,8 @@ plot_better_lime(sample_seed = 1, model_smoothness = 50, sample_size = 10)
   
 ```
 
-### Non-continuous, non-convex black box models
 
-(- keep kernel width constant to stay out of philipps topic)
-- sampled boston housing data: medv ~ lstat
-- decision tree with node size = 1 (overfitting + non-smoothness)
-- random forest with more trees and higher node size still non-continuous, but less overfitting
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
-
-library(mlbench)
-library(mlr)
-
-data(BostonHousing)
-set.seed(5)
-boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
-
-# create task and leaner
-btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
-regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
-# run model and get prediction surface
-black_box  = train(regr_model, btask)
-x_grid     = 1:4000 / 100
-y_pred     = predict(black_box, newdata = data.frame(lstat=x_grid))
-
-# visualize results
-ggplot() +
-  geom_line(
-    data = data.frame(x_grid, y_pred=y_pred$data$response),
-    aes(x = x_grid, y = y_pred),
-    color = "#00C5CD",
-    size  = 1.5
-  ) +
-  geom_point(data = boston, aes(y = medv, x = lstat)) +
-  ylim(c(0,50)) +
-  theme_minimal() +
-  ylab("target (medv)") +
-  xlab("feature (lstat)")
-
-```
-
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-# EVALUATE ABOVE CELL FIRST
-plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 25, sample_size = 10) {
-  
-  # create grid
-  x_grid     = 1:4000 / 100
-  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
-
-  set.seed(1)
-  # randomly pick data point to explain
-  x_ex = runif(1, 1, 40)
-  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
-  y_ex = yret$data$response
-  
-  set.seed(sample_seed)
-  # sample new data points
-  x_samp = runif(sample_size, 1, 40)
-  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
-  data   = data.frame(x = x_samp, y = y_samp$data$response)
-  
-  # apply gaussian kernel to receive weights
-  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
-  
-  # fit surrogate model and get predictions
-  model  = lm(y ~ x, data = data, weights = weights)
-  y_pred = predict(model, newdata = data.frame(x = x_grid))
-  
-  # visualize everything
-  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
-    geom_line(color = "#00C5CD", size = 1.5) +
-    geom_point(data = data, aes(x = x, y = y)) +
-    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
-    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
-    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
-    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
-    theme_minimal() +
-    ylim(c(0, 50)) +
-    ylab("target") +
-    xlab("feature")
-
-}
-
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime_boston(sample_seed = 1, kernel_width = 1)
-  
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime_boston(sample_seed = 2, kernel_width = 1)
-  
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 # EVALUATE ABOVE CELLS FIRST!
 plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 900, sample_size = 10) {
@@ -459,6 +926,11 @@ plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_wi
     geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
     geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
     theme_minimal() +
+    theme(
+      text = element_text(size = 15),
+      axis.title.x = element_text(vjust = -4),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
     ylim(c(0, 50)) +
     ylab("target") +
     xlab("feature")
@@ -467,48 +939,63 @@ plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_wi
 
 ```
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
-
+filename = paste0("images/boston_sampled_tree_fst_better.png")
+png(filename, width = 700, height = 500)
 plot_better_lime_boston(sample_seed = 1, kernel_width = 1)
+dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_fst_better.png")
+```
 
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
+filename = paste0("images/boston_sampled_tree_snd_better.png")
+png(filename, width = 700, height = 500)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 1)
+dev.off()
   
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_snd_better.png")
 ```
 
 - new sampling strategy still works with extreme small kernel width
 - but losses surrounding information (as possibly intended)
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
-
+filename = paste0("images/boston_sampled_tree_snd_better_slim.png")
+png(filename, width = 700, height = 500)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 0.01)
+dev.off()
   
 ```
 
-- catastrophic failure of global sampling with low kernel width
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_snd_better_slim.png")
+```
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+- catastrophic failure of global sampling with low kernel width in the following
 
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
+filename = paste0("images/boston_sampled_tree_snd_slim.png")
+png(filename, width = 700, height = 500)
 plot_lime_boston(sample_seed = 2, kernel_width = 0.01)
+dev.off()
   
 ```
 
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+knitr::include_graphics("images/boston_sampled_tree_snd_slim.png")
+```
 
-
-(#### Datasets used in experiments (remove this chapter and introduce on-the-fly)
-- mnist as high dimensional classification with numerical features
-- boston as low dimensional regression with numerical features
-- transformed mnist as high dimensional classification with binary features
-- mental health data as mid dimensional classification/regression with categorical features
-https://www.kaggle.com/osmi/mental-health-in-tech-survey/downloads/mental-health-in-tech-survey.zip/3
-)
 
 ## Influence of feature dimension
 - Curse of dimensionality
