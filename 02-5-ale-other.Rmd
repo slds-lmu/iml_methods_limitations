@@ -50,7 +50,7 @@ p + ggplot2::geom_point() +
 ```
 
 
-```{r dataALE, fig.cap='(ref:Dataset1)', out.width='100%', echo=FALSE}
+```{r DatasetALE1, fig.cap='(ref:Dataset1)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_Dataset1.PNG")
 ```
@@ -392,7 +392,7 @@ p + ggplot2::geom_point() +
 
 
 
-```{r dataset2, fig.cap='(ref:dataset2)', out.width='100%', echo=FALSE}
+```{r datasetALE2, fig.cap='(ref:dataset2)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_dataset2.PNG")
 ```
