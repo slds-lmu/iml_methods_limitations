@@ -48,3 +48,9 @@ p + ggplot2::geom_point() +
   ggplot2::labs(title = "Dataset 1", subtitle = "Uniform dist.")
 
 ```
+
+```{r DatasetALE1,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_Dataset1.PNG")
+```
+(ref:DatasetALE1)The correlation is clearly recognizable.
