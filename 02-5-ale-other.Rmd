@@ -187,3 +187,130 @@ $$(12.1)~~~~ALE_{\hat{f},1}(x) =  \frac{3}{6} x^6 - \frac{30}{5}x^5 + \frac{101}
 Grafic XX shows the behaviour of the ALE with different grid sizes in this setting.
 
 
+```{r eval =FALSE}
+prediction_function_2 <- function(x_1, x_2){
+  y <-(x_1-4)*(x_1-5)*(x_1-6)* x_2^3
+  return(y)
+}
+
+
+sample_uniform <- function(n, FUN = prediction_function_2, a = 0, b = 10, c = 3, d = 3){
+  x_1 <- runif(n = n, min = a, max = b)
+  x_2 <- runif(n = n, min = x_1 - c, max = x_1 + d)
+  y <- FUN(x_1, x_2)
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+
+set.seed(123)
+dataset_1 <- sample_uniform(100, prediction_function_2, a = 0, b = 10, c = 3, d = 3)
+p <- ggplot2::ggplot(dataset_1, ggplot2::aes(x_1, x_2))
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 1", subtitle = "Uniform dist.")
+
+
+
+expected_ALE_2 <- function(x){
+
+  ALE <- 3/6*x^6 -30/5*x^5 +101/4 * x^4 -90*x^3+333*x^2 -10528.57
+  return (ALE)
+}
+
+fun.0 <- function(x) expected_ALE_2(x)
+
+library(crs)
+library(iml)
+
+model = crs(y~., data = dataset_1)
+predictor_2 = Predictor$new(model, data = dataset_1, y = "y", predict.fun = function(model, newdata){
+  #a<-predict(model, newdata)
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_2(newdata[i, 1], newdata[i, 2])
+  }
+  return(a)
+})
+
+X_1 = dataset_1[which(names(df) != "y")]
+
+
+ale.1 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 2)
+fun.1 <- function(x) ale.1$predict(x)
+
+library(ggplot2)
+plot1 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 2",  x = "x _ j", y = "ALE(x _ j)")
+
+
+ale.2 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 5)
+fun.2 <- function(x) ale.2$predict(x)
+
+plot2 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 5",  x = "x _ j", y = "ALE(x _ j)")
+
+
+ale.3 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 10)
+fun.3 <- function(x) ale.3$predict(x)
+
+plot3 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.3, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 10",  x = "x _ j", y = "ALE(x _ j)")
+
+ale.4 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 25)
+fun.4 <- function(x) ale.4$predict(x)
+
+plot4 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.4, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 25",  x = "x _ j", y = "ALE(x _ j)")
+
+ale.5 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 50)
+fun.5 <- function(x) ale.4$predict(x)
+
+plot5 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.5, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 50",  x = "x _ j", y = "ALE(x _ j)")
+
+ale.6 = FeatureEffect$new(predictor_2, feature = "x_1", grid.size = 100)
+fun.6 <- function(x) ale.4$predict(x)
+
+plot6 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.6, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 100",  x = "x _ j", y = "ALE(x _ j)")
+
+
+
+
+
+library(ggpubr)
+
+ggarrange(plot1, plot2, plot3, plot4, plot5, plot6 , ncol=2, nrow=3, common.legend = TRUE, legend="bottom")
+#ggarrange(plot3, plot4, plot5, plot6 , ncol=2, nrow=2, common.legend = TRUE, legend="bottom")
+
+
+
+
+
+
+```
+
+
+
