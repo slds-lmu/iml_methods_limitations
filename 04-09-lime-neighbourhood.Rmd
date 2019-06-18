@@ -5,6 +5,7 @@
 How much neighbourhood may be an issue can be illustrated in a setting very different to LIME:
 Descriptive statistics or in particular kernel density estimations.
 The figure below illustrates kernel densities from a standard normal distribution.
+'TODO
 One can easily see that the second panel seems to be appropriate while the first one is too granular and the third one does not feature any information.
 The proper definition of the neighbourhood is in this case very crucial.
 However, with no prior information this definition is arbitrary.
@@ -217,36 +218,74 @@ We may induce non-linearity by different means.
 However, first of all it seems interesting to study how the kernel width affects LIME explanations in a very simple setting of non-linearity:
 The features only affect the target locally linearly, as expressed by:
 
-$$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 1_{x_2>c_2}+ \beta_3 x_3 + \epsilon $$
+$$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 + \beta_3 x_3 + \epsilon + \gamma_0 1_{x_1>c_1} $$
 
-where $x_1$ and $x_2$ only affect $y$ within the given interval.
-We again fit a random forest which can deal with this property.
+where $x_1$ only affects $y$ within the given interval. 
+$\gamma_0$ corrects the predictive surface by another intercept in order to avoid discontinuities.
+We again fit a random forest which can deal with this property of local features.
 LIME should be able to detect this as well -- given an appropriate kernel for each observation.
 To illustrate this we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predicitve surface. 
-We set $\beta_1 = 4$, $\beta_2 = -3$, $\beta_1 = 5$ and $c_1 = 6$ and $c_2 = 4$.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for piece-wise local associations."}
+knitr::include_graphics("images/04-09-09.png")
+```
+
+We set $\beta_1 = 5$, $\beta_2 = -4$, $\beta_1 = 3$ and $c_1 = 5$.
 
 Representative now means we should investigate observations the following properties:
-1. $x_1 < 6$ and $x_2 < 4$.
-2. $x_1 > 6$ and $x_2 < 4$.
-3. $x_1 < 6$ and $x_2 > 4$.
-4. $x_1 > 6$ and $x_2 > 4$.
-We think these observations are best explained in areas with reasonable margin to $c_1$ and $c_2$.
+1. $x_1 < 5$ 
+2. $x_1 > 5$ 
+We think these observations are best explained in areas with reasonable margin to $c_1$.
 
-Below we depict the coefficient paths for four representative observations.
-We can clearly see that in this case we cannot simply set an arbitrary kernel width.
-The true local coefficients are only approximated well within a narrow interval of the kernel width.
+Below, we depict the coefficient paths for four representative observations, two belonging to each bin.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-10-1.png")
+knitr::include_graphics("images/04-09-10-2.png")
+knitr::include_graphics("images/04-09-10-3.png")
+knitr::include_graphics("images/04-09-10-4.png")
+```
+
+We can clearly see that in this case we __cannot__ simply set an arbitrary kernel width.
+The true local coefficient for $x_1$ is only approximated well within a narrow interval of the kernel width.
 As before, we observe that a too small kernel width however produces non-meaningful coefficients.
+In the limit, the true coefficient is not approximated, but rather the global (average) linear coefficient.
 Additionally, we observe that for lower kernel widths, the local models are rather volatile (see figure).
 
 Hence, we aim to better investigate this volatility.
 We display the mean and the confidence intervals of the coefficients from 100 different models for different kernel sizes in figure X.
 For very low kernel widths we observe a massive volatility which decreases to an acceptable level only after $0.25$ for all covariates.
 
-We observe that there is a trade-off between stable coefficients and locality.
-In our analysis it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-11-1.png")
+knitr::include_graphics("images/04-09-11-2.png")
+knitr::include_graphics("images/04-09-11-3.png")
+```
+
+We observe that there is a trade-off between stable coefficients and locality (expressed by small kernel width).
+In our analysis, it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
 Mathematically speaking, we aim the minimal kernel size that satisfies a volatility condition.
 
+Parallel to boosting...
+
 #### Global Non-Linearity
+
+More generally, we aim to show that a similar behaviour occurs if we induce more severe non-linearity.
+As we strongly favour linear relationships, we further generalise the approache from the previous section and simulate data with the underlying data generating mechanism:
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2<c_1} + \beta_{2,2} x_2 1_{c_1 < x_2 < c_2} +  \beta_{2,3} x_2 1_{c_2 < x_2} + \beta_3 x_3 + \epsilon + \gamma_0 1_{c_1 < x_1 < c_2} + \gamma_0 1_{x_1 > c_2} $$
+
+where the slope $\beta_2$ changes over the whole domain of $x_2$.
+We set $\beta_1 = 5$, $\beta_{2,1} = -4$, $\beta_{2,2} = 3$, $\beta_{2,3} = -4$ $\beta_1 = 3$, $c_1 = 4$ and $c_2 = 6$.
+
+We study three _representative_ observations complying with:
+1. $x_2 < 4$
+2. $4 < x_2 < 6$
+3. $6 < x_2$
+
+We observe the same pattern as before...
+
+NUR NOCH 3 SÄTZE.
 
 ### Real data
 
@@ -255,8 +294,6 @@ EXPLANATIONS WHAT IT IS
 First of all, we will show that the same problems as for simulated data persist for real data.
 When LIME is used in practise on real data, we aim that it produces consistent, or in other words stable, results.
 This means that if the input slighlty changes, we wish the explanation not to drastically change as well.
-We examine the stability of the explanations by coefficient and so-called stability paths.
-Stability paths are explained in detail below.
 We study how drastically explanations differ at different kernel sizes if we explain the nearest neighbours of the instance to be explained are used instead.
 
 
