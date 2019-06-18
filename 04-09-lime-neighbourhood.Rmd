@@ -318,6 +318,13 @@ We may formulate the problem as a mininmisation problem w.r.t. the kernel size s
 
 ### Real data
 
+- Things to consider: Scaling is crucial
+
+- Problem persists:
+single observations as before, then what happens when jumping to nearest neighbours?
+
+- How to achieve stable & local coefficients in general?
+
 ## Conclusion and outlook
 
 
