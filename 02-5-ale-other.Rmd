@@ -25,7 +25,7 @@ In the following section, we only consider two dimensional data sets, of contini
 
 ### Example 1
 
-In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e. $X_1 \thicksim \textit{U}(0,10) $. Furthermore we assume the conditional distribution of the feature $x_2$ given $x_1$ to be also uniform on the interval $[x_1 - 3, x_1 + 3 ]$, i.e. $X_2 \vert X_1 = x_1 \thicksim \textit{U}(x_1 - 3, x_1 + 3 ) $. Sampling 100 data points from this distribution yields the first dataset.
+In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e. $X_1 \sim U(0,10) $. Furthermore we assume the conditional distribution of the feature $x_2$ given $x_1$ to be also uniform on the interval $[x_1 - 3, x_1 + 3 ]$, i.e. $X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 ) $. Sampling 100 data points from this distribution yields the first dataset.
 
 ```{r eval = FALSE}
 prediction_function_1 <- function(x_1, x_2){
@@ -365,7 +365,7 @@ As the the theoretical ALE in this example was quite smooth grid.size 10 gave re
 
 ### Example 3
 
-In The 3rd example we assume $X_1 \thicksim \textit{N}(5,1)$ as well as $X_2 \vert X_1 = x_1 \thicksim \textit{U}(x_1 - 3, x_1 + 3 ) $. 
+In The 3rd example we assume $X_1 \sim N(5,1)$ as well as $X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 ) $. 
 
 ``` {r eval = FALSE}
 prediction_function_3 <- function(x_1, x_2){
