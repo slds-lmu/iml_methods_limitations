@@ -245,6 +245,7 @@ Representative now means that we should investigate observations with the follow
 We think these observations are best explained in areas with reasonable margin to $c_1 = 5$.
 
 Below, we depict the coefficient paths for four representative observations, two belonging to each bin.
+The true local coefficients are displayed by solid vertical lines.
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
 knitr::include_graphics("images/04-09-10-1.png")
