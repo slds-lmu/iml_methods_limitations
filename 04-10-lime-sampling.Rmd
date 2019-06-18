@@ -117,7 +117,7 @@ Fortunately in practice one can at least give a good approximation of the lower 
 
 - using continuous, convex black box model
 
-```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation"}
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
 
 # default input parameters
 model_smoothness = 270
@@ -152,7 +152,7 @@ model = lm(y ~ x, data = samples, weights = proximity)
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output"}
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
 req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
 install_these = req_packages[!(req_packages %in% installed.packages())]
 
