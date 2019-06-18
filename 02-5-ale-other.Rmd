@@ -314,3 +314,127 @@ ggarrange(plot1, plot2, plot3, plot4, plot5, plot6 , ncol=2, nrow=3, common.lege
 
 
 
+
+```{r exampleALe2_6,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_example2_6plots.PNG")
+```
+While for grid size 5 and bigger the approximations for the region 0 to 7.5 seem quite reasonable it seems that for the region 7.5 to 10 the approximation is best for grid size 10 and gets worse with higher grid sizes. Zooming in for grid sizes 10 and 25 reveals this effect more clearly.
+
+
+```{r eval = FALSE}
+plot7 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.3, aes(colour = "red")) +
+  xlim(c(6,9)) + ylim(c(-10000, 40000))+
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 10",  x = "x _ j", y = "ALE(x _ j)")
+
+
+
+
+plot8 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.0, aes(colour = "green")) +
+  stat_function(fun = fun.4, aes(colour = "red")) +
+  xlim(c(6,9)) + ylim(c(-10000, 40000)) +
+  scale_colour_manual("Legende", values = c("green", "red"), labels = c("theoretical ALE", "estimated ALE")) +
+  labs(title = "grid.size = 25",  x = "x _ j", y = "ALE(x _ j)")
+
+ggarrange(plot3, plot4, plot7, plot8 , ncol=2, nrow=2, common.legend = TRUE, legend="bottom")
+
+```
+
+
+
+```{r exampleALe2_zoom,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_example2_zoom.PNG")
+```
+
+Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the x_2 values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole AlE curve from that point on.
+
+This is also shown by the following grafic, which shows 50 ALE estimations (on different data samples) with grid size 10 and 25. The expected higher variance of the estimations with grid size 25 has especially strong effects in the region from $x_1 = 7$ to $x_1 = 10$  
+
+Grafic : Wip!!!!
+
+As the the theoretical ALE in this example was quite smooth grid.size 10 gave reasonable estimates. The following example shows problems that occur once the prediction function is quite shaky.
+
+### Example 3
+
+In The 3rd example we assume $X_1 \sim N(5,1)$ as well as $X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 ) $. 
+
+``` {r eval = FALSE}
+prediction_function_3 <- function(x_1, x_2){
+  y <-sin(10*x_1)*x_2
+  return(y)
+}
+
+
+sample_normal_uniform <- function(n, FUN = prediction_function_3, a = 5, b = 1, c = 3, d = 3){
+  x_1 <- rnorm(n = n, mean = a, sd = b)
+  x_2 <- runif(n = n, min = x_1 - c, max = x_1 + d)
+  y <- FUN(x_1, x_2)
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+
+set.seed(123)
+dataset_1 <- sample_normal_uniform(100, prediction_function_3, a = 5, b = 1, c = 3, d = 3)
+p <- ggplot2::ggplot(dataset_1, ggplot2::aes(x_1, x_2))
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 2", subtitle = "Normal distr.")
+
+
+```
+
+
+
+```{r datasetALE2,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_dataset2.PNG")
+```
+Furthermore we look at the prediction function $ \hat{f}_3(x_1,x_2) = sin(10x_1)*x_2 $
+
+Wip
+
+### Problems with piece-wise constant models
+Piece-wise constant models such as for example decision trees and random forests dont have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical Ale doenst make any sense in this context as the partial derivative doesnt exist. Still it is possible to estimate the ALE asthe "jump" will result in a more or less steep linear part, depending on the intervalsize of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
+As the following example shows this can be quite hard to realize if the steps dont match well the data.
+
+###Example 4
+WiP
+
+### Outlook 
+
+Ideas how to reslove this pronblem. Diffrent methods to select the intervals. Adaptive method?
+
+
+## Categorical Features
+
+Problem with categorical features: ALE accumulates the effects. That implies the feature needs to be ordered. Categorical features dont have a natural order as continuos features. So it is neccesary to first order them before being able to calculate an ALE. 
+
+### Ordering the features
+
+How to order the feature Space?
+What is implemented in the iml Package: order categories based on their similarity with respect to the other features. 
+1. Komogorov-Smirnoff distance or frequency tables for categorical features
+2. multidimensional scaling
+
+### Example of ALE with categorical feature
+
+WIP: find a good real data example and compute the ALE
+
+### Interpretation
+
+WIP: interprete it as this was not done in the ALE _intro Chapter
+
+
+### Changes of the ALE due to diffrent orders
+
+Problem: Ordering the categories is somehow arbitrary. could weigh different features differentley and obtain different orders.
+Ale-Plot will change!
+Idea: Use artifical ordinal feature to simulate different orders 
+
+### Example
+Example of differnet ALE plots with respect to the same categorical feature but different orders 
+
+
