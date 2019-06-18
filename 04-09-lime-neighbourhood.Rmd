@@ -5,8 +5,12 @@
 How much neighbourhood may be an issue can be illustrated in a setting very different to LIME:
 Descriptive statistics or in particular kernel density estimations.
 The figure below illustrates kernel densities from a standard normal distribution.
-'TODO
-One can easily see that the second panel seems to be appropriate while the first one is too granular and the third one does not feature any information.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship."}
+knitr::include_graphics("images/04-09-00.png")
+```
+
+One can easily see that the first panel seems to be appropriate while the second one is too granular.
 The proper definition of the neighbourhood is in this case very crucial.
 However, with no prior information this definition is arbitrary.
 We can only judge on the proper definition of the neighbourhood from our experience and our expectations.
@@ -16,15 +20,15 @@ Thus, it seems much harder to argue on the proper neighbourhood definition when 
 
 This chapter reviews the neighbourhood issue w.r.t. the LIME algorithm critically.
 The objective of this chapter is more to outline this particular issue and not to suggest solutions for it.
-First of all, it describes the neighbourhood defintion abstractly (section 1).
-Then, it reviews possible implementations with special emphasis on the implementation in Python and R (section 2).
-Section 3 discusses inherent problems and potential issues of the current implementations.
-In section 4 we examine the coefficient stability of LIME explanations w.r.t to altering the neighbourhood definition within an experiment in R.
-We use both, simulated and real data.
-We make use of the stability selection algorithm which is explained in section 4.1.
-Finally, section 5 concludes reviewing the take-aways of this chapter and proposing an improved algorithm w.r.t. the neighbourhood issue.
+First of all, it describes the neighbourhood defintion abstractly in greater detail. 
+Then, it illustrates how problematic the neighbourhood definition is in a simple one-dimensional example.
+Furthermore, we study the effect of altering the kernel size more systematically in more complex contexts in the next section.
+The first subsection investigates multivariate globally linear relationships.
+The second one researches local coefficients.
+The third one studies non-linear effects.
+Afterwards, we apply the insights from simulated data to a real data set and suggest best practises for setting an appropriate kernel width when working with LIME.
 
-## The Neighbourhood in LIME
+## The Neighbourhood in LIME in more detail
 
 When obtaining explanations with LIME the neighbourhood of an instance is determined when fitting the model by applying weights to instances w.r.t. proximity to the instance of interest.
 However, it is important to note that this step is already arbitrary.
@@ -35,8 +39,8 @@ This way we would increase the density around the instance already by proper sam
 In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
 In this chapter, however, we focus on the explicit implementation in LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model stability.
 
-In LIME the weighting of instances is performed using a kernel function over the distances of instances to the instance of interest.
-This leaves us two _arbitrary_ (in fact they may not be that arbitrary) choices:
+When working with LIME, the weighting of instances is performed using a kernel function over the distances of instances to the instance of interest.
+This leaves us two _arbitrary_ (in fact they may not be _that_ arbitrary) choices:
 the distance and the kernel function.
 Typical distance functions applicable to statistical data analysis are based on the L0, L1 and L2 norms.
 For numerical features one tends to use either manhattan distance (L1) or euclidean distance (L2).
@@ -66,7 +70,7 @@ We observed that this property may have some undesired properties as global mode
 We suggest to implement a kernel function also for the Gower distance.
 We are currently working on this issue in collaboration with the package owner.
 
-## The Problem in a one-dimensional setting
+## The problem in a one-dimensional setting
 
 How crucial the kernel width is can be illustrated by a very simple example.
 We simulate data with one target and two features.
@@ -232,10 +236,13 @@ knitr::include_graphics("images/04-09-09.png")
 
 We set $\beta_1 = 5$, $\beta_2 = -4$, $\beta_1 = 3$ and $c_1 = 5$.
 
-Representative now means we should investigate observations the following properties:
+Representative now means that we should investigate observations with the following properties:
+
 1. $x_1 < 5$ 
+
 2. $x_1 > 5$ 
-We think these observations are best explained in areas with reasonable margin to $c_1$.
+
+We think these observations are best explained in areas with reasonable margin to $c_1 = 5$.
 
 Below, we depict the coefficient paths for four representative observations, two belonging to each bin.
 
@@ -246,14 +253,15 @@ knitr::include_graphics("images/04-09-10-3.png")
 knitr::include_graphics("images/04-09-10-4.png")
 ```
 
-We can clearly see that in this case we __cannot__ simply set an arbitrary kernel width.
+We can clearly see that in this case, we __cannot__ simply set an arbitrary kernel width.
 The true local coefficient for $x_1$ is only approximated well within a narrow interval of the kernel width.
 As before, we observe that a too small kernel width however produces non-meaningful coefficients.
 In the limit, the true coefficient is not approximated, but rather the global (average) linear coefficient.
 Additionally, we observe that for lower kernel widths, the local models are rather volatile (see figure).
 
 Hence, we aim to better investigate this volatility.
-We display the mean and the confidence intervals of the coefficients from 100 different models for different kernel sizes in figure X.
+We display the mean and the confidence intervals of the coefficients from 100 different models for different kernel sizes in figure 11.
+The black lines interpolates averaged coefficient estimates for different kernel sizes. The solid black line indicates the true local coefficient. The grey shaded area are the 95% confidence intervals (capped at $7$ and $-7$).
 For very low kernel widths we observe a massive volatility which decreases to an acceptable level only after $0.25$ for all covariates.
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
@@ -264,7 +272,7 @@ knitr::include_graphics("images/04-09-11-3.png")
 
 We observe that there is a trade-off between stable coefficients and locality (expressed by small kernel width).
 In our analysis, it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
-Mathematically speaking, we aim the minimal kernel size that satisfies a volatility condition.
+Mathematically speaking, we aim the minimal kernel size so that it satisfies a volatility condition.
 
 Parallel to boosting...
 
@@ -279,22 +287,37 @@ where the slope $\beta_2$ changes over the whole domain of $x_2$.
 We set $\beta_1 = 5$, $\beta_{2,1} = -4$, $\beta_{2,2} = 3$, $\beta_{2,3} = -4$ $\beta_1 = 3$, $c_1 = 4$ and $c_2 = 6$.
 
 We study three _representative_ observations complying with:
+
 1. $x_2 < 4$
+
 2. $4 < x_2 < 6$
+
 3. $6 < x_2$
 
-We observe the same pattern as before...
+We observe the same pattern as before.
+In figures 12 and 13 we see that there is a small range where we actually are capable of fitting a stable and appropriate model for all different bins.
 
-NUR NOCH 3 SÄTZE.
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-12-1.png")
+knitr::include_graphics("images/04-09-12-2.png")
+knitr::include_graphics("images/04-09-12-3.png")
+```
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-13-1.png")
+knitr::include_graphics("images/04-09-13-2.png")
+knitr::include_graphics("images/04-09-13-3.png")
+```
+
+Having investigated simulated data where we knew the ground truth gave us a good overview on how the kernel size affects the resulting explainer model.
+The neighbourhood problem can be described briefly by the following.
+A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model.
+An optimal kernel size should balance these effects.
+We may formulate the problem as a mininmisation problem w.r.t. the kernel size subjected to the constraint that coefficients need to be stable.
 
 ### Real data
 
-The real data set is... 
-EXPLANATIONS WHAT IT IS
-First of all, we will show that the same problems as for simulated data persist for real data.
-When LIME is used in practise on real data, we aim that it produces consistent, or in other words stable, results.
-This means that if the input slighlty changes, we wish the explanation not to drastically change as well.
-We study how drastically explanations differ at different kernel sizes if we explain the nearest neighbours of the instance to be explained are used instead.
+## Conclusion and outlook
 
 
 
