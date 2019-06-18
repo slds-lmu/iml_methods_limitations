@@ -1,4 +1,93 @@
 # Comparison of ALE and PDP
 
-*Author: firstname lastname*
+*Author: Jakob Bodensteiner*
 
+short intro
+
+## Comparison one feature
+Here the focus will lie on a short explenation to point out the differences in interpretation. 
+
+Especially we will see, pdp is not working for correlated data.
+Here a real world problem seems to be apropriate
+
+## Comparison two features
+The comparison for two features will have two parts:
+
+### Estimation 2D ALE
+First the estimation function will be derived (maybe the theoretical function is shown, but main part is on the estimation)
+
+### 2D ALE vs 2D PDP
+Here the difference in interpretation will be explained. The point here is, that ALE only shows 'joint' effects of the two features without the maineffects. So just the additional effect for the different combinations of the two features is visualized. Whereas for the PDP it is again the 'average prediction' for the different combinations.
+
+Here it will be interesting to see the different effects for correlated features especially for the PDP. 
+
+## Runtime comparison 
+Here it is the plan to compare the runtime of the two algos with the package micro benchmark. All comparisons one small data set (100 points), one bigger (around 1000) and one 'huge' (10000 points) will be used.
+The plots to be compared will be PDP vs ALE for:
+
+1. one numerical feature of interest
+2. two numerical features of interest
+3. one categorical feature of interest
+
+The outcomes will be analysed. It is expected that The ALE is faster.
+
+## Weakness of ALE
+
+Compared to PDP ALE is almost always the better choice, at least for one feature of interest. It is faster and unbiased also for correlated features. But in some special cases PDP can be superior to ALE.
+
+
+``` {r eval=FALSE}
+library(crs)
+library(iml)
+
+# create data frame with target variable y = sinus(x1)
+# x1 uniformely between min_int and max_int 
+# x2 has no influence on the target variable
+# nor is it correlated with x1
+get_sin_df <- function(n, min_int, max_int) {
+  x1 <- runif(n, min_int, max_int)
+  sinus <- sin(x1)
+  x2 <- numeric(n)
+  return(as.data.frame(cbind(x1, x2, sinus)))
+}
+
+# create example df
+sin_df <- get_sin_df(15, -4, 4)
+
+# fit splines on df
+spl <- crs(sinus ~ x1, data = sin_df)
+
+# generate predictor set
+X = sin_df[which(names(sin_df) != 'sinus')]
+predictor = Predictor$new(spl, data = X, y = sin_df$sinus)
+
+# plot ale
+ale = FeatureEffect$new(predictor, feature = 'x1')
+plot(ale)
+
+# plot pdp on same situation
+pdp = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+pdp$plot()
+```
+
+```{r aleSinusSpline, fig.cap='(ref:aleSinusSplineCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_sinus_splines_15_points_ale.png")
+```
+(ref:aleSinusSplineCap) ALE estimated on a sinus function fitted with splines. Feature x1 is independent of x2.
+
+```{r pdpSinusSpline, fig.cap='(ref:pdpSinusSplineCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_sinus_splines_15_points_pdp.png")
+```
+(ref:pdpSinusSplineCap) PDP calculated on the same setting like the ALE above in figure \@ref(fig:aleSinusSpline).
+
+Figure \@ref(fig:pdpSinusSpline) shows a PDP calculated on the data set from the r code above. For the target variable y it holds that y = sinus(x1). Feature x1 is uniformely sidtributed between -4 and 4. Feature x2 has no influence on the target variable nor is it correlated with x1.
+Since there is absolutely no connection between x2 and x1 or y, the PDP shows simply the prediction of the fitted spline function. So obviously the spline fits the real sinus pretty well. 
+In contrast to that we see that the ALE (\@ref(fig:aleSinusSpline)) struggles to interpret the the fitted spline function. The obvious main problems are:
+A: It can be seen that it does not cover the full range of the sinus function (between -1 and 1). 
+B: It does not show a smooth curve. One could guess a sinus function but it is absolutely not obvious.
+First of all, the most important reason for both problems is the poor data situation in this example. The sample includes just 15 data points.
+The point here for problem A is, that in the peek of the sinus function no point was sampled. There was also no point sampled in the lowest region of the sinus function. But just looking at the range of this ALE it is between -1 and about 0.75. So one could conclude that just the upper range was not evaluated well. This would not be correct. For the ALE one always has to be aware of the centering. Since in the example here more points in feature x1 were sampled with low sinus values the centering of the ALE shifts the uncentered ALE downwards. This can be seen by the value at x1. It is below 0 although sinus(0) = 0. So in both directions the ALE does not get the maximal values of the sinus function. For Problem B on of the main assumptions of the ALE estimation is the reason. In the ALE estimation the change of the function in each interval is estimated in a linear way. And if the intervals become too big for the function, in a way that an interval the change is not approximately linear anymore, then the ALE does not deliver smooth results.
+
+If one samples enough points for x1 then the ALE looks basically the same as the PDP. So for enough data the ALE is to be preferable to the PDP. Especially in real data no correlation between the features is not often the case. But if the data is sparse, the prediction function relatively complex and the feature of interest has low correlation with the other features the PDP is absolutely worth a look. 
