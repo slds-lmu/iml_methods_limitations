@@ -6,7 +6,7 @@ How much neighbourhood may be an issue can be illustrated in a setting very diff
 Descriptive statistics or in particular kernel density estimations.
 Figure \@ref(fig:fig1) illustrates kernel densities from a standard normal distribution.
 
-```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "The right kernel width for kernel density estiamtions."}
+```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "The appropriate kernel width for kernel density estimations."}
 knitr::include_graphics("images/04-09-01.png")
 ```
 
@@ -65,7 +65,7 @@ By default the R implementation implements an exponential kernel where the kerne
 
 As the choice of the distance measure seems least arbitrary and the choice of the kernel function is not expected to have crucial impact on the neighbourhood definition, we focus on the kernel width in our experimental study.
 However, it is very important to notice that practically the distance measure may interact with the kernel width.
-This is because as of the current implementation in R Gower distance does not apply any kernel as it already returns scaled distances.
+This is because as of 2019 the current implementation in R Gower distance does not apply any kernel as it already returns scaled distances.
 We observed that this property may have some undesired properties as global models seem to be preferred over local models.
 We suggest to implement a kernel function also for the Gower distance.
 We are currently working on this issue in collaboration with the package owner.
@@ -106,7 +106,7 @@ This is indicated by the red line in figure 4.
 However, if we increased the kernel width to $2$ the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure \@ref(fig:fig5).
 The second line does not seem to fit a local linear model but rather a global one.
 
-```{r, fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for univariately non-linear data."}
+```{r, fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Possible local models for univariately non-linear data."}
 knitr::include_graphics("images/04-09-05.png")
 ```
 
@@ -138,7 +138,7 @@ But what a small kernel width is also strongly depends on the dimensionality and
 ## The problem in more complex settings
 
 The previous setting was trivial for LIME.
-We could visualise the predicitve surface.
+We could visualise the predicitve surface in the first place.
 This means that interpretability was largely given in the first place.
 We will study our problem in more complex settings to show that the problem persists.
 We will do so by examining simulated and real data.
@@ -149,11 +149,11 @@ We simulate data with multiple numeric features and a numeric target.
 We assume the features to originate from a multivariate normal distribution where all features are moderately correlated.
 Note that the choice of the normal distribution to be consistent with the assumptions within LIME.
 We simulate three different data sets. 
-In the first one the true associations are linear.
-In the second one we exchange one of the linear associations with a non-linear one.
-In the third one the true assocations are linear but only affect the target within a sub interval of the feature domain.
-This should examine LIME's ability to determin local feature importance.
-For all three data sets we expect the kernel width to have crucial impact on the resulting explainer.
+In the first one the true associations are linear (globally linear).
+In the second one the true assocations are linear but only affect the target within a sub interval of the feature domain (locally linear).
+This should examine LIME's ability to determine local feature importance.
+In the third one we exchange one of the linear associations from the first simulation with a non-linear one (globally non-linear).
+For all three data sets, we expect the kernel width to have impact on the resulting explainer.
 However, for the global linear relationships we expect the weakest dependency because the true local model and the true global model are identical.
 
 We refrain from simulating more complex data sets as we strongly favour that the true marginal predicitive surface is human interpretable.
