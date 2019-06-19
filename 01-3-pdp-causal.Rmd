@@ -1,18 +1,60 @@
 # PDP and Causal Interpretation
 
 *Author: Thommy Dassen*
+
 ## Introduction
 
 ## Partial Dependence Plots and Directed Acyclical Graphs
 
 ## Interventions on simulated data
 
-** Scenario 1: Direct Effects **
+**Scenario 1: Direct Effects**
 
-** Scenario 2: Confounding **
+```{r eval=FALSE, include=FALSE}
+library(iml) # for pdp and ice
+library(ggdag) # for structural causal graphs
+library(xgboost) # for modeling
+library(randomForest) # for modeling
+library(caret) # for creating train and test set
+library(pdp) # for pdp and ice plots
 
-** Scenario 3: Latent Variable **
+# set the number of data points to be created
+N <- 1000
+set.seed(107)
+###############################################
+# Scenario 1: Direct Effect
+###############################################
+# x1 causes y
+dagify(y ~ x1,
+       y ~ x2,
+       y ~ x3
+       ) %>% 
+  ggdag() 
+```
 
-** Scenario 4: Collider **
+```{r directeffect, fig.cap='(ref:directeffect)', echo=FALSE, out.width='60%'}
+knitr::include_graphics("images/direct_effect.jpeg")
+```
+(ref:directeffect) A DAG with direct effects.
+
+**Scenario 2: Confounding**
+```{r eval=FALSE, include=FALSE}
+###############################################
+# Scenario 2: Confounding Variables
+###############################################
+# create structural graph of what the data set looks like
+dagify(y ~ x2,
+       x2 ~ x1,
+       y ~ x1) %>% 
+  ggdag() 
+```
+```{r confounding, fig.cap='(ref:confounding)', echo=FALSE, out.width='60%'}
+knitr::include_graphics("images/confounding.jpeg")
+```
+(ref:confounding) A DAG with a confounding effect.
+
+**Scenario 3: Latent Variable**
+
+**Scenario 4: Collider**
 
 ## To Do
