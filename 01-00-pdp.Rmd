@@ -2,7 +2,7 @@
 
 ## Partial Dependence Plots (PDP)
 
-The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can reveal the nature of dependence structure. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s).\citep{molnar2019}
+The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can show the way a feature impacts an outcome variable. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s).\citep{molnar2019}
 
 The underlying function can be described as follows:
 
@@ -35,11 +35,11 @@ knitr::include_graphics('images/PDP_Plot_2.jpeg')
 
 Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in figure \@ref(fig:plot4). 
 
-```{r plot3, echo=FALSE, out.width='90%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.", fig.align= 'center'}
+```{r plot3, echo=FALSE, out.width='80%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_3.jpeg')
 ```
 
-```{r plot4, echo=FALSE, out.width='100%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.", fig.align= 'center'}
+```{r plot4, echo=FALSE, out.width='80%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_4.jpeg')
 ```
 
@@ -53,7 +53,7 @@ More formally, ICE plots can be derived by considering the estimated response fu
 
 As shown in figure \@ref(fig:plot5), each line represents one instance and visualizes the effect of varying the feature value $x^{(i)}_S$ (Age) of a particular instance on the model’s prediction, given all other features remain constant (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
-```{r plot5, echo=FALSE, out.width='100%', fig.cap="ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.", fig.align= 'center'}
+```{r plot5, echo=FALSE, out.width='80%', fig.cap="ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_5.jpeg')
 ```
 
@@ -65,7 +65,7 @@ $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
 Experience has shown that the most interpretable plots occur when the anchor point $x^a$ is chosen as minimum or maximum of the observed values. Figure \@ref(fig:plot6) shows the effect of centering the ICE curves of survival probability by Age at the minimum of observed ages in the 'Titanic' data set. 
 
 
-```{r plot6, echo=FALSE, out.width='100%', fig.cap="Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.", fig.align= 'center'}
+```{r plot6, echo=FALSE, out.width='80%', fig.cap="Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_6.jpeg')
 ```
 
