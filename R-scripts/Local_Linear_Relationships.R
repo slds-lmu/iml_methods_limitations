@@ -1,6 +1,10 @@
 library(dplyr)
 library(mlr)
 library(lime)
+library(gridExtra)
+library(ggplot2)
+library(reshape2)
+source("utils.R")
 data_set <- simulate_data(2500, 
                           3, 
                           nonlinear = NULL,

@@ -1,8 +1,9 @@
 library(devtools)
-install_github("https://github.com/pkopper/lime")
+#install_github("https://github.com/pkopper/lime")
 library(lime)
 library(mlr)
 library(gridExtra)
+library(ggplot2)
 source("~/utils.R")
 
 ### First simulation

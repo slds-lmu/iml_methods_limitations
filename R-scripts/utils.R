@@ -175,3 +175,32 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
     result
   }
 }
+
+plot_kernels <- function(kernel_matrix, 
+                         kernel_widths,
+                         true_coefficients) {
+  model_per_kernel <- cbind(kernel_widths, kernel_matrix)
+  colnames(model_per_kernel) <- c("kernel", "intercept", 
+                                  paste("x", 1:ncol(observation), sep = ""))
+  
+  plot_frame <- cbind(rep(kernel_widths, ncol(observation)), 
+                      melt(model_per_kernel[, 3:(ncol(observation) + 2)]))
+  colnames(plot_frame) <- c("kernel", "Feature", "coefficient")
+  
+  p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 
+                                     group = Feature)) + 
+    geom_line(aes(color = Feature), size = 3) + 
+    geom_point(aes(color = Feature), size = 3) + 
+    labs(x = "Kernel width", y = "Slope") +
+    theme(text = element_text(size = 35))
+  
+  add_this <- ""
+  for (i in 1:length(true_coefficients)) {
+    new <- paste(" + geom_path(colour = ", i, 
+                 " + 1, stat = 'function', size = 1.5, ", 
+                 "fun = function(x) true_coefficients[", i, "])", sep = "")
+    add_this <- paste(add_this, new, sep = "") 
+  }
+  call_text <- paste("p", add_this)
+  eval(parse(text = call_text))
+}
