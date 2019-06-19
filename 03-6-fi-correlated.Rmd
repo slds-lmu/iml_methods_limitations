@@ -1,3 +1,233 @@
 # PFI, LOCO and Correlated Features
 
-*Author: firstname lastname*
+* The interpretablity of Feature Importance (strongly) depend on the correlations between the input variables
+
+* If all features of  data set are independent and not correlated, you can can calculate the the feature importance of every feature and there is no problem in the interpretability due to correlation effects.
+
+* Whereas if there are some correlated feature in the data which is highly possible in reality, then the results of the feature importance do not reflect the individually feature importance. This leads to misleading interpreatations about the relevance of a feature in a model
+
+* To show you the reason behind that here is an example:
++ Descriptive examples of problems with correlation
++ One example refering to the chapter "Decrease of Feature Importance by Adding Correlated Features":
++ An other example for the chapter "Unrealistic data instances"
+
+## Effect on Feature Importance by Adding Correlated Features
+
+* The overall emphasis is on this chapter 
+* Comparison of the two methods LOCO and PFI
+
+### Simulation
+
+* The main focus is here on the simulation of correlated feature and not the application on real data
+
+* Simulation of different kind of szenarios:
+  + Strength of correlation (complete correlation r = 0.99; r = 0.8; r = 0.6; r = 0.4; r = 0.2; r = 0 (no correlation)
+  
+  
+```{r sim, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of highly correlated features 1 and 2 (r=0.99) "}
+
+
+library(mvtnorm)
+
+
+set.seed(123)
+mu_1 <- 2
+mu_2 <- 2
+mu_3 <- 2
+mu_4 <- 2
+var_1 <- 1
+var_2 <- 1
+var_3 <- 1
+var_4 <- 1
+cov_12 <- 0.99*sqrt(var_1)*sqrt(var_2)
+cov_13 <- 0.0*sqrt(var_1)*sqrt(var_3)
+cov_14 <- 0.0*sqrt(var_1)*sqrt(var_4)
+cov_23 <- 0.0*sqrt(var_2)*sqrt(var_3)
+cov_24 <- 0.0*sqrt(var_2)*sqrt(var_4)
+cov_34 <- 0.0*sqrt(var_3)*sqrt(var_4)
+data <- as.data.frame(rmvnorm(n = 1000, 
+                              mean = c(mu_1, mu_2, mu_3, mu_4),
+                              sigma = matrix(c(var_1, cov_12, cov_13, cov_14,
+                                               cov_12, var_2, cov_23, cov_24,
+                                               cov_13, cov_23, var_3, cov_34,
+                                               cov_14, cov_24, cov_34, var_4), nrow=4)))
+
+
+cov(data)
+cor(data)
+
+# For cases with higher dimesions one should use package genPositiveDefMat to generate the covariance matrix and ensure that the matrix is postive definit
+
+```
+
+```{r sim1, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of no correlation between the features 1 and 2 (r=0) "}
+
+
+library(mvtnorm)
+
+
+set.seed(123)
+mu_1 <- 2
+mu_2 <- 2
+mu_3 <- 2
+mu_4 <- 2
+var_1 <- 1
+var_2 <- 1
+var_3 <- 1
+var_4 <- 1
+cov_12 <- 0*sqrt(var_1)*sqrt(var_2)
+cov_13 <- 0.0*sqrt(var_1)*sqrt(var_3)
+cov_14 <- 0.0*sqrt(var_1)*sqrt(var_4)
+cov_23 <- 0.0*sqrt(var_2)*sqrt(var_3)
+cov_24 <- 0.0*sqrt(var_2)*sqrt(var_4)
+cov_34 <- 0.0*sqrt(var_3)*sqrt(var_4)
+data1 <- as.data.frame(rmvnorm(n = 1000, 
+                              mean = c(mu_1, mu_2, mu_3, mu_4),
+                              sigma = matrix(c(var_1, cov_12, cov_13, cov_14,
+                                               cov_12, var_2, cov_23, cov_24,
+                                               cov_13, cov_23, var_3, cov_34,
+                                               cov_14, cov_24, cov_34, var_4), nrow=4)))
+
+
+cov(data1)
+cor(data1)
+
+# For cases with higher dimesions one should use package genPositiveDefMat to generate the covariance matrix and ensure that the matrix is postive definit
+
+```
+
+
+
+```{r szenarios, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Different kind of szenarios"}
+
+
+
+#Different kind of simulations (only the simulations which show interesting results will be shown later)
+
+y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #linear
+
+#y2 <- data$X1 - data$X2 + 3*sin(data$X3) + 1.5*data$X4 + rnorm(n = 1, mean = 0, sd = 1) #nicht-linear
+
+#y3 <- data$X1 - data$X2 + 3*data$X3 + 1.5*data$X4 + rnorm(n = 1, mean = 0, sd = 1) #uninformative (which means: no information of some feature meaning there are part of the data set but not part of the model implemented) 
+
+#y4 Simulation with interaction effect
+
+#y5 Simulation with high amount of correlated data
+
+
+
+### Simulation for y1 (linear case)
+data <- as.data.frame(data)
+df <- data
+df['random'] <- runif(nrow(df))
+
+```
+
+
+```{r PFI, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with high correlated features (r = 0.99) on random forest model and linear model"}
+
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+#Effect on PFI
+
+
+create_rfplot <- function(rf, data){
+  mod <- Predictor$new(rf, data , y =y1) 
+  imp <- FeatureImp$new(mod, loss = "mse" , compare = "ratio")
+  imp.dat <- imp$results
+  
+  p <- ggplot(imp.dat, aes(x=reorder(feature, importance),ymin=importance.05, ymax=importance.95)) +
+    geom_errorbar(width=0.3, size=1, color="darkblue") + 
+    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
+    coord_flip() +
+    theme(plot.subtitle = element_text(size = 10)) +
+    labs(y = "Feature Importance", x= "") + 
+    theme(text = element_text(size = 16))
+  
+  return(p)
+}
+
+# For a random forest model: 
+rf1 <- randomForest(y1~. , data = df)
+p1 <- create_rfplot(rf1, data= df)
+p1
+# For a linear model:
+lm1 <- lm(y1~., data=df)
+pl <- create_rfplot(lm1, data=df)
+pl
+```
+
+```{r LOCO, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0.99) on random forest model"}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+
+
+# Effect on LOCO
+# For a random forest model:
+df["y1"] <- y1
+task = makeRegrTask(data = df , target= "y1")
+learner = makeLearner("regr.randomForest")
+feat = getTaskFeatureNames(task)
+feat
+mod.full = train(learner, task)
+res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
+res = resample(learner = learner, task = task, resampling = res_desc,show.info = FALSE)
+
+
+result <- data.frame(matrix(nrow=1,ncol=length(feat))) 
+
+for(i in 1:length(feat)){
+  taskfeat = dropFeatures(task, feat[i])
+  mod.feat = train(learner, dropFeatures(task, feat[i]))
+  resfeat = resample(learner = learner, task = taskfeat, resampling = res_desc,show.info = FALSE);
+  importance = data.frame(resfeat$aggr-res$aggr)
+  feature = c(getTaskFeatureNames(task))
+  result[i] <- importance
+  #print(importance)
+}
+result
+colnames(result) <- getTaskFeatureNames(task)
+rownames(result) <- "imp"
+FIP <- data.frame(
+  importance0= round((t(result)),3),
+  feature0= getTaskFeatureNames(task))
+
+
+ploco <- ggplot(data = FIP ,aes(x=feature0,y = imp)) + #### hier fehler 
+  geom_point(mapping=aes(x=feature0, y=imp), size=3, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "Feature Importance", x= "") + 
+  theme(text = element_text(size = 16))
+
+ploco
+
+#Problem to order the importance within the graphic. This issue should be fixed.
+
+```
+  
+
+
+
+### Real Data
+
+* Probably dataset "mtcars", because the features are highly correlated, but should be 
+* Just showing the problem on a real data set to show the complex effects of correlated, real data
+* But this chapter should be rather small
+
+## Unrealistic data instances
+
+* this chapter should be hold relativly small (less weight than 2nd chapter), because the emphasis is on the chapter "The Effect on Feature Importance by Adding Correlated Features"
+
+### Real Data
+
+## Prevention of Correlation Problems
+
+
+
+
+
