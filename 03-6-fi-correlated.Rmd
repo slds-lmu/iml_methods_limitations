@@ -106,21 +106,16 @@ cor(data1)
 
 Szenario Settings:
 
-Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y.
-
- (only the szenarios which show interesting results will be shown later)
+Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. (only the szenarios which show interesting results will be shown later)
 
 1) Linear Dependence:
 
 
 ```{r szenariolm, message = FALSE, fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence"}
 
+y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #correlated
 
-
-
-
-y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #linear
-y10 <- data1$V1 + data1$V2 + data1$V3 + data1$V4 + rnorm(n = 1, mean = 0, sd = 1)
+y10 <- data1$V1 + data1$V2 + data1$V3 + data1$V4 + rnorm(n = 1, mean = 0, sd = 1) #uncorrelated
 
 
 ### Simulation for y1 (linear case) and correlated features
@@ -132,29 +127,6 @@ df['random'] <- runif(nrow(df))
 data1 <- as.data.frame(data1)
 df1 <- data1
 df1['random'] <- runif(nrow(df1))
-
-```
-
-
-```{r szenario2, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Different kind of szenarios"}
-
-#y2 <- data$X1 - data$X2 + 3*sin(data$X3) + 1.5*data$X4 + 
-#       rnorm(n = 1, mean = 0, sd = 1) #nicht-linear
-
-#y3 <- data$X1 - data$X2 + 3*data$X3 + 1.5*data$X4 + 
-#          rnorm(n = 1, mean = 0, sd = 1) #uninformative 
-#      (which means: no information of some feature meaning there
-#       are part of the data set but not part of the model implemented) 
-
-#y4 Simulation with interaction effect
-
-#y5 Simulation with high amount of correlated data
-
-
-
-
-
-
 
 ```
 
@@ -349,6 +321,51 @@ ploco0
 
 * In case of uncorrelated features (r = 0) the random forest model weights every feature nearly the same. It does not look like that at the first sight, but the scale of the ordinate is relativly small. So they are nearly the same also considering that the correlation is not exactly zero (see above).
 
+
+
+
+2) Nonlinear Dependence:
+
+```{r szenariononlm, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Nonlinear Dependence"}
+
+#y2 <- sin(data$X1) + data$X2 + data$X3 + data$X4 + 
+      # rnorm(n = 1, mean = 0, sd = 1) #correlated
+
+#y20 <- sin(data1$X1) + data1$X2 + data1$X3 + data1$X4 + 
+      # rnorm(n = 1, mean = 0, sd = 1) #uncorrelated
+
+### Simulation for y2 (nonlinear dependence) and correlated features
+data <- as.data.frame(data)
+df <- data
+df['random'] <- runif(nrow(df))
+
+### Simulation for y10 (nonlinear dependence) and uncorrelated features
+data1 <- as.data.frame(data1)
+df1 <- data1
+df1['random'] <- runif(nrow(df1))
+
+```
+
+
+
+3) Uninformative Feature:
+Uninformative which means that one feature (in this case X4) is considered for the dependence on Y, but not considered for the model. So here it is the same case as in 1)
+
+```{r szenariouninf, message = FALSE, fig.height=6, fig.width=12, fig.cap="Szenario Uniformative Feature"}
+
+y3 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #correlated
+
+y30 <- data1$V1 + data1$V2 + data1$V3 + data1$V4 + rnorm(n = 1, mean = 0, sd = 1) #uncorrelated) 
+
+```
+
+4) Simulation with interaction effect
+
+5) Simulation with high amount of correlated data
+
+
+
+```
 
 ### Real Data
 
