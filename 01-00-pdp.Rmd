@@ -18,7 +18,7 @@ $$\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})$$
 An example of a PDP based on the 'Titanic' data set, which contains information on the fate of 2224 passengers and crew members during the Titanic's maiden voyage, is given in figure \@ref(fig:plot1).
 
 ```{r plot1, echo=FALSE, out.width='80%', fig.cap="PDP for predicted survival probability and numeric feature variable 'Age'. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_1.pdf')
+knitr::include_graphics('images/PDP_Plot_1.jpeg')
 ```
 
 When a feature is categorical, rather than continuous, the partial dependence function is modeled separately for all of the K different classes of said feature. It maps the predictions for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
@@ -26,7 +26,7 @@ When a feature is categorical, rather than continuous, the partial dependence fu
 For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed $x_S$-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, \@ref(fig:plot2) shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature 'passenger class'.
 
 ```{r plot2, echo=FALSE, out.width='80%', fig.cap="The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_2.pdf')
+knitr::include_graphics('images/PDP_Plot_2.jpeg')
 ```
 
 
@@ -36,11 +36,11 @@ knitr::include_graphics('images/PDP_Plot_2.pdf')
 Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in \@ref(fig:plot4). 
 
 ```{r plot3, echo=FALSE, out.width='90%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_3.pdf')
+knitr::include_graphics('images/PDP_Plot_3.jpeg')
 ```
 
 ```{r plot4, echo=FALSE, out.width='100%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_4.pdf')
+knitr::include_graphics('images/PDP_Plot_4.jpeg')
 ```
 
 Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.\citep{molnar2019}
@@ -54,7 +54,7 @@ More formally, ICE plots can be derived by considering the estimated response fu
 In ICE plots, each line represents one instance and visualizes the effect of varying the feature value $x^{(i)}_S$ of a particular instance on the model’s prediction, given all other features remain constant (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
 ```{r plot5, echo=FALSE, out.width='100%', fig.cap="ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_5.pdf')
+knitr::include_graphics('images/PDP_Plot_5.jpeg')
 ```
 
 
@@ -66,7 +66,7 @@ Experience has shown that the most interpretable plots occur when the anchor poi
 
 
 ```{r plot6, echo=FALSE, out.width='100%', fig.cap="Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.", fig.align= 'center'}
-knitr::include_graphics('images/PDP_Plot_6.pdf')
+knitr::include_graphics('images/PDP_Plot_6.jpeg')
 ```
 
 
