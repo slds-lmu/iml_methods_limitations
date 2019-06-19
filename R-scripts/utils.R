@@ -1,0 +1,177 @@
+make_split <- function(data, share) {
+  split <- sample(1:nrow(data), floor(share * nrow(data)))
+  return(list(train = data[split, ], test = data[-split, ]))
+}
+
+extract_local_model <- function(observation, 
+                                explainer, 
+                                n_features, 
+                                n_permutations, 
+                                kernel_width,
+                                dist_fun = "euclidean") {
+  observation <- as.data.frame(observation)
+  explanation <- explain(observation, explainer,
+                         n_features = n_features, 
+                         n_permutations = n_permutations, 
+                         kernel_width = kernel_width, 
+                         dist_fun = dist_fun)
+  coefs <- rep(0, n_features + 1)
+  coefs[1] <- explanation$model_intercept[1]
+  names(coefs)[1] <- "Intercept"
+  for (i in 1:n_features) {
+    coefs[i + 1] <- explanation$feature_weight[i]
+    names(coefs)[i + 1] <- explanation$feature[i]
+  }
+  coefs
+}
+
+extract_average_local_model <- function(observation, 
+                                        explainer, 
+                                        n_features, 
+                                        n_permutations, 
+                                        kernel_width,
+                                        dist_fun = "euclidean",
+                                        iterations = 25,
+                                        se = FALSE) {
+  res <- vector(mode = "list", length = iterations)
+  for (i in 1:iterations) {
+    res[[i]] <- extract_local_model(observation, 
+                                    explainer, 
+                                    n_features, 
+                                    n_permutations, 
+                                    kernel_width,
+                                    dist_fun = "euclidean")
+  }
+  means <- Reduce("+", res) / iterations
+  if (!se) {
+    means
+  } else {
+    sq_error <- res
+    for (i in 1:length(res)) {
+      sq_error[[i]] <- (res[[i]] - means) ^ 2
+    }
+    se <- sqrt(Reduce("+", sq_error) / iterations)
+    list(means, se)
+  }
+}
+
+analyse_univariate_kernel_width <- function(kernel_widths, 
+                                            observation, 
+                                            explainer, 
+                                            n_features, 
+                                            n_permutations,
+                                            dist_fun = "euclidean",
+                                            iterations = 25) {
+  result <- rep(0, length(kernel_widths))
+  result <- cbind(result, result)
+  result <- as.data.frame(result)
+  i = 0
+  for (k in kernel_widths) {
+    i <- i + 1
+    local_model <- extract_average_local_model(observation,
+                                               explainer,
+                                               n_features = 1, 
+                                               n_permutations = 2500,
+                                               dist_fun = "euclidean", 
+                                               kernel_width = k)
+    result[i, ] <- local_model
+  }
+  result
+}
+
+
+simulate_data <- function(n_obs, n_vars, nonlinear = NULL, 
+                          piece_wise_intervals = NULL,
+                          seed, mu, Sigma, true_coefficients, intercept) {
+  set.seed(seed)
+  df <- mvrnorm(n = n_obs, mu, Sigma, tol = 1e-6, empirical = FALSE, 
+                EISPACK = FALSE)
+  if (is.null(nonlinear) & is.null(piece_wise_intervals)) {
+    y_det <- cbind(1, df) %*% c(intercept, true_coefficients)
+  } else if (!is.null(piece_wise_intervals)) {
+    df_sim <- df
+    #predictor <- rep(0, n_obs)
+    for (i in 1:length(piece_wise_intervals)) {
+      #if (!is.null(piece_wise_intervals[[i]])) {
+        #predictor <- predictor + 
+         # (df[, i] > piece_wise_intervals[[i]]$lower &
+          #   df[, i] < piece_wise_intervals[[i]]$upper) * 
+          #true_coefficients[i] * df[, i] + 
+          #(df[, i] < piece_wise_intervals[[i]]$lower) * 
+          #true_coefficients[i] * piece_wise_intervals[[i]]$lower +
+          #(df[, i] > piece_wise_intervals[[i]]$upper) * 
+          #true_coefficients[i] * piece_wise_intervals[[i]]$upper
+        df_sim[df[, i] < piece_wise_intervals[[i]]$lower , i] <- 
+          piece_wise_intervals[[i]]$lower
+        df_sim[df[, i] > piece_wise_intervals[[i]]$upper , i] <- 
+          piece_wise_intervals[[i]]$upper
+      #} else {
+        #predictor <- predictor + true_coefficients[i] * df[, i]
+      #}
+    }
+    y_det <- cbind(1, df_sim) %*% c(intercept, true_coefficients)
+    #y_det <- predictor + intercept
+  } else {
+    df_nl <- df
+    df_nl[, nonlinear] <- cos(df[, nonlinear])
+    true_coefficients[nonlinear] <- true_coefficients[nonlinear] * 5
+    y_det <- df_nl %*% true_coefficients
+  }
+  colnames(df) <- paste("x", as.character(1:n_vars), sep = "")
+  y <- rnorm(n_obs, y_det, abs(y_det) / runif(n_obs, 1, 100))
+  data.frame(y, df)
+}
+
+
+analyse_multivariate_kernel_width <- function(kernel_widths, 
+                                              observation, 
+                                              explainer, 
+                                              n_features, 
+                                              n_permutations,
+                                              dist_fun = "euclidean",
+                                              iterations = 50,
+                                              ci = FALSE) {
+  if (!ci) {
+    result <- matrix(0, ncol = n_features + 1, nrow = length(kernel_widths))
+    result <- as.data.frame(result)
+    i = 0
+    for (k in kernel_widths) {
+      i <- i + 1
+      local_model <- extract_average_local_model(observation,
+                                                 explainer,
+                                                 n_features, 
+                                                 n_permutations,
+                                                 dist_fun = "euclidean", 
+                                                 kernel_width = k,
+                                                 iterations = iterations,
+                                                 se = FALSE)
+      result[i, ] <- local_model
+    }
+    result
+  } else {
+    result <- vector(mode = "list", length = 3)
+    result[[1]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+                                        nrow = length(kernel_widths)))
+    result[[2]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+                                        nrow = length(kernel_widths)))
+    result[[3]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+                                        nrow = length(kernel_widths)))
+    
+    i = 0
+    for (k in kernel_widths) {
+      i <- i + 1
+      local_model <- extract_average_local_model(observation,
+                                                 explainer,
+                                                 n_features, 
+                                                 n_permutations,
+                                                 dist_fun = "euclidean", 
+                                                 kernel_width = k,
+                                                 iterations = iterations,
+                                                 se = TRUE)
+      result[[1]][i, ] <- local_model[[1]]
+      result[[2]][i, ] <- local_model[[1]] - 1.96 * local_model[[2]]
+      result[[3]][i, ] <- local_model[[1]] + 1.96 * local_model[[2]]
+    }
+    result
+  }
+}
