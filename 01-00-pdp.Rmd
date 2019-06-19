@@ -83,8 +83,4 @@ When no interactions are present in the fitted model, all curves in the d-ICE pl
 
 
 ###Advantages and Limitations of ICE Plots###
-**Advantages**
-ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences. This may help to identify subgroups and interactions between model inputs. 
-
-**Disadvantages**
-Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there would be a problem of overplotting and it would be hard to distinguish anything in the plot. Secondly, just like PDPs, ICE plots for correlated features may produce invalid data points. Finally, without additionally plotting the PDP it might be difficult to see the average in ICE plots.\citep{molnar2019}
+The major advantage of ICE plots is that they are even more intuitive than PDPs which enables data scientists to drill much deeper to explore individual differences. This may help to identify subgroups and interactions between model inputs. However, there are also some disadvantages of ICE plots. Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there would be a problem of overplotting and it would be hard to distinguish anything in the plot. Secondly, just like PDPs, ICE plots for correlated features may produce invalid data points. Finally, without additionally plotting the PDP it might be difficult to see the average in ICE plots.\citep{molnar2019}
