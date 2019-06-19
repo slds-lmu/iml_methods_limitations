@@ -169,7 +169,7 @@ pl <- create_rfplot(lm1, data=df)
 pl
 ```
 
-* Interesting effect here: All features have the the mean and variance. Only the feature V1 and V2 are highly correlated with each other (r=0.99). In the plot of the random forest modelyou can see that the correlated features are shown as more important than the uncorrelated features V3 and V4. On the other hand for the linear model you see the complete opposite. Here V1 and V2 are considered as less important.
+* Interesting effect here: All features have the the mean and variance. Only the feature V1 and V2 are highly correlated with each other (r=0.99). In the plot of the random forest model you can see that the correlated features are shown as more important than the uncorrelated features V3 and V4. On the other hand for the linear model you see the complete opposite. Here V1 and V2 are considered as less important.
 
 
 ```{r PFI2, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with no correlated features (r = 0) on random forest model and linear model"}
@@ -266,7 +266,7 @@ ploco
 * Interesting effect here: All features have the the mean and variance. Only the feature V1 and V2 are highly correlated with each other (r=0.99). In the plot of the random forest model the uncorrelated features V3 and V4 are considered as more important. So the correlation of feature V1 and V2 has a negative effect on the LOCO Feature Importance.
 
 
-```{r LOCO0, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0) on random forest model"}
+```{r LOCO0, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with uncorrelated features (r = 0) on random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
