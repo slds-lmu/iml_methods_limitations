@@ -257,16 +257,17 @@ In the limit, the true coefficient is not approximated, but rather the global (a
 Additionally, we observe that for lower kernel widths, the local models are rather volatile (see figure).
 
 Hence, we aim to better investigate this volatility.
-We display the mean and the confidence intervals of the coefficients from 100 different models for different kernel sizes in figure 11.
-The black lines interpolates averaged coefficient estimates for different kernel sizes. The solid black line indicates the true local coefficient. The grey shaded area are the 95% confidence intervals (capped at $7$ and $-7$).
+We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure 11 for $x_1$.
+The black lines interpolate averaged coefficient estimates for different kernel sizes. 
+The solid black line indicates the true local coefficient. 
+The grey shaded area are the 95% confidence intervals (capped at X and $10$).
 For very low kernel widths we observe a massive volatility which decreases to an acceptable level only after $0.25$ for all covariates.
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
 knitr::include_graphics("images/04-09-11-1.png")
-knitr::include_graphics("images/04-09-11-2.png")
-knitr::include_graphics("images/04-09-11-3.png")
 ```
 
+Note that we obtain the same picture for every covariate and other representative observations.
 We observe that there is a trade-off between stable coefficients and locality (expressed by small kernel width).
 In our analysis, it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
 Mathematically speaking, we aim the minimal kernel size so that it satisfies a volatility condition.
