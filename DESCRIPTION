@@ -7,5 +7,10 @@ Depends:
   ggplot2,
   svglite,
   iml,
-  randomForest
+  randomForest, 
+  mvtnorm,
+  ggcorrplot,
+  ggpubr,
+  cowplot
+
   

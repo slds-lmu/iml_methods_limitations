@@ -29,6 +29,7 @@ output:
 ###	Simulated Data
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE}
+setwd("C:/Users/Veronika/Documents/Studium Statistik LMU/Seminar Intrepretable ML/PDP Correlated Features/Simulationen")
 library(mvtnorm) 
 library(ggplot2)
 library(ggcorrplot)
@@ -50,10 +51,10 @@ colnames(data_0) <- c("X1", "X2", "X3", "X4")
 cov(data_0)
 cor(data_0)
 # visualize correlation of X1 and X2
-p <- ggplot(data = data_0, aes(x = X1, y = X2)) + geom_point(alpha = 0.2) + labs(title = "Uncorrelated Features X1, X2 & Marginal distribution of X2") + theme_bw()
-d <- ggdensity(data_0$X2)+ geom_density() + rotate() + clean_theme() + rremove("legend") 
+p <- ggplot(data = data_0, aes(x = X1, y = X2)) + geom_point(alpha = 0.5) + labs(title = "Uncorrelated Features x1, x2 & Marginal distribution of x2") + theme_bw()+theme(plot.title = element_text(size=20, face = "bold"))+ylim(-2.5,2.5)
+d <- ggdensity(data_0$X2)+ geom_density() + rotate() + clean_theme()+ rremove("legend") +xlim(-2.5,2.5)
 #jpeg("Plots/PDP_Sim_Plot1.jpeg")
-plot_grid(p, d, ncol = 2, align = "hv", rel_widths = c(3, 1), rel_heights = c(1, 3))
+p1 <- plot_grid(p, d, ncol = 2, align = "hv", rel_widths = c(3, 1), rel_heights = c(1, 3))
 #dev.off()
 
 ############################ Simulate highly correlated numerical features X1 and X2 ##########################
@@ -71,10 +72,14 @@ cov(data)
 cor(data)
 
 # visualize correlation of X1 and X2
-p <- ggplot(data = data, aes(x = X1, y = X2)) + geom_point(alpha = 0.2) + labs(title = "Correlated Features X1, X2 & Marginal distribution of X2") + theme_bw()
-d <- ggdensity(data$X2)+ geom_density() + rotate() + clean_theme() + rremove("legend") 
+p <- ggplot(data = data, aes(x=X1, y=X2)) + geom_point(alpha=0.5) + labs(title = "Correlated Features x1, x2 & Marginal distribution of x2")+theme_bw()+theme(plot.title = element_text(size=20, face = "bold")) +rremove("ylab")+ylim(-2.5,2.5)
+d <- ggdensity(data$X2)+ geom_density()+rotate()+clean_theme()+rremove("legend")+xlim(-2.5,2.5)
 #jpeg("Plots/PDP_Sim_Plot2.jpeg")
-plot_grid(p, d, ncol = 2, align = "hv", rel_widths = c(3, 1), rel_heights = c(1, 3))
+p2 <- plot_grid(p, d, ncol = 2, align = "hv", rel_widths = c(3, 1), rel_heights = c(1, 3))
+#dev.off()
+
+#jpeg("Plots/PDP_Sim_Plot1.jpeg", width = 1600, height = 1000)
+ggarrange(p1, p2, ncol=2, align = "hv")
 #dev.off()
 
 ################################# Simulation Setting 1: Linear Dependence #####################################
@@ -85,7 +90,7 @@ rf1 = randomForest(y1 ~ ., data = data, ntree = 50)
 mod1 = Predictor$new(rf1, data = data)
 eff1 = FeatureEffect$new(mod1, feature = "X1", method = "pdp", grid.size = 30)
 
-p1 <- plot(eff1)+theme_bw()+labs(title = "y = x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)
+p1 <- plot(eff1)+theme_bw()+labs(title = "y = x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)
 
 # b)
 sd_1 <- mean(2*data$X1 + data$X2 + data$X3 + data$X4)*0.1
@@ -94,7 +99,7 @@ rf1 = randomForest(y1 ~ ., data = data, ntree = 50)
 mod1 = Predictor$new(rf1, data = data)
 eff1 = FeatureEffect$new(mod1, feature = "X1", method = "pdp", grid.size = 30)
 
-p2 <- plot(eff1)+theme_bw()+labs(title = "y = 2*x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p2 <- plot(eff1)+theme_bw()+labs(title = "y = 2*x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
 # c)
 sd_1 <- mean(3*data$X1 + data$X2 + data$X3 + data$X4)*0.1
@@ -103,12 +108,12 @@ rf1 = randomForest(y1 ~ ., data = data, ntree = 50)
 mod1 = Predictor$new(rf1, data = data)
 eff1 = FeatureEffect$new(mod1, feature = "X1", method = "pdp", grid.size = 30)
 
-p3 <- plot(eff1)+theme_bw()+labs(title = "y = 3*x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p3 <- plot(eff1)+theme_bw()+labs(title = "y = 3*x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
 
-#jpeg("Plots/PDP_Sim_Plot3.jpeg")
+#jpeg("Plots/PDP_Sim_Plot3.jpeg", width = 1500, height = 1000)
 fig <- ggarrange(p1, p2, p3, ncol=3)
-annotate_figure(fig, fig.lab = "PDP with increasing impact of linear dependence of X1")
+annotate_figure(fig, fig.lab = "PDP with increasing impact of linear dependence of x1", fig.lab.size = 22, fig.lab.face = "bold")
 #dev.off()
 
 ################################ Simulation Setting 2: Nonlinear Dependence ###################################
@@ -119,7 +124,7 @@ rf2 = randomForest(y2 ~ ., data = data, ntree = 50)
 mod2 = Predictor$new(rf2, data = data)
 eff2 = FeatureEffect$new(mod2, feature = "X1", method = "pdp", grid.size = 30)
 
-p1 <- plot(eff2)+theme_bw()+labs(title = "y = sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)
+p1 <- plot(eff2)+theme_bw()+labs(title = "y = sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)
 
 # b) 
 sd_2 <- mean(2*sin(data$X1) + data$X2 + data$X3 + data$X4)*0.1
@@ -128,7 +133,7 @@ rf2 = randomForest(y2 ~ ., data = data, ntree = 50)
 mod2 = Predictor$new(rf2, data = data)
 eff2 = FeatureEffect$new(mod2, feature = "X1", method = "pdp", grid.size = 30)
 
-p2 <- plot(eff2)+theme_bw()+labs(title = "y = 2*sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p2 <- plot(eff2)+theme_bw()+labs(title = "y = 2*sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
 # c) 
 sd_2 <- mean(3*sin(data$X1) + data$X2 + data$X3 + data$X4)*0.1
@@ -137,11 +142,11 @@ rf2 = randomForest(y2 ~ ., data = data, ntree = 50)
 mod2 = Predictor$new(rf2, data = data)
 eff2 = FeatureEffect$new(mod2, feature = "X1", method = "pdp", grid.size = 30)
 
-p3 <- plot(eff2)+theme_bw()+labs(title = "y = 3*sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p3 <- plot(eff2)+theme_bw()+labs(title = "y = 3*sin(x1)+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
-#jpeg("Plots/PDP_Sim_Plot4.jpeg")
+#jpeg("Plots/PDP_Sim_Plot4.jpeg", width = 1500, height = 1000)
 fig <- ggarrange(p1, p2, p3, ncol=3)
-annotate_figure(fig, fig.lab = "PDP with increasing impact of nonlinear dependence of X1")
+annotate_figure(fig, fig.lab = "PDP with increasing impact of nonlinear dependence of x1", fig.lab.size = 22, fig.lab.face = "bold")
 #dev.off()
 
 ########################### Simulation Setting 3: Missing informative Feature X4 ##############################
@@ -151,7 +156,7 @@ y3 <- data$X1 + data$X2 + data$X3 + data$X4 + rnorm(n = 1, mean = 0, sd = sd_3) 
 rf3 = randomForest(y3 ~ . -X4, data = data, ntree = 50)
 mod3 = Predictor$new(rf3, data = data)
 eff3 = FeatureEffect$new(mod3, feature = "X1", method = "pdp", grid.size = 30)
-p1 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)
+p1 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)
 
 # b) 
 sd_3 <- mean(data$X1 + data$X2 + data$X3 + 2*data$X4)*0.1
@@ -159,7 +164,7 @@ y3 <- data$X1 + data$X2 + data$X3 + 2*data$X4 + rnorm(n = 1, mean = 0, sd = sd_3
 rf3 = randomForest(y3 ~ . -X4, data = data, ntree = 50)
 mod3 = Predictor$new(rf3, data = data)
 eff3 = FeatureEffect$new(mod3, feature = "X1", method = "pdp", grid.size = 30)
-p2 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+2*x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p2 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+2*x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
 # c) 
 sd_3 <- mean(data$X1 + data$X2 + data$X3 + 3*data$X4)*0.1
@@ -167,34 +172,49 @@ y3 <- data$X1 + data$X2 + data$X3 + 3*data$X4 + rnorm(n = 1, mean = 0, sd = sd_3
 rf3 = randomForest(y3 ~ . -X4, data = data, ntree = 50)
 mod3 = Predictor$new(rf3, data = data)
 eff3 = FeatureEffect$new(mod3, feature = "X1", method = "pdp", grid.size = 30)
-p3 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+3*x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"))+ylim(-2.5,2.5)+rremove("ylab")
+p3 <- plot(eff3)+theme_bw()+labs(title = "y = x1+x2+x3+3*x4")+geom_abline(slope = 1, col = "blue")+theme(plot.margin = unit(c(1,0,0,0), "cm"), plot.title = element_text(size=20))+ylim(-2.5,2.5)+rremove("ylab")
 
-#jpeg("Plots/PDP_Sim_Plot5.jpeg")
+#jpeg("Plots/PDP_Sim_Plot5.jpeg", width = 1500, height = 1000)
 fig <- ggarrange(p1, p2, p3, ncol=3)
-annotate_figure(fig, fig.lab = "PDP with increasing impact of missing informative Variable X4")
+annotate_figure(fig, fig.lab = "PDP with increasing impact of missing informative Variable x4", fig.lab.size = 22, fig.lab.face = "bold")
 #dev.off()
 
 ```
 
-```{r plot1, echo=FALSE, out.width='80%', fig.cap="Scatterplot of uncorrelated features x1 and x2 and marginal distribution of x2."}
+```{r pdp.plot1, echo=FALSE, out.width='100%', fig.cap="Scatterplot of uncorrelated vs. highly correlated features x1 and x2 and marginal distributions of x2."}
 knitr::include_graphics('images/PDP_Sim_Plot1.jpeg')
 ```
 
-```{r plot2, echo=FALSE, out.width='80%', fig.cap="Scatterplot of higly correlated features x1 and x2 (rho = 0.95) and marginal distribution of x2."}
-knitr::include_graphics('images/PDP_Sim_Plot2.jpeg')
-```
+The partial dependence function, which represents the effect of $x_1$, is derived by assuming the marginal distribution of $x_2$ (and all other features in the complement set) for each $x_1$-value. This approach is reasonable in the case of uncorrelated features, where the scatterplot of both features reveals no structural relationship (see left part of figure \@ref(fig:pdp.plot1)).  
+By contrast, if $x_1$ and $x_2$ are strongly correlated, as shown in the right part of figure \@ref(fig:pdp.plot1) where $x_1$ and $x_2$ are almost perfectly collinear with a correlation coefficient of 0.95, the marginal distribution of $x_2$ is not meaningful for all $x_1$-values. As a consequence of the correlation, the PDP takes unrealistic combinations of both features into account and doesn't reflect the true effect of $x_1$. 
 
-```{r plot3, echo=FALSE, out.width='80%', fig.cap="Simulation of linear dependencies."}
+In order to demonstrate the impact of a strong correlation between $x_S$ and one or more features in $x_C$, a selection of data generating processes has been defined for the simulation of $y$. All predictions $\hat{y}$ have been generated through random forest for regression tasks with a number of 50 trees. The different settings and their impact on the PDP shall be discussed in this chapter.
+
+*Simulation Setting 1 - Linear relationship, two correlated features*  
+The first simulation setting is based on a purely linear relationship between $y$ and the feature variables. Only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot3) shows how the PDP evolves with an increasing weight on one of the correlated variables ($x_1$).
+
+```{r pdp.plot3, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot3.jpeg')
 ```
 
-```{r plot4, echo=FALSE, out.width='80%', fig.cap="Simulation of nonlinear dependencies."}
+*Simulation Setting 2 - Nonlinear relationship, two correlated features*  
+The second simulation setting is based on a nonlinear relationship of $y$ and $x_1$ while the dependence of all other feature variables is linear. Again, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot4) shows how the PDP evolves with an increasing weight on the correlated variables with nonlinear influence on $y$ ($x_1$).
+
+```{r pdp.plot4, echo=FALSE, out.width='100%', fig.cap="Simulation of nonlinear dependencies. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot4.jpeg')
 ```
 
-```{r plot5, echo=FALSE, out.width='80%', fig.cap="Simulation of nonlinear dependencies."}
+*Simulation Setting 3 - Linear relationship with missing informative feature, two correlated features*  
+The third simulation setting is based on the idea that in the true data generation process, all feature variables have a linear impact on $y$. However, one of the informative variables ($x_4$) is not taken into account in the Machine Learning model. Like in the previous settings, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot5) shows how the PDP evolves with an increasing weight on the missing informative variable ($x_4$).
+
+```{r pdp.plot5, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies with missing informative feature. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot5.jpeg')
 ```
+
+*Simulation Setting 4 - Interaction with categorical feature*
+
+*Simulation Setting 5 - (Non-)Linear relationship of more than two correlated features*
+
 
 ###	Real Data
 -	Home Insurance Data

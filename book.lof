@@ -8,19 +8,23 @@
 \contentsline {figure}{\numberline {2.5}{\ignorespaces The ICE plot indicates that there is underlying heterogeneity in the complement set.\relax }}{6}{figure.caption.10}% 
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Centered ICE plot.\relax }}{7}{figure.caption.11}% 
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Scatterplot of uncorrelated vs. highly correlated features x1 and x2 and marginal distributions of x2.\relax }}{10}{figure.caption.12}% 
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Simulation of linear dependencies. The blue line represents the true effect of x1.\relax }}{11}{figure.caption.13}% 
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Simulation of nonlinear dependencies. The blue line represents the true effect of x1.\relax }}{12}{figure.caption.14}% 
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Simulation of linear dependencies with missing informative feature. The blue line represents the true effect of x1.\relax }}{13}{figure.caption.15}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance\relax }}{29}{figure.caption.12}% 
-\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset\relax }}{29}{figure.caption.13}% 
-\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance\relax }}{31}{figure.caption.14}% 
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance\relax }}{31}{figure.caption.16}% 
+\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset\relax }}{31}{figure.caption.17}% 
+\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance\relax }}{33}{figure.caption.18}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{41}{figure.caption.15}% 
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{43}{figure.caption.19}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
