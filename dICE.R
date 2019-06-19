@@ -103,7 +103,7 @@ dICI <- function(data = pfi, feature, measure){
   data_dICI <- as_tibble(data)
   data_dICI %>% map(feature, filter(data_dICI, data_dICI$features %in% feature)
                       %>% arrange(features, row.id)
-                      %>% mutate(finite.differences(data_dICI))
+                      %>% dplyr::mutate(finite.differences(data_dICI))
                       %>% paste0(data_dICI, "_", feature)
                       )
   

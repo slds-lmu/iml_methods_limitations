@@ -1,9 +1,10 @@
 ## Simulation Data
-
+library(mlr)
 library(MASS)
 library(tidyverse)
 library(dplyr)
 library(featureImportance)
+library(randomForest)
 
 # specify data
 set.seed(1)
@@ -29,19 +30,19 @@ generateY_sim2 <- function(X){
 }
 
 
-########## Simulation for subchapter 1 
+########## Simulation 1 for subchapter 1 
 set.seed(1)
 n <- 1000
 sig <- diag(2)
 
 
 X_1 <- rnorm(n, mean = 0, sd = 1)
-X_2 <- rnorm(n, mean = 2, sd = 4)
+X_2 <- rnorm(n, mean = 0,5, sd = 2)
 X_3 <- rbinom(n, size = 1, prob = 0.5)
 eps <- rnorm(nrow(X), sd = 0.5)
 
 X_sim1 <- as.data.frame(cbind(X_1, X_2, X_3))
-X_sim1$y <- X_1 + 5*X_2 + ifelse(X_2 > 4, ifelse(X_3 == 0, 5*X_2, -10*X_2), 0) + eps
+X_sim1$y <- X_1 + 5*X_2 + ifelse(X_2 > 1, ifelse(X_3 == 0, 5*X_2, -5*X_2), 0) + eps
 
 target_sim1 <- "y"
 mlr_sim1 <- train_mlr_model(target_sim1, X_sim1, training_size = 0.8, n_tree = 100)
@@ -54,7 +55,7 @@ summary(pfi_sim1)
 pfi_sim1$feature.value
 
 
-## Plot 
+## Plot Simulation 1
 
 pi.curve_sim1 <- plotImportance(pfi_sim1, feat ="X_2", mid = "mse", individual = FALSE, hline = TRUE)
 ici.curves_sim1 <- plotImportance(pfi_sim1, feat ="X_2", mid = "mse", individual = TRUE, hline = FALSE)
@@ -63,22 +64,29 @@ grid.arrange(pi.curve_sim1, ici.curves_sim1, nrow = 1)
 rm(feat)
 dICI_sim1 <- dICI(data = pfi_sim1, feature = "X_2", measure = "mse")
 
-### test line
 
-pfi_sim1_tibble <- as_tibble(pfi_sim1)
-pfi_sim1_tibble <- filter(pfi_sim1_tibble, features %in% "X_2")
-pfi_sim1_tibble <- arrange(pfi_sim1_tibble ,features, row.id)
-pfi_sim1_tibble <- mutate(finite.differences(pfi_sim1_tibble))
+############ Simulation 2 for subchapter 2 
 
-feat, filter(data_dICI, features %in% feat)
-       %>% arrange(features, row.id)
-       %>% mutate(finite.differences(data_dICI))
-       %>% paste0(data_dICI, "_", feat)
-)
+V_1 <- rnorm(n, mean = 0, sd = 1)
+V_2 <- rnorm (n, mean = 0.5, sd = 2)
+X_sim3 <- as.data.frame(cbind(V_1, V_2))
+X_sim3$y_sim3 <- V_1 + 5*V_2 + V_2^2
+target_sim3 <- "y_sim3"
 
-pfi_sim1_tibble$mse
-length(pfi_sim1_tibble$feature.value)
-length(pfi_sim1_tibble$mse)
+mlr_sim3 <- train_mlr_model(target_sim3, X_sim3, training_size = 0.8, n_tree = 100)
+test_sim3 <- mlr_sim3[["test"]]
+train_sim3 <- mlr_sim3[["train"]]
+mod_sim3 <- mlr_sim3[["mod"]]
+
+pfi_sim3 <- calculate_PFI(test_sim3, c("V_1","V_2"), target = target_sim3, mod = mod_sim3, mid = "mse", local = TRUE, replace.ids = obs.id)
+
+## Plot Simulation 2
+
+pi.curve_sim2 <- plotImportance(pfi_sim2, feat ="X_2", mid = "mse", individual = FALSE, hline = TRUE)
+ici.curves_sim2 <- plotImportance(pfi_sim2, feat ="X_2", mid = "mse", individual = TRUE, hline = FALSE)
+grid.arrange(pi.curve_sim1, ici.curves_sim1, nrow = 1)
+
+
 
 
 #####################################################################################
@@ -113,13 +121,14 @@ train_mlr_model <- function(target, data, training_size, n_tree){
   
   # Get test and train data  
   test <- getTaskData(task, subset = test.ind)
+  train <- getTaskData(task, subset = train.ind)
   
   # Train algorithm with mlr
   mod <- train(lrn, task)
   mod_train <- train(lrn, task, subset = train.ind)
   getLearnerModel(mod)
   summary(mod)
-  parameter_list <- list(test = test, mod = mod)
+  parameter_list <- list(test = test, train = train, mod = mod)
   return(parameter_list)
   
 }
@@ -129,12 +138,12 @@ train_mlr_model <- function(target, data, training_size, n_tree){
 calculate_PFI <- function(data, features, target, mod, mid, local = TRUE, replace.ids){
   
   
-  pfi <- lapply(feat, function(features){
-    imp <- featureImportance(mod, data = test, features = list(features), target = target, mid = "mse", local = TRUE, replace.ids = obs.id)
+  pfi <- lapply(features, function(feat){
+    imp <- featureImportance(mod, data = test, features = list(feat), target = target, mid = "mse", local = TRUE, replace.ids = obs.id)
     imp$importance
   })
   
-  pfi <- setNames(pfi, feat)
+  pfi <- setNames(pfi, features)
   pfi <- rbindlist(pfi)
   
   return(pfi)
