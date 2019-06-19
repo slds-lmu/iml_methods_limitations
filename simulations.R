@@ -1,6 +1,9 @@
 ## Simulation Data
 
 library(MASS)
+library(tidyverse)
+library(dplyr)
+library(featureImportance)
 
 # specify data
 set.seed(1)
@@ -57,12 +60,25 @@ pi.curve_sim1 <- plotImportance(pfi_sim1, feat ="X_2", mid = "mse", individual =
 ici.curves_sim1 <- plotImportance(pfi_sim1, feat ="X_2", mid = "mse", individual = TRUE, hline = FALSE)
 grid.arrange(pi.curve_sim1, ici.curves_sim1, nrow = 1)
 
+rm(feat)
+dICI_sim1 <- dICI(data = pfi_sim1, feature = "X_2", measure = "mse")
 
+### test line
 
+pfi_sim1_tibble <- as_tibble(pfi_sim1)
+pfi_sim1_tibble <- filter(pfi_sim1_tibble, features %in% "X_2")
+pfi_sim1_tibble <- arrange(pfi_sim1_tibble ,features, row.id)
+pfi_sim1_tibble <- mutate(finite.differences(pfi_sim1_tibble))
 
+feat, filter(data_dICI, features %in% feat)
+       %>% arrange(features, row.id)
+       %>% mutate(finite.differences(data_dICI))
+       %>% paste0(data_dICI, "_", feat)
+)
 
-
-
+pfi_sim1_tibble$mse
+length(pfi_sim1_tibble$feature.value)
+length(pfi_sim1_tibble$mse)
 
 
 #####################################################################################
