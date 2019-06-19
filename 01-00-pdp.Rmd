@@ -23,7 +23,7 @@ knitr::include_graphics('images/PDP_Plot_1.jpeg')
 
 When a feature is categorical, rather than continuous, the partial dependence function is modeled separately for all of the K different classes of said feature. It maps the predictions for each respective class at given feature values of $x_S$.\citep{hastie2013elements} 
 
-For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed $x_S$-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, \@ref(fig:plot2) shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature 'passenger class'.
+For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed $x_S$-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, figure \@ref(fig:plot2) shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature 'passenger class'.
 
 ```{r plot2, echo=FALSE, out.width='80%', fig.cap="The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_2.jpeg')
@@ -33,7 +33,7 @@ knitr::include_graphics('images/PDP_Plot_2.jpeg')
 
 ## Advantages and Limitations of Partial Dependence Plots
 
-Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in \@ref(fig:plot4). 
+Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \@ref(fig:plot3) shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age & Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in figure \@ref(fig:plot4). 
 
 ```{r plot3, echo=FALSE, out.width='90%', fig.cap="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_3.jpeg')
@@ -51,7 +51,7 @@ While partial dependence plots provide the average effect of a feature, Individu
 
 More formally, ICE plots can be derived by considering the estimated response function $\hat{f}$ and the observations ${(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}$. The curve $\hat{f}_S^{(i)}$ is plotted against the observed values of $x^{(i)}_S$ for each of the observed instances while $x^{(i)}_C$ remains fixed at each point on the x-axis.\citep{molnar2019}\citep{Goldstein2013}
 
-In ICE plots, each line represents one instance and visualizes the effect of varying the feature value $x^{(i)}_S$ of a particular instance on the model’s prediction, given all other features remain constant (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
+As shown in figure \@ref(fig:plot5), each line represents one instance and visualizes the effect of varying the feature value $x^{(i)}_S$ (Age) of a particular instance on the model’s prediction, given all other features remain constant (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
 ```{r plot5, echo=FALSE, out.width='100%', fig.cap="ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.", fig.align= 'center'}
 knitr::include_graphics('images/PDP_Plot_5.jpeg')
@@ -59,10 +59,10 @@ knitr::include_graphics('images/PDP_Plot_5.jpeg')
 
 
 ###Centered ICE Plot###
-It can be difficult to observe heterogeneity in the model if the curves are stacked or have a wide range of intercepts. The so called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point.\citep{molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
+If the curves of an ICE plot are stacked or have a wide range of intercepts it can be difficult to observe heterogeneity in the model. The so called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point.\citep{molnar2019} After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
 
 $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
-Experience has shown that the most interpretable plots occur when the anchor point $x^a$ is chosen as minimum or maximum of the observed values.
+Experience has shown that the most interpretable plots occur when the anchor point $x^a$ is chosen as minimum or maximum of the observed values. Figure \@ref(fig:plot6) shows the effect of centering the ICE curves of survival probability by Age at the minimum of observed ages in the 'Titanic' data set. 
 
 
 ```{r plot6, echo=FALSE, out.width='100%', fig.cap="Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.", fig.align= 'center'}
