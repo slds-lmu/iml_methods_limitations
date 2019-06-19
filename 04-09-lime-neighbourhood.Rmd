@@ -50,7 +50,7 @@ So does Gower's distance @gower1986metric:
 
 $$ d_G(x_i, x_j) = \sum_{p = 1} ^ {P} \frac{d_{euc}(x_{p, i}, x_{p, j})}{ 
 range(x_p)} $$
-or a bit more general the distance proposed by @Huang1997kproto
+or a bit more general the distance proposed by @huang1997kproto
 
 $$ d_H(x_i, x_j) = d_{euc}(x_i, x_j) + \lambda d_{ham}(x_i, x_j) $$
 
