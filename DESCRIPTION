@@ -7,5 +7,8 @@ Depends:
   ggplot2,
   svglite,
   iml,
-  randomForest
+  randomForest,
+  ggdag,
+  pdp
+
   

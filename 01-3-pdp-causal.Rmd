@@ -3,7 +3,6 @@
 library(iml) # for pdp and ice
 library(ggdag) # for structural causal graphs
 library(randomForest) # for modeling
-library(caret) # for creating train and test set
 library(pdp) # for pdp and ice plots
 
 # set the number of data points to be created
