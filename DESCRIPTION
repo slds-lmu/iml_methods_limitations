@@ -7,5 +7,9 @@ Depends:
   ggplot2,
   svglite,
   iml,
-  randomForest
+  randomForest,
+  ranger,
+  mlbench,
+  lime,
+  mlr
   

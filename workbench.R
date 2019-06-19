@@ -44,9 +44,9 @@ P = 10
 bostp = as.data.frame(sapply(1:P, function(i) (boston$lstat^i)))
 names(bostp) = paste0("lstat_", 1:P)
 bostp$medv = boston$medv
-btask <- makeRegrTask(data = bostp, target = "medv")
-regr_model <- makeLearner("regr.lm")
-black_box <- mlr::train(regr_model, btask)
+btask = makeRegrTask(data = bostp, target = "medv")
+regr_model = makeLearner("regr.lm")
+black_box = mlr::train(regr_model, btask)
 x_grid = 1:4000 / 100
 x_feat = as.data.frame(sapply(1:P, function(i) (x_grid^i)))
 names(x_feat) = paste0("lstat_", 1:P)
@@ -85,9 +85,9 @@ result = permutation_growth(
 
 ### First simulation
 set.seed(1)
-x_1 <- rnorm(300, 100, 42)
-x_2 <- rnorm(300, 10, 10)
-y <- (300 * sin(0.0002 * x_1^2) + 0.5 * x_1 + 250 + rnorm(300, 0, 70))
+x_1 = rnorm(300, 100, 42)
+x_2 = rnorm(300, 10, 10)
+y = (300 * sin(0.0002 * x_1^2) + 0.5 * x_1 + 250 + rnorm(300, 0, 70))
 plot(x_1, y)
 
 
@@ -168,13 +168,13 @@ boston = boston[!duplicated(boston$lstat), ]#c("lstat", "medv")]
 btask = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
 regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
 #regr_model = makeLearner("regr.svm", degree = 200, cost = 500)
-black_box <- mlr::train(regr_model, btask)
+black_box = mlr::train(regr_model, btask)
 x_grid = 1:4000 / 100
 y_pred = predict(black_box, newdata = data.frame(lstat=x_grid))
 
-#model <- lm(data = boston, medv ~ poly(lstat, P))
-#x_grid <- 1:4000 / 100
-#y_pred <- predict.lm(model, newdata = data.frame(lstat = x_grid))
+#model = lm(data = boston, medv ~ poly(lstat, P))
+#x_grid = 1:4000 / 100
+#y_pred = predict.lm(model, newdata = data.frame(lstat = x_grid))
 
 ggplot(data = boston, aes(y = medv, x = lstat)) +
   geom_point() +
@@ -273,28 +273,28 @@ plot_better_lime(sample_seed = 1, model_stability = 50, kernel_width = 9000)
 
 
 # removing categorical feature
-boston     <- BostonHousing[, -4]
-boston     <- as.data.frame(lapply(boston, function(x) x/sd(x)))
-btask      <- makeRegrTask(data = boston, target = "medv")
-regr_model <- makeLearner("regr.ranger")
-black_box  <- train(regr_model, btask)
-explainer  <- lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
+boston     = BostonHousing[, -4]
+boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
+btask      = makeRegrTask(data = boston, target = "medv")
+regr_model = makeLearner("regr.ranger")
+black_box  = train(regr_model, btask)
+explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
 
-data_point <- as.data.frame(lapply(boston[, -ncol(boston)], mean))
+data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
 # set index of datapoint to use
-limes <- sapply(1:100, function(k) {
-  interim <- explain(data_point, explainer, n_features = ncol(boston)-1)
-  weights_l <- interim$feature_weight
-  names(weights_l) <- interim$feature
+limes = sapply(1:100, function(k) {
+  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
+  weights_l = interim$feature_weight
+  names(weights_l) = interim$feature
   weights_l
 })
 
 
-means <- apply(limes, MARGIN = 1, mean)
-sds <- apply(limes, MARGIN = 1, sd)
+means = apply(limes, MARGIN = 1, mean)
+sds = apply(limes, MARGIN = 1, sd)
 
 
-nice_plot <- function(means, sds, headline, color1, color2) {
+nice_plot = function(means, sds, headline, color1, color2) {
 
   ggplot(data = NULL, aes(x = names(means), y = means)) +
     geom_bar(stat = "identity", fill = color1) +
@@ -310,7 +310,24 @@ nice_plot <- function(means, sds, headline, color1, color2) {
 }
 
 
-filename <- paste0("images/boston_100iter_standard.png")
+filename = paste0("images/boston_100iter_standard.png")
 png(filename, width = 700, height = 500)
 nice_plot(means, sds, "LIME", rgb(135/255, 150/255, 40/255), rgb(70/255, 95/255, 25/255))
 dev.off()
+
+library(binr)
+bikes = read.csv("datasets/day.csv")
+# remove undesired variables
+bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
+# quantile binning with 4 bins
+bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
+  bikes[c("temp", "atemp", "hum", "windspeed")],
+  function(vec) {
+    quantiles = quantile(vec)
+    sapply(vec, function(x) sum(x >= quantiles))
+  }
+)
+
+bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
+
+

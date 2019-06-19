@@ -183,7 +183,7 @@ permutation_growth = function(
     function(n_permutations) {
       
       # iterate over sequence of "n_feature" arguments
-      inner_return = sapply(
+      inner_return = lapply(
         n_feat_seq,
         function(n_features) {
           
@@ -224,7 +224,7 @@ permutation_growth = function(
       log = sprintf("%2.2f/1.00 done", frac)
       print(log)
       # transpose matrix and transform to dataframe
-      as.data.frame(t(inner_return))
+      data.table::rbindlist(inner_return)
     }
   )
   # concatenate dataframes
@@ -236,22 +236,13 @@ complexity_growth = function(
   data,
   target,
   pts_to_predict,
-  covariable,
+  type,
   repeats = 10L,
   seed = 123L,
-  n_permutations = 10,
-  max_degree = 15,
-  repetitions = 10
+  n_permutations = 10
 ) {
   
-  set.seed(seed)
-  
-  pts_to_predict = apply(
-    pts_to_predict,
-    MARGIN = 2,
-    function(col) rep(col, repetitions)
-  )
-  
+
   # dimension of feature space
   p_max = ncol(data) - 1L
   feature_names = names(data[names(data) != target])
@@ -259,30 +250,45 @@ complexity_growth = function(
   # move target variable to the end
   train_data           = data[names(data) != target]
   train_data[[target]] = data[[target]]
+
   
   # iterate over sequence of polynomial degrees
   outer_return = lapply(
     1:max_degree,
     function(degree) {
 
-      model = lm(data = train_data, medv ~ poly(get(covariable), degree))
-      class(model) = c(class(model), "lime_regressor")
-      explainer = lime(train_data[1L:p_max], model)
+      # make model smoother with each iteration
+      num.trees = 1L + (degree - 1L) * 10L
+      # less overfitting
+      min.node.size = degree
+      
+      # define task and learner based on data type
+      if (type == "classif") {
+        task = makeClassifTask(data = train_data, target = target)
+        learner = makeLearner("classif.randomForest", num.trees = num.trees, min.node.size = min.node.size, predict.type = "prob")
+        
+      } else if (type == "regr") {
+        task = makeRegrTask(data = train_data, target = target)
+        learner = makeLearner("regr.randomForest", num.trees = num.trees, min.node.size = min.node.size)
+        
+      } else {
+        stop("Wrong type, buddy")
+      }
+      
+      black_box = train(learner, task)
+      explainer = lime(train_data[1L:p_max], model, bin_continuous = FALSE, use_density = FALSE)
       
       inner_return = apply(
         pts_to_predict,
         MARGIN = 1,
         function(target_pt) {
           
-          feat_return        = rep(NA, p_max)
-          names(feat_return) = feature_names
-
           explanation = explain(
             as.data.frame(t(target_pt[1:p_max])),
             explainer,
             n_labels = 1L,
             n_features = p_max,
-            n_permutations = n_permutations
+            dist_fun = "euclidian"
           )
           
           to_update = names(feat_return) %in% explanation$feature
@@ -290,12 +296,10 @@ complexity_growth = function(
           names(target_pt) = paste0("data_", feature_names)
           
           c(
-            degree = degree,
-            n_permutations = n_permutations,
+            smoothness = degree,
             target_pt,
             feat_return
           )
-          
         }
       )
       # output progress
