@@ -21,9 +21,10 @@
 * The main focus is here on the simulation of correlated feature and not the application on real data
 
 * Simulation of different kind of szenarios:
-  + Strength of correlation (complete correlation r = 0.99; r = 0.8; r = 0.6; r = 0.4; r = 0.2; r = 0 (no correlation)
+  + Strength of correlation: complete correlation r = 0.99 (complete correlation); r = 0.8; r = 0.6; r = 0.4; r = 0.2; r = 0 (no correlation)
   
-  
+Simulation of highly correlated features 1 and 2 (r=0.99):
+
 ```{r sim, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of highly correlated features 1 and 2 (r=0.99) "}
 
 
@@ -57,9 +58,12 @@ cov(data)
 cor(data)
 
 # For cases with higher dimesions one should use package genPositiveDefMat to generate 
-# the covariance   matrix and ensure that the matrix is postive definit
+# the covariance matrix and ensure that the matrix is postive definit
 
 ```
+
+
+Simulation of uncorrelated feature 1 and 2 (r = 0):
 
 ```{r sim1, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of no correlation between the features 1 and 2 (r=0) "}
 
@@ -81,13 +85,13 @@ cov_13 <- 0.0*sqrt(var_1)*sqrt(var_3)
 cov_14 <- 0.0*sqrt(var_1)*sqrt(var_4)
 cov_23 <- 0.0*sqrt(var_2)*sqrt(var_3)
 cov_24 <- 0.0*sqrt(var_2)*sqrt(var_4)
-cov_34 <- 0.0*sqrt(var_3)*sqrt(var_4)
+cov_34_2 <- 0.0*sqrt(var_3)*sqrt(var_4)
 data1 <- as.data.frame(rmvnorm(n = 1000, 
                               mean = c(mu_1, mu_2, mu_3, mu_4),
                               sigma = matrix(c(var_1, cov_12, cov_13, cov_14,
                                                cov_12, var_2, cov_23, cov_24,
-                                               cov_13, cov_23, var_3, cov_34,
-                                               cov_14, cov_24, cov_34, var_4), nrow=4)))
+                                               cov_13, cov_23, var_3, cov_34_2,
+                                               cov_14, cov_24, cov_34_2, var_4), nrow=4)))
 
 
 cov(data1)
@@ -100,14 +104,39 @@ cor(data1)
 
 
 
-```{r szenarios, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Different kind of szenarios"}
+Szenario Settings:
+
+Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y.
+
+ (only the szenarios which show interesting results will be shown later)
+
+1) Linear Dependence:
+
+
+```{r szenariolm, message = FALSE, fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence"}
 
 
 
-#Different kind of simulations (only the simulations which 
-#show interesting results will be shown later)
+
 
 y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #linear
+y10 <- data1$V1 + data1$V2 + data1$V3 + data1$V4 + rnorm(n = 1, mean = 0, sd = 1)
+
+
+### Simulation for y1 (linear case) and correlated features
+data <- as.data.frame(data)
+df <- data
+df['random'] <- runif(nrow(df))
+
+### Simulation for y10 (linear case) and uncorrelated features
+data1 <- as.data.frame(data1)
+df1 <- data1
+df1['random'] <- runif(nrow(df1))
+
+```
+
+
+```{r szenario2, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Different kind of szenarios"}
 
 #y2 <- data$X1 - data$X2 + 3*sin(data$X3) + 1.5*data$X4 + 
 #       rnorm(n = 1, mean = 0, sd = 1) #nicht-linear
@@ -123,10 +152,9 @@ y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #li
 
 
 
-### Simulation for y1 (linear case)
-data <- as.data.frame(data)
-df <- data
-df['random'] <- runif(nrow(df))
+
+
+
 
 ```
 
@@ -161,11 +189,54 @@ create_rfplot <- function(rf, data){
 rf1 <- randomForest(y1~. , data = df)
 p1 <- create_rfplot(rf1, data= df)
 p1
+
+
 # For a linear model:
 lm1 <- lm(y1~., data=df)
 pl <- create_rfplot(lm1, data=df)
 pl
 ```
+
+* Interesting effect here: All features have the the mean and variance. Only the feature V1 and V2 are highly correlated with each other (r=0.99). In the plot of the random forest modelyou can see that the correlated features are shown as more important than the uncorrelated features V3 and V4. On the other hand for the linear model you see the complete opposite. Here V1 and V2 are considered as less important.
+
+
+```{r PFI2, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with no correlated features (r = 0) on random forest model and linear model"}
+
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+#Effect on PFI
+
+
+create_rfplot1 <- function(rf, data1){
+  mod1 <- Predictor$new(rf, data1 , y =y10) 
+  imp1 <- FeatureImp$new(mod1, loss = "mse" , compare = "ratio")
+  imp.dat1 <- imp1$results
+  
+  p <- ggplot(imp.dat1, aes(x=reorder(feature, importance),
+                           ymin=importance.05, ymax=importance.95)) +
+    geom_errorbar(width=0.3, size=1, color="darkblue") + 
+    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
+    coord_flip() +
+    theme(plot.subtitle = element_text(size = 10)) +
+    labs(y = "Feature Importance", x= "") + 
+    theme(text = element_text(size = 16))
+  
+  return(p)
+}
+
+# For a random forest model: 
+rf11 <- randomForest(y10~. , data = df1)
+p11 <- create_rfplot(rf11, data= df1)
+p11
+# For a linear model:
+lm11 <- lm(y10~., data=df1)
+pl1 <- create_rfplot1(lm1, data=df1)
+pl1
+```
+* In case of uncorrelated features (r = 0) the random forest model weights every feature nearly the same. It does not look like that at the first sight, but the scale of the ordinate is relativly small. So they are nearly the same also considering that the correlation is not exactly zero (see above).
+
 
 ```{r LOCO1, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0.99) on random forest model"}
 library(mlr)
@@ -176,8 +247,9 @@ library(randomForest)
 
 # Effect on LOCO
 # For a random forest model:
-df["y1"] <- y1
-task = makeRegrTask(data = df , target= "y1")
+dfl <- df
+dfl["y1"] <- y1
+task = makeRegrTask(data = dfl , target= "y1")
 learner = makeLearner("regr.randomForest")
 feat = getTaskFeatureNames(task)
 feat
@@ -219,7 +291,63 @@ ploco
 
 ```
   
+* Interesting effect here: All features have the the mean and variance. Only the feature V1 and V2 are highly correlated with each other (r=0.99). In the plot of the random forest model the uncorrelated features V3 and V4 are considered as more important. So the correlation of feature V1 and V2 has a negative effect on the LOCO Feature Importance.
 
+
+```{r LOCO0, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0) on random forest model"}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+
+
+# Effect on LOCO
+# For a random forest model:
+dfl0 <- df1
+dfl0["y10"] <- y10
+task0 = makeRegrTask(data = dfl0 , target= "y10")
+learner0 = makeLearner("regr.randomForest")
+feat0 = getTaskFeatureNames(task0)
+feat0
+mod.full0 = train(learner0, task0)
+res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
+res = resample(learner = learner0, task = task0, 
+               resampling = res_desc,show.info = FALSE)
+
+
+result0 <- data.frame(matrix(nrow=1,ncol=length(feat0))) 
+
+for(i in 1:length(feat0)){
+  taskfeat0 = dropFeatures(task0, feat0[i])
+  mod.feat0 = train(learner0, dropFeatures(task0, feat0[i]))
+  resfeat0 = resample(learner = learner0, task = taskfeat0, resampling = res_desc,show.info = FALSE);
+  importance0 = data.frame(resfeat0$aggr-res$aggr)
+  feature2 = c(getTaskFeatureNames(task0))
+  result0[i] <- importance0
+  #print(importance)
+}
+result0
+colnames(result0) <- getTaskFeatureNames(task0)
+rownames(result0) <- "imp0"
+FIP0 <- data.frame(
+  importance02= round((t(result0)),3),
+  feature02= getTaskFeatureNames(task0))
+
+
+ploco0 <- ggplot(data = FIP0 ,aes(x=feature02,y = imp0)) + #### hier fehler 
+  geom_point(mapping=aes(x=feature02, y=imp0), size=3, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "Feature Importance", x= "") + 
+  theme(text = element_text(size = 16))
+
+ploco0
+
+#Problem to order the importance within the graphic. This issue should be fixed.
+
+```
+
+* In case of uncorrelated features (r = 0) the random forest model weights every feature nearly the same. It does not look like that at the first sight, but the scale of the ordinate is relativly small. So they are nearly the same also considering that the correlation is not exactly zero (see above).
 
 
 ### Real Data
