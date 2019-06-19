@@ -1,11 +1,19 @@
-data_set <- make_split(simulate_data(2500, 3, nonlinear = NULL, 
-              piece_wise_intervals = list(list(lower = -10, upper = 5),
-                                          NULL,
-                                          NULL),
-              seed = 1, mu = c(5, 5, 5), 
-              Sigma = matrix(c(0.6, 0.2, 0.1, 0.2, 0.8, 0.1, 0.1, 0.1, 0.6), 
-                             ncol = 3, nrow = 3, byrow = TRUE), 
-              true_coefficients = c(5, -4, 3), intercept = 2.5), 0.9)
+library(dplyr)
+library(mlr)
+library(lime)
+data_set <- simulate_data(2500, 
+                          3, 
+                          nonlinear = NULL,
+                          piece_wise_intervals = list(
+                            list(lower = -10, upper = 5), NULL,
+                            NULL), 
+                          seed = 1, 
+                          mu = c(5, 5, 5), 
+                          Sigma = matrix(
+                            c(0.6, 0.2, 0.1, 0.2, 0.8, 0.1, 0.1, 0.1, 0.6),
+                            ncol = 3, nrow = 3, byrow = TRUE), 
+                          true_coefficients = c(5, -4, 3), 
+                          intercept = 2.5) %>% make_split(share = 0.9)
 
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
