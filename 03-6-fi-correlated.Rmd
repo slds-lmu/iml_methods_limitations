@@ -56,7 +56,8 @@ data <- as.data.frame(rmvnorm(n = 1000,
 cov(data)
 cor(data)
 
-# For cases with higher dimesions one should use package genPositiveDefMat to generate the covariance matrix and ensure that the matrix is postive definit
+# For cases with higher dimesions one should use package genPositiveDefMat to generate 
+# the covariance   matrix and ensure that the matrix is postive definit
 
 ```
 
@@ -92,7 +93,8 @@ data1 <- as.data.frame(rmvnorm(n = 1000,
 cov(data1)
 cor(data1)
 
-# For cases with higher dimesions one should use package genPositiveDefMat to generate the covariance matrix and ensure that the matrix is postive definit
+# For cases with higher dimesions one should use package genPositiveDefMat 
+# to generate the covariance matrix and ensure that the matrix is postive definit
 
 ```
 
@@ -102,13 +104,18 @@ cor(data1)
 
 
 
-#Different kind of simulations (only the simulations which show interesting results will be shown later)
+#Different kind of simulations (only the simulations which 
+#show interesting results will be shown later)
 
 y1 <- data$V1 + data$V2 + data$V3 + data$V4 + rnorm(n = 1, mean = 0, sd = 1) #linear
 
-#y2 <- data$X1 - data$X2 + 3*sin(data$X3) + 1.5*data$X4 + rnorm(n = 1, mean = 0, sd = 1) #nicht-linear
+#y2 <- data$X1 - data$X2 + 3*sin(data$X3) + 1.5*data$X4 + 
+#       rnorm(n = 1, mean = 0, sd = 1) #nicht-linear
 
-#y3 <- data$X1 - data$X2 + 3*data$X3 + 1.5*data$X4 + rnorm(n = 1, mean = 0, sd = 1) #uninformative (which means: no information of some feature meaning there are part of the data set but not part of the model implemented) 
+#y3 <- data$X1 - data$X2 + 3*data$X3 + 1.5*data$X4 + 
+#          rnorm(n = 1, mean = 0, sd = 1) #uninformative 
+#      (which means: no information of some feature meaning there
+#       are part of the data set but not part of the model implemented) 
 
 #y4 Simulation with interaction effect
 
@@ -124,7 +131,7 @@ df['random'] <- runif(nrow(df))
 ```
 
 
-```{r PFI, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with high correlated features (r = 0.99) on random forest model and linear model"}
+```{r PFI1, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with high correlated features (r = 0.99) on random forest model and linear model"}
 
 library(mlr)
 library(iml)
@@ -138,7 +145,8 @@ create_rfplot <- function(rf, data){
   imp <- FeatureImp$new(mod, loss = "mse" , compare = "ratio")
   imp.dat <- imp$results
   
-  p <- ggplot(imp.dat, aes(x=reorder(feature, importance),ymin=importance.05, ymax=importance.95)) +
+  p <- ggplot(imp.dat, aes(x=reorder(feature, importance),
+                           ymin=importance.05, ymax=importance.95)) +
     geom_errorbar(width=0.3, size=1, color="darkblue") + 
     geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
     coord_flip() +
@@ -159,7 +167,7 @@ pl <- create_rfplot(lm1, data=df)
 pl
 ```
 
-```{r LOCO, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0.99) on random forest model"}
+```{r LOCO1, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with high correlated features (r = 0.99) on random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -175,7 +183,8 @@ feat = getTaskFeatureNames(task)
 feat
 mod.full = train(learner, task)
 res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
-res = resample(learner = learner, task = task, resampling = res_desc,show.info = FALSE)
+res = resample(learner = learner, task = task, 
+               resampling = res_desc,show.info = FALSE)
 
 
 result <- data.frame(matrix(nrow=1,ncol=length(feat))) 
