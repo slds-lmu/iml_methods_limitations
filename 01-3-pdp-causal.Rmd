@@ -4,11 +4,30 @@
 
 ## Introduction
 
+The goal is to observe differences in PDPs before and after interventions. 
+
 ## Partial Dependence Plots and Directed Acyclical Graphs
 
-## Interventions on simulated data
+*insert adjustment formula*
+$$P(Y|do(X_S = x_S)) = \int P(Y |X_S = x_S, X_C = x_C) dP(x_C)     $$
 
-**Scenario 1: Direct Effects**
+A path is any consecutive connection of edges, regardless of the direction of the edges. A "back-door" path, on the other hand, is any path containing an arrow into $X_S$ [@zhaohastie]. These back-door paths can be seen as a common cause of both $X_S$ and $Y$ and would need to be adjusted for in order to compute the causal effect of $X_S$ on $Y$.
+
+[@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It holds that:
+
+1. No node in $X_C$ can be a descendant of $X_S$ in the DAG $G$.
+
+2. Every "back-door" path between $X_S$ and $Y$ has to be blocked bz $X_C$.
+
+
+
+
+## Interventions on simulated data
+The complexity of scenarios will increase throughtout this chapter.
+
+**Scenario 1: Direct Effect**
+
+The simplest scenario one can think of is that of a single direct effect between a feature $x_1$ and an outcome $Y$. This can be visualized by the DAG below.
 
 ```{r eval=FALSE, include=FALSE}
 library(iml) # for pdp and ice
@@ -25,9 +44,7 @@ set.seed(107)
 # Scenario 1: Direct Effect
 ###############################################
 # x1 causes y
-dagify(y ~ x1,
-       y ~ x2,
-       y ~ x3
+dagify(y ~ x1
        ) %>% 
   ggdag() 
 ```
@@ -35,12 +52,37 @@ dagify(y ~ x1,
 ```{r directeffect, fig.cap='(ref:directeffect)', echo=FALSE, out.width='60%'}
 knitr::include_graphics("images/direct_effect.jpeg")
 ```
-(ref:directeffect) A DAG with direct effects.
+(ref:directeffect) A DAG with a direct effect.
 
-**Scenario 2: Confounding**
+**Scenario 2: Collider**
+
 ```{r eval=FALSE, include=FALSE}
 ###############################################
-# Scenario 2: Confounding Variables
+# Scenario 2: Collider
+###############################################
+collider_dag <- collider_triangle(x = "x1", 
+                               y = "x2", 
+                               m = "y") 
+
+ggdag(collider_dag, text = FALSE, use_labels = "label")
+
+ggdag_dseparated(collider_dag, text = FALSE, use_labels = "label")
+
+ggdag_dseparated(collider_dag, controlling_for = "m", 
+                 text = FALSE, use_labels = "label")
+```
+```{r collider, fig.cap='(ref:collider)', echo=FALSE, out.width = "100%"}
+knitr::include_graphics("images/colliders.jpg")
+
+```
+(ref:collider) A d-separated and d-connected collider.
+
+**Scenario 3: Confounding**
+
+In the case of a confounding variable, the outcome $Y$ is again impacted by the features $x_1$ and $x_2$, as in the collider example before. However, this time the value of $x_2$ is dependent on the value of $x_1$ as well. As such $x_1$ does not only impact $Y$ directly, but also throught its impact on $x_2$.
+```{r eval=FALSE, include=FALSE}
+###############################################
+# Scenario 3: Confounding Variables
 ###############################################
 # create structural graph of what the data set looks like
 dagify(y ~ x2,
@@ -48,13 +90,12 @@ dagify(y ~ x2,
        y ~ x1) %>% 
   ggdag() 
 ```
-```{r confounding, fig.cap='(ref:confounding)', echo=FALSE, out.width='60%'}
+```{r confounding, fig.cap='(ref:confounding)', echo=FALSE, out.width='70%'}
 knitr::include_graphics("images/confounding.jpeg")
 ```
 (ref:confounding) A DAG with a confounding effect.
 
-**Scenario 3: Latent Variable**
+**Scenario 4: Latent Variable**
 
-**Scenario 4: Collider**
 
 ## To Do
