@@ -181,33 +181,33 @@ annotate_figure(fig, fig.lab = "PDP with increasing impact of missing informativ
 
 ```
 
-```{r pdp.plot1, echo=FALSE, out.width='100%', fig.cap="Scatterplot of uncorrelated vs. highly correlated features x1 and x2 and marginal distributions of x2."}
+```{r pdpplot1, echo=FALSE, out.width='100%', fig.cap="Scatterplot of uncorrelated vs. highly correlated features x1 and x2 and marginal distributions of x2."}
 knitr::include_graphics('images/PDP_Sim_Plot1.jpeg')
 ```
 
-The partial dependence function, which represents the effect of $x_1$, is derived by assuming the marginal distribution of $x_2$ (and all other features in the complement set) for each $x_1$-value. This approach is reasonable in the case of uncorrelated features, where the scatterplot of both features reveals no structural relationship (see left part of figure \@ref(fig:pdp.plot1)).  
-By contrast, if $x_1$ and $x_2$ are strongly correlated, as shown in the right part of figure \@ref(fig:pdp.plot1) where $x_1$ and $x_2$ are almost perfectly collinear with a correlation coefficient of 0.95, the marginal distribution of $x_2$ is not meaningful for all $x_1$-values. As a consequence of the correlation, the PDP takes unrealistic combinations of both features into account and doesn't reflect the true effect of $x_1$. 
+The partial dependence function, which represents the effect of $x_1$, is derived by assuming the marginal distribution of $x_2$ (and all other features in the complement set) for each $x_1$-value. This approach is reasonable in the case of uncorrelated features, where the scatterplot of both features reveals no structural relationship (see left part of figure \@ref(fig:pdpplot1)). 
+By contrast, if $x_1$ and $x_2$ are strongly correlated, as shown in the right part of figure \@ref(fig:pdpplot1) where $x_1$ and $x_2$ are almost perfectly collinear with a correlation coefficient of 0.95, the marginal distribution of $x_2$ is not meaningful for all $x_1$-values. As a consequence of the correlation, the PDP takes unrealistic combinations of both features into account and doesn't reflect the true effect of $x_1$. 
 
 In order to demonstrate the impact of a strong correlation between $x_S$ and one or more features in $x_C$, a selection of data generating processes has been defined for the simulation of $y$. All predictions $\hat{y}$ have been generated through random forest for regression tasks with a number of 50 trees. The different settings and their impact on the PDP shall be discussed in this chapter.
 
 *Simulation Setting 1 - Linear relationship, two correlated features*  
-The first simulation setting is based on a purely linear relationship between $y$ and the feature variables. Only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot3) shows how the PDP evolves with an increasing weight on one of the correlated variables ($x_1$).
+The first simulation setting is based on a purely linear relationship between $y$ and the feature variables. Only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdpplot3) shows how the PDP evolves with an increasing weight on one of the correlated variables ($x_1$).
 
-```{r pdp.plot3, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies. The blue line represents the true effect of x1."}
+```{r pdpplot3, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot3.jpeg')
 ```
 
 *Simulation Setting 2 - Nonlinear relationship, two correlated features*  
-The second simulation setting is based on a nonlinear relationship of $y$ and $x_1$ while the dependence of all other feature variables is linear. Again, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot4) shows how the PDP evolves with an increasing weight on the correlated variables with nonlinear influence on $y$ ($x_1$).
+The second simulation setting is based on a nonlinear relationship of $y$ and $x_1$ while the dependence of all other feature variables is linear. Again, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdpplot4) shows how the PDP evolves with an increasing weight on the correlated variables with nonlinear influence on $y$ ($x_1$).
 
-```{r pdp.plot4, echo=FALSE, out.width='100%', fig.cap="Simulation of nonlinear dependencies. The blue line represents the true effect of x1."}
+```{r pdpplot4, echo=FALSE, out.width='100%', fig.cap="Simulation of nonlinear dependencies. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot4.jpeg')
 ```
 
 *Simulation Setting 3 - Linear relationship with missing informative feature, two correlated features*  
-The third simulation setting is based on the idea that in the true data generation process, all feature variables have a linear impact on $y$. However, one of the informative variables ($x_4$) is not taken into account in the Machine Learning model. Like in the previous settings, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdp.plot5) shows how the PDP evolves with an increasing weight on the missing informative variable ($x_4$).
+The third simulation setting is based on the idea that in the true data generation process, all feature variables have a linear impact on $y$. However, one of the informative variables ($x_4$) is not taken into account in the Machine Learning model. Like in the previous settings, only $x_1$ and $x_2$ are highly correlated with $\rho = 0.95$ while all other features meet the independence assumption ($\rho = 0$). Figure \@ref(fig:pdpplot5) shows how the PDP evolves with an increasing weight on the missing informative variable ($x_4$).
 
-```{r pdp.plot5, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies with missing informative feature. The blue line represents the true effect of x1."}
+```{r pdpplot5, echo=FALSE, out.width='100%', fig.cap="Simulation of linear dependencies with missing informative feature. The blue line represents the true effect of x1."}
 knitr::include_graphics('images/PDP_Sim_Plot5.jpeg')
 ```
 
