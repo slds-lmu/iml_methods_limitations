@@ -1,4 +1,18 @@
 # PDP and Causal Interpretation
 
-*Author: firstname lastname*
+*Author: Thommy Dassen*
+## Introduction
 
+## Partial Dependence Plots and Directed Acyclical Graphs
+
+## Interventions on simulated data
+
+** Scenario 1: Direct Effects **
+
+** Scenario 2: Confounding **
+
+** Scenario 3: Latent Variable **
+
+** Scenario 4: Collider **
+
+## To Do
