@@ -242,6 +242,7 @@ plot_lime(sample_seed = 1, model_smoothness = 50)
 
 - increase of sampling size helps
 - not feasable for higher dimensions (curse of dimensionality)
+<!-- good!! -->
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -258,6 +259,7 @@ plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
 ```
 
 - quick sanity check: kernel width doesn't help (careful about intersections with philipp)
+<!-- What do you mean by this`? -->
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -272,6 +274,8 @@ plot_lime(sample_seed = 2, model_smoothness = 50, kernel_width = 9000)
 plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
   
 ```
+
+<!-- Way too many plots!, try to reduce it to the essence or at least work with panels -->
 
 ## Sampling stability
 
@@ -628,9 +632,14 @@ dev.off()
 knitr::include_graphics("images/boston.png")
 ```
 
+<!-- Too small -->
+<!-- why? -->
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
 knitr::include_graphics("images/boston_100iter_standard.png")
 ```
+
+<!-- Too small -->
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "All weights scaled to 1.0 -- the standard deviation is highly varying to the weight size"}
 knitr::include_graphics("images/boston_100iter_scaled.png")
@@ -639,6 +648,8 @@ knitr::include_graphics("images/boston_100iter_scaled.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
 knitr::include_graphics("images/boston_100iter_outlier.png")
 ```
+
+<!-- Really so bad? Well if the obs is not normal why expect the model to behave nicely? -->
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights as previous figure, but scaled to 1.0 -- standard deviation is extremely varying"}
 knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
@@ -693,8 +704,6 @@ knitr::include_graphics("images/boston_lm_bins_outlier.png")
 knitr::include_graphics("images/boston_lm_bins_outlier_scaled.png")
 ```
 
-
-
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
 knitr::include_graphics("images/boston_tree.png")
 ```
@@ -711,9 +720,15 @@ knitr::include_graphics("images/boston_tree_outlier.png")
 knitr::include_graphics("images/boston_tree_outlier_scaled.png")
 ```
 
+<!-- AGAIN: Way too many plots. Better show only some and rather focus on it.
+Then just describe the other results in your text.
+You cannot show the reader everything you did.
+You already overloaded me being familiar with the topic.
+What is even your point?-->
 - we saw several evaluations of explanations of single points under different settings
 - how is the general trend over certain settings?
 - feature dimension vs stability and amount of selected features vs stability in the following
+<!-- You gave me too much input. I cannot judge what is most important / interesting -->
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
