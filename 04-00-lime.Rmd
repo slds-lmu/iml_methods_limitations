@@ -139,10 +139,11 @@ Further details on this topic will be studied in chapter X.
 
 A fully implemented example of LIME can be seen in the following code block with its resulting plot. In the latter we can observe how much each feature contributes to the surrogate model's prediction and to what extend this prediction offers a good fit on the black box model ('Explanation Fit' between 0 and 1).
 
+<<<<<<< HEAD
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE}
 required_packages = c("lime", "mlr")
-install_these =
-  required_packages[!(required_packages %in% installed.packages())]
+install_these = required_packages[!(required_packages %in%
+                                      installed.packages())]
 if (length(install_these) > 0) install.packages(install_these)
 ```
 
