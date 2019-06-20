@@ -35,7 +35,7 @@ ggplot(data = task_pred$data, aes(x = response, y = truth)) +
 dev.off()
 
 explainer <- lime(data_set$train[ , 2:4], black_box,
-                  bin_continuous = FALSE)
+                  bin_continuous = FALSE, use_density = FALSE)
 
 ## representative
 epsilon <- 0.75

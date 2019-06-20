@@ -29,7 +29,7 @@ dev.off()
 
 # Set up LIME explanations
 explainer <- lime(data_set$train[ , 2:4], black_box,
-                  bin_continuous = FALSE)
+                  bin_continuous = FALSE, use_density = FALSE)
 # Choose observation
 set.seed(1)
 explanation <- explain(data_set$test[1:4, 2:4], explainer,

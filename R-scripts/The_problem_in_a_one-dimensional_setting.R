@@ -1,5 +1,5 @@
 library(devtools)
-#install_github("https://github.com/pkopper/lime")
+install_github("https://github.com/thomasp85/lime")
 library(lime)
 library(mlr)
 library(gridExtra)
@@ -73,7 +73,7 @@ test <- data.frame(y_hat = test_pred$data$response, x1 = test_obs$x1)
 ### We now Set up LIME a explainer for the black box.
 ### We use do not bin cont. features.
 explainer <- lime(data_set$train[ , 2:3], black_box,
-                  bin_continuous = FALSE)
+                  bin_continuous = FALSE, use_density = FALSE)
 
 ### We generate an explanation (sparse) for test_obs.
 ### extract_average_local_model uses the explain function and averages

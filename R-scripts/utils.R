@@ -1,3 +1,4 @@
+library(MASS)
 make_split <- function(data, share) {
   split <- sample(1:nrow(data), floor(share * nrow(data)))
   return(list(train = data[split, ], test = data[-split, ]))
