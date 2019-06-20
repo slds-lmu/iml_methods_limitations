@@ -143,7 +143,13 @@ A fully implemented example of LIME can be seen in the following code block with
 required_packages = c("lime", "mlr")
 install_these = required_packages[!(required_packages %in%
                                       installed.packages())]
-if (length(install_these) > 0) install.packages(install_these)
+if (length(install_these) > 0) {
+  if ("lime" %in% install_these) {
+    install_these = install_these[install_these != "lime"]
+    install_github("https://github.com/thomasp85/lime")
+  }
+  install.packages(install_these)
+}
 ```
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', out.width = '99%', fig.cap = "Basic example of a LIME application. We create a black box model on the iris dataset without the first data point and then explain the prediction of this point with LIME."}
