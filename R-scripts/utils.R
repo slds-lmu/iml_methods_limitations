@@ -91,27 +91,13 @@ simulate_data <- function(n_obs, n_vars, nonlinear = NULL,
     y_det <- cbind(1, df) %*% c(intercept, true_coefficients)
   } else if (!is.null(piece_wise_intervals)) {
     df_sim <- df
-    #predictor <- rep(0, n_obs)
     for (i in 1:length(piece_wise_intervals)) {
-      #if (!is.null(piece_wise_intervals[[i]])) {
-        #predictor <- predictor + 
-         # (df[, i] > piece_wise_intervals[[i]]$lower &
-          #   df[, i] < piece_wise_intervals[[i]]$upper) * 
-          #true_coefficients[i] * df[, i] + 
-          #(df[, i] < piece_wise_intervals[[i]]$lower) * 
-          #true_coefficients[i] * piece_wise_intervals[[i]]$lower +
-          #(df[, i] > piece_wise_intervals[[i]]$upper) * 
-          #true_coefficients[i] * piece_wise_intervals[[i]]$upper
-        df_sim[df[, i] < piece_wise_intervals[[i]]$lower , i] <- 
-          piece_wise_intervals[[i]]$lower
-        df_sim[df[, i] > piece_wise_intervals[[i]]$upper , i] <- 
-          piece_wise_intervals[[i]]$upper
-      #} else {
-        #predictor <- predictor + true_coefficients[i] * df[, i]
-      #}
+      df_sim[df[, i] < piece_wise_intervals[[i]]$lower , i] <- 
+        piece_wise_intervals[[i]]$lower
+      df_sim[df[, i] > piece_wise_intervals[[i]]$upper , i] <- 
+        piece_wise_intervals[[i]]$upper
     }
     y_det <- cbind(1, df_sim) %*% c(intercept, true_coefficients)
-    #y_det <- predictor + intercept
   } else {
     df_nl <- df
     df_nl[, nonlinear] <- cos(df[, nonlinear])
@@ -179,22 +165,24 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
 
 plot_kernels <- function(kernel_matrix, 
                          kernel_widths,
-                         true_coefficients) {
+                         true_coefficients, 
+                         title) {
   model_per_kernel <- cbind(kernel_widths, kernel_matrix)
   colnames(model_per_kernel) <- c("kernel", "intercept", 
-                                  paste("x", 1:ncol(observation), sep = ""))
-  
-  plot_frame <- cbind(rep(kernel_widths, ncol(observation)), 
-                      melt(model_per_kernel[, 3:(ncol(observation) + 2)]))
+                                  paste("x", 1:length(true_coefficients), 
+                                        sep = ""))
+  plot_frame <- cbind(rep(kernel_widths, length(true_coefficients)), 
+                      melt(model_per_kernel[, 3:(length(
+                        true_coefficients) + 2)]))
   colnames(plot_frame) <- c("kernel", "Feature", "coefficient")
   
   p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 
                                      group = Feature)) + 
     geom_line(aes(color = Feature), size = 3) + 
     geom_point(aes(color = Feature), size = 3) + 
-    labs(x = "Kernel width", y = "Slope") +
-    theme(text = element_text(size = 35))
-  
+    labs(x = "Kernel width", y = "Coefficient") +
+    theme(text = element_text(size = 35)) +
+    labs(title = title)
   add_this <- ""
   for (i in 1:length(true_coefficients)) {
     new <- paste(" + geom_path(colour = ", i, 
