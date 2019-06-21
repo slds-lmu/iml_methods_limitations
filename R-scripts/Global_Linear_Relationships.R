@@ -84,7 +84,7 @@ kernel_matrix4 <- analyse_multivariate_kernel_width(kernel_widths,
 panel4 <- plot_kernels(kernel_matrix4, kernel_widths, c(4, -3, 5), "",
                        ymin = -5, ymax = 8)
 
-png("04-09-08.png", width = 1000, height = 848)
-grid.arrange(panel1, panel1, panel1, panel1, ncol = 2)
+png("04-09-08.png", width = 2000, height = 1700)
+grid.arrange(panel1, panel2, panel3, panel4, ncol = 2)
 dev.off()
 

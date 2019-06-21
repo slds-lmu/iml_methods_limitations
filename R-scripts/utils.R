@@ -1,4 +1,7 @@
 library(MASS)
+library(foreach)
+library(doRNG)
+library(doParallel)
 make_split <- function(data, share) {
   split <- sample(1:nrow(data), floor(share * nrow(data)))
   return(list(train = data[split, ], test = data[-split, ]))
@@ -33,25 +36,23 @@ extract_average_local_model <- function(observation,
                                         kernel_width,
                                         dist_fun = "euclidean",
                                         iterations = 25,
-                                        se = FALSE) {
+                                        se = FALSE,
+                                        seed) {
   res <- vector(mode = "list", length = iterations)
-  for (i in 1:iterations) {
-    res[[i]] <- extract_local_model(observation, 
-                                    explainer, 
-                                    n_features, 
-                                    n_permutations, 
-                                    kernel_width,
-                                    dist_fun = "euclidean")
+  res <- foreach(i = 1:iterations, .options.RNG = seed, 
+                 .combine = bind_rows) %dorng% {
+                   extract_local_model(observation, 
+                                       explainer, 
+                                       n_features, 
+                                       n_permutations, 
+                                       kernel_width,
+                                       dist_fun = "euclidean")
   }
-  means <- Reduce("+", res) / iterations
+  means <- colMeans(res)
   if (!se) {
     means
   } else {
-    sq_error <- res
-    for (i in 1:length(res)) {
-      sq_error[[i]] <- (res[[i]] - means) ^ 2
-    }
-    se <- sqrt(Reduce("+", sq_error) / iterations)
+    se <- sapply(res, sd)
     list(means, se)
   }
 }
@@ -117,12 +118,15 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                               n_permutations,
                                               dist_fun = "euclidean",
                                               iterations = 50,
-                                              ci = FALSE) {
+                                              ci = FALSE,
+                                              seed) {
   if (!ci) {
+    n_cores <- detectCores()
+    registerDoParallel(n_cores - 1)
     result <- matrix(0, ncol = n_features + 1, nrow = length(kernel_widths))
     result <- as.data.frame(result)
-    i = 0
-    for (k in kernel_widths) {
+    i <- 0
+    for (k in kernel_widths){
       i <- i + 1
       local_model <- extract_average_local_model(observation,
                                                  explainer,
@@ -131,7 +135,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                                  dist_fun = "euclidean", 
                                                  kernel_width = k,
                                                  iterations = iterations,
-                                                 se = FALSE)
+                                                 se = FALSE,
+                                                 seed)
       result[i, ] <- local_model
     }
     result
@@ -154,7 +159,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                                  dist_fun = "euclidean", 
                                                  kernel_width = k,
                                                  iterations = iterations,
-                                                 se = TRUE)
+                                                 se = TRUE,
+                                                 seed)
       result[[1]][i, ] <- local_model[[1]]
       result[[2]][i, ] <- local_model[[1]] - 1.96 * local_model[[2]]
       result[[3]][i, ] <- local_model[[1]] + 1.96 * local_model[[2]]

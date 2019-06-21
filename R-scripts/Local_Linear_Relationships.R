@@ -48,15 +48,17 @@ candidates <- data_set$test[data_set$test$x1 > 6 + 0.5 * epsilon, ]
 obs_2 <- candidates[sample(1:nrow(candidates), 2), ]
 
 
-kernel_widths <- c(seq(0.01, 0.1, 0.0075), seq(0.1, 0.75, 0.05), 
+kernel_widths <- c(seq(0.02, 0.1, 0.0075), seq(0.1, 0.75, 0.05), 
                    seq(0.8, 2, 0.2))
+
 km_1_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_1[1, 2:4], 
                                             explainer,
                                             n_features = 3, 
                                             n_permutations = 1000, 
                                             dist_fun = "euclidean",
-                                            ci = TRUE)
+                                            ci = TRUE,
+                                            seed = 1)
 
 km_1_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_1[2, 2:4], 
@@ -64,7 +66,8 @@ km_1_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             n_features = 3, 
                                             n_permutations = 1000, 
                                             dist_fun = "euclidean",
-                                            ci = TRUE)
+                                            ci = TRUE, 
+                                            seed = 2)
 
 km_2_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_2[1, 2:4], 
@@ -72,7 +75,8 @@ km_2_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                             n_features = 3, 
                                             n_permutations = 1000, 
                                             dist_fun = "euclidean",
-                                            ci = TRUE)
+                                            ci = TRUE,
+                                            seed = 3)
 
 km_2_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_2[2, 2:4], 
@@ -80,7 +84,8 @@ km_2_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             n_features = 3, 
                                             n_permutations = 1000, 
                                             dist_fun = "euclidean",
-                                            ci = TRUE)
+                                            ci = TRUE,
+                                            seed = 4)
 
 km_nc_1_1 <- km_1_1[[1]]
 km_nc_1_2 <- km_1_2[[1]]

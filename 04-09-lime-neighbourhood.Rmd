@@ -190,15 +190,12 @@ In this case we assume that the kernel size may be infinitely large as the globa
 However, if the kernel width is set too small we may fit too much noise.
 Hence, in this case we may find no good local models.
 
-The figures below (all four panels of figure 8) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
+The figures below (all four panels of figure \@ref(fig:fig8)) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
 The three vertical line indicate the true global coefficients.
 Note that this is representative for all observations.
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Coefficients for different kernel widhts."}
-knitr::include_graphics("images/04-09-08-1.png")
-knitr::include_graphics("images/04-09-08-2.png")
-knitr::include_graphics("images/04-09-08-3.png")
-knitr::include_graphics("images/04-09-08-4.png")
+```{r fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Coefficients for different kernel widhts."}
+knitr::include_graphics("images/04-09-08.png")
 ```
 
 We observe that too small kernel widths are not able to reproduce the global predictive surface at all.
