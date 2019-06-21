@@ -241,10 +241,7 @@ Below, we depict the coefficient paths for four representative observations, two
 The true local coefficients are displayed by solid vertical lines.
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
-knitr::include_graphics("images/04-09-10-1.png")
-knitr::include_graphics("images/04-09-10-2.png")
-knitr::include_graphics("images/04-09-10-3.png")
-knitr::include_graphics("images/04-09-10-4.png")
+knitr::include_graphics("images/04-09-10.png")
 ```
 
 We can clearly see that in this case, we __cannot__ simply set an arbitrary kernel width.

@@ -92,31 +92,34 @@ km_nc_1_2 <- km_1_2[[1]]
 km_nc_2_1 <- km_2_1[[1]]
 km_nc_2_2 <- km_2_2[[1]]
 
-png("04-09-10-1.png", width = 1000, height = 848)
-plot_kernels(km_nc_1_1, 
-             kernel_widths, 
-             true_coefficients = c(5, -4, 3))
-dev.off()
 
-png("04-09-10-2.png", width = 1000, height = 848)
-plot_kernels(km_nc_1_2, 
+panel1 <- plot_kernels(km_nc_1_1, 
              kernel_widths, 
-             true_coefficients = c(5, -4, 3))
-dev.off()
+             true_coefficients = c(5, -4, 3), 
+             ymin = -10, ymax = 10,
+             title = "True local coefficient for x1 is 5.")
 
-png("04-09-10-3.png", width = 1000, height = 848)
-plot_kernels(km_nc_2_1, 
+panel2 <- plot_kernels(km_nc_1_2, 
              kernel_widths, 
-             true_coefficients = c(0, -4, 3))
-dev.off()
+             true_coefficients = c(5, -4, 3), 
+             ymin = -10, ymax = 10,
+             title = "True local coefficient for x1 is 5.")
 
-png("04-09-10-4.png", width = 1000, height = 848)
-plot_kernels(km_nc_2_2, 
+panel3 <- plot_kernels(km_nc_2_1, 
              kernel_widths, 
-             true_coefficients = c(0, -4, 3))
-dev.off()
+             true_coefficients = c(0, -4, 3),
+             ymin = -10, ymax = 10,
+             title = "True local coefficient for x1 is 0.")
 
-kernel_matrix[[3]] - kernel_matrix[[2]]
+panel4 <- plot_kernels(km_nc_2_2, 
+             kernel_widths, 
+             true_coefficients = c(0, -4, 3), 
+             ymin = -10, ymax = 10,
+             title = "True local coefficient for x1 is 0.")
+
+png("04-09-10.png", width = 2000, height = 1700)
+grid.arrange(panel1, panel2, panel3, panel4, nrow = 2)
+dev.off()
 
 x1_frame <- as.data.frame(cbind(kernel_widths,
                                 km_2_1[[1]][[2]], 
