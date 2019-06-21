@@ -166,7 +166,9 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
 plot_kernels <- function(kernel_matrix, 
                          kernel_widths,
                          true_coefficients, 
-                         title) {
+                         title,
+                         ymin,
+                         ymax) {
   model_per_kernel <- cbind(kernel_widths, kernel_matrix)
   colnames(model_per_kernel) <- c("kernel", "intercept", 
                                   paste("x", 1:length(true_coefficients), 
@@ -174,6 +176,8 @@ plot_kernels <- function(kernel_matrix,
   plot_frame <- cbind(rep(kernel_widths, length(true_coefficients)), 
                       melt(model_per_kernel[, 3:(length(
                         true_coefficients) + 2)]))
+  plot_frame$value <- ifelse(plot_frame$value < ymin, ymin, plot_frame$value)
+  plot_frame$value <- ifelse(plot_frame$value > ymax, ymax, plot_frame$value)
   colnames(plot_frame) <- c("kernel", "Feature", "coefficient")
   
   p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 

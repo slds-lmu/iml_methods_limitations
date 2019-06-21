@@ -40,14 +40,14 @@ explainer <- lime(data_set$train[ , 2:4], black_box,
 # obs 1 .- plot 8a
 kernel_widths <- seq(0.1, 5, 0.1)
 kernel_widths <- c(0.02, 0.05, kernel_widths)
-kernel_matrix <- analyse_multivariate_kernel_width(kernel_widths,
-                                                   data_set$test[1, 2:4], 
-                                                   explainer,
-                                                   n_features = 3, 
-                                                   n_permutations = 1000, 
-                                                   dist_fun = "euclidean")
+kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
+                                                    data_set$test[1, 2:4], 
+                                                    explainer,
+                                                    n_features = 3, 
+                                                    n_permutations = 1000, 
+                                                    dist_fun = "euclidean")
 
-panel1 <- plot_kernels(kernel_matrix, kernel_widths, c(4, -3, 5), "",
+panel1 <- plot_kernels(kernel_matrix1, kernel_widths, c(4, -3, 5), "",
                        ymin = -5, ymax = 8)
 
 # obs 21 .- plot 8b
