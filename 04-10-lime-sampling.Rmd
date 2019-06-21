@@ -113,19 +113,14 @@ Fortunately in practice one can at least give a good approximation of the lower 
  - kernel approximated distribution
  - danger of extrapolating areas 
 
-## Side-effects of sampling
-- Curse of Dimensionality OR $x'$ far off from used density leading to sparseness in local surrounding
-- instability of picked features
-- instability of coefficients
-
-
-## Understanding basic LIME
+## Understanding basic LIME by examples
 
 <!-- I like your approach. However, I decided against it as it is simply very non-standard to code it yourself; and I assume it does not help that much here as more complex sampling will be time consuming to be implemented. -->
 
 - using continuous, convex black box model
+- following code snippet setting environment for LIME
 
-```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation preliminaries", warning = FALSE}
 
 # default input parameters
 model_smoothness = 270
@@ -139,12 +134,14 @@ x = 1:1000
 y = black_box(x)
 
 set.seed(1)
-# randomly pick data point to explain
+# pick data point to explain (by random in this case)
 x_ex = runif(1, 1, 1000)
 y_ex = black_box(x_ex)
+```
 
+- following code snippet showing core functionality of LIME
 
-### start of LIME
+```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
 
 set.seed(sample_seed)
 # sample new data points uniformly
@@ -210,6 +207,8 @@ plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sa
   
 ```
 
+- showing LIME results of simple numerical example
+
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 
@@ -224,7 +223,15 @@ plot_lime(sample_seed = 1)
   
 ```
 
+- as we can see, the surrogate models depend only on randomly generated samples, that randomly lie closer or further spread across the feature space, giving raise to the following investigation
+
+
+
+## Sampling stability
+
 - using continuous, non-convex black box model
+- giving raise of question about weight stability in certain settings
+- which settings are worse/have biggest influence?
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -278,6 +285,10 @@ plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
 <!-- Way too many plots!, try to reduce it to the essence or at least work with panels -->
 
 ## Sampling stability
+
+- using real datasets in the following to show weight stability associated with different samples
+
+### Numerical features
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -628,12 +639,20 @@ dev.off()
 
 ```
 
+- boston housing dataset well known
+- offering good amount of numerical features
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
 knitr::include_graphics("images/boston.png")
 ```
 
 <!-- Too small -->
 <!-- why? -->
+
+##### Average data point explanation
+- experiment: average data point explanation resampled 100 times
+- weight average and standard deviation of each feature
+>>>>>>> 32b2046896b35e7903ff2d49f56e47fd93900322
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
 knitr::include_graphics("images/boston_100iter_standard.png")
@@ -645,6 +664,9 @@ knitr::include_graphics("images/boston_100iter_standard.png")
 knitr::include_graphics("images/boston_100iter_scaled.png")
 ```
 
+###### comparing results with outlying data point
+- same experiment settings
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
 knitr::include_graphics("images/boston_100iter_outlier.png")
 ```
@@ -655,6 +677,9 @@ knitr::include_graphics("images/boston_100iter_outlier.png")
 knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
 ```
 
+##### using binning (default) option as sampling strategy
+- same other settings as before (average data point vs outlying data point)
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of mean data point with binning as sampling strategy -- standard deviation highly increased compared to previous results"}
 knitr::include_graphics("images/boston_100iter_bins.png")
 ```
@@ -663,6 +688,8 @@ knitr::include_graphics("images/boston_100iter_bins.png")
 knitr::include_graphics("images/boston_100iter_bins_scaled.png")
 ```
 
+###### vs outlyer
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of outlying data point -- different weight sizes as before, but the standard deviation is not clearly different"}
 knitr::include_graphics("images/boston_100iter_bins_outlier.png")
 ```
@@ -670,6 +697,12 @@ knitr::include_graphics("images/boston_100iter_bins_outlier.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same LIME weights, but scaled to 1.0 -- coefficient standard deviation of the almost-zero weight dominating the rest"}
 knitr::include_graphics("images/boston_100iter_bins_outlier_scaled.png")
 ```
+
+- binning is pretty bad
+
+##### using a globally linear black box model (sanity check)
+- expected: very stable results and same results for average and outlying data point
+- same experiment settings as before
 
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of the mean data point applied on a linar model as black box model"}
@@ -680,6 +713,8 @@ knitr::include_graphics("images/boston_lm.png")
 knitr::include_graphics("images/boston_lm_scaled.png")
 ```
 
+###### vs outlyer
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same linear model as before, but with the LIME weights of an outlying data point"}
 knitr::include_graphics("images/boston_lm_outlier.png")
 ```
@@ -688,6 +723,8 @@ knitr::include_graphics("images/boston_lm_outlier.png")
 knitr::include_graphics("images/boston_lm_outlier_scaled.png")
 ```
 
+##### vs binning
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with a linear model as black box and binning as sampling strategy"}
 knitr::include_graphics("images/boston_lm_bins.png")
 ```
@@ -695,6 +732,8 @@ knitr::include_graphics("images/boston_lm_bins.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- noticably higher standard deviation making results very questionable"}
 knitr::include_graphics("images/boston_lm_bins_scaled.png")
 ```
+
+###### vs binning with outlyer
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same settings but with outlying data point for weights -- weight size notably different to the case of the mean point"}
 knitr::include_graphics("images/boston_lm_bins_outlier.png")
@@ -729,6 +768,13 @@ What is even your point?-->
 - how is the general trend over certain settings?
 - feature dimension vs stability and amount of selected features vs stability in the following
 <!-- You gave me too much input. I cannot judge what is most important / interesting -->
+
+#### Influence of feature dimension
+- Is Curse of dimensionality real?
+- how is the general trend over amount of feature dimensions in the train data set?
+- experiment design: 10 random data points explained 100 times under different feature dimension
+- results of experiment in terms of stability (= standard deviation) averaged
+- plots of feature dimension vs stability and amount of selected features vs stability in the following
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -789,7 +835,8 @@ feature_growth <- function(
       }
       
       black_box = train(learner, task)
-      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, use_density = FALSE)
+      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, 
+                       use_density = FALSE)
       
       # create sequence of "n_feature" arguments
       n_feat_seq = seq(1L, p, by = dim_increment)
@@ -992,13 +1039,23 @@ dev.off()
 knitr::include_graphics("images/sd_p.png")
 ```
 
+- no tendency found
+- may depend on learned interactions of the black box model, but not on the actual train data
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the amount of features selected for the explainer. As can be seen, the weight stability is remarkably constant for low amount of features and suddenly becomes very jumpy for higher amount of selected feature. If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately no real rule of thumb can be suggested in this case. The shape of the graph may result due to globally linear predictions for the lesser important features -- assuming the features are picked by weight size."}
 
 knitr::include_graphics("images/sd_nfeat.png")
 
 ```
 
+- tendency of less weights selected being better, but no clear tendency for higher amounts
+- no curse of dimensionality visible
 
+
+#### Does the amount of chosen samples influence stability?
+- how does increased denseness in the feature space (by increasing sample size) increase stability of the surrogate model?
+- experiment design: 10 randomly picked datapoints explained 100 times iterated over amount of permutations/size of sample
+- again standard deviation of all weights calculated and averaged
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -1186,7 +1243,181 @@ dev.off()
 knitr::include_graphics("images/sd_npermutations.png")
 ```
 
+- clear and monotonous trend of more permutations giving better stability
+- feature dimension unrelated to weight stability, but sample size highly related - does this make sense?
+- moving focus from train data to black box model
 
+
+#### Demonstrating LIME in combination with overfitting
+
+- demonstrating by 2D simulation
+- sampled boston housing data: medv ~ lstat
+- decision tree with node size = 1 (overfitting + non-smoothness)
+- random forest with more trees and higher node size still non-continuous, but less overfitting
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
+
+### EVALUATE THIS CELL TO MAKE FUNCTIONS BELOW WORK
+
+library(mlbench)
+library(mlr)
+
+data(BostonHousing)
+set.seed(5)
+boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
+
+# create task and leaner
+btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
+regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
+# run model and get prediction surface
+black_box  = train(regr_model, btask)
+x_grid     = 1:4000 / 100
+y_pred     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+# visualize results
+plot = ggplot() +
+  geom_line(
+    data = data.frame(x_grid, y_pred=y_pred$data$response),
+    aes(x = x_grid, y = y_pred),
+    color = "#00C5CD",
+    size  = 1.5
+  ) +
+  geom_point(data = boston, aes(y = medv, x = lstat)) +
+  ylim(c(0, 50)) +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 15),
+    axis.title.x = element_text(vjust = -4),
+    plot.margin = ggplot2::margin(20,20,30,20)
+  ) +
+  ylab("target (medv)") +
+  xlab("feature (lstat)")
+
+filename = paste0("images/boston_sampled_tree.png")
+png(filename, width = 700, height = 500)
+plot
+dev.off()
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Non-smooth and non-continuous overfit of a decision tree on the feature 'lstat' of the boston housing dataset -- this will be used as black box model in the following"}
+knitr::include_graphics("images/boston_sampled_tree.png")
+```
+
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+# EVALUATE ABOVE CELL FIRST
+plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 25, sample_size = 10) {
+  
+  # create grid
+  x_grid     = 1:4000 / 100
+  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
+
+  set.seed(1)
+  # randomly pick data point to explain
+  x_ex = runif(1, 1, 40)
+  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
+  y_ex = yret$data$response
+  
+  set.seed(sample_seed)
+  # sample new data points
+  x_samp = runif(sample_size, 1, 40)
+  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
+  data   = data.frame(x = x_samp, y = y_samp$data$response)
+  
+  # apply gaussian kernel to receive weights
+  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
+  
+  # fit surrogate model and get predictions
+  model  = lm(y ~ x, data = data, weights = weights)
+  y_pred = predict(model, newdata = data.frame(x = x_grid))
+  
+  # visualize everything
+  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
+    geom_line(color = "#00C5CD", size = 1.5) +
+    geom_point(data = data, aes(x = x, y = y)) +
+    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
+    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
+    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
+    theme_minimal() +
+    theme(
+      text = element_text(size = 15),
+      axis.title.x = element_text(vjust = -4),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
+    ylim(c(0, 50)) +
+    ylab("target") +
+    xlab("feature")
+
+}
+
+```
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+filename = paste0("images/boston_sampled_tree_fst.png")
+png(filename, width = 700, height = 500)
+plot_lime_boston(sample_seed = 1, kernel_width = 1)
+dev.off()
+  
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Uniform sampling strategy -- black dots are sampled data points, red line is the LIME explanation, yellow dot the explained data point and the horizontal lines the square root of the kernel width, approximating size of neighborhood"}
+knitr::include_graphics("images/boston_sampled_tree_fst.png")
+```
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+filename = paste0("images/boston_sampled_tree_snd.png")
+png(filename, width = 700, height = 500)
+plot_lime_boston(sample_seed = 2, kernel_width = 1)
+dev.off()
+  
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Exact same settings, but simple rerun of the sampling leading to catastrophic differences due to missing anchor points in the neighborhood"}
+knitr::include_graphics("images/boston_sampled_tree_snd.png")
+```
+
+- giving raise to further investigations
+
+##### Numerical features with overfitting model
+
+- using decision tree with minimum node size of 1 as black box model
+- expected: worse stability compared to smoother models (random forest and linear model)
+- same experiment settings as before (100 iterations; no binning)
+- average data point:
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
+knitr::include_graphics("images/boston_tree.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation is for smaller weights high enough to make these untrustworthy"}
+knitr::include_graphics("images/boston_tree_scaled.png")
+```
+
+###### vs outlying data point:
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
+knitr::include_graphics("images/boston_tree_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- too much standard deviation making every result untrustworthy except feature 'rm'"}
+knitr::include_graphics("images/boston_tree_outlier_scaled.png")
+```
+
+- highly increased weight instability
+- giving raise to more general experiment
+
+
+#### How does the black box model smoothness influence weight stability?
+- 2D simulation suggests more overfitting and less smoothness of the prediction surface influences weight stability
+- interim explanation: random forest hyperparameters tree amount and minimum node size
+- higher tree amount giving prediction surface more smoothness (by reducing average step size of each step in the prediction function)
+- higher minimum node size reducing overfitting (by making predictions dependent on more train data points)
+- experiment: 10 randomly picked data points explained 100 times, iterated over random forest with different hyperparameter settings (each iteration more trees are added and minimum node size increased, leading to less overfitting and more smoothness)
+- results again used to get average standard deviation (= average weight stability)
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -1363,7 +1594,15 @@ dev.off()
 knitr::include_graphics("images/sd_smoothness.png")
 ```
 
+- big influence of the smoothness
+- influence flattens quickly, but may be different for more complex data sets requiring more "overfitting" (=less smooth fitting)
 
+### LIME with categorical data
+
+- only numerical features so far
+- using dataset with only categorical features now (rental bikes)
+- forced gower distance (equal or not // every other distance not possible)
+- do we get similar results as for numerical features?
 
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
@@ -1608,9 +1847,16 @@ dev.off()
 
 ```
 
+- overview of data set
+- good amount of categorical features
+- only 2 numerical features, discretized by binning
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the features in the bike rental dataset with respect to the target variable 'cnt', describing amount of rented bikes for a day"}
 knitr::include_graphics("images/bikes.png")
 ```
+
+- average case
+- same experiment settings as before (100 iterations)
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of the modal data point with a random forest model of standard regularisations"}
 knitr::include_graphics("images/bikes_standard.png")
@@ -1620,6 +1866,9 @@ knitr::include_graphics("images/bikes_standard.png")
 knitr::include_graphics("images/bikes_scaled.png")
 ```
 
+###### vs outlying data point
+- same settings
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of a LIME model applied on an outlying data point"}
 knitr::include_graphics("images/bikes_outlier.png")
 ```
@@ -1627,6 +1876,9 @@ knitr::include_graphics("images/bikes_outlier.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights but rescaled -- lower weight values seem highly untrustworthy similar to the case of numerical features"}
 knitr::include_graphics("images/bikes_outlier_scaled.png")
 ```
+
+##### using linear model (maybe remove this, because linear models don't provide a global fit for categorical features with category size higher than 2)
+- average data point:
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the modal data points with a linear model as black box -- high discrepancy to the random forest case"}
 knitr::include_graphics("images/bikes_lm.png")
@@ -1636,6 +1888,8 @@ knitr::include_graphics("images/bikes_lm.png")
 knitr::include_graphics("images/bikes_lm_scaled.png")
 ```
 
+###### linear model with ouyling point:
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the linear model as black box -- different weights as in the case of the modal data point, but not surprising due to the nature of linear models with categorical features"}
 knitr::include_graphics("images/bikes_lm_outlier.png")
 ```
@@ -1643,6 +1897,9 @@ knitr::include_graphics("images/bikes_lm_outlier.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- same behaviour as before: the higher the weights the more trustworthy"}
 knitr::include_graphics("images/bikes_lm_outlier_scaled.png")
 ```
+
+##### using decision tree (overfitting with minimum node size of 1)
+- average data point:
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the modal data point with an extremely overfitting tree as black box -- similar weights as in the case of a linear model"}
 knitr::include_graphics("images/bikes_tree.png")
@@ -1652,6 +1909,8 @@ knitr::include_graphics("images/bikes_tree.png")
 knitr::include_graphics("images/bikes_tree_scaled.png")
 ```
 
+###### vs outlying data point
+
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree as above -- very different weight sizes"}
 knitr::include_graphics("images/bikes_tree_outlier.png")
 ```
@@ -1660,7 +1919,10 @@ knitr::include_graphics("images/bikes_tree_outlier.png")
 knitr::include_graphics("images/bikes_tree_outlier_scaled.png")
 ```
 
-## Is the LIME implementation of bin sampling just bad?
+- side observation: categorical weights not as instable as numericals with binning as sampling strategy
+- raising the following question
+
+### Is bin sampling inferior?
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -1803,143 +2065,22 @@ knitr::include_graphics("images/bikes_bins_lime.png")
 knitr::include_graphics("images/bikes_no_bins.png")
 ```
 
+- LIME binning similarly unstable as data preprocessing
+- totally different results in terms of weight size compared to non binning
 - conclusion: binning in lime (the !DEFAULT! option) is not recommendable as a sampling stability
 
-### Why weight stability is getting worse with more overfitting black box models
+## Conclusion
+- different settings having high influence on weight stability
+- weight stability independent of weight size (ignore small weights)
+- averaging over several samples recommended
+- selecting low amount of explained features recommended (to remove the smaller weights)
+- train data doesn't matter
+- black box model matters
+- don't use binning
 
-(- keep kernel width constant to stay out of philipps topic)
-- sampled boston housing data: medv ~ lstat
-- decision tree with node size = 1 (overfitting + non-smoothness)
-- random forest with more trees and higher node size still non-continuous, but less overfitting
+## STOP REVIEW HERE, PHILIPP
 
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
-
-### EVALUATE THIS CELL TO MAKE FUNCTIONS BELOW WORK
-
-library(mlbench)
-library(mlr)
-
-data(BostonHousing)
-set.seed(5)
-boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
-
-# create task and leaner
-btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
-regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
-# run model and get prediction surface
-black_box  = train(regr_model, btask)
-x_grid     = 1:4000 / 100
-y_pred     = predict(black_box, newdata = data.frame(lstat=x_grid))
-
-# visualize results
-plot = ggplot() +
-  geom_line(
-    data = data.frame(x_grid, y_pred=y_pred$data$response),
-    aes(x = x_grid, y = y_pred),
-    color = "#00C5CD",
-    size  = 1.5
-  ) +
-  geom_point(data = boston, aes(y = medv, x = lstat)) +
-  ylim(c(0, 50)) +
-  theme_minimal() +
-  theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    plot.margin = ggplot2::margin(20,20,30,20)
-  ) +
-  ylab("target (medv)") +
-  xlab("feature (lstat)")
-
-filename = paste0("images/boston_sampled_tree.png")
-png(filename, width = 700, height = 500)
-plot
-dev.off()
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Non-smooth and non-continuous overfit of a decision tree on the feature 'lstat' of the boston housing dataset -- this will be used as black box model in the following"}
-knitr::include_graphics("images/boston_sampled_tree.png")
-```
-
-
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-# EVALUATE ABOVE CELL FIRST
-plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 25, sample_size = 10) {
-  
-  # create grid
-  x_grid     = 1:4000 / 100
-  y_grid     = predict(black_box, newdata = data.frame(lstat=x_grid))
-
-  set.seed(1)
-  # randomly pick data point to explain
-  x_ex = runif(1, 1, 40)
-  yret = predict(black_box, newdata = data.frame(lstat = x_ex))
-  y_ex = yret$data$response
-  
-  set.seed(sample_seed)
-  # sample new data points
-  x_samp = runif(sample_size, 1, 40)
-  y_samp = predict(black_box, newdata = data.frame(lstat = x_samp))
-  data   = data.frame(x = x_samp, y = y_samp$data$response)
-  
-  # apply gaussian kernel to receive weights
-  weights = exp( - (x_samp - x_ex)^2 / kernel_width )
-  
-  # fit surrogate model and get predictions
-  model  = lm(y ~ x, data = data, weights = weights)
-  y_pred = predict(model, newdata = data.frame(x = x_grid))
-  
-  # visualize everything
-  ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
-    geom_line(color = "#00C5CD", size = 1.5) +
-    geom_point(data = data, aes(x = x, y = y)) +
-    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
-    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
-    geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
-    geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
-    theme_minimal() +
-    theme(
-      text = element_text(size = 15),
-      axis.title.x = element_text(vjust = -4),
-      plot.margin = ggplot2::margin(20,20,30,20)
-    ) +
-    ylim(c(0, 50)) +
-    ylab("target") +
-    xlab("feature")
-
-}
-
-```
-
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-filename = paste0("images/boston_sampled_tree_fst.png")
-png(filename, width = 700, height = 500)
-plot_lime_boston(sample_seed = 1, kernel_width = 1)
-dev.off()
-  
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Uniform sampling strategy -- black dots are sampled data points, red line is the LIME explanation, yellow dot the explained data point and the horizontal lines the square root of the kernel width, approximating size of neighborhood"}
-knitr::include_graphics("images/boston_sampled_tree_fst.png")
-```
-
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-filename = paste0("images/boston_sampled_tree_snd.png")
-png(filename, width = 700, height = 500)
-plot_lime_boston(sample_seed = 2, kernel_width = 1)
-dev.off()
-  
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Exact same settings, but simple rerun of the sampling leading to catastrophic differences due to missing anchor points in the neighborhood"}
-knitr::include_graphics("images/boston_sampled_tree_snd.png")
-```
-
-
-
-## Proposing replacement of proximity measure with new sampling strategy
+## Proposing replacement of proximity measure with new sampling strategy (PROBABLY REMOVED)
 - this chapter and the following probably gets a cut
 - extreme increase of sampling efficiency
 - show mathematically risk minimization of uniform sample + gaussian kernel is the same as normal sample + no kernel with kernel width equal to variance of normal distribution
@@ -2104,23 +2245,4 @@ dev.off()
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Global sampling misses a lot of close anchor points to offer a good fit for smaller kernel widths -- leading to a catastrophic failure in this case"}
 knitr::include_graphics("images/boston_sampled_tree_snd_slim.png")
 ```
-
-
-## Influence of feature dimension
-- Curse of dimensionality
-
-### Categorical features
-- finite feature space
-- only binary distance measure
-
-### Numerical features
-- infinte feature space
-- euclidian distance measure
-- gower not working
-
-## Influence of sample size
-- counter acting curse of dimensionality
-### Categorical features
-
-### Numerical features
 
