@@ -299,6 +299,7 @@ Ignoring this problem not related to the kernel width we also find for globally 
 knitr::include_graphics("images/04-09-12.png")
 ```
 
+
 ```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
 knitr::include_graphics("images/04-09-13.png")
 ```
