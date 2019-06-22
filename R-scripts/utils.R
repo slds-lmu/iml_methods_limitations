@@ -120,12 +120,14 @@ simulate_data <- function(n_obs, n_vars, nonlinear_intervals = NULL,
       }
     }
     y_partial <- Reduce("+", y_partial)
-    y_det <- y_partial + cbind(1, df[, is.null(nonlinear_intervals[[j]])]) %*%
-      c(intercept, true_coefficients[is.null(nonlinear_intervals[[j]])])
+    y_det <- y_partial + 
+      cbind(1, df[, unlist(lapply(nonlinear_intervals, is.null))]) %*%
+      c(intercept, true_coefficients[unlist(lapply(nonlinear_intervals, 
+                                                   is.null))])
   }
   colnames(df) <- paste("x", as.character(1:n_vars), sep = "")
   if (shock == "internal") {
-  y <- rnorm(n_obs, y_det, abs(y_det) / runif(n_obs, 1, 100))
+    y <- rnorm(n_obs, y_det, abs(y_det) / runif(n_obs, 1, 100))
   } else {
     y <- rnorm(n_obs, y_det, shock)
   }

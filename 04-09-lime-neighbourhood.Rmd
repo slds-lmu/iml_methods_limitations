@@ -277,7 +277,7 @@ As we strongly favour linear relationships, we further generalise the approache 
 $$ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2<c_1} + \beta_{2,2} x_2 1_{c_1 < x_2 < c_2} +  \beta_{2,3} x_2 1_{c_2 < x_2} + \beta_3 x_3 + \epsilon + \gamma_0 1_{c_1 < x_1 < c_2} + \gamma_0 1_{x_1 > c_2} $$
 
 where the slope $\beta_2$ changes over the whole domain of $x_2$.
-We set $\beta_1 = 5$, $\beta_{2,1} = -4$, $\beta_{2,2} = 3$, $\beta_{2,3} = -4$ $\beta_1 = 3$, $c_1 = 4$ and $c_2 = 6$.
+We set $\beta_1 = 5$, $\beta_{2,1} = -4$, $\beta_{2,2} = 3$, $\beta_{2,3} = -3$ $\beta_1 = 3$, $c_1 = 4$ and $c_2 = 6$.
 
 We study three _representative_ observations complying with:
 
@@ -287,19 +287,20 @@ We study three _representative_ observations complying with:
 
 3. $6 < x_2$
 
-We observe the same pattern as before.
-In figures 12 and 13 we see that there is a small range where we actually are capable of fitting a stable and appropriate model for all different bins.
+We observe a same pattern as before with one very significant exemption.
+As the example becomes more complex, the pattern described in @laugel2018defining can be found in our data.
+The sampling of LIME strongly biases its local models towards a global linear surrogate model.
+This problem is strongly associated with the sampling strategy and will be dealt with in more depth in the next chapter.
+However, we strongly favour the alternative approach of @laugel2018defining which sample locally instead of weighting a global sample.
 
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
-knitr::include_graphics("images/04-09-12-1.png")
-knitr::include_graphics("images/04-09-12-2.png")
-knitr::include_graphics("images/04-09-12-3.png")
+Ignoring this problem not related to the kernel width we also find for globally highly non-linear associations that we prefer a small kernel width which however yields stable coefficients in order to achieve a (second best) optimal local model.
+
+```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-12.png")
 ```
 
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
-knitr::include_graphics("images/04-09-13-1.png")
-knitr::include_graphics("images/04-09-13-2.png")
-knitr::include_graphics("images/04-09-13-3.png")
+```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+knitr::include_graphics("images/04-09-13.png")
 ```
 
 Having investigated simulated data where we knew the ground truth gave us a good overview on how the kernel size affects the resulting explainer model.

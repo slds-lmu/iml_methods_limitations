@@ -126,14 +126,14 @@ x1_frame <- as.data.frame(cbind(kernel_widths,
                                 km_2_1[[3]][[2]]))
 
 x2_frame <- as.data.frame(cbind(kernel_widths,
-                  km_2_1[[1]][[3]], 
-                  km_2_1[[2]][[3]], 
-                  km_2_1[[3]][[3]]))
+                                km_2_1[[1]][[3]], 
+                                km_2_1[[2]][[3]], 
+                                km_2_1[[3]][[3]]))
 
 x3_frame <- as.data.frame(cbind(kernel_widths,
-                  km_2_1[[1]][[4]], 
-                  km_2_1[[2]][[4]], 
-                  km_2_1[[3]][[4]]))
+                                km_2_1[[1]][[4]], 
+                                km_2_1[[2]][[4]], 
+                                km_2_1[[3]][[4]]))
 
 colnames(x1_frame) <- c("Kernel", "Mean", "lower", "upper")
 colnames(x2_frame) <- c("Kernel", "Mean", "lower", "upper")

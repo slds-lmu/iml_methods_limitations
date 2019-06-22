@@ -94,6 +94,66 @@ panel3 <- plot_kernels(km_3[[1]],
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x2 is -3.")
 
-png("04-09-12.png", width = 1000, height = 2800)
-grid.arrange(panel1, panel2, panel3, nrow = 3)
+png("04-09-12.png", width = 2800, height = 1000)
+grid.arrange(panel1, panel2, panel3, nrow = 1)
+dev.off()
+
+frame1 <- as.data.frame(cbind(kernel_widths,
+                              km_1[[1]][[3]], 
+                              km_1[[2]][[3]], 
+                              km_1[[3]][[3]]))
+
+frame2 <- as.data.frame(cbind(kernel_widths,
+                              km_2[[1]][[3]], 
+                              km_2[[2]][[3]], 
+                              km_2[[3]][[3]]))
+
+frame3 <- as.data.frame(cbind(kernel_widths,
+                              km_3[[1]][[3]], 
+                              km_3[[2]][[3]], 
+                              km_3[[3]][[3]]))
+
+colnames(frame1) <- c("Kernel", "Mean", "lower", "upper")
+colnames(frame2) <- c("Kernel", "Mean", "lower", "upper")
+colnames(frame3) <- c("Kernel", "Mean", "lower", "upper")
+
+
+plotframe1 <- frame1
+plotframe1[plotframe1 > 7] <- 7
+plotframe1[plotframe1 < -6] <- -6
+panel1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe1, size = 3) +
+  geom_ribbon(data = plotframe1, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) -4) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  labs(title = "True local coefficient for x2 is -4.")
+
+plotframe2 <- frame2
+plotframe2[plotframe2 > 9] <- 9
+plotframe2[plotframe2 < -1] <- -1
+panel2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe2, size = 3) +
+  geom_ribbon(data = plotframe2, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) 6) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  labs(title = "True local coefficient for x2 is 6.")
+
+plotframe3 <- frame3
+plotframe3[plotframe3 > 7] <- 7
+plotframe3[plotframe3 < -5] <- -5
+panel3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe3, size = 3) +
+  geom_ribbon(data = plotframe3, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) -3) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  labs(title = "True local coefficient for x2 is -3.")
+
+png("04-09-13.png", width = 2800, height = 1000)
+grid.arrange(panel1, panel2, panel3, nrow = 1)
 dev.off()
