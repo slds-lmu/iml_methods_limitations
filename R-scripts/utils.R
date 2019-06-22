@@ -82,13 +82,14 @@ analyse_univariate_kernel_width <- function(kernel_widths,
 }
 
 
-simulate_data <- function(n_obs, n_vars, nonlinear = NULL, 
+simulate_data <- function(n_obs, n_vars, nonlinear_intervals = NULL, 
                           piece_wise_intervals = NULL,
-                          seed, mu, Sigma, true_coefficients, intercept) {
+                          seed, mu, Sigma, true_coefficients, intercept,
+                          shock = "internal") {
   set.seed(seed)
   df <- mvrnorm(n = n_obs, mu, Sigma, tol = 1e-6, empirical = FALSE, 
                 EISPACK = FALSE)
-  if (is.null(nonlinear) & is.null(piece_wise_intervals)) {
+  if (is.null(nonlinear_intervals) & is.null(piece_wise_intervals)) {
     y_det <- cbind(1, df) %*% c(intercept, true_coefficients)
   } else if (!is.null(piece_wise_intervals)) {
     df_sim <- df
@@ -98,16 +99,48 @@ simulate_data <- function(n_obs, n_vars, nonlinear = NULL,
       df_sim[df[, i] > piece_wise_intervals[[i]]$upper , i] <- 
         piece_wise_intervals[[i]]$upper
     }
-    y_det <- cbind(1, df_sim) %*% c(intercept, true_coefficients)
+    y_det <- cbind(1, df_sim) %*% c(intercept, true_coefficients) 
   } else {
-    df_nl <- df
-    df_nl[, nonlinear] <- cos(df[, nonlinear])
-    true_coefficients[nonlinear] <- true_coefficients[nonlinear] * 5
-    y_det <- df_nl %*% true_coefficients
+    y_partial <- vector(mode = "list", length = n_vars)
+    for (j in 1:length(nonlinear_intervals)) {
+      y_partial[[j]] <- rep(0, n_obs)
+      if (!is.null(nonlinear_intervals[[j]])) {
+        support_intercepts <- make_support_intercepts(nonlinear_intervals[[j]])
+        for (i in 1:length(nonlinear_intervals[[j]]$coefs)) {
+          int_min <- ifelse(i == 1, -Inf, nonlinear_intervals[[j]]$knots[i - 1])
+          int_max <- ifelse(i == length(nonlinear_intervals[[j]]$coefs), Inf, 
+                            nonlinear_intervals[[j]]$knots[i])
+          y_partial[[j]] <- y_partial[[j]] + 
+            ifelse(df[, j] > int_min & df[, j] < int_max, df[, j] * 
+            nonlinear_intervals[[j]]$coefs[i] +
+            support_intercepts[i], 0)
+        }
+      } else {
+        y_partial[[j]] <- rep(0, n_obs)
+      }
+    }
+    y_partial <- Reduce("+", y_partial)
+    y_det <- y_partial + cbind(1, df[, is.null(nonlinear_intervals[[j]])]) %*%
+      c(intercept, true_coefficients[is.null(nonlinear_intervals[[j]])])
   }
   colnames(df) <- paste("x", as.character(1:n_vars), sep = "")
+  if (shock == "internal") {
   y <- rnorm(n_obs, y_det, abs(y_det) / runif(n_obs, 1, 100))
+  } else {
+    y <- rnorm(n_obs, y_det, shock)
+  }
   data.frame(y, df)
+}
+
+make_support_intercepts <- function(nonlinear_interval) {
+  res <- rep(0, length(nonlinear_interval$coefs))
+  for (i in 2:length(nonlinear_interval$coefs)) {
+    knot_value <- nonlinear_interval$coefs[i - 1] * 
+      nonlinear_interval$knots[i - 1]
+    res[i] <- knot_value - nonlinear_interval$coefs[i] * 
+      nonlinear_interval$knots[i - 1] + res[i - 1]
+  }
+  res
 }
 
 

@@ -6,8 +6,7 @@ library(ggplot2)
 library(reshape2)
 source("utils.R")
 data_set <- simulate_data(2500, 
-                          3, 
-                          nonlinear = NULL,
+                          3,
                           piece_wise_intervals = list(
                             list(lower = -10, upper = 5), NULL,
                             NULL), 
