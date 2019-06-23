@@ -45,7 +45,8 @@ kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     explainer,
                                                     n_features = 3, 
                                                     n_permutations = 1000, 
-                                                    dist_fun = "euclidean")
+                                                    dist_fun = "euclidean",
+                                                    seed = 1)
 
 panel1 <- plot_kernels(kernel_matrix1, kernel_widths, c(4, -3, 5), "",
                        ymin = -5, ymax = 8)
@@ -56,7 +57,8 @@ kernel_matrix2 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     explainer,
                                                     n_features = 3, 
                                                     n_permutations = 1000, 
-                                                    dist_fun = "euclidean")
+                                                    dist_fun = "euclidean",
+                                                    seed = 1)
 
 panel2 <- plot_kernels(kernel_matrix2, kernel_widths, c(4, -3, 5), "",
                        ymin = -5, ymax = 8)
@@ -67,7 +69,8 @@ kernel_matrix3 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     explainer,
                                                     n_features = 3, 
                                                     n_permutations = 1000, 
-                                                    dist_fun = "euclidean")
+                                                    dist_fun = "euclidean",
+                                                    seed = 1)
 
 panel3 <- plot_kernels(kernel_matrix3, kernel_widths, c(4, -3, 5), "",
                        ymin = -5, ymax = 8)
@@ -78,7 +81,8 @@ kernel_matrix4 <- analyse_multivariate_kernel_width(kernel_widths,
                                                    explainer,
                                                    n_features = 3, 
                                                    n_permutations = 1000, 
-                                                   dist_fun = "euclidean")
+                                                   dist_fun = "euclidean",
+                                                   seed = 1)
 
 
 panel4 <- plot_kernels(kernel_matrix4, kernel_widths, c(4, -3, 5), "",

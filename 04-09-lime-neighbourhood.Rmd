@@ -291,20 +291,20 @@ We observe a same pattern as before with one very significant exemption.
 As the example becomes more complex, the pattern described in @laugel2018defining can be found in our data.
 The sampling of LIME strongly biases its local models towards a global linear surrogate model.
 This problem is strongly associated with the sampling strategy and will be dealt with in more depth in the next chapter.
-However, we strongly favour the alternative approach of @laugel2018defining which sample locally instead of weighting a global sample.
+However, we strongly favour the alternative approach of @laugel2018defining who sample locally instead of weighting a global sample.
 
-Ignoring this problem not related to the kernel width we also find for globally highly non-linear associations that we prefer a small kernel width which however yields stable coefficients in order to achieve a (second best) optimal local model.
+Ignoring this problem that is not related to the choice of the kernel width, we also find for globally highly non-linear associations that we prefer a small kernel width which however yields stable coefficients in order to achieve a (second best) optimal local model.
 
-```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for non-linear associations"}
 knitr::include_graphics("images/04-09-12.png")
 ```
 
 
-```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and cofidence bands for different kernel widths for non-linear associations (for x2)."}
 knitr::include_graphics("images/04-09-13.png")
 ```
 
-Having investigated simulated data where we knew the ground truth gave us a good overview on how the kernel size affects the resulting explainer model.
+Having investigated simulated data where we knew the ground truth gave us a good feeling on how the kernel size affects the resulting explainer model.
 The neighbourhood problem can be described briefly by the following.
 A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.
@@ -312,7 +312,32 @@ We may formulate the problem as a mininmisation problem w.r.t. the kernel size s
 
 ### Real data
 
-- Things to consider: Scaling is crucial, CoD
+Leaving the controlled environment we may face more challenges than we used to.
+Most however are related to the sampling of LIME and thus will be neglected in this chapter.
+However, we should mention that sampling does not work in areas with low density.
+This problem becomes highly significant for high-dimensional data.
+
+High-dimensional data is also for the kernel width an issue to consider.
+LIME computes dissimilarities of observations to each other.
+It is well-known that dissimilarities get increasingly less meaningful as the feature space expands.
+This is one consequence of the curse of dimensionality.
+
+Computing some dissimilarities (e.g. Manhattan or euclidean) also comes with the problem that the cardinility of the features mainly steers this meausre.
+Thus, data should be scaled before the weights for the regression are determined.
+Note that for our previous examples this was not necessary as all of our features were of the same cardinality.
+
+When working with real data sets with many features, we typically want a sparse explanation.
+In order to achieve this we should let LIME do feature selection.
+
+Within this section we study whether we find the same behaviour as we did for simulated data in the previous sections for a real data set.
+We will work with the well-known Boston housing data set.
+We do so because this data set is familiar to most machine learning scholars and it only features numeric data (We found some issues with the R implementation for mixed data.).
+Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality.
+
+Using this data we aim to use a random forest to predict the per capita crime rate by suburb.
+The goal is to predict how many bikes will be rented depending on the weather and the day.
+
+
 
 - Problem persists:
 single observations as before, then what happens when jumping to nearest neighbours?

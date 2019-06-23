@@ -19,12 +19,26 @@ extract_local_model <- function(observation,
                          n_permutations = n_permutations, 
                          kernel_width = kernel_width, 
                          dist_fun = dist_fun)
-  coefs <- rep(0, n_features + 1)
-  coefs[1] <- explanation$model_intercept[1]
-  names(coefs)[1] <- "Intercept"
-  for (i in 1:n_features) {
-    coefs[i + 1] <- explanation$feature_weight[i]
-    names(coefs)[i + 1] <- explanation$feature[i]
+  if (n_features < ncol(observation)) {
+    coefs <- rep(0, ncol(observation) + 1)
+    coefs[1] <- explanation$model_intercept[1]
+    names(coefs)[1] <- "Intercept"
+    for (i in 1:n_features) {
+      coefs[i + 1] <- explanation$feature_weight[i]
+      names(coefs)[i + 1] <- explanation$feature[i]
+    }
+    coefs[(i + 2):(ncol(observation) + 1)] <- NA
+    names(coefs)[(i + 2):(ncol(observation) + 1)] <- 
+      colnames(observation)[!(colnames(observation) %in% names(coefs))]
+    coefs <- c(coefs[1], coefs[2:8][order(names(coefs[2:8]))])
+  } else {
+    coefs <- rep(0, n_features + 1)
+    coefs[1] <- explanation$model_intercept[1]
+    names(coefs)[1] <- "Intercept"
+    for (i in 1:n_features) {
+      coefs[i + 1] <- explanation$feature_weight[i]
+      names(coefs)[i + 1] <- explanation$feature[i]
+    }
   }
   coefs
 }
@@ -48,13 +62,18 @@ extract_average_local_model <- function(observation,
                                        kernel_width,
                                        dist_fun = "euclidean")
   }
-  means <- colMeans(res)
+  means <- colMeans(res, na.rm = TRUE)
+  NA_count <- 1 - (apply(is.na(res), 2, sum) / iterations)
   if (!se) {
-    means
+    result <- means
   } else {
-    se <- sapply(res, sd)
-    list(means, se)
+    se <- sapply(res, sd, na.rm = TRUE)
+    result <- list(means, se)
   }
+  if (n_features < ncol(observation)) {
+    result <- list(result, NA_count)
+  }
+  result
 }
 
 analyse_univariate_kernel_width <- function(kernel_widths, 
@@ -145,7 +164,6 @@ make_support_intercepts <- function(nonlinear_interval) {
   res
 }
 
-
 analyse_multivariate_kernel_width <- function(kernel_widths, 
                                               observation, 
                                               explainer, 
@@ -155,51 +173,79 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                               iterations = 50,
                                               ci = FALSE,
                                               seed) {
+  n_cores <- detectCores()
+  registerDoParallel(n_cores - 1)
   if (!ci) {
-    n_cores <- detectCores()
-    registerDoParallel(n_cores - 1)
-    result <- matrix(0, ncol = n_features + 1, nrow = length(kernel_widths))
+    result <- matrix(0, ncol = ncol(observation) + 1, 
+                     nrow = length(kernel_widths))
     result <- as.data.frame(result)
+    NA_count <- result
     i <- 0
     for (k in kernel_widths){
       i <- i + 1
-      local_model <- extract_average_local_model(observation,
-                                                 explainer,
-                                                 n_features, 
-                                                 n_permutations,
-                                                 dist_fun = "euclidean", 
-                                                 kernel_width = k,
-                                                 iterations = iterations,
-                                                 se = FALSE,
-                                                 seed)
+      local <- extract_average_local_model(observation,
+                                           explainer,
+                                           n_features, 
+                                           n_permutations,
+                                           dist_fun = "euclidean", 
+                                           kernel_width = k,
+                                           iterations = iterations,
+                                           se = FALSE,
+                                           seed)
+      if (n_features < ncol(observation)) {
+        local_model <- local[[1]]
+        NA_count[i, ] <- local[[2]]
+      } else {
+        local_model <- local
+      }
       result[i, ] <- local_model
     }
-    result
+    col_names <- names(local_model)
+    colnames(result) <- col_names
+    result[is.na(result)] <- 0
   } else {
     result <- vector(mode = "list", length = 3)
-    result[[1]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+    result[[1]] <- as.data.frame(matrix(0, ncol = ncol(observation) + 1, 
                                         nrow = length(kernel_widths)))
-    result[[2]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+    result[[2]] <- as.data.frame(matrix(0, ncol = ncol(observation) + 1, 
                                         nrow = length(kernel_widths)))
-    result[[3]] <- as.data.frame(matrix(0, ncol = n_features + 1, 
+    result[[3]] <- as.data.frame(matrix(0, ncol = ncol(observation) + 1, 
                                         nrow = length(kernel_widths)))
-    
+    NA_count <- result[[1]]
     i = 0
     for (k in kernel_widths) {
       i <- i + 1
-      local_model <- extract_average_local_model(observation,
-                                                 explainer,
-                                                 n_features, 
-                                                 n_permutations,
-                                                 dist_fun = "euclidean", 
-                                                 kernel_width = k,
-                                                 iterations = iterations,
-                                                 se = TRUE,
-                                                 seed)
+      local <- extract_average_local_model(observation,
+                                           explainer,
+                                           n_features, 
+                                           n_permutations,
+                                           dist_fun = "euclidean", 
+                                           kernel_width = k,
+                                           iterations = iterations,
+                                           se = TRUE,
+                                           seed)
+      if (n_features < ncol(observation)) {
+        local_model <- local[[1]]
+        NA_count[i, ] <- local[[2]]
+      } else {
+        local_model <- local
+      }
       result[[1]][i, ] <- local_model[[1]]
       result[[2]][i, ] <- local_model[[1]] - 1.96 * local_model[[2]]
       result[[3]][i, ] <- local_model[[1]] + 1.96 * local_model[[2]]
     }
+    result[[1]][is.na(result[[1]])] <- 0
+    result[[2]][is.na(result[[2]])] <- 0
+    result[[3]][is.na(result[[3]])] <- 0
+    col_names <- names(local_model[[1]])
+    colnames(result[[1]]) <- col_names
+    colnames(result[[2]]) <- col_names
+    colnames(result[[3]]) <- col_names
+  } 
+  if (n_features < ncol(observation)) {
+    colnames(NA_count) <- col_names
+    list(result, NA_count)
+  } else {
     result
   }
 }
@@ -237,4 +283,52 @@ plot_kernels <- function(kernel_matrix,
   }
   call_text <- paste("p", add_this)
   eval(parse(text = call_text))
+}
+
+plot_kernels_real <- function(kernel_matrix, 
+                              kernel_widths,
+                              global_coefficients, 
+                              title,
+                              ymin,
+                              ymax) {
+  model_per_kernel <- cbind(kernel_widths, kernel_matrix)
+  colnames(model_per_kernel)[1] <- "kernel"
+  plot_frame <- cbind(rep(kernel_widths, length(true_coefficients)), 
+                      melt(model_per_kernel[, 3:(length(
+                        true_coefficients) + 2)]))
+  plot_frame$value <- ifelse(plot_frame$value < ymin, ymin, plot_frame$value)
+  plot_frame$value <- ifelse(plot_frame$value > ymax, ymax, plot_frame$value)
+  colnames(plot_frame) <- c("kernel", "Feature", "coefficient")
+  
+  p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 
+                                     group = Feature)) + 
+    geom_line(aes(color = Feature), size = 3) + 
+    geom_point(aes(color = Feature), size = 3) + 
+    labs(x = "Kernel width", y = "Coefficient") +
+    theme(text = element_text(size = 35)) +
+    labs(title = title)
+  add_this <- ""
+  for (i in 1:length(true_coefficients)) {
+    new <- paste(" + geom_path(colour = ", i, 
+                 " + 1, stat = 'function', size = 1.5, ", 
+                 "fun = function(x) global_coefficients[", i, "])", sep = "")
+    add_this <- paste(add_this, new, sep = "") 
+  }
+  call_text <- paste("p", add_this)
+  eval(parse(text = call_text))
+}
+
+plot_stability_paths <- function(stability_paths){
+  stability_paths <- cbind(melt(stability_paths), 
+                           rep(0:(nrow(stability_paths) - 1), 
+                               ncol(stability_paths)))
+  names(stability_paths) <- c("variable", "probality", "regularisation")
+  x <- stability_paths$regularisation
+  y <- stability_paths$probality
+  variable <- stability_paths$variable
+  p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
+  p <- p + geom_line(aes(color = variable)) + 
+    geom_point(aes(color = variable)) + 
+    labs(x = "# covariates", y = expression(pi))
+  return(p)
 }
