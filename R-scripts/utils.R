@@ -12,13 +12,15 @@ extract_local_model <- function(observation,
                                 n_features, 
                                 n_permutations, 
                                 kernel_width,
-                                dist_fun = "euclidean") {
+                                dist_fun = "euclidean",
+                                feature_select) {
   observation <- as.data.frame(observation)
   explanation <- explain(observation, explainer,
                          n_features = n_features, 
                          n_permutations = n_permutations, 
                          kernel_width = kernel_width, 
-                         dist_fun = dist_fun)
+                         dist_fun = dist_fun,
+                         feature_select = feature_select)
   if (n_features < ncol(observation)) {
     coefs <- rep(0, ncol(observation) + 1)
     coefs[1] <- explanation$model_intercept[1]
@@ -27,10 +29,11 @@ extract_local_model <- function(observation,
       coefs[i + 1] <- explanation$feature_weight[i]
       names(coefs)[i + 1] <- explanation$feature[i]
     }
-    coefs[(i + 2):(ncol(observation) + 1)] <- NA
-    names(coefs)[(i + 2):(ncol(observation) + 1)] <- 
+    coefs[(n_features + 2):(ncol(observation) + 1)] <- NA
+    names(coefs)[(n_features + 2):(ncol(observation) + 1)] <- 
       colnames(observation)[!(colnames(observation) %in% names(coefs))]
-    coefs <- c(coefs[1], coefs[2:8][order(names(coefs[2:8]))])
+    coefs <- c(coefs[1], coefs[2:(ncol(observation) + 1)] 
+               [order(names(coefs[2:(ncol(observation) + 1)]))]) 
   } else {
     coefs <- rep(0, n_features + 1)
     coefs[1] <- explanation$model_intercept[1]
@@ -51,7 +54,8 @@ extract_average_local_model <- function(observation,
                                         dist_fun = "euclidean",
                                         iterations = 25,
                                         se = FALSE,
-                                        seed) {
+                                        seed,
+                                        feature_select = feature_select) {
   res <- vector(mode = "list", length = iterations)
   res <- foreach(i = 1:iterations, .options.RNG = seed, 
                  .combine = bind_rows) %dorng% {
@@ -60,20 +64,21 @@ extract_average_local_model <- function(observation,
                                        n_features, 
                                        n_permutations, 
                                        kernel_width,
-                                       dist_fun = "euclidean")
+                                       dist_fun = "euclidean",
+                                       feature_select = feature_select)
   }
   means <- colMeans(res, na.rm = TRUE)
   NA_count <- 1 - (apply(is.na(res), 2, sum) / iterations)
   if (!se) {
-    result <- means
+    out <- means
   } else {
-    se <- sapply(res, sd, na.rm = TRUE)
-    result <- list(means, se)
+    sds <- sapply(res, sd, na.rm = TRUE)
+    out <- list(means, sds)
   }
   if (n_features < ncol(observation)) {
-    result <- list(result, NA_count)
+    out <- list(out, NA_count)
   }
-  result
+  out
 }
 
 analyse_univariate_kernel_width <- function(kernel_widths, 
@@ -172,7 +177,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                               dist_fun = "euclidean",
                                               iterations = 50,
                                               ci = FALSE,
-                                              seed) {
+                                              seed, 
+                                              feature_select = "auto") {
   n_cores <- detectCores()
   registerDoParallel(n_cores - 1)
   if (!ci) {
@@ -191,7 +197,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                            kernel_width = k,
                                            iterations = iterations,
                                            se = FALSE,
-                                           seed)
+                                           seed = seed,
+                                           feature_select = feature_select)
       if (n_features < ncol(observation)) {
         local_model <- local[[1]]
         NA_count[i, ] <- local[[2]]
@@ -223,7 +230,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                            kernel_width = k,
                                            iterations = iterations,
                                            se = TRUE,
-                                           seed)
+                                           seed = seed,
+                                           feature_select = feature_select)
       if (n_features < ncol(observation)) {
         local_model <- local[[1]]
         NA_count[i, ] <- local[[2]]
@@ -318,17 +326,15 @@ plot_kernels_real <- function(kernel_matrix,
   eval(parse(text = call_text))
 }
 
-plot_stability_paths <- function(stability_paths){
-  stability_paths <- cbind(melt(stability_paths), 
-                           rep(0:(nrow(stability_paths) - 1), 
-                               ncol(stability_paths)))
-  names(stability_paths) <- c("variable", "probality", "regularisation")
-  x <- stability_paths$regularisation
+plot_stability_paths <- function(kernel_widths, stability_paths){
+  stability_paths <- cbind(melt(stability_paths), kernel_widths)
+  names(stability_paths) <- c("variable", "probality", "kernel")
+  x <- stability_paths$kernel
   y <- stability_paths$probality
   variable <- stability_paths$variable
   p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
   p <- p + geom_line(aes(color = variable)) + 
     geom_point(aes(color = variable)) + 
-    labs(x = "# covariates", y = expression(pi))
+    labs(x = "Kernel Width", y = expression(pi))
   return(p)
 }

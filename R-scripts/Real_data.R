@@ -13,23 +13,25 @@ ggplot(data = task_pred$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
   theme(text = element_text(size = 35))
 
-explainer <- lime(data_set$train[ , 2:8], black_box,
+explainer <- lime(data_set$train[, 2:14], black_box,
                   bin_continuous = FALSE, use_density = FALSE) ## BUG!!!!!!
 
-kernel_widths <- c(seq(0.05, 0.1, 0.0025), seq(0.1, 1, 0.075), 
+kernel_widths <- c(seq(0.15, 1, 0.075), 
                    seq(1, 2, 0.125), seq(2, 5, 0.75))
 
-km_real <- vector(mode = "list", length(nrow(data_set$test)))
+km_real <- vector(mode = "list", length = nrow(data_set$test))
 
 for (i in 1:length(km_real)) {
   km_real[[i]] <- analyse_multivariate_kernel_width(kernel_widths,
-                                                    data_set$test[1, 2:8], 
+                                                    data_set$test[3, 2:14], 
                                                     explainer,
-                                                    n_features = 3, 
+                                                    n_features = 5, 
                                                     n_permutations = 1000, 
                                                     dist_fun = "euclidean",
                                                     seed = 1,
-                                                    ci = TRUE)
+                                                    ci = TRUE,
+                                                    feature_select = 
+                                                      "lasso_path")
 }
 
-km_real[[1]][is.na(km_real[[1]])]
+plot_stability_paths(kernel_widths, stability_paths = km_real[[2]][[2]][, 2:14])
