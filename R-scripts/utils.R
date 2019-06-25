@@ -14,36 +14,37 @@ extract_local_model <- function(observation,
                                 kernel_width,
                                 dist_fun = "euclidean",
                                 feature_select) {
-  observation <- as.data.frame(observation)
   explanation <- explain(observation, explainer,
                          n_features = n_features, 
                          n_permutations = n_permutations, 
                          kernel_width = kernel_width, 
                          dist_fun = dist_fun,
                          feature_select = feature_select)
-  if (n_features < ncol(observation)) {
-    coefs <- rep(0, ncol(observation) + 1)
+  n_col <- ncol(observation)
+  sorted_col_names <- colnames(observation)[order(colnames(observation))]
+  if (n_features < n_col) {
+    coefs <- rep(0, n_col + 1)
     coefs[1] <- explanation$model_intercept[1]
     names(coefs)[1] <- "Intercept"
-    for (i in 1:n_features) {
-      coefs[i + 1] <- explanation$feature_weight[i]
-      names(coefs)[i + 1] <- explanation$feature[i]
+    names(coefs)[2:(n_col + 1)] <- sorted_col_names
+    for (i in 2:(n_col + 1)) {
+      if (sorted_col_names[i - 1] %in% explanation$feature) {
+        coefs[i] <- explanation$feature_weight[explanation$feature == 
+                                                 sorted_col_names[i - 1]]
+      } else {
+        coefs[i] <- NA
+      }
     }
-    coefs[(n_features + 2):(ncol(observation) + 1)] <- NA
-    names(coefs)[(n_features + 2):(ncol(observation) + 1)] <- 
-      colnames(observation)[!(colnames(observation) %in% names(coefs))]
-    coefs <- c(coefs[1], coefs[2:(ncol(observation) + 1)] 
-               [order(names(coefs[2:(ncol(observation) + 1)]))]) 
   } else {
     coefs <- rep(0, n_features + 1)
     coefs[1] <- explanation$model_intercept[1]
     names(coefs)[1] <- "Intercept"
-    for (i in 1:n_features) {
-      coefs[i + 1] <- explanation$feature_weight[i]
-      names(coefs)[i + 1] <- explanation$feature[i]
+    for (n in 1:n_features) {
+      coefs[n + 1] <- explanation$feature_weight[n]
+      names(coefs)[n + 1] <- explanation$feature[n]
     }
   }
-  coefs
+  return(coefs)
 }
 
 extract_average_local_model <- function(observation, 
@@ -57,7 +58,7 @@ extract_average_local_model <- function(observation,
                                         seed,
                                         feature_select = feature_select) {
   res <- vector(mode = "list", length = iterations)
-  res <- foreach(i = 1:iterations, .options.RNG = seed, 
+  res <- foreach(m = 1:iterations, .options.RNG = seed, 
                  .combine = bind_rows) %dorng% {
                    extract_local_model(observation, 
                                        explainer, 
@@ -104,7 +105,6 @@ analyse_univariate_kernel_width <- function(kernel_widths,
   }
   result
 }
-
 
 simulate_data <- function(n_obs, n_vars, nonlinear_intervals = NULL, 
                           piece_wise_intervals = NULL,
@@ -223,9 +223,9 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
     for (k in kernel_widths) {
       i <- i + 1
       local <- extract_average_local_model(observation,
-                                           explainer,
-                                           n_features, 
-                                           n_permutations,
+                                           explainer = explainer,
+                                           n_features = n_features, 
+                                           n_permutations = n_permutations,
                                            dist_fun = "euclidean", 
                                            kernel_width = k,
                                            iterations = iterations,
@@ -326,9 +326,13 @@ plot_kernels_real <- function(kernel_matrix,
   eval(parse(text = call_text))
 }
 
-plot_stability_paths <- function(kernel_widths, stability_paths){
+plot_stability_paths <- function(kernel_widths, stability_paths, 
+                                 max_kernel = NULL){
   stability_paths <- cbind(melt(stability_paths), kernel_widths)
   names(stability_paths) <- c("variable", "probality", "kernel")
+  if (!(is.null(max_kernel))) {
+    stability_paths <- stability_paths[stability_paths$kernel < max_kernel, ]
+  }
   x <- stability_paths$kernel
   y <- stability_paths$probality
   variable <- stability_paths$variable
@@ -337,4 +341,20 @@ plot_stability_paths <- function(kernel_widths, stability_paths){
     geom_point(aes(color = variable)) + 
     labs(x = "Kernel Width", y = expression(pi))
   return(p)
+}
+
+scale_data <- function(data_set) {
+  means <- colMeans(data_set$train)
+  sds <- apply(data_set$train, 2, sd)
+  for (i in 1:ncol(data_set$train)) {
+    data_set$train[ , i] <- (data_set$train[ , i] - means[i]) / sds[i]
+    data_set$test[ , i] <- (data_set$test[ , i] - means[i]) / sds[i]
+  }
+  return(list(data_set, c(means = means, sds = sds)))
+}
+
+rank_predictions <- function(task_pred) {
+  mse_cont <- (task_pred$data$response - task_pred$data$truth) ^ 2
+  names(mse_cont) <- rownames(task_pred$data)
+  mse_cont[order(mse_cont)]
 }

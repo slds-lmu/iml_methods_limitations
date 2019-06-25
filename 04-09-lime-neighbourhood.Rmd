@@ -33,7 +33,7 @@ Afterwards, we apply the insights from simulated data to a real data set and sug
 When obtaining explanations with LIME the neighbourhood of an instance is determined when fitting the model by applying weights to instances w.r.t. proximity to the instance of interest.
 However, it is important to note that this step is already arbitrary.
 @craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve model fidelity.
-This could be obtained in many other ways than weighting observations as in LIME.
+This could be obtained in many more ways than weighting observations as done in LIME.
 One possible alternative might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm.
 This way we would increase the density around the instance already by proper sampling. 
 In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
