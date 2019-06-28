@@ -5,16 +5,16 @@
 
 ## Introduction
 
-The idea behind LIME reduced to its most basic scheme is basically fitting a simpler model on a more complex model with weights definining an area of higher relevance for the loss function.
-Let's remember how an arbitrary machine learning model is fitted:
+The idea behind LIME reduced to its most basic scheme is basically fitting a simpler local model on a more complex model with weights definining an area of higher relevance for the loss function.
+Let's remember how an arbitrary machine learning model is fit:
 We search the function (= model) $f^*$ out of our hypothesis space $\mathcal{H}$ offering the best minimization of a loss function $L$ plus a regularization term $J(f)$ for counteracting overfitting as can be seen by
 
 $$ f^* = \arg\min_{f \in \mathcal{H}} \sum_{i=1}^{n} L\Big(y^{(i)}, f\big(x^{(i)}\big) \Big) + \lambda \times J(f) $$
 
-A more specific description of this is given in [C. Bishop, Pattern Recognition and Machine Learning] and is out of scope in this book.
+A more specific description of this is given in @bishop and is beyond the scope of this book.
 The interesting part is now, how this is related to the LIME equation.
-Let's assume we just fitted successfully a very complex (and highly impressive) model on a not less intimidating dataset.
-This means we identified our $f^*$, that is -- of course -- still a function of $x$.
+Let's assume we just fit successfully a very complex model on a not less intimidating dataset.
+This means we identified our $f^*$, that is -- of course -- still a function of $x$ $f^*(x)$.
 So we have our black box model and predict $ŷ'$ of a new point $x'$, but we are possibly not satisfied with the received output and want to have an explanation of how the features in $x'$ are weighted to receive $ŷ'$.
 This is the point, where LIME is applied to deliver an explainer model $g^*$, whose parameters we can interpret.
 Recall from the introduction how this looks as a minimization problem:
@@ -30,40 +30,43 @@ This means nothing more besides the fact that we do not care about our original 
 We just don't, it's gone.
 We only want to explain the black box model $f^*$ and thus completely ignore everything of distraction for a best fit of $g^*$ on $f^*$ -- even the original target.
 The second difference is the factor $\pi_{x'}(x^{(i)})$ scaling the loss value of each observation.
-As we have already discussed in the introduction, $\pi_{x'}$ is simply a proximity measure giving observations $x^{(i)}$ more weight the closer they are to $x'$, ensuring significantly lower loss on more distant points and thus being responsible for a local fit around $x'$ instead of a global fit of the whole available feature space.
+As we have already discussed in the introduction, $\pi_{x'}$ is simply a proximity measure giving observations $x^{(i)}$ more weight the closer they are to $x'$, ensuring significantly lower loss contribution on more distant points and thus being responsible for a local fit around $x'$ instead of a global fit of the whole available feature space.
+<!-- Pretty much everything up to here is to my mind not necessary. -->
 When you read the last few words, there may just have popped up a small question mark in the back of your head.
 Why 'feature space'?
 Isn't it simply the original dataset instead?
-The feature space is basically infinitely large for numerical cases, and almost always by more than a few factors bigger than the dataset for categorical cases.
+The feature space is basically infinitely large for the numerical case, and almost always by more than a few factors bigger than the dataset for categorical cases. <!-- What do you mean? -->
 So how does it make sense talking about the feature space instead of the real, given samples of this space?
 Long story short, the answer is the solely reason why this Chapter 10 even exists.
 And the answer also leads to another set of gigantic problems in practice -- it's the third difference between the equations: $n'$ is not the same as $n$.
-Usually one would assume $n' < n$ because you can't simulate the data generation process, but in our case $n' >> n$.
+Usually one would assume $n' < n$ because you can't simulate the data generation process, but in our case $n' >> n$. <!-- Hard to understand -->
 The reason why this works is due to our target.
-The normal target $y$ is a vector of values of fixed size.
+The original target $y$ is a vector of values of fixed size.
 Full stop.
-But because our new target is not a fixed vector, but rather a function $f^*$, we can basically generate an infinite amount of new target observations (assuming the codomain is also infinite) and these observations represent exactly the ground truth $f^*(x)$ without any stochastic noise or whatsoever -- afterall functions are deterministic.
+But because our new target is not a fixed vector <!-- I know what you mean but this is not very well phrased. -->, but rather a function $f^*$, we can basically generate an infinite amount of new target observations (assuming the codomain is also infinite) and these observations represent exactly the ground truth <!-- Well, it's not the truth though --> $f^*(x)$ without any stochastic noise or whatsoever -- afterall functions are deterministic.
 But why should someone burden this computational effort?
 Isn't our real dataset enough?
-The quick answer is 'no'.
+The short answer is 'no'.
 The long answer is that we want a local fit of a new observation $x'$, but what if $x'$ lies in a very sparse area, or on the edge, or even far away of the space consumed by $\{x^{(i)}: i = 1, ..., n\}$?
-A general advice in machine learning is to never ever assume you have a reliable fit in these cases due to local overfitting or -- the worst nightmare -- extrapolation.
+A general advice in machine learning is to never ever assume you have a reliable fit in these cases due to local overfitting or -- the worst nightmare -- extrapolation. <!-- Well, what does this mean for our black box then?. -->
 These problems occure because $\{x^{(i)}: i = 1, ..., n\}$ may not offer enough anchor points for $g*$ to deliver a good fit on $\{(x, f^*(x)): x \in X\}$ for a new $x' \in X$.
 So, generating more data sounds suddenly like a solid plan.
 The first (and certainly not the last) issue here is the definition of the feature space.
-We need a new set $\{x: x \sim X\}$ with feature space $X$ to receive the responses of $f^*$, but nowhere is written how $X$ looks like, and our original dataset is a finite sample of an infinite space (numerical features) or 'only' an exponentially large space with respect to $dim(X)$.
+We need a new set $\{x: x \sim X\}$ with feature space $X$ to receive the responses of $f^*$.
+However, a priori it is not clear what $X$ looks like, and our original dataset is a finite sample of an infinite space (numerical features) or 'only' an exponentially large space with respect to $dim(X)$.
 As a consequence, we can't assume producing a dataset equal to the size of our feature space -- we need strategies to receive the best possible representation with respect to our task.
 
 
 ## Sampling strategies
 
-This chapter is about different approaches of generating a sample representing the original feature space as exactly as possible.
-To see how absolutely non-trivial this is, just keep in mind that we possibly don't even need an approximation of the probability density in the feature space, but just areas where the assumed possibility of data is higher than zero, due to the deterministic nature of $f^*(x)$, and uniformly sample there.
+This chapter is about different approaches of generating a sample representing the original feature space as appropriately as possible.
+To see how absolutely non-trivial this is, just keep in mind that we possibly don't even need an approximation of the probability density in the feature space, but just areas where the assumed possibility of data is measureably larger than zero, due to the deterministic nature of $f^*(x)$, and uniformly sample there.
+<!-- Long sentence, hard to understand -->
 The word 'possibly' was used here because we could also decide to use the density and draw more samples in certain areas, this would give the explanation $g^*$ of our $x'$ more anchor points in it's surrounding for a more precise fit, assuming $x'$ is located in areas of higher probability.
 But what if $x'$ is located in an area of lower probability?
 Unlikely, but absolutely possible with potentially disastrous results due to a missing locality around $x'$.
 The next best idea to reduce the likelihood of this happening is to increase the amount of samples of our feature space.
-But thanks to our good old friend 'Curse of Dimensionality' (who absolutely deserves that name), this is not feasable for an arbitrarely large feature dimension.
+But thanks to our good old friend 'Curse of Dimensionality' (who absolutely deserves that name), this is not feasable for a large feature dimension.
 The Curse of Dimensionality means the feature space grows exponentially large with each added dimension, thus we would need an exponentially large sample size under the assumption of linear independence between the features.
 A way to circumvent this would be to not sample in the traditional way, but rather pick a data point of our original dataset and randomly change a random amount of its feature values.
 The results are so called perturbations, because they are 'perturbed' in some of their features.
@@ -78,36 +81,41 @@ The following strategies take up a position somewhere between, but something lik
 
 ### Categorical features
 
+<!-- It would be helpful if you outlined where these ideas come from. -->
 Categorical features are handled a bit more straight forward then numerical ones due to finite space.
 But this doesn't mean there's a trivial strategy.
 The easiest way would be to simply sample each feature independently of the others and with probabilities of the frequency of each category appearing in the original dataset.
 The cases when this goes wrong is if one category is very unlikely and then simply not drawn, giving the fitting process not enough information of how this category would influence our prediction.
 If we throw away the original data after sampling, no information is left over about this category.
-On the other side, by ignoring feature combinations, we may sample points that are impossible in the real world and add no value to our fit, or may even distort it.
+On the other hand, by ignoring feature combinations, we may sample points that are impossible in the real world and add no value to our fit, or may even distort it. 
 For example imagine a dataset about eating habits of persons, with one feature called 'is_vegetarian' and the other 'favorite_food' and getting the sample combination of 'Yes' and 'Roast beef'.
-Of course this is a very specific example easy to spot, but if you have high dimensional datasets, a lot of drawn samples may be wasted on non-sense combinations, filling the feature space at areas not accessible for real data on the cost of areas with plausible combinations.
+Of course, this is a very specific example easy to spot, but if you have high dimensional datasets, a lot of drawn samples may be wasted on non-sense combinations, filling the feature space at areas not accessible for real data on the cost of areas with plausible combinations.
+<!-- Well, but how does non-sense then finally affect our local model? -->
 
 Another way to draw samples would be to randomly draw a data point of our given dataset $\{x^{(i)}: i = 1, ..., n\}$, then change a random amount of features randomly to different categories.
-At first, this may sound confusing, but by adjusting the expected value of the amount of features changed, we can control the trade-off stated in the end of last chapter.
+At first, this may sound confusing, but by adjusting the expected value of the amount of features changed, we can control the trade-off stated in the end of last section.
 By always changing all features, we basically end up with the same strategy as before.
 If the expected amount of changed features is small, we lower the risk of unrealistic feature combinations.
-This strategy is especially used for text data, when the underlying feature space is the size of the word dictionary with binary variables if a word is appearing in a sentence or not.
+This strategy is especially applicable to text data, when the underlying feature space is the size of the word dictionary with binary variables if a word is appearing in a sentence or not.
 The dimension of this feature space is easily in the thousands, making it impossible to sample most word combinations.
-On the other hand due to the way language works, most of the possible word combinations make no sense at all, so staying close to the original combinations is a sound plan.
+On the other hand, due to the way language works, most of the possible word combinations make no sense at all, so staying close to the original combinations is a sound plan.
 
 
 ### Numerical features
 
 Numerical features rise the challenge even further.
 While categorical features make it possible for at least very low dimensions to gather a dataset with all possible values, numerical features are theoretically of infinite size.
-Fortunately in practice one can at least give a good approximation of the lower and upper bounds, making sure a certain denseness of the samples is possible.
+Fortunately in practice one can at least give a good approximation of the lower and upper bounds, making sure a certain density <!-- ??--> of the samples is possible.
+<!-- Is this your outline? -->
+<!-- You should defo talk about correlation structures here! -->
  - bins
  - normal distribution
  - kernel approximated distribution
- - danger of extrapolating areas
-
+ - danger of extrapolating areas 
 
 ## Understanding basic LIME by examples
+
+<!-- I like your approach. However, I decided against it as it is simply very non-standard to code it yourself; and I assume it does not help that much here as more complex sampling will be time consuming to be implemented. -->
 
 - using continuous, convex black box model
 - following code snippet setting environment for LIME
@@ -152,6 +160,7 @@ model = lm(y ~ x, data = samples, weights = proximity)
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
 req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
 install_these = req_packages[!(req_packages %in% installed.packages())]
+# Wo bleibt meine Zitation ;-)? Better work with the Description file, though!
 
 if (length(install_these) > 0) install.packages(install_these)
 library(ggplot2)
@@ -240,6 +249,7 @@ plot_lime(sample_seed = 1, model_smoothness = 50)
 
 - increase of sampling size helps
 - not feasable for higher dimensions (curse of dimensionality)
+<!-- good!! -->
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -256,6 +266,7 @@ plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
 ```
 
 - quick sanity check: kernel width doesn't help (careful about intersections with philipp)
+<!-- What do you mean by this`? -->
 
 ```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -271,7 +282,9 @@ plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
   
 ```
 
+<!-- Way too many plots!, try to reduce it to the essence or at least work with panels -->
 
+## Sampling stability
 
 - using real datasets in the following to show weight stability associated with different samples
 
@@ -633,13 +646,19 @@ dev.off()
 knitr::include_graphics("images/boston.png")
 ```
 
+<!-- Too small -->
+<!-- why? -->
+
 ##### Average data point explanation
 - experiment: average data point explanation resampled 100 times
 - weight average and standard deviation of each feature
+>>>>>>> 32b2046896b35e7903ff2d49f56e47fd93900322
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
 knitr::include_graphics("images/boston_100iter_standard.png")
 ```
+
+<!-- Too small -->
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "All weights scaled to 1.0 -- the standard deviation is highly varying to the weight size"}
 knitr::include_graphics("images/boston_100iter_scaled.png")
@@ -651,6 +670,8 @@ knitr::include_graphics("images/boston_100iter_scaled.png")
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
 knitr::include_graphics("images/boston_100iter_outlier.png")
 ```
+
+<!-- Really so bad? Well if the obs is not normal why expect the model to behave nicely? -->
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights as previous figure, but scaled to 1.0 -- standard deviation is extremely varying"}
 knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
@@ -722,6 +743,31 @@ knitr::include_graphics("images/boston_lm_bins_outlier.png")
 knitr::include_graphics("images/boston_lm_bins_outlier_scaled.png")
 ```
 
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
+knitr::include_graphics("images/boston_tree.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation is for smaller weights high enough to make these untrustworthy"}
+knitr::include_graphics("images/boston_tree_scaled.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
+knitr::include_graphics("images/boston_tree_outlier.png")
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- too much standard deviation making every result untrustworthy except feature 'rm'"}
+knitr::include_graphics("images/boston_tree_outlier_scaled.png")
+```
+
+<!-- AGAIN: Way too many plots. Better show only some and rather focus on it.
+Then just describe the other results in your text.
+You cannot show the reader everything you did.
+You already overloaded me being familiar with the topic.
+What is even your point?-->
+- we saw several evaluations of explanations of single points under different settings
+- how is the general trend over certain settings?
+- feature dimension vs stability and amount of selected features vs stability in the following
+<!-- You gave me too much input. I cannot judge what is most important / interesting -->
 
 #### Influence of feature dimension
 - Is Curse of dimensionality real?
@@ -789,7 +835,8 @@ feature_growth <- function(
       }
       
       black_box = train(learner, task)
-      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, use_density = FALSE)
+      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, 
+                       use_density = FALSE)
       
       # create sequence of "n_feature" arguments
       n_feat_seq = seq(1L, p, by = dim_increment)
