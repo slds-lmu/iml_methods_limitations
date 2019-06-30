@@ -89,24 +89,18 @@ data_dICI_X_3 <- filter(data_dICI, features %in% "X_3") %>% arrange(features, ro
 
 #######
 
-
-
-
-#######
-
-dICI <- function(data = pfi, feature, measure){
+dICI <- function(data = pfi, feat, measure){
   
   ## Include assertions
   ## data must be of type dataframe, feature must be list() of characters, measure (i.e. "mse")
   
   ## Produces n list objects (n = number of features) 
   data_dICI <- as_tibble(data)
-  data_dICI %>% map(feature, filter(data_dICI, data_dICI$features %in% feature)
+  data_dICI %>% lapply(feat, filter(data_dICI, features %in% feat)
                       %>% arrange(features, row.id)
-                      %>% dplyr::mutate(finite.differences(data_dICI))
-                      %>% paste0(data_dICI, "_", feature)
+                      %>% mutate(finite.differences(data_dICI))
+                      %>% paste0(data_dICI, "_", feat)
                       )
-  
   return(data_dICI)
   
 }
@@ -114,10 +108,10 @@ dICI <- function(data = pfi, feature, measure){
 
 #### Formular/Function for numerical approximation of derivative 
 
-finite.differences <- function(data, measure){
+finite.differences <- function(data){
   
   
-  if(length(data$feature.value) != length(data$measure)){
+  if(length(data$feature.value) != length(data$mse)){
     stop('x and y must be equal length')
   }
   
@@ -241,5 +235,53 @@ finite.differences_raw <- function(x, y) {
 }
 
 
+
+
+### Other function
+
+dICI_2 <- function(data = pfi, feature, measure){
+  
+  ## Include assertions
+  ## data must be of type dataframe, feature must be list() of characters, measure (i.e. "mse")
+  data_dICI_test <- as_tibble(data)
+  data_dICI_test_filtered <- filter(data_dICI_test ,features %in% feature)
+  data_dICI_test_arranged <- arrange(data_dICI_test_filtered, features, row.id, feature.value)
+  data_dICI_test_mutated <- mutate(data_dICI_test_arranged, delta_f = finite.differences_2(data_dICI_test_arranged))
+  
+  return(data_dICI_test_mutated)
+  
+}
+
+
+
+
+
+
+
+
+finite.differences_2 <- function(data, measure){
+  
+  if(length(data$feature.value) != length(data$mse)){
+    stop('x and y must be equal length')
+  }
+  
+  
+  n_all <- length(data$feature.value)
+  n_row_unique <- length(unique(data$row.id))
+  
+  list_fdx <- list()
+  length(list_fdx) <-  n_row_unique
+  for(row in unique(data$row.id)){
+    data_by_row.id <- filter(data, row.id %in% row)
+    feature <- data_by_row.id$feature.value
+    target <- data_by_row.id$mse
+    n <- nrow(feature)
+    list_fdx[[row]] <- D1ss(feature, target)
+    
+  }
+  fdx_final <- unlist(list_fdx)
+  return(fdx_final)
+  
+}
 
 

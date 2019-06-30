@@ -3,55 +3,185 @@
 *Author: Moritz Wagner*
 
 
-The introducing chapter already took up several problems of the concept of Permutation Feature Importance (PFI). Among others, the one-dimensional nature of the metric poses a limitation, especially if one is interested in a more detailed analysis of the Feature Importance of a specific feature. Here, it might be of special interest to investigate whether the importance of a feature varies within its range of values. Pursuing this objective, a visualization tool where the different values of the respective feature are plotted on the x-axis and the varying Feature Importance metric on the y-axis, seems to be promising. Partial Importance (PI) plots visualize the average partial importance of a feature, by marginalizing over all other features in the feature space
+For some applications an aggregated, global measure of Feature Importance might be insufficient, especially when one expects a significant heterogeneity within the feature's range of values. Briefly spoken, heterogeneity means that some observations are more important for prediction than others. For such purposes, an algorithm is required that calculates the Feature Importance for each value of the respective feature. As the range of values can be rather large a tabular description seems to be cluttered. Therefore, a visualization tool which allows to gain meaningful and concise insights on how the Feature Importance varies, seems to be appropriate. One would then plot the respective values of the feature against its local Feature Importance measures. In case of heterogeneity, the plotted curve should then deviate from a constant relationship. Following the objective of visualization, one can make use of the concepts of Partial Dependence and Individual Conditional Expectation, as these methods allow to detect heterogeneity in the context of Feature Effects. Cassaliccio et al. (2018) avail themselves from these concepts and transfer them to the principle of Feature Importance, by introducing the metrics Partial Importance (PI) and Individual Conditional Importance (ICI). They show that these methods enable to detect subgroups with differing levels of Feature Importance and are therefore, when striving for a complete picture, non-negligible complements to the global PFI metric. However, it might be of interest to not only reliably detect heterogeneity but to also better understand the drivers. Uncovering the sources appears to be not straightforward, especially as the structural relationship between covariates and the outcome variables is unknown. Hence, one cannot really argue whether there is just simply a non-linear relationship or whether for instance interactions between covariates exist. In order to shed some light into this concern, this chapter will focus on the question to what extent the methods of PI and ICI do provide meaningful insights on what the real drivers of heterogeneity in Feature Importance are. The following will show that just plotting ICI curves is not sufficient but that calculating the Individual Conditional Importance serves as an exhaustive foundation to implement additional models capable to detect these sources. 
+
+The remaining subchapters are structured as follows: First, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) plots are theoretically introduced. This shall provide the reader with an in-depth understanding of how the Feature Importance can be visualized, both on an aggregated, global and disentangled, local level. With these preliminaries, the reader is equipped with sufficient knowledge to understand the following simulations which are meant to cover two broader topics. In the subchapter "Detect Interations", it will be focussed on to what extent the PI and ICI plots can uncover interaction effects between covariates. In order to give this a new angle of perspective, a new method, called "derivative-ICI" will be introduced. The second subchapter will then discuss the issue of actually explaining the detected interaction effects. Pursuing this objective, an additional method will be introduced which will predict the global Feature Importance of a respective variable based on the remaining covariates in the model. A significant relationship between the PFI and at least one covariate would then not only confirm the conjecture of interaction effects, but also explain between which features these interactions took place. In conjunction with the results from chapter "Explain Interaction", one can then calculate the respective conditional Feature Importance and plot them. These conditional plots provide then an exhaustive understanding of differing Feature Importance in the subgroups.
+
+ 
+
+Then, the identified methods during the simulation phase will be validated with real data.
+The chapter will be closed with a brief discussion and an outlook for future work.
+
+
+
+## Preliminaries on Partial and Individual Conditional Importance
+
+The following will show that deriving the Partial Importance as well as the Individual Conditional Importance is a rather straightforward procedure, once the concept of the global PFI is clear. Therefore, one should briefly recall that the global PFI of a feature $S$ is defined as
+
+$$PFI_{S} = E(L(f(X_{S}, X_{C}), Y)) - E(L(f(X), Y)) $$
+where the first term corresponds to the theoretical generalization error of the model, including the permuted feature $X_{S}$ and the second term depicts the generalization error resulting from the original model. The difference then gives the global PFI of feature $S$. However, in application, the joint distribution of $X$ and $Y$ is unknown so that the generalization error needs to be approximated by the empirical error. The first term of equation (1) is derived by the formula 
+
+
+$$\widehat{GE_{C}}(\hat{f}, D) = \frac{1}{n} \sum_{i = 1}^{n}\frac{1}{n} \sum_{k = 1}^{n}L(\hat{f}(X_{S}^{k}, X_{C}^{i}),  y^{i})$$
+which states that the empirical losses for all observations $i \in \{i, ..., n\}$ are calculated respectively for each permutation $k \in \{i, ..., n\}$ of $X_{S}$  and averaged over $n$. Here, $\widehat{GE_{C}}(\hat{f}, D)$ is subscripted with $C$ as the 
+The second term of equation (1) can be approximated by the formula
+
+$$\widehat{GE}(f, D) = \frac{1}{n}\sum_{i = 1}^{n}L(f(x^{(i)}, y^{(i)})$$
+
+
+For equations (2) and (3), $\hat{f}$ corresponds to fitted supervised machine learning model and $D$ is defined as the underlying test data, sampled from a $i.i.d$ distribution $P$. Taking the difference of both approximations from eqautions (2) and (3) yields the formula for the global $PFI_{S}$ which is defined as
+
+$$Formula for global PFI$$
+
+
+whereby calculating the global PFI becomes computationally expensive when n is large as the iteration scales with $O(n^{2})$. This issues becomes more apparent when considering the full set of possible permutations $(\tau_{1}, ..., \tau_{n!})$, resulting in an equation equivalent to formula (XX) but instead iterates over all $n!$ permutations.
+
+ 
+$$GE_{C}(f, D) = $$
+
+In order to circumvent the computational disadvantage, it is advisable to rather approximate $GE_{C}(f,D)$ by $GE_{C, approx}(f,D)$ which only entails a randomly selected set of m permutationns, defined as
+
+
+$$PFI_{S,approx} = \frac{1}{n*m}\sum_{i = 1}^{n}\sum_{k = 1}^{m}(L(f(x_{S}^{\tau_{k}^{(i)}}, x_{C}^{(i)}), y^{(i)}) - L(f(x^{(i)}, y^{i}))$$
+
+The summands in Eq. (XX) can be rewritten as 
+
+Then explain how to get from individual observations to global PFI and vice-versa
+
+Show pseudo algorithm and graphic.
+
+
+In application, the generalization error is estimated by taking the mean of all Losses $L(f(x^{i}), y^{i})$ 
+
+2) Show pseudo-algorithm with graphics
+3) Show which pair of values should be plotted
+
 
 
 Convenience of the concepts:
 
 As these concepts are already established in the literature, this chapter will mainly focus on the 
 As Cassalicio (XXXX) noted, the exchangability  
-
 averaging the ICI curves across observations yields a PI curve, and integrating the PI curve with respect to the distribution of the considered feature results in the global Feature Importance
 
-These subgroup analyses are only enabled when the aggregated measure is broken down into its individual observations. Pursuing this objective, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) will be introduced. 
-
-
-Note, these methods are conceptually highly comparable to the already discussed Partial Dependence (PD) and Individual Conditional Expectation (ICE) methods, so the reader should already be familiarised with the main principles. 
 
 
 
-1) Introduce the main limitation of PFI which will be solved in this chapter
-2) Why is it interesting?
-3) What are the concepts I will focus on in the following (PI plots and ICI plots)
-4) Why convenient choice? Nice way to visualize => provides a good overview 
+## Simulations: ...
 
-As already discussed, the concept of Permutation Feature Importance (PFI) depicts a strong tool to determine, if some assumptions hold, to what extent a feature contributes to the predicitive power of a model. However, the single metric is rather poor when aiming for a deepened understanding of Feature Importance. 
-
-Here: name so arguments for why it would be nice to assess the feature importance over ...
-
-Then: 
-
-This chapter proceeds as follows.
+In general simulations are a convenient choice to check statistical models for their correctness and validity. The following simulations are meant to guide the reader through a proposed step-by-step procedure which first, shall detect, then explain and lastly visualize interaction effects and their impact on a feature's heterogeneity in Importance. Event though each step is motivated by a limitation from its preceeding method, they should be considered as mutual complements which allow to derive a complete picture.
 
 
-The following chapters are structured as follows: First, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) plots are theoretically introduced. This shall provide the reader with an in-depth understanding of how the feature importance of a feature can be visualized, both on a global and local level. Further it will be shown that these concepts are essential when conduction any subgroup analyses.
-The introduction of these concepts are essential to further understand how they can be used to apply subgroup analyses within the data. These analyses can then be used to potentially detect any interactione effects between predictor variables which might confound the initial results on measuring feature importance. 
+### Detect Interactions
+
+If interaction effects between covariates are existent, it should be, for the sake of the interpretability of a machine learning model, of major interest to detect them. Detecting them is an indispensable objective to be enabled to then explain them. And only if they can be explained, the heterogeneity in Feature Importance can be understood and the results can be interpreted accordingly. As opposed to correlation between features, interaction cannot be detected by descriptives and therefore, some more sophisticated analyses must be conducted.
+
+
+#### Partial Importance and Individual Conditional Importance plots
+
+Consider the following data-generating model:
+
+$$ y \, = \, 5w_{1} \,  + \, 5w_{2} \, + w_{3}  \, + \, \epsilon$$
+$$ w_{1} \, \overset{i.i.d}{\sim} \, \mathcal{N}(0,1), \, w_{2} \, \overset{i.i.d}{\sim}  \mathcal{N}(0, 1) \, and \, w_{3} \overset{i.i.d}{\sim} B(1, 0.5),\,  \epsilon \overset{i.i.d}{\sim} \mathcal{N}(0, 1)$$
+
+
+The model is simulated with 1000 observations which are split in 80% training and 20% test data. On the training data a Random Forest model is fitted and based on the estimates, the Partial Importance and the Individual Conditional Importance are calculated on the test data. In figure 11.1, the plots are visualized for feature $w_{2}$. 
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-1.jpeg")
+
+```
+
+
+The PI plot indicates already a heterogeneous relationship, where the Partial Importance becomes large for large values irrespective of the sign. The minimum is reached at around $w_{2} = 0$. The respective ICI plot, provides even more insights. It shows that some observations have a low local Feature Importance for large negative values and a large local Feature Importance for large positive values and vice-versa. As the shape of the curves are in both direction similar and the minimum is around $w_{2} = 0$, it can be concluded that the feature $w_{2}$ is equally distributed around its mean. As the data-generating model suggests, the results should not be surprising and both, the PI and ICI plot do explain the heterogeneity to the full extent. However, this simulation is probably not suitable to evaluate or stress potential limitations of PI and ICI plots. To test that, it is now evaluated whether these plots allow to conveniently detect interaction effects. Therefore, consider now the following data-generating model:
 
 
 
-## Theoretical Framework
+$$ y \, = \, x_{1} \,  - \, 5x_{2} \, + 5x_{2}  1_{x_2 > 2, x_3 = 0} \, + \, \epsilon$$
 
-Explain theory behind Partial Importance and Individual Conditional Importance, but not too exhaustive. 
-=> just rewrite content from Cassaliccio (XXXX)
+$$ x_{1} \, \overset{i.i.d}{\sim} \, \mathcal{N}(0,1), \, x_{2} \, \overset{i.i.d}{\sim}  \mathcal{N}(0, 4) \, and \, x_{3} \overset{i.i.d}{\sim} B(1, 0.5),\,  \epsilon \overset{i.i.d}{\sim} \mathcal{N}(0, 1)$$
 
-algorithm for  PI and ICI 
-
-
-## The usefulness of Partial Importance and Individual Conditional Importance: Insights gained through simulations
+Besides the comparabale linear relationship between the covariates and the outcome variable, the model contains additionally an interaction effect between $x_{2}$ and $x_{3}$. The model suggest that the feature $x_{2}$ should become more important for values $x_{2} > 2$ and $x_{3} = 0$. Hence, the plots should reveal large values in this area. The respective PI and ICI plots are at first glance quite similar to the plots, resulting from simulation 1. Yet, the above mentioned differences can be observed. First, the PI plot reveals that the Feature Importance increases with a higher magnitude for large positive values, indicating that these observations are relatively more important. Looking at the ICI plot and highlighting the observations with the highest, the lowest and the median FI, yields some clearer insights. The green curve, which corresponds to the most important observations, shows that the Feature Importance drops decisively in the area around $x_{2} = 2$. This means that once the threshold below $x_{2} = 2$ is reached, the estimated model does not trigger the interaction effect anymore and therefore, the predictions diverge increasingly. This observed property already indicates that an interaction effect is a major driver for heterogeneity. However, the rather similar plots from simulation 1 and simulation 2 raises the question whether additional methods are existent which allow for a clearer picture. Besides, these plot still do not explain which features are the driver for the heterogeneity in Feature Importance.
 
 
-## Application on Real Data
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-2.jpeg")
 
+```
+
+
+
+#### d-ICI (derivative Individual Conditional Importance)
+
+In order to supplement the results, yielded from the PI and ICI plots, it will be now proposed a method that was developed by (...) with the purpose to detect interaction effects in the context of analyzing Feature Effects. By calculating the numerical derivative for each ICE, they show that the respective derivative plots enable to detect interaction effects. They argue that the derivatives should be constant over the range of values if no interaction effects exists. In case of interaction effects, the derivatives should show a larger positive or negative magnitude at the point where the interaction effect takes place. This is in line with the theoretical concept, as the threshold triggers an initial higher level of Feature Importance. Therefore, one would expect a sudden increase or decrease of the ICI curves. However, to make the conceptual transfer from Feature Effects to Feature Importance, one has to slighty adjust the interpretation of the derivative plots. First, one should not expect that the plots are constant in case when no interaction is existent. Figure 3 shows for the model with no interaction effect that, there is also some altitude in the derivatives. However, this is rather equally distributed over the feature's range of values and therefore, it is reasonable to assume that there is no interaction effect. Secondly, in contrast to the derivative of ICE curves, it is to be expected that the derivatives of the ICI curves are both, negative (descending curves) but also positive (ascending curves). The respective d-ICI plot for simulation 2 depicts a distinguished picture. Over the whole range of values the derivatives are comparably flat, except for the derivatives at $x_{2} = 2$. Concluding that this visualization is a clear indicator that an interaction effect in this area takes place as it is a clear deviation from its normal shape.
+
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-3.jpeg")
+
+```
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-4.jpeg")
+
+```
+
+
+### Explain Interactions
+
+So far it is understood that PI and ICI plots might not be the most convenient choice to detect interaction effects. Yet, calculating the Individual Conditional Importance allows to implement d-ICI plots which provide better insights. Still, it is not clarified between which features the interaction takes place. Enabling this, would have a major impact on the interpretability of machine learning models. The following will introduce a reliable method that resolves the issue of a lack in explanatory power for interaction effects. These results will then be complemented by the insights from the previous simulations to obtain a full picture of the heterogeneity in Feature Importance.
+
+
+#### Drivers for Heterogeneity in Feature Importance
+
+Chapter 1 highlighted the fact the taking the integral of the the Individual Conditional Importance yields the global Feature Importance for each observation. This property can be used to predict the global Feature Importance for each observation with respect to the remaining covariates. If interaction exists, as for instance a d-ICI plot suggests, then a significant relationship should be yielded. If some assumptions hold, a decision-tree with tree-depth of 1 should return the most insightful results. Not only, because it returns the variable with the highest explanatory power (the interacting feature), but also because it additionally returns the split point. The split point indicates on which values of the interacting feature the conditional Feature Importance should be calculated. In conjunction with the results from the d-ICI plot, one obtains a quite complete understanding of the nature of the interaction effect. These insights are then used to later visualize the Conditional Feature Importance.
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-5.jpeg")
+
+```
+
+
+Figure 5. visualizes the fitted decision tree. The results show that the Feature Importance of $x_2$ is distinctly larger for values $x_3 < 0.5$. As $x_3$ is a binary variable, either taking the value $0$ or $1$, the results show that if and only if $x_3 = 0$, interaction takes place. In case of only one interaction effect between two covariates, the decision tree should yield stable results. However, it might appear that there are several interaction effects taking place so that a decision-tree with tree-depth = 1 is insufficient. Still this poses no actual problem as this methods is in general not restricted to a specific machine learning model. However, it would be still advantageous to preserve the Importance dimension. Hence, fitting a random forest model would be a suitable method. To validate the performance of random forest prediction when several interactions take place, the following data-generative model will be considered. 
+
+
+
+
+The model is specified with to interaction effects for $s_$. First with $s_3$ and second with $s_4$. If the random forest model is appropriate, it should detect both interactions
+
+
+#### Conditional Importance plots
+
+
+With results from above, one can now calculate the Conditional Individual Importance of the feature $x_{2}$. Therefore, one just simply subdivides the Individual Conditional Importance into the respective groups. 
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: PI Plot and ICI Plot."}
+knitr::include_graphics("images/03-7-6.jpeg")
+
+```
+
+### Stress results on Simulation with Non-Linear Relationship
+
+So far, the methods have been assessed on simulated data, specified by linear relationships between the features and the outcome variable. As a next step it seems reasonable to validate the methods within a data-generative model with a non-linear relationship. By doing so, it can be assessed whether the methods still detect interaction effects even though additional inherent heterogeneity is introduced. For this purpose, consider the following data-generative model:
+
+$$y \, = \, x_{1} \,  - \, 5x_{2} \, + 5x_{2}  1_{x_2 > 2, x_3 = 0} \, + \, \epsilon$$
+
+The sinus function is a convenient choice for such sensitivity analysis, as the
+
+
+The plotted PI curve indicates that the Feature Importance for $T_2 > 5.5$ is above the average. Therefore, one might conclude that interaction which makes the feature more important takes place in this area. Disentangling the PI curve into its components, yields a slightly different picture. It shows a steep descent of some curves at $T_2 = 2$ and descending but also ascending curves at $T_2 = 5$. Compared to the PI curves, the ICI curves allow a more detailed analysis of the heterogeneity. But, still it is not clarified whether interaction takes place at $T_2 = 2$ or $T_2 = 2$. Hence, again the derivatives can be calculated and they show that the the steepest descent of ICI curves takes place at $T_2 = 2$. 
+
+
+Further, to analysis the sensitivty of the ICI curve to interaction effects serves as a valid and revealing perspective. 
+
+## Real Data Application
+
+#### Boston Housing
+Before this chapter will be closed by a brief discussion and an outlook for further research, the introduced methods will be now applied on real data. To stress these methods in a real data setting is important for a final validation. Pursuing this objective, we will caculate the PFI, PI and ICI for the predictors of the Boston Housing dataset. In this setting, it is of interest to predict and explain the "median value  of owner-occupied homes in USD1,000$. In a pre-analysis, the predictor variable age was chosen to conduct further analyses. As in the simulation analysis, the model is fitted equivalently by a random forest model and the calculation of the Importance metrics follows the same principle. The PI and ICI plots below, allow a first 
+
+
+#### Titanic Survival Data
 
 ## Discussion and Outlook
 
