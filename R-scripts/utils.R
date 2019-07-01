@@ -326,8 +326,8 @@ plot_kernels_real <- function(kernel_matrix,
   eval(parse(text = call_text))
 }
 
-plot_stability_paths <- function(kernel_widths, stability_paths, 
-                                 max_kernel = NULL){
+plot_pseudo_stability_paths <- function(kernel_widths, stability_paths, 
+                                        max_kernel = NULL){
   stability_paths <- cbind(melt(stability_paths), kernel_widths)
   names(stability_paths) <- c("variable", "probality", "kernel")
   if (!(is.null(max_kernel))) {

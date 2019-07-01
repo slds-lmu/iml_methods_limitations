@@ -324,18 +324,40 @@ This is one consequence of the curse of dimensionality.
 
 Computing some dissimilarities (e.g. Manhattan or euclidean) also comes with the problem that the cardinility of the features mainly steers this meausre.
 Thus, data should be scaled before the weights for the regression are determined.
-Note that for our previous examples this was not necessary as all of our features were of the same cardinality.
+This is featured in the current R package.
 
 When working with real data sets with many features, we typically want a sparse explanation.
 In order to achieve this we should let LIME do feature selection.
 
 Within this section we study whether we find the same behaviour as we did for simulated data in the previous sections for a real data set.
 We will work with the well-known Boston housing data set.
-We do so because this data set is familiar to most machine learning scholars and it only features numeric data (We found some issues with the R implementation for mixed data.).
+We do so because this data set is familiar to most machine learning scholars and we find the regression context more straight forward when talking about interpretability.
 Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality.
 
 Using this data we aim to use a random forest to predict the per capita crime rate by suburb.
-The goal is to predict how many bikes will be rented depending on the weather and the day.
+The random forest performs...
+
+When working with LIME in practise we want to obtain stable explanations. 
+An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
+We evaluate this property with the aid of modified stability paths (@meinshausen2010stability).
+Stability paths are used for sparse models and indicate how likely each covariate is part of the model.
+Normally, analyse the association of the regularisation strength and these probabilities.
+In our context we rather aim to study how likely a covariate is part of the model for a given regularisation (number of features) over a grid of kernel_widths.
+
+Over a grid of kernel widths, we compute several explanations for the same kernel width.
+We count how frequently each covariate has been part of the explanation model.
+We divide by the total number of iterations and achieve estimates for the sampling probability for a given observation, a given number of features and a given kernel width.
+We search the grid of kernel width and can repeat this procedure for different observations.
+
+Our pseudo stability paths are stable in areas where we have extreme probabilities, i.e. either probabilites close to 1 or close to 0.
+We observe that all observations converge to the same set of covariates if we set the kernel width large.
+These are the global features.
+In our example these are 
+Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
+Here this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
+
+
+
 
 
 
