@@ -2,15 +2,10 @@
 
 The method of Feature Importance is a powerful tool to gain insights of black box models assuming that the features of the given dataset are uncorrelated with each other. However, this assumption can be most of the time neglected in reality. The interpretablity of Feature Importance depend on the correlations between the input variables. If all features of  data set are independent and not correlated, you can can calculate the the feature importance of every feature and there is no problem in the interpretability due to correlation effects. Whereas if there are some correlated feature in the data which is highly possible in reality, then the results of the feature importance do not reflect the individually feature importance. This leads to misleading ranking of the features and thus to wrong interpreatations about the relevance of a feature in a model. 
 
-
-This chapter demonstrates the (some) issue of correlated features and tries to present some reasons of the outcomes. This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with. To get a better understanding there will be a change in the intesity of the correlation of the features and in the learning algorithm.  
-
+This chapter demonstrates the (some) issue of correlated features and tries to present some reasons of the outcomes. This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with. To get a better understanding there will be a change in the intesity of the correlation of the features and in the learning algorithm. 
 
 Two main problems can be derived from the following examples. The first and most crucial one [...]
 The second does seem to play a role in case of PFI. If the features are correlated it can happen in the step of shuffling on of the features that there are unrealistic instances of datapoints. In this case it breaks not only the association to the outcome variable, but also the association with the correlated feature. For instance, there exists the variable indicating the amount of precipitation and an other variable indicating the weather. Shuffeling the the variable precipitation can lead to data instances where the precipitation is high and the weather is sunny. So there are cases where the new data points are unlikely all the way up to completly impossible. The question is can we still trust the informative value of the PFI, if it is caluclated with data instances that are not observed in reality and therefore biased?
-
-
-
 
 ## Effect on Feature Importance by Adding Correlated Features
 
@@ -19,16 +14,21 @@ The second does seem to play a role in case of PFI. If the features are correlat
 
 ### Simulation
 
-* The main focus is here on the simulation of correlated feature and not the application on real data
+A good way to show the effects of correlated features on the feature importance measures is just to simulate some data with the desired dependence. The main focus is here on the simulation of correlated feature and not the application on real data, because the features of real data are most of the time correlated with different kind of intesity among one another. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. 
+
+The simulation design 
 
 * Simulation of different kind of szenarios:
-  + Strength of correlation: complete correlation r = 0.99 (complete correlation); r = 0.75; r = 0.5; r = 0.25; r = 0 (no correlation)
+  + Strength of correlation: complete correlation r = 0.99 (complete correlation); r = 0.75; r = 0.5; r = 0.25; r = 0 (no correlation) of feature $X1$ and $X2$
+  
+* added a random variable to see if the importance is higher than a random effect
   
 **Simulation of uncorrelated feature 1 and 2 (r = 0):**
 
 ```{r Simulation01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Simulation of uncorrelated features 1 and 2 (r=0)"}
 
 library(mvtnorm)
+library(matrixcalc)
 
 set.seed(456)
 # specify entries for covariance matrix
@@ -38,14 +38,15 @@ data_u <- as.data.frame(rmvnorm(n = 1000,
                               mean = rep(0, times = 4), 
                               sigma = sigma_u))
 colnames(data_u) <- c("X1", "X2", "X3", "X4")
-# check covariance and correlation matrices 
+# check covariance and correlation matrices
 cov(data_u)
+is.positive.definite(cov(data_u))
+
 cor(data_u)
+is.positive.definite(cor(data_u))
 
 data_u <- as.data.frame(data_u)
 data_u['random'] <- runif(nrow(data_u))
-
-
 ```
 
 ```{r Simulation02, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
@@ -64,7 +65,10 @@ data_c25 <- as.data.frame(rmvnorm(n = 1000,
 colnames(data_c25) <- c("X1", "X2", "X3", "X4")
 # check covariance and correlation matrices 
 cov(data_c25)
+is.positive.definite(cov(data_c25))
+
 cor(data_c25)
+is.positive.definite(cor(data_c25))
 
 data_c25 <- as.data.frame(data_c25)
 data_c25['random'] <- runif(nrow(data_c25))
@@ -86,7 +90,10 @@ data_c5 <- as.data.frame(rmvnorm(n = 1000,
 colnames(data_c5) <- c("X1", "X2", "X3", "X4")
 # check covariance and correlation matrices 
 cov(data_c5)
+is.positive.definite(cov(data_c5))
+
 cor(data_c5)
+is.positive.definite(cor(data_c5))
 
 data_c5 <- as.data.frame(data_c5)
 data_c5['random'] <- runif(nrow(data_c5))
@@ -108,7 +115,10 @@ data_c75 <- as.data.frame(rmvnorm(n = 1000,
 colnames(data_c75) <- c("X1", "X2", "X3", "X4")
 # check covariance and correlation matrices 
 cov(data_c75)
+is.positive.definite(cov(data_c75))
+
 cor(data_c75)
+is.positive.definite(cor(data_c75))
 
 data_c75 <- as.data.frame(data_c75)
 data_c75['random'] <- runif(nrow(data_c75))
@@ -135,7 +145,10 @@ data_c <- as.data.frame(rmvnorm(n = 1000,
 colnames(data_c) <- c("X1", "X2", "X3", "X4")
 # check covariance and correlation matrices 
 cov(data_c)
+is.positive.definite(cov(data_c))
+
 cor(data_c)
+is.positive.definite(cor(data_c))
 
 data_c <- as.data.frame(data_c)
 data_c['random'] <- runif(nrow(data_c))
@@ -144,9 +157,15 @@ data_c['random'] <- runif(nrow(data_c))
 
 **Scenario Settings:**
 
-Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. (only the scenarios which show interesting results will be shown later)
+Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $r$ betweeen eah other. Otherwise, there is no correlation between any feature. Only in scenario 4) the setting changes to more features and more correlations to investigate the behaviour, if there is an increase in the features which are correlated.
+
+(only the scenarios which show interesting results will be shown later). There are many interesting instances.  
 
 **1) Linear Dependence:**
+
+In the first scenario setting the dependence of the features $X_i$ on the target value $y$ is a linear one. 
+
+The choice of noise variance $sd_i^2$ should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation. In this case we assume that there is only a standard deviation of ten percent of the mean of the [...].
 
 
 ```{r szenariolm, message = FALSE, fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence with differrent correlation of feature 1 and 2"}
@@ -161,7 +180,7 @@ sd_c75 <- mean(data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4)*0.1
 
 sd_c <- mean(data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4)*0.1
 
-
+#The choice of noise variance should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation.
 
 y1u <- data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4 + rnorm(n = 1, mean = 0, sd = sd_u) 
 
@@ -172,8 +191,6 @@ y1c5 <- data_c5$X1 + data_c5$X2 + data_c5$X3 + data_c5$X4 + rnorm(n = 1, mean = 
 y1c75 <- data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4 + rnorm(n = 1, mean = 0, sd = sd_c75)
 
 y1c <- data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4 + rnorm(n = 1, mean = 0, sd = sd_c) 
-
-#The choice of noise variance should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation. (umschreiben)
 ```
 
 
@@ -212,15 +229,18 @@ imp.datrfc <- imprfc$results
 imp.datrfu$feature
 
 #Plot:
-prf <- ggplot(imp.datrfu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance), size=3, shape=21, fill="lightblue",color = "lightblue") +
-    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance), size=3, shape=21, fill="black") +
+prf <- ggplot(imp.datrfu, aes(x=feature,y= importance, colour = "0"))+
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke =3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") 
+    theme(text = element_text(size = 14))+
+    labs(y = "Feature Importance MSE", x= "") +
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Random Forest")
 
 prf
 ```
@@ -257,16 +277,18 @@ imp.datlmc75 <- implmc75$results
 imp.datlmc <- implmc$results
 
 #Plot:
-plm <- ggplot(imp.datlmu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance), size=3, shape=21, fill="lightblue") +
-    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance), size=3, shape=21, fill="black") +
+plm <- ggplot(imp.datlmu, aes(x=feature, y= importance, colour = "0")) +
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke = 3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
     labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 16))
+    theme(text = element_text(size = 14))+
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Linear Model")
 
 plm
 ```
@@ -295,7 +317,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -324,7 +346,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -353,7 +375,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -382,7 +404,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -410,7 +432,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -423,18 +445,21 @@ FIPc <- data.frame(
   featurec= getTaskFeatureNames(taskc))
 
 #Plot:
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, shape=21,stroke = 3, fill="white") +
+  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Random Forest")
 
 ploco
+
 #Problem to order the importance within the graphic. This issue should be fixed.
 
 ```
@@ -465,7 +490,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -473,7 +498,7 @@ for(i in 1:length(featu)){
 resultu
 colnames(resultu) <- getTaskFeatureNames(tasku)
 rownames(resultu) <- "importance_u"
-FIPu <- data.frame(
+FIPulm <- data.frame(
   importanceu= round((t(resultu)),3),
   featureu= getTaskFeatureNames(tasku))
 
@@ -494,7 +519,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -502,7 +527,7 @@ for(i in 1:length(featc25)){
 resultc25
 colnames(resultc25) <- getTaskFeatureNames(taskc25)
 rownames(resultc25) <- "importance_c25"
-FIPc25 <- data.frame(
+FIPc25lm <- data.frame(
   importancec25= round((t(resultc25)),3),
   featurec25= getTaskFeatureNames(taskc25))
 
@@ -523,7 +548,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -531,7 +556,7 @@ for(i in 1:length(featc5)){
 resultc5
 colnames(resultc5) <- getTaskFeatureNames(taskc5)
 rownames(resultc5) <- "importance_c5"
-FIPc5 <- data.frame(
+FIPc5lm <- data.frame(
   importancec5= round((t(resultc5)),3),
   featurec5= getTaskFeatureNames(taskc5))
 
@@ -552,7 +577,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -560,7 +585,7 @@ for(i in 1:length(featc75)){
 resultc75
 colnames(resultc75) <- getTaskFeatureNames(taskc75)
 rownames(resultc75) <- "importance_c75"
-FIPc75 <- data.frame(
+FIPc75lm <- data.frame(
   importancec75= round((t(resultc75)),3),
   featurec75= getTaskFeatureNames(taskc75))
 
@@ -580,7 +605,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -588,24 +613,32 @@ for(i in 1:length(featc)){
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
 rownames(resultc) <- "importance_c5"
-FIPc <- data.frame(
+FIPclm <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
 #Plot:
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+plocolm <- ggplot(data = FIPulm ,aes(x=featureu,y = importance_u, colour = "0"))+ 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, stroke =3, shape=21, fill="white") +
+  geom_point(mapping=aes(x=FIPc25lm$featurec25, y=FIPc25lm$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5lm$featurec5, y=FIPc5lm$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75lm$featurec75, y=FIPc75lm$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPclm$featurec, y=FIPclm$importance_c, colour = "0.99"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Linear Model")
 
-ploco
+plocolm
 ```
+
+
+```{r arrange01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+library(ggpubr)
+ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
+``` 
 
 
 **2) Nonlinear Dependence:**
@@ -667,16 +700,19 @@ imp.datrfc75 <- imprfc75$results
 imp.datrfc <- imprfc$results
 
 
-prf <- ggplot(imp.datrfu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=imp.datrfu$feature, y=imp.datrfu$importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance), size=3, shape=21, fill="lightblue",color = "lightblue") +
-    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance), size=3, shape=21, fill="black") +
+prf <- ggplot(imp.datrfu, aes(x=feature,y= importance, colour = "0"))+
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke =3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") 
-                     
+    theme(text = element_text(size = 14))+
+    labs(y = "Feature Importance MSE", x= "") +
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Random Forest")
+
 prf
 ```
 
@@ -712,16 +748,19 @@ imp.datlmc5 <- implmc5$results
 imp.datlmc75 <- implmc75$results
 imp.datlmc <- implmc$results
 
-plm <- ggplot(imp.datlmu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance), size=3, shape=21, fill="lightblue") +
-    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance), size=3, shape=21, fill="black") +
+plm <- ggplot(imp.datlmu, aes(x=feature, y= importance, colour = "0")) +
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke = 3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
     labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 16))
+    theme(text = element_text(size = 14))+
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Linear Model")
+
 plm
 
 ```
@@ -750,7 +789,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -779,7 +818,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -808,7 +847,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -837,7 +876,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -865,7 +904,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -877,16 +916,18 @@ FIPc <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, shape=21,stroke = 3, fill="white") +
+  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Random Forest")
 
 ploco
 ```
@@ -918,7 +959,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -926,7 +967,7 @@ for(i in 1:length(featu)){
 resultu
 colnames(resultu) <- getTaskFeatureNames(tasku)
 rownames(resultu) <- "importance_u"
-FIPu <- data.frame(
+FIPulm <- data.frame(
   importanceu= round((t(resultu)),3),
   featureu= getTaskFeatureNames(tasku))
 
@@ -947,7 +988,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -955,7 +996,7 @@ for(i in 1:length(featc25)){
 resultc25
 colnames(resultc25) <- getTaskFeatureNames(taskc25)
 rownames(resultc25) <- "importance_c25"
-FIPc25 <- data.frame(
+FIPc25lm <- data.frame(
   importancec25= round((t(resultc25)),3),
   featurec25= getTaskFeatureNames(taskc25))
 
@@ -976,7 +1017,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -984,7 +1025,7 @@ for(i in 1:length(featc5)){
 resultc5
 colnames(resultc5) <- getTaskFeatureNames(taskc5)
 rownames(resultc5) <- "importance_c5"
-FIPc5 <- data.frame(
+FIPc5lm <- data.frame(
   importancec5= round((t(resultc5)),3),
   featurec5= getTaskFeatureNames(taskc5))
 
@@ -1005,7 +1046,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -1013,7 +1054,7 @@ for(i in 1:length(featc75)){
 resultc75
 colnames(resultc75) <- getTaskFeatureNames(taskc75)
 rownames(resultc75) <- "importance_c75"
-FIPc75 <- data.frame(
+FIPc75lm <- data.frame(
   importancec75= round((t(resultc75)),3),
   featurec75= getTaskFeatureNames(taskc75))
 
@@ -1033,7 +1074,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -1041,23 +1082,31 @@ for(i in 1:length(featc)){
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
 rownames(resultc) <- "importance_c5"
-FIPc <- data.frame(
+FIPclm <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+plocolm <- ggplot(data = FIPulm ,aes(x=featureu,y = importance_u, colour = "0"))+ 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, stroke =3, shape=21, fill="white") +
+  geom_point(mapping=aes(x=FIPc25lm$featurec25, y=FIPc25lm$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5lm$featurec5, y=FIPc5lm$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75lm$featurec75, y=FIPc75lm$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPclm$featurec, y=FIPclm$importance_c, colour = "0.99"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Linear Model")
 
-ploco
+plocolm
 ```
+
+
+```{r arrange02, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+library(ggpubr)
+ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
+``` 
 
 
 **3) Uninformative Feature:**
@@ -1121,15 +1170,18 @@ imp.datrfc5 <- imprfc5$results
 imp.datrfc75 <- imprfc75$results
 imp.datrfc <- imprfc$results
 
-prf <- ggplot(imp.datrfu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance), size=3, shape=21, fill="lightblue",color = "lightblue") +
-    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance), size=3, shape=21, fill="black") +
+prf <- ggplot(imp.datrfu, aes(x=feature,y= importance, colour = "0"))+
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke =3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datrfc25$feature, y=imp.datrfc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc5$feature, y=imp.datrfc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc75$feature, y=imp.datrfc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datrfc$feature, y=imp.datrfc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") 
+    theme(text = element_text(size = 14))+
+    labs(y = "Feature Importance MSE", x= "") +
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Random Forest")
 
 prf
 ```
@@ -1165,16 +1217,18 @@ imp.datlmc5 <- implmc5$results
 imp.datlmc75 <- implmc75$results
 imp.datlmc <- implmc$results
 
-plm <- ggplot(imp.datlmu, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance), size=3, shape=21, fill="lightblue") +
-    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance), size=3, shape=21, fill="blue") +
-    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance), size=3, shape=21, fill="darkblue") +
-    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance), size=3, shape=21, fill="black") +
+plm <- ggplot(imp.datlmu, aes(x=feature, y= importance, colour = "0")) +
+    geom_point(mapping=aes(x=feature, y=importance), size=0, stroke = 3, shape=21, fill="white") +
+    geom_point(mapping=aes(x=imp.datlmc25$feature, y=imp.datlmc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc5$feature, y=imp.datlmc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc75$feature, y=imp.datlmc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+    geom_point(mapping=aes(x=imp.datlmc$feature, y=imp.datlmc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
     labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 16))
+    theme(text = element_text(size = 14))+
+    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+    ggtitle("PFI on Linear Model")
 
 plm
 
@@ -1206,7 +1260,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -1235,7 +1289,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -1264,7 +1318,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -1293,7 +1347,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -1321,7 +1375,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -1333,16 +1387,18 @@ FIPc <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, shape=21,stroke = 3, fill="white") +
+  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Random Forest")
 
 ploco
 ```
@@ -1374,7 +1430,7 @@ for(i in 1:length(featu)){
   taskfeatu = dropFeatures(tasku, featu[i])
   mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
   resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
+  importance_u = data.frame(resfeatu$aggr/resu$aggr)
   featureu = c(getTaskFeatureNames(tasku))
   resultu[i] <- importance_u
   #print(importance)
@@ -1382,7 +1438,7 @@ for(i in 1:length(featu)){
 resultu
 colnames(resultu) <- getTaskFeatureNames(tasku)
 rownames(resultu) <- "importance_u"
-FIPu <- data.frame(
+FIPulm <- data.frame(
   importanceu= round((t(resultu)),3),
   featureu= getTaskFeatureNames(tasku))
 
@@ -1403,7 +1459,7 @@ for(i in 1:length(featc25)){
   taskfeatc25 = dropFeatures(taskc25, featc25[i])
   mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
   resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
+  importance_c25 = data.frame(resfeatc25$aggr/resc25$aggr)
   featurec25 = c(getTaskFeatureNames(taskc25))
   resultc25[i] <- importance_c25
   #print(importance)
@@ -1411,7 +1467,7 @@ for(i in 1:length(featc25)){
 resultc25
 colnames(resultc25) <- getTaskFeatureNames(taskc25)
 rownames(resultc25) <- "importance_c25"
-FIPc25 <- data.frame(
+FIPc25lm <- data.frame(
   importancec25= round((t(resultc25)),3),
   featurec25= getTaskFeatureNames(taskc25))
 
@@ -1432,7 +1488,7 @@ for(i in 1:length(featc5)){
   taskfeatc5 = dropFeatures(taskc5, featc5[i])
   mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
   resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
+  importance_c5 = data.frame(resfeatc5$aggr/resc5$aggr)
   featurec5 = c(getTaskFeatureNames(taskc5))
   resultc5[i] <- importance_c5
   #print(importance)
@@ -1440,7 +1496,7 @@ for(i in 1:length(featc5)){
 resultc5
 colnames(resultc5) <- getTaskFeatureNames(taskc5)
 rownames(resultc5) <- "importance_c5"
-FIPc5 <- data.frame(
+FIPc5lm <- data.frame(
   importancec5= round((t(resultc5)),3),
   featurec5= getTaskFeatureNames(taskc5))
 
@@ -1461,7 +1517,7 @@ for(i in 1:length(featc75)){
   taskfeatc75 = dropFeatures(taskc75, featc75[i])
   mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
   resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
+  importance_c75 = data.frame(resfeatc75$aggr/resc75$aggr)
   featurec75 = c(getTaskFeatureNames(taskc75))
   resultc75[i] <- importance_c75
   #print(importance)
@@ -1469,7 +1525,7 @@ for(i in 1:length(featc75)){
 resultc75
 colnames(resultc75) <- getTaskFeatureNames(taskc75)
 rownames(resultc75) <- "importance_c75"
-FIPc75 <- data.frame(
+FIPc75lm <- data.frame(
   importancec75= round((t(resultc75)),3),
   featurec75= getTaskFeatureNames(taskc75))
 
@@ -1489,7 +1545,7 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
@@ -1497,23 +1553,31 @@ for(i in 1:length(featc)){
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
 rownames(resultc) <- "importance_c5"
-FIPc <- data.frame(
+FIPclm <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+plocolm <- ggplot(data = FIPulm ,aes(x=featureu,y = importance_u, colour = "0"))+ 
+  geom_point(mapping=aes(x=featureu, y=importance_u), size=0, stroke =3, shape=21, fill="white") +
+  geom_point(mapping=aes(x=FIPc25lm$featurec25, y=FIPc25lm$importance_c25, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc5lm$featurec5, y=FIPc5lm$importance_c5, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPc75lm$featurec75, y=FIPc75lm$importance_c75, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
+  geom_point(mapping=aes(x=FIPclm$featurec, y=FIPclm$importance_c, colour = "0.99"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
+  labs(y = "Feature Importance MSE", x= "") + 
+  theme(text = element_text(size = 14))+
+  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
+  ggtitle("LOCO on Linear Model")
 
-ploco
+plocolm
 ```
+
+```{r arrange03, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+library(ggpubr)
+ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
+``` 
+
 
 
 4) Simulation with high amount of correlated data
@@ -1798,5 +1862,7 @@ ploco
 ### Real Data
 
 ## Prevention of Correlation Problems
+
+In summary, when features of a given data set are correlated, feature importance measures like LOCO or PFI can be strongly misleading. Thus, a check for correlated features before a usage of these two methods is recommended or in other words even necessary to have a credible interpretation. 
 
 
