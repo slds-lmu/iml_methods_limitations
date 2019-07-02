@@ -177,6 +177,5 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) 3) +
   theme(text = element_text(size = 35)) + ylab("Coefficient")
-
 dev.off()
 

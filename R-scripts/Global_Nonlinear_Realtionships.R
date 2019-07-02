@@ -13,12 +13,10 @@ data_set <- simulate_data(3000,
                           true_coefficients = c(5, NA, 3), 
                           intercept = 2.5) %>% make_split(share = 0.9)
 
-plot(data_set$train$x2, data_set$train$y)
-
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 1000)
+learner <- makeLearner("regr.randomForest", ntree = 100)
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
@@ -53,7 +51,7 @@ km_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                           obs_1[, 2:4], 
                                           explainer,
                                           n_features = 3, 
-                                          n_permutations = 5000, 
+                                          n_permutations = 10000, 
                                           dist_fun = "euclidean",
                                           ci = TRUE,
                                           seed = 1)
@@ -68,7 +66,7 @@ km_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                           obs_2[, 2:4], 
                                           explainer,
                                           n_features = 3, 
-                                          n_permutations = 5000, 
+                                          n_permutations = 10000, 
                                           dist_fun = "euclidean",
                                           ci = TRUE, 
                                           seed = 2)
@@ -83,7 +81,7 @@ km_3 <- analyse_multivariate_kernel_width(kernel_widths,
                                           obs_3[, 2:4], 
                                           explainer,
                                           n_features = 3, 
-                                          n_permutations = 5000, 
+                                          n_permutations = 10000, 
                                           dist_fun = "euclidean",
                                           ci = TRUE,
                                           seed = 3)
@@ -132,7 +130,7 @@ panel1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
 
 plotframe2 <- frame2
 plotframe2[plotframe2 > 9] <- 9
-plotframe2[plotframe2 < -1] <- -1
+plotframe2[plotframe2 < -1] <- -1 #
 panel2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = plotframe2, size = 3) +

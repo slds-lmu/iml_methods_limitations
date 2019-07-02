@@ -244,6 +244,7 @@ knitr::include_graphics("images/04-09-10.png")
 
 We can clearly see that in this case, we __cannot__ simply set an arbitrary kernel width.
 The true local coefficient for $x_1$ is only approximated well within a narrow interval of the kernel width.
+In our scenario, good kernel widths are between $0.25$ and $0.75$.
 As before, we observe that a too small kernel width however produces non-meaningful coefficients.
 In the limit, the true coefficient is not approximated, but rather the global (average) linear coefficient:
 For $x_1$ a large kernel_width results in a linear model that averages the local slopes.
@@ -253,8 +254,9 @@ This motivates us to further investigate this volatility.
 We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure \@ref(fig:fig11) for $x_1$.
 The black lines interpolate averaged coefficient estimates for different kernel sizes. 
 The solid black line indicates the true local coefficient. 
-The grey shaded area are the 95% confidence intervals (capped at X and $10$).
-For very low kernel widths we observe a massive volatility which decreases to an acceptable level only after $0.25$ for all covariates.
+The grey shaded area are the (capped) 95% confidence intervals.
+For very low kernel widths we observe a massive volatility.
+The volatility decreases to an acceptable level only after $0.25$ for all covariates.
 
 ```{r, fig11,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
 knitr::include_graphics("images/04-09-11-1.png")
