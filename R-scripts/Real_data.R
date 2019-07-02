@@ -17,7 +17,7 @@ data_set <- make_split(df, 0.85)
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "crim")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 90)
+learner <- makeLearner("regr.randomForest", ntree = 25)
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
@@ -51,22 +51,22 @@ plot_stability_paths(stability_paths)
 kernel_widths <- c(seq(0.07, 0.15, 0.02), seq(0.275, 1, 0.075),
                    seq(1.25, 2.5, 0.25), seq(3.5, 5.5, 1))
 
-km_real <- vector(mode = "list", length = 2)
-
+km_real <- vector(mode = "list", length = 3)
+a <- Sys.time()
 for (i in 1:length(km_real)) {
   km_real[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
                                                         data_set$test[i, 2:14], 
                                                         explainer,
                                                         n_features = 5, 
-                                                        n_permutations = 15000, 
+                                                        n_permutations = 25000, 
                                                         dist_fun = "gower",
                                                         seed = 1,
                                                         ci = TRUE,
                                                         feature_select = 
-                                                          "auto",
+                                                          "lasso_path",
                                                         iterations = 25))
 }
-
+b <- Sys.time()
 plot_pseudo_stability_paths(kernel_widths, 
                      stability_paths = km_real[[1]][[2]][, 2:14],
                      5)

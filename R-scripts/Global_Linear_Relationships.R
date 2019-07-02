@@ -1,5 +1,5 @@
 library(devtools)
-install_github("https://github.com/pkopper/lime")
+install_github("https://github.com/thomasp85/lime")
 library(lime)
 library(ggplot2)
 library(mlr)
@@ -7,6 +7,7 @@ library(reshape2)
 library(gridExtra)
 source("utils.R")
 library(dplyr)
+explain <- lime::explain
 data_set <- simulate_data(2500, 
                           3, 
                           seed = 1, 
@@ -20,7 +21,7 @@ data_set <- simulate_data(2500,
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 1000)
+learner <- makeLearner("regr.glm", family = "gaussian")
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
@@ -36,10 +37,9 @@ dev.off()
 explainer <- lime(data_set$train[ , 2:4], black_box,
                   bin_continuous = FALSE, use_density = FALSE)
 
-
 # obs 1 .- plot 8a
-kernel_widths <- seq(0.1, 5, 0.1)
-kernel_widths <- c(0.02, 0.05, kernel_widths)
+kernel_widths <- seq(0.1, 3, 0.1)
+kernel_widths <- c(0.025, 0.05, kernel_widths)
 kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     data_set$test[1, 2:4], 
                                                     explainer,
@@ -49,7 +49,7 @@ kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     seed = 1)
 
 panel1 <- plot_kernels(kernel_matrix1, kernel_widths, c(4, -3, 5), "",
-                       ymin = -5, ymax = 8)
+                       ymin = -7, ymax = 13)
 
 # obs 21 .- plot 8b
 kernel_matrix2 <- analyse_multivariate_kernel_width(kernel_widths,

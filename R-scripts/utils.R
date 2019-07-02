@@ -65,7 +65,7 @@ extract_average_local_model <- function(observation,
                                        n_features, 
                                        n_permutations, 
                                        kernel_width,
-                                       dist_fun = "euclidean",
+                                       dist_fun = dist_fun,
                                        feature_select = feature_select)
   }
   means <- colMeans(res, na.rm = TRUE)
@@ -193,7 +193,7 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                            explainer,
                                            n_features, 
                                            n_permutations,
-                                           dist_fun = "euclidean", 
+                                           dist_fun = dist_fun, 
                                            kernel_width = k,
                                            iterations = iterations,
                                            se = FALSE,

@@ -177,11 +177,11 @@ The true relationship of the features on the target $y$ is described by:
 $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
 We set the true coefficients to be $\beta_1 = 4$, $\beta_2 = -3$, $\beta_1 = 5$.
 
-We use a random forest as black box model.
-Below we indicate the test set performance of the model in figure 7.
-It seems as if the random forest largely succeeds in finding the true association between the features and the target.
+We use a linear regression model as black box model.
+Below we indicate the test set performance of the model in figure @ref(fig:fig7).
+Not surprisingly, the linear model describes the association very well. 
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Model evaluation for random forest."}
+```{r fig7, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Model evaluation for random forest."}
 knitr::include_graphics("images/04-09-07.png")
 ```
 
@@ -199,9 +199,7 @@ knitr::include_graphics("images/04-09-08.png")
 ```
 
 We observe that too small kernel widths are not able to reproduce the global predictive surface at all.
-However, moderately all kinds of kernel widths from moderate size to very large kernels fit very similar models which are all very close to the _true_ model where __qualitative__ model explanations remain identical.
-We further notice that LIME does not converge to the true global model but a shrunk version of it. 
-This can be reasoned by the regularisation applied in LIME.
+However, moderately all kinds of kernel widths from moderate size to very large kernels fit very similar models which are all very close to the _true_ model.
 
 These results allow to conclude that for predicitive surfaces corresponding to linear relationships, the kernel width is a non-critical parameter.
 However, this case may be seen as trivial for most users of LIME.
@@ -266,8 +264,6 @@ Note that we obtain the same picture for every covariate and other representativ
 We observe that there is a trade-off between stable coefficients and locality (expressed by small kernel width).
 In our analysis, it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
 Mathematically speaking, we aim the minimal kernel size so that it satisfies a volatility condition.
-
-Parallel to boosting...
 
 #### Global Non-Linearity
 

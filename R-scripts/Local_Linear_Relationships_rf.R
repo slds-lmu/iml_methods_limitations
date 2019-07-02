@@ -21,7 +21,7 @@ data_set <- simulate_data(2500,
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 100)
+learner <- makeLearner("regr.randomForest", ntree = 1000)
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
@@ -54,7 +54,7 @@ km_1_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_1[1, 2:4], 
                                             explainer,
                                             n_features = 3, 
-                                            n_permutations = 10000, 
+                                            n_permutations = 1000, 
                                             dist_fun = "euclidean",
                                             ci = TRUE,
                                             seed = 1)
@@ -63,7 +63,7 @@ km_1_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_1[2, 2:4], 
                                             explainer,
                                             n_features = 3, 
-                                            n_permutations = 10000, 
+                                            n_permutations = 1000, 
                                             dist_fun = "euclidean",
                                             ci = TRUE, 
                                             seed = 2)
@@ -72,7 +72,7 @@ km_2_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_2[1, 2:4], 
                                             explainer,
                                             n_features = 3, 
-                                            n_permutations = 10000, 
+                                            n_permutations = 1000, 
                                             dist_fun = "euclidean",
                                             ci = TRUE,
                                             seed = 3)
@@ -81,7 +81,7 @@ km_2_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             obs_2[2, 2:4], 
                                             explainer,
                                             n_features = 3, 
-                                            n_permutations = 10000, 
+                                            n_permutations = 1000, 
                                             dist_fun = "euclidean",
                                             ci = TRUE,
                                             seed = 4)
