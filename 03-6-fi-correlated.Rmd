@@ -647,6 +647,12 @@ ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common
 
 **2) Nonlinear Dependence:**
 
+In the second scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. Here $X_{1}$ has a non linear dependence in form of the sine function. 
+
+(For  better comparison: Maybe take also sin(X3))
+
+
+
 ```{r scenariononnld, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Simulation of Nonlinear Dependence"}
 
 
@@ -1584,7 +1590,7 @@ ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common
 
 
 
-4) Simulation with high amount of correlated data
+**4) Simulation with high amount of correlated data**
 
 ```{r scenariohac, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
 
@@ -1673,14 +1679,23 @@ prfsim5 <- ggplot(imp.datrfsim5, aes(x=reorder(feature, importance), ymin=import
 prfsim5
 
 prfsim10 <- ggplot(imp.datrfsim10, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
+  geom_errorbar(width=0.3, size=1, color="darkred") +
     geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="red")+
-  geom_errorbar(width=0.3, size=1, color="darkred") + 
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
     labs(y = "Feature Importance MSE", x= "") + 
     theme(text = element_text(size = 16)) 
 prfsim10
+
+
+mean(imp.datrfsim5$importance[1:5])
+mean(imp.datrfsim10$importance[1:10])
 ```
+
+```{r arrange04, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+library(ggpubr)
+ggarrange(prfsim5, prfsim10 , ncol=2, legend = "bottom", common.legend = TRUE)
+``` 
 
 
 ```{r LOCO07, message = FALSE, fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
@@ -1691,126 +1706,8 @@ library(randomForest)
 
 
 res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
-
-
-du <- data_sim5
-du["y1sim5"] <- y1u
-tasku = makeRegrTask(data = du , target= "y1sim5")
-learneru = makeLearner("regr.randomForest")
-featu = getTaskFeatureNames(tasku)
-featu
-mod.fullu = train(learneru, tasku)
-resu = resample(learner = learneru, task = tasku, 
-               resampling = res_desc,show.info = FALSE)
-
-resultu <- data.frame(matrix(nrow=1,ncol=length(featu))) 
-
-for(i in 1:length(featu)){
-  taskfeatu = dropFeatures(tasku, featu[i])
-  mod.featu = train(learneru, dropFeatures(tasku, featu[i]))
-  resfeatu = resample(learner = learneru, task = taskfeatu, resampling = res_desc ,show.info = FALSE);
-  importance_u = data.frame(resfeatu$aggr-resu$aggr)
-  featureu = c(getTaskFeatureNames(tasku))
-  resultu[i] <- importance_u
-  #print(importance)
-}
-resultu
-colnames(resultu) <- getTaskFeatureNames(tasku)
-rownames(resultu) <- "importance_u"
-FIPu <- data.frame(
-  importanceu= round((t(resultu)),3),
-  featureu= getTaskFeatureNames(tasku))
-
-
-dc25 <- data_c25
-dc25["y1c25"] <- y1c25
-taskc25 = makeRegrTask(data = dc25 , target= "y1c25")
-learnerc25 = makeLearner("regr.randomForest")
-featc25 = getTaskFeatureNames(taskc25)
-featc25
-mod.fullc25 = train(learnerc25, taskc25)
-resc25 = resample(learner = learnerc25, task = taskc25, 
-               resampling = res_desc,show.info = FALSE)
-
-resultc25 <- data.frame(matrix(nrow=1,ncol=length(featc25))) 
-
-for(i in 1:length(featc25)){
-  taskfeatc25 = dropFeatures(taskc25, featc25[i])
-  mod.featc25 = train(learnerc25, dropFeatures(taskc25, featc25[i]))
-  resfeatc25 = resample(learner = learnerc25, task = taskfeatc25, resampling = res_desc ,show.info = FALSE);
-  importance_c25 = data.frame(resfeatc25$aggr-resc25$aggr)
-  featurec25 = c(getTaskFeatureNames(taskc25))
-  resultc25[i] <- importance_c25
-  #print(importance)
-}
-resultc25
-colnames(resultc25) <- getTaskFeatureNames(taskc25)
-rownames(resultc25) <- "importance_c25"
-FIPc25 <- data.frame(
-  importancec25= round((t(resultc25)),3),
-  featurec25= getTaskFeatureNames(taskc25))
-
-
-dc5 <- data_c5
-dc5["y1c5"] <- y1c5
-taskc5 = makeRegrTask(data = dc5 , target= "y1c5")
-learnerc5 = makeLearner("regr.randomForest")
-featc5 = getTaskFeatureNames(taskc5)
-featc5
-mod.fullc5 = train(learnerc5, taskc5)
-resc5 = resample(learner = learnerc5, task = taskc5, 
-               resampling = res_desc,show.info = FALSE)
-
-resultc5 <- data.frame(matrix(nrow=1,ncol=length(featc5))) 
-
-for(i in 1:length(featc5)){
-  taskfeatc5 = dropFeatures(taskc5, featc5[i])
-  mod.featc5 = train(learnerc5, dropFeatures(taskc5, featc5[i]))
-  resfeatc5 = resample(learner = learnerc5, task = taskfeatc5, resampling = res_desc ,show.info = FALSE);
-  importance_c5 = data.frame(resfeatc5$aggr-resc5$aggr)
-  featurec5 = c(getTaskFeatureNames(taskc5))
-  resultc5[i] <- importance_c5
-  #print(importance)
-}
-resultc5
-colnames(resultc5) <- getTaskFeatureNames(taskc5)
-rownames(resultc5) <- "importance_c5"
-FIPc5 <- data.frame(
-  importancec5= round((t(resultc5)),3),
-  featurec5= getTaskFeatureNames(taskc5))
-
-
-dc75 <- data_c75
-dc75["y1c75"] <- y1c75
-taskc75 = makeRegrTask(data = dc75 , target= "y1c75")
-learnerc75 = makeLearner("regr.randomForest")
-featc75 = getTaskFeatureNames(taskc75)
-featc75
-mod.fullc75 = train(learnerc75, taskc75)
-resc75 = resample(learner = learnerc75, task = taskc75, 
-               resampling = res_desc,show.info = FALSE)
-
-resultc75 <- data.frame(matrix(nrow=1,ncol=length(featc75))) 
-
-for(i in 1:length(featc75)){
-  taskfeatc75 = dropFeatures(taskc75, featc75[i])
-  mod.featc75 = train(learnerc75, dropFeatures(taskc75, featc75[i]))
-  resfeatc75 = resample(learner = learnerc75, task = taskfeatc75, resampling = res_desc ,show.info = FALSE);
-  importance_c75 = data.frame(resfeatc75$aggr-resc75$aggr)
-  featurec75 = c(getTaskFeatureNames(taskc75))
-  resultc75[i] <- importance_c75
-  #print(importance)
-}
-resultc75
-colnames(resultc75) <- getTaskFeatureNames(taskc75)
-rownames(resultc75) <- "importance_c75"
-FIPc75 <- data.frame(
-  importancec75= round((t(resultc75)),3),
-  featurec75= getTaskFeatureNames(taskc75))
-
-dc <- data_c
-dc["y1c"] <- y1c
-taskc = makeRegrTask(data = dc , target= "y1c")
+data_sim5 ["y1sim5"] <- y1sim5
+taskc = makeRegrTask(data = data_sim5  , target= "y1sim5")
 learnerc = makeLearner("regr.randomForest")
 featc = getTaskFeatureNames(taskc)
 featc
@@ -1824,33 +1721,78 @@ for(i in 1:length(featc)){
   taskfeatc = dropFeatures(taskc, featc[i])
   mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
   resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr-resc$aggr)
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
   featurec = c(getTaskFeatureNames(taskc))
   resultc[i] <- importance_c
   #print(importance)
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
-FIPc <- data.frame(
+rownames(resultc) <- "importance_c"
+FIPcsim5 <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
 
-ploco <- ggplot(data = FIPu ,aes(x=featureu,y = importance_u)) + #### hier fehler 
-  geom_point(mapping=aes(x=featureu, y=importance_u), size=3, shape=21, fill="white") +
-  geom_point(mapping=aes(x=FIPc25$featurec25, y=FIPc25$importance_c25), size=3, shape=21, fill="lightblue") +
-  geom_point(mapping=aes(x=FIPc5$featurec5, y=FIPc5$importance_c5), size=3, shape=21, fill="blue") +
-  geom_point(mapping=aes(x=FIPc75$featurec75, y=FIPc75$importance_c75), size=3, shape=21, fill="darkblue") +
-  geom_point(mapping=aes(x=FIPc$featurec, y=FIPc$importance_c), size=3, shape=21, fill="black") +
+locosim5 <- ggplot(data = FIPcsim5 ,aes(reorder(x=featurec,importance_c), y= importance_c)) + #### hier fehler 
+  geom_point(size=3, shape=21, fill="green") +
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
   labs(y = "Feature Importance", x= "") + 
   theme(text = element_text(size = 16))
 
-ploco
-
-
+locosim5
 ```
+
+```{r LOCO07, message = FALSE, fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+
+
+res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
+data_sim10 ["y1sim10"] <- y1sim10
+taskc = makeRegrTask(data = data_sim10  , target= "y1sim10")
+learnerc = makeLearner("regr.randomForest")
+featc = getTaskFeatureNames(taskc)
+featc
+mod.fullc = train(learnerc, taskc)
+resc = resample(learner = learnerc, task = taskc, 
+               resampling = res_desc,show.info = FALSE)
+
+resultc <- data.frame(matrix(nrow=1,ncol=length(featc))) 
+
+for(i in 1:length(featc)){
+  taskfeatc = dropFeatures(taskc, featc[i])
+  mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
+  resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
+  importance_c = data.frame(resfeatc$aggr/resc$aggr)
+  featurec = c(getTaskFeatureNames(taskc))
+  resultc[i] <- importance_c
+  #print(importance)
+}
+resultc
+colnames(resultc) <- getTaskFeatureNames(taskc)
+rownames(resultc) <- "importance_c"
+FIPcsim10 <- data.frame(
+  importancec= round((t(resultc)),3),
+  featurec= getTaskFeatureNames(taskc))
+
+locosim10 <- ggplot(data = FIPcsim10 ,aes(reorder(x=featurec,importance_c), y= importance_c)) + 
+  geom_point(size=3, shape=21, fill="red") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "Feature Importance", x= "") + 
+  theme(text = element_text(size = 16))
+
+locosim10
+```
+
+```{r arrange05, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+library(ggpubr)
+ggarrange(locosim5, locosim10 , ncol=2, legend = "bottom", common.legend = TRUE)
+``` 
+
 
 
 ### Real Data
@@ -1869,4 +1811,5 @@ ploco
 
 In summary, when features of a given data set are correlated, feature importance measures like LOCO or PFI can be strongly misleading. Thus, a check for correlated features before a usage of these two methods is recommended or in other words even necessary to have a credible interpretation. 
 
+* Conditional variable importance (Strobl)
 
