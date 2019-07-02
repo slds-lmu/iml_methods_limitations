@@ -52,6 +52,7 @@ data_u['random'] <- runif(nrow(data_u))
 ```{r Simulation02, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
 
 library(mvtnorm)
+library(matrixcalc)
 
 set.seed(456)
 # specify entries for covariance matrix
@@ -77,6 +78,7 @@ data_c25['random'] <- runif(nrow(data_c25))
 ```{r Simulation03, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of medium correlated features 1 and 2 (r=0.5) "}
 
 library(mvtnorm)
+library(matrixcalc)
 
 set.seed(456)
 # specify entries for covariance matrix
@@ -102,6 +104,7 @@ data_c5['random'] <- runif(nrow(data_c5))
 ```{r Simulation04, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of high correlated features 1 and 2 (r=0.75) "}
 
 library(mvtnorm)
+library(matrixcalc)
 
 set.seed(456)
 # specify entries for covariance matrix
@@ -132,6 +135,7 @@ Simulation of highly correlated features 1 and 2 (r=0.99):
 ```{r Simulation05, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
 
 library(mvtnorm)
+library(matrixcalc)
 
 set.seed(456)
 # specify entries for covariance matrix

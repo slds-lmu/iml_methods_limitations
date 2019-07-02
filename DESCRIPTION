@@ -9,5 +9,7 @@ Depends:
   iml,
   randomForest,
   mlr,
-  mvtnorm
+  mvtnorm,
+  matrixcalc,
+  ggpubr
   
