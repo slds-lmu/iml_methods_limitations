@@ -119,7 +119,7 @@ colnames(frame3) <- c("Kernel", "Mean", "lower", "upper")
 plotframe1 <- frame1
 plotframe1[plotframe1 > 7] <- 7
 plotframe1[plotframe1 < -6] <- -6
-panel1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
+panel2_1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = plotframe1, size = 3) +
   geom_ribbon(data = plotframe1, aes(ymin = lower, ymax = upper), 
@@ -131,7 +131,7 @@ panel1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
 plotframe2 <- frame2
 plotframe2[plotframe2 > 9] <- 9
 plotframe2[plotframe2 < -1] <- -1 #
-panel2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
+panel2_2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = plotframe2, size = 3) +
   geom_ribbon(data = plotframe2, aes(ymin = lower, ymax = upper), 
@@ -143,7 +143,7 @@ panel2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
 plotframe3 <- frame3
 plotframe3[plotframe3 > 7] <- 7
 plotframe3[plotframe3 < -5] <- -5
-panel3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
+panel2_3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = plotframe3, size = 3) +
   geom_ribbon(data = plotframe3, aes(ymin = lower, ymax = upper), 
@@ -153,5 +153,5 @@ panel3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
   labs(title = "True local coefficient for x2 is -3.")
 
 png("04-09-13.png", width = 2800, height = 1000)
-grid.arrange(panel1, panel2, panel3, nrow = 1)
+grid.arrange(panel2_1, panel2_2, panel2_3, nrow = 1)
 dev.off()
