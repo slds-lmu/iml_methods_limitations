@@ -27,10 +27,10 @@ Here we want to investigate the effect on PFI and LOCO Feature Importance of the
 
 **The simulation design of different correlation intensities**
 
-In order to 
+In order to examine the effect we simulated a fictive data set with four features $x_{i1}...x_{i4}$ and 1000 observation $i = 1,...,1000$. The features were randomly drawn out of a multivariate normal distribution with a mean of 0 $X \sim MVN(0,\Sigma)$. The covariance $\Sigma$ depends on the variance of all features which were set equally to $\sigma_{j,j}=1$ and covariance $\sigma_{j,l}$. The covariance for feature 1 and 2 $\sigma_{1,2}$ were set to either $\rho = 0;0,25;0,5;0,75 or 0,99$ depending on our intesity of interest whereas the covariance of the rest were set to $\sigma_{j,l} = 0$ which means independence. Note: Here the correlaion and the covariance are the same, because we set the variance to 1 such that $\rho = \frac{Cov(X_{j},X_{l})}{\sqrt{Var(X_{j})}\sqrt{Var(X_{l})}} =Cov(X_{j},X_{l})$. The reason behind we setting $\rho = 0.99$ and not to $1$ is that to avoid problems to calculate matrices. If $\rho = 1$ we have perfect multicollinearity and the problem that the rank of the matrix is not full. So this simplifies later calculations especially regarding the application of the linear model.
 
-  + Strength of correlation: complete correlation r = 0.99 (complete correlation); r = 0.75; r = 0.5; r = 0.25; r = 0 (no correlation) of feature $X1$ and $X2$
-  
+Quelle: Archer and Kimes, Strobl 2008
+
 * added a random variable to see if the importance is higher than a random effect
   
 **Simulation of uncorrelated feature 1 and 2 (r = 0):**
@@ -136,11 +136,6 @@ is.positive.definite(cor(data_c75))
 data_c75 <- as.data.frame(data_c75)
 data_c75['random'] <- runif(nrow(data_c75))
 ```
-
-Simulation of highly correlated features 1 and 2 (r=0.99):
-
-*we chosse r= 0.99 here to avoid problems to calculate matrices. If r=1 we have perfect multicollinearity and the problem that the rank of the matrix is not full. 
-
 
 ```{r Simulation05, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
 
