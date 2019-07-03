@@ -4,21 +4,31 @@ The method of Feature Importance is a powerful tool to gain insights of black bo
 
 This chapter demonstrates the (some) issue of correlated features and tries to present some reasons of the outcomes. This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with. To get a better understanding there will be a change in the intesity of the correlation of the features and in the learning algorithm. 
 
-Two main problems can be derived from the following examples. The first and most crucial one [...]
+Two main problems can be derived from the following examples. By adding a correlated feature to the data set can lead to a decrease in Feature Importance is the first and most crucial problem. Imagine you want to predict the risk of a heart attack by looking at the weight of a person had yesterday and other uncorrelated features. For instances, you choose a random forest model. It is well know that overweight can be a deciding influence factor for heart attacks and your choosen model as well indicating that weight is the most important feature. What happens if you now also add the weight of the person of today which is highly correlated to the weight of a person yesterday. A big advantage of a random forest model is the application and predicitve accuarcy of high dimensional data sets. Even in the case of correlated features or interaction effects. So adding a new component should be no problem. However, there can be some effects on the Feature Importance that can make an interpreation more difficult. Since, now the importance kind of splits between both features. During the training of the random forest, some of the decision trees will choose the weight of today, the the weight of yesterday, both or another none of these two as a split criteria.   [...]
+
 The second does seem to play a role in case of PFI. If the features are correlated it can happen in the step of shuffling on of the features that there are unrealistic instances of datapoints. In this case it breaks not only the association to the outcome variable, but also the association with the correlated feature. For instance, there exists the variable indicating the amount of precipitation and an other variable indicating the weather. Shuffeling the the variable precipitation can lead to data instances where the precipitation is high and the weather is sunny. So there are cases where the new data points are unlikely all the way up to completly impossible. The question is can we still trust the informative value of the PFI, if it is caluclated with data instances that are not observed in reality and therefore biased?
 
 ## Effect on Feature Importance by Adding Correlated Features
 
-* The overall emphasis is on this chapter 
-* Comparison of the two methods LOCO and PFI
+In this chapter we want to take a closer look at the problem of the interpretation of Feature Importance by adding or having correlated features in the given data set. Our focus is on the behaviour of Permutation Feature Importance by Breiman as well as of the LOCO Feature Importance by Lei et. which have been already introduced. There will be a comparison of these measures apllied on the linear model and random forest model with different correlation intesities using  simulations. Later on an application of a real data set (Boston?) will follow. 
 
 ### Simulation
 
-A good way to show the effects of correlated features on the feature importance measures is just to simulate some data with the desired dependence. The main focus is here on the simulation of correlated feature and not the application on real data, because the features of real data are most of the time correlated with different kind of intesity among one another. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. 
+A good way to show the effects of correlated features on the feature importance measures is just to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist. The main focus is here on the simulation of correlated feature and not the application on real data, because the features of real data are most of the time correlated with different kind of intesity among one another. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. 
+In total there will be four different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline for scenario 1-3 and the fourth differs to the extent that there will be more feature involved:
 
-The simulation design 
+$$
 
-* Simulation of different kind of szenarios:
+y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
+
+$$
+
+Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $\rho$ betweeen each other. Otherwise, there is no correlation between any feature. Only in scenario 4) the setting changes to more features and more correlations to investigate the behaviour, if there is an increase in the features which are correlated.
+
+**The simulation design of different correlation intensities**
+
+In order to 
+
   + Strength of correlation: complete correlation r = 0.99 (complete correlation); r = 0.75; r = 0.5; r = 0.25; r = 0 (no correlation) of feature $X1$ and $X2$
   
 * added a random variable to see if the importance is higher than a random effect
@@ -161,11 +171,15 @@ data_c['random'] <- runif(nrow(data_c))
 
 **Scenario Settings:**
 
-Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $r$ betweeen eah other. Otherwise, there is no correlation between any feature. Only in scenario 4) the setting changes to more features and more correlations to investigate the behaviour, if there is an increase in the features which are correlated.
-
 (only the scenarios which show interesting results will be shown later). There are many interesting instances.  
 
 **1) Linear Dependence:**
+
+
+$$
+y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
+$$
+
 
 In the first scenario setting the dependence of the features $X_i$ on the target value $y$ is a linear one. 
 
@@ -443,7 +457,7 @@ for(i in 1:length(featc)){
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
+rownames(resultc) <- "importance_c"
 FIPc <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
@@ -616,7 +630,7 @@ for(i in 1:length(featc)){
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
+rownames(resultc) <- "importance_c"
 FIPclm <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
@@ -647,35 +661,36 @@ ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common
 
 **2) Nonlinear Dependence:**
 
+$$
+y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
+$$
+
+
 In the second scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. Here $X_{1}$ has a non linear dependence in form of the sine function. 
-
-(For  better comparison: Maybe take also sin(X3))
-
-
 
 ```{r scenariononnld, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Simulation of Nonlinear Dependence"}
 
 
-sd_u <- mean(sin(data_u$X1) + data_u$X2 + data_u$X3 + data_u$X4)*0.1
+sd_u <- mean(sin(data_u$X1) + data_u$X2 + sin(data_u$X3) + data_u$X4)*0.1
 
-sd_c25 <- mean(sin(data_c25$X1) + data_c25$X2 + data_c25$X3 + data_c25$X4)*0.1
+sd_c25 <- mean(sin(data_c25$X1) + data_c25$X2 + sin(data_c25$X3) + data_c25$X4)*0.1
 
-sd_c5 <- mean(sin(data_c5$X1) + data_c5$X2 + data_c5$X3 + data_c5$X4)*0.1
+sd_c5 <- mean(sin(data_c5$X1) + data_c5$X2 + sin(data_c5$X3) + data_c5$X4)*0.1
 
-sd_c75 <- mean(sin(data_c75$X1) + data_c75$X2 + data_c75$X3 + data_c75$X4)*0.1
+sd_c75 <- mean(sin(data_c75$X1) + data_c75$X2 + sin(data_c75$X3) + data_c75$X4)*0.1
 
-sd_c <- mean(sin(data_c$X1) + data_c$X2 + data_c$X3 + data_c$X4)*0.1
+sd_c <- mean(sin(data_c$X1) + data_c$X2 + sin(data_c$X3) + data_c$X4)*0.1
 
 
-y1u <- sin(data_u$X1) + data_u$X2 + data_u$X3 + data_u$X4 + rnorm(n = 1, mean = 0, sd = sd_u) 
+y1u <- sin(data_u$X1) + data_u$X2 + sin(data_u$X3) + data_u$X4 + rnorm(n = 1, mean = 0, sd = sd_u) 
 
-y1c25 <- sin(data_c25$X1) + data_c25$X2 + data_c25$X3 + data_c25$X4 + rnorm(n = 1, mean = 0, sd = sd_c25)
+y1c25 <- sin(data_c25$X1) + data_c25$X2 + sin(data_c25$X3) + data_c25$X4 + rnorm(n = 1, mean = 0, sd = sd_c25)
 
-y1c5 <- sin(data_c5$X1) + data_c5$X2 + data_c5$X3 + data_c5$X4 + rnorm(n = 1, mean = 0, sd = sd_c5)
+y1c5 <- sin(data_c5$X1) + data_c5$X2 + sin(data_c5$X3) + data_c5$X4 + rnorm(n = 1, mean = 0, sd = sd_c5)
 
-y1c75 <- sin(data_c75$X1) + data_c75$X2 + data_c75$X3 + data_c75$X4 + rnorm(n = 1, mean = 0, sd = sd_c75)
+y1c75 <- sin(data_c75$X1) + data_c75$X2 + sin(data_c75$X3) + data_c75$X4 + rnorm(n = 1, mean = 0, sd = sd_c75)
 
-y1c <- sin(data_c$X1) + data_c$X2 + data_c$X3 + data_c$X4 + rnorm(n = 1, mean = 0, sd = sd_c)  
+y1c <- sin(data_c$X1) + data_c$X2 + sin(data_c$X3) + data_c$X4 + rnorm(n = 1, mean = 0, sd = sd_c)  
 ```  
 
 
@@ -921,7 +936,7 @@ for(i in 1:length(featc)){
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
+rownames(resultc) <- "importance_c"
 FIPc <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
@@ -1091,7 +1106,7 @@ for(i in 1:length(featc)){
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
+rownames(resultc) <- "importance_c"
 FIPclm <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
@@ -1392,7 +1407,7 @@ for(i in 1:length(featc)){
 }
 resultc
 colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c5"
+rownames(resultc) <- "importance_c"
 FIPc <- data.frame(
   importancec= round((t(resultc)),3),
   featurec= getTaskFeatureNames(taskc))
