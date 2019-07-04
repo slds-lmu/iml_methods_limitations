@@ -225,7 +225,7 @@ $$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 + \beta_3 x_3 + \epsilon 
 
 where $x_1$ only affects $y$ within the given interval. 
 $\gamma_0$ corrects the predictive surface by another intercept in order to avoid discontinuities.
-This time, we fit a MARS model @friedmann which can deal with this property of local features.
+This time, we fit a MARS model @friedman1991multivariate which can deal with this property of local features.
 Note that a random forest would have the same property.
 However, models like a random forest, which are not good at extrapolating, may produce implausible predictions for many permutations.
 For our simulated data, all of our results are qualitatively identical between MARS and a random forest.

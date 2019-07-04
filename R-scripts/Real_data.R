@@ -49,7 +49,7 @@ stability_paths <- stability_paths[, order(colnames(stability_paths))]
 plot_stability_paths(stability_paths)
 
 kernel_widths <- c(seq(0.07, 0.15, 0.02), seq(0.275, 1, 0.075),
-                   seq(1.25, 2.5, 0.25), seq(3.5, 5.5, 1))
+                   seq(1.25, 2.5, 0.25), seq(3.5, 5.5, 1), 20)
 
 km_real <- vector(mode = "list", length = 3)
 a <- Sys.time()
@@ -57,19 +57,19 @@ for (i in 1:length(km_real)) {
   km_real[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
                                                         data_set$test[i, 2:14], 
                                                         explainer,
-                                                        n_features = 5, 
+                                                        n_features = 4, 
                                                         n_permutations = 25000, 
                                                         dist_fun = "gower",
                                                         seed = 1,
                                                         ci = TRUE,
                                                         feature_select = 
-                                                          "lasso_path",
-                                                        iterations = 25))
+                                                          "auto",
+                                                        iterations = 12))
 }
 b <- Sys.time()
 plot_pseudo_stability_paths(kernel_widths, 
-                     stability_paths = km_real[[1]][[2]][, 2:14],
-                     5)
+                     stability_paths = km_real[[2]][[2]][, 2:14],
+                     20)
 
 
 frame_zn <- data.frame(kernel_widths, 

@@ -77,6 +77,6 @@ b <- Sys.time()
 for (i in 1:length(km_real3)) {
   print(plot_pseudo_stability_paths(kernel_widths, 
                             stability_paths = km_real3[[i]][[2]][, 2:8],
-                            2, title = as.character(i)))
+                            0.5, title = as.character(i)))
 }
-2 ist mit bins 3 ohne
+#2 ist mit bins 3 ohne
