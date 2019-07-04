@@ -16,15 +16,19 @@ data_set <- simulate_data(3000,
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 100)
+learner <- makeLearner("regr.earth")
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
 task_pred <- predict(black_box, newdata = data_set$test)
 
+mean((task_pred$data$truth - task_pred$data$response)^2)
+
 ggplot(data = task_pred$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
-  theme(text = element_text(size = 35))
+  theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
+
+
 
 explainer <- lime(data_set$train[ , 2:4], black_box,
                   bin_continuous = FALSE, use_density = FALSE)

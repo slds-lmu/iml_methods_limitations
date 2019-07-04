@@ -22,6 +22,7 @@ data_set <- simulate_data(2500,
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
 learner <- makeLearner("regr.randomForest", ntree = 100)
+learner <- makeLearner("regr.earth")
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
@@ -30,7 +31,7 @@ task_pred <- predict(black_box, newdata = data_set$test)
 png("04-09-09.png", width = 1000, height = 848)
 ggplot(data = task_pred$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
-  theme(text = element_text(size = 35))
+  theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
 dev.off()
 
 explainer <- lime(data_set$train[ , 2:4], black_box,
