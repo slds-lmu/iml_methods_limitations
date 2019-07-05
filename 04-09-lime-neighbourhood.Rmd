@@ -373,12 +373,17 @@ In our example we find... to be the four most important global features.
 Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
 Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
 
-Below, we display the stability paths for different observations.
-We, somewhat surprisingly, see that they look very similar for all observations.
-We see that most observations deem the same set of covariates to be influential already for the minimal kernel width granting stable results.
-For some, however, we see that for small and stable kernel widths different models are fit than the global one.
-This..
+Below, we display the stability paths for different observations for MARS and random forest.
+We, somewhat surprisingly, see that they look very similar for all observations for each model.
+It seems as if both models have a slightly different order of important features, though.
+We observe both effects described in literature: instability (@) for small kernel widths and global surrogates (@) for larger ones.
+For real data, however, we cannot observe the area we identified for simulated data where we find a stable & local model.
+(only some tendencies...)
 
+
+
+
+Interestingly, our results remain qualitatively identical when we use the example from the R vignette instead (only changing to the euclidean distance instead).
 However, our result agrees with the findings of @laugel2018defining who find LIME to be biased towards global features.
 
 ## Conclusion and outlook

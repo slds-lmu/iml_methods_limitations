@@ -48,22 +48,22 @@ km_real <- vector(mode = "list", length = 10)
 
 for (i in 1:length(km_real)) {
   km_real[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
-                                                         data_set$test[i, 1:8], 
-                                                         explainer,
-                                                         n_features = 4, 
-                                                         n_permutations = 8000, 
-                                                         dist_fun = "euclidean",
-                                                         seed = 1,
-                                                         ci = TRUE,
-                                                         feature_select = 
-                                                           "auto",
-                                                         iterations = 48))
+                                                        data_set$test[i, 1:8], 
+                                                        explainer,
+                                                        n_features = 4, 
+                                                        n_permutations = 8000, 
+                                                        dist_fun = "euclidean",
+                                                        seed = 1,
+                                                        ci = TRUE,
+                                                        feature_select = 
+                                                          "auto",
+                                                        iterations = 48))
 }
 
 for (i in 1:length(km_real)) {
   print(plot_pseudo_stability_paths(kernel_widths, 
                                     stability_paths = km_real[[i]][[2]][, 2:8],
-                                    4, title = as.character(i)))
+                                    2, title = as.character(i)))
 }
 
 ##################### earth ############################
@@ -90,25 +90,25 @@ explainer <- lime(data_set$train[, 1:8], black_box, bin_continuous = FALSE,
 kernel_widths <- c(seq(0.07, 0.15, 0.02), seq(0.275, 1, 0.075),
                    seq(1.15, 1.75, 0.15), seq(1.75, 5.75, 1), 20)
 
-km_real2 <- vector(mode = "list", length = 10)
+km_real2 <- vector(mode = "list", length = 8)
 
 for (i in 1:length(km_real2)) {
   km_real2[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
-                                                        data_set$test[i, 1:8], 
-                                                        explainer,
-                                                        n_features = 4, 
-                                                        n_permutations = 8000, 
-                                                        dist_fun = "euclidean",
-                                                        seed = 1,
-                                                        ci = TRUE,
-                                                        feature_select = 
-                                                          "auto",
-                                                        iterations = 48))
+                                                         data_set$test[i, 1:8], 
+                                                         explainer,
+                                                         n_features = 4, 
+                                                         n_permutations = 8000, 
+                                                         dist_fun = "euclidean",
+                                                         seed = 1,
+                                                         ci = TRUE,
+                                                         feature_select = 
+                                                           "auto",
+                                                         iterations = 48))
 }
 
 for (i in 1:length(km_real2)) {
   print(plot_pseudo_stability_paths(kernel_widths, 
-                            stability_paths = km_real2[[i]][[2]][, 2:8],
-                            4, title = as.character(i)))
+                                    stability_paths = km_real2[[i]][[2]][, 2:8],
+                                    2, title = as.character(i)))
 }
 
