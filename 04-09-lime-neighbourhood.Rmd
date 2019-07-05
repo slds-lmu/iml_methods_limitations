@@ -374,19 +374,17 @@ Furthermore, we observe that for small values of the kernel width we have - like
 Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
 
 Below, we display the stability paths for different observations for MARS and random forest.
-We, somewhat surprisingly, see that they look very similar for all observations for each model.
+We, somewhat surprisingly, see that they look very similar for all observations for both models.
 It seems as if both models have a slightly different order of important features, though.
-We observe both effects described in literature: instability (@) for small kernel widths and global surrogates (@) for larger ones.
-For real data, however, we cannot observe the area we identified for simulated data where we find a stable & local model.
+We observe both effects described in literature: instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones which we already discoverd for simulated data.
+For real data, however, we cannot locate the area we identified for simulated data where we find a stable __and__ local model.
 (only some tendencies...)
+The only stable explanations are essentially the global explanations.
+It seems as if the predictive surface is too complex to facilitate local and stable surrogate models.
 
+Interestingly, our results remain qualitatively identical when we use the example from the R vignette instead (only changing to the euclidean distance instead of gower).
 
-
-
-Interestingly, our results remain qualitatively identical when we use the example from the R vignette instead (only changing to the euclidean distance instead).
-However, our result agrees with the findings of @laugel2018defining who find LIME to be biased towards global features.
-
-## Conclusion and outlook
+## Discussion and outlook
 
 LIME is capable of finding local models.
 We show this with simulated data.
