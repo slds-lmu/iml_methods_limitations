@@ -428,9 +428,10 @@ plot_pseudo_stability_paths <- function(kernel_widths, stability_paths,
   y <- stability_paths$probality
   variable <- stability_paths$variable
   p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
-  p <- p + geom_line(aes(color = variable)) + 
-    geom_point(aes(color = variable)) + 
-    labs(x = "Kernel Width", y = expression(pi)) + labs(title = title)
+  p <- p + geom_line(aes(color = variable), size = 1.75) + 
+    geom_point(aes(color = variable), size = 3) + 
+    labs(x = "Kernel Width", y = expression(pi)) + labs(title = title) + 
+    theme(text = element_text(size = 35))
   return(p)
 }
 
