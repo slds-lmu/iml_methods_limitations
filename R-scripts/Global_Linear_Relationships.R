@@ -85,6 +85,22 @@ png("04-09-08.png", width = 2000, height = 1700)
 grid.arrange(panel1, panel2, panel3, panel4, ncol = 2)
 dev.off()
 
+png("04-09-08a.png", width = 1000, height = 848)
+panel1
+dev.off()
+
+png("04-09-08b.png", width = 1000, height = 848)
+panel2
+dev.off()
+
+png("04-09-08c.png", width = 1000, height = 848)
+panel3
+dev.off()
+
+png("04-09-08d.png", width = 1000, height = 848)
+panel4
+dev.off()
+
 saveRDS(kernel_matrix1, file = "R-results/kernelmatrix-global_linear1.RDS")
 saveRDS(kernel_matrix2, file = "R-results/kernelmatrix-global_linear2.RDS")
 saveRDS(kernel_matrix3, file = "R-results/kernelmatrix-global_linear3.RDS")

@@ -371,7 +371,7 @@ plot_kernels <- function(kernel_matrix,
   
   p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 
                                      group = Feature)) + 
-    geom_line(aes(color = Feature), size = 3) + 
+    geom_line(aes(color = Feature), size = 2) + 
     geom_point(aes(color = Feature), size = 3) + 
     labs(x = "Kernel width", y = "Coefficient") +
     theme(text = element_text(size = 35)) +
