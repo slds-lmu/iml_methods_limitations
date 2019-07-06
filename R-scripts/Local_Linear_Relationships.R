@@ -1,10 +1,6 @@
-library(dplyr)
-library(mlr)
-library(lime)
-library(gridExtra)
-library(ggplot2)
-library(reshape2)
-source("utils.R")
+source("R-scripts/packages.R")
+source("R-scripts/utils.R")
+
 data_set <- simulate_data(2500, 
                           3,
                           piece_wise_intervals = list(

@@ -1,13 +1,6 @@
-library(devtools)
-install_github("https://github.com/thomasp85/lime")
-library(lime)
-library(ggplot2)
-library(mlr)
-library(reshape2)
-library(gridExtra)
-source("utils.R")
-library(dplyr)
-explain <- lime::explain
+source("R-scripts/packages.R")
+source("R-scripts/utils.R")
+
 data_set <- simulate_data(2500, 
                           3, 
                           seed = 1, 

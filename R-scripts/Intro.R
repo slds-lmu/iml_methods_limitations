@@ -1,5 +1,4 @@
-library(ggplot2)
-library(gridExtra)
+source("R-scripts/packages.R")
 set.seed(1)
 example <- data.frame(x = rnorm(1000, 0, 1))
 p1 <- ggplot(example, aes(x)) + stat_density() + 

@@ -1,3 +1,5 @@
+source("R-scripts/packages.R")
+source("R-scripts/utils.R")
 day <- read_csv("datasets/day.csv")
 day$holiday <- as.factor(day$holiday)
 day$workingday <- as.factor(day$workingday)
@@ -57,87 +59,17 @@ for (i in 1:length(km_real_abs)) {
                                                           "highest_weights",
                                                         iterations = 48))
 }
-panels <- vector(mode = "list", length = 3)
+panels <- vector(mode = "list", length = 4)
 j <- 0
-for (i in c(1, 3, 5)) {
+for (i in c(1, 3, 4, 5)) {
   j <- j + 1
   panels[[j]] <- plot_pseudo_stability_paths(kernel_widths, 
                                     stability_paths = km_real[[i]][[2]][, 2:8],
                                     2, title = paste("Observation", 
-                                                     as.character(i)))
+                                                     as.character(j)))
 }
-png("04-09-14.png", width = 2600, height = 800)
-grid.arrange(panels[[1]], panels[[2]], panels[[3]], nrow = 1)
-dev.off()
-
-##################### earth ############################
-
-task <- makeRegrTask(data = data_set$train, target = "cnt")
-### Define the learner (mlr)
-learner <- makeLearner("regr.earth")
-### Train the model (mlr)
-black_box <- train(learner, task)
-### predict
-task_pred <- predict(black_box, newdata = data_set$test)
-mean(abs(task_pred$data$truth - task_pred$data$response))
-
-# fit not as good as before but not that important because we don't know truth.
-ggplot(data = task_pred$data, aes(x = response, y = truth)) +
-  geom_point(size = 3) +
-  theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
-
-
-explainer <- lime(data_set$train[, 1:8], black_box, bin_continuous = FALSE,
-                  use_density = FALSE)
-
-kernel_widths <- c(seq(0.07, 0.15, 0.02), seq(0.275, 1, 0.075),
-                   seq(1.15, 1.75, 0.15), seq(1.75, 5.75, 1), 20)
-
-km_real2 <- vector(mode = "list", length = 5)
-km_real2_abs <- vector(mode = "list", length = 5)
-for (i in 1:length(km_real2)) {
-  km_real2[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
-                                                         data_set$test[i, 1:7], 
-                                                         explainer,
-                                                         n_features = 3, 
-                                                         n_permutations = 6500, 
-                                                         dist_fun = "euclidean",
-                                                         seed = 1,
-                                                         ci = TRUE,
-                                                         feature_select = 
-                                                           "auto",
-                                                         iterations = 48))
-}
-
-for (i in 1:length(km_real2_abs)) {
-  km_real2_abs[[i]] <- try(analyse_multivariate_kernel_width(kernel_widths,
-                                                            data_set$test
-                                                            [i, 1:7], 
-                                                            explainer,
-                                                            n_features = 3, 
-                                                            n_permutations = 
-                                                              6500, 
-                                                            dist_fun = 
-                                                              "euclidean",
-                                                            seed = 1,
-                                                            ci = TRUE,
-                                                            feature_select = 
-                                                              "highest_weights",
-                                                            iterations = 48))
-}
-
-panels <- vector(mode = "list", length = 3)
-j <- 0
-for (i in c(1, 3, 5)) {
-  j <- j + 1
-  panels[[j]] <- plot_pseudo_stability_paths(kernel_widths, 
-                                             stability_paths = km_real2[[i]][[2]][, 2:8],
-                                             2, title = paste("Observation", 
-                                                              as.character(i)))
-}
-png("04-09-15.png", width = 2600, height = 800)
-grid.arrange(panels[[1]], panels[[2]], panels[[3]], nrow = 1)
+png("04-09-14.png", width = 1500, height = 1500)
+grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], nrow = 2)
 dev.off()
 
 saveRDS(km_real, file = "R-results/kernelmatrix-bike-randomforest")
-saveRDS(km_real2, file = "R-results/kernelmatrix-bike-earth")

@@ -251,8 +251,8 @@ where $x_1$ only affects $y$ within the given interval.
 $\gamma_0$ corrects the predictive surface by another intercept in order to avoid discontinuities.
 This time, we fit a MARS model (@friedman1991multivariate) which can deal with this property of local features.
 Note that a random forest would have the same property.
-However, models like a random forest, which are not good at extrapolating, may produce implausible predictions for many permutations.
-For our simulated data, all of our results are qualitatively identical between MARS and random forest.
+However, models like a random forest, which are not good at extrapolating, may produce implausible predictions for many permutations possibly causing less stable explanations.
+For our simulated data, all of our results are _qualitatively_ identical between MARS and random forest, though.
 The random forest explanations are less stable and tend to be more biased towards a global surrogate ceteris paribus.
 LIME should be able to detect this as well -- given an appropriate kernel for each observation.
 To illustrate this, we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predictive surface in figure \@ref(fig:fig9).
@@ -377,10 +377,10 @@ We select this data set because it is well-known in the machine learning communi
 Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality of the distance measures.
 Note that we only use a subset of all possible features as some are somewhat colinear.
 
-Using this data we aim to use both, a MARS model and a random forest to predict the number of daily bicycle hires. 
-We tune them using cross-validation.
-For both, we use LIME to explain the black box.
-Both models perform (on average) reasonably well with a mean absolute error of 1000 (MARS) and 952 (random forest) on the held-out data while the mean of the bicycle rental count is 4284. (MAKE CV!!)
+Using this data we aim to use a random forest to predict the number of daily bicycle hires. 
+We tune the forest using cross-validation.
+We use LIME to explain the black box.
+The model performs (on average) reasonably well with a mean absolute error 952 on the held-out data while the mean of the bicycle rental count is 4284. (MAKE CV!!)
 
 When working with LIME in practice, we want to obtain stable explanations. 
 An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
@@ -400,34 +400,27 @@ Our pseudo stability paths are stable in areas where we have extreme probabiliti
 Furthermore, they should not change extremely when the kernel width slightly changes.
 We observe that stability paths for all observations converge to the same set of covariates if we set the kernel width large.
 These are the global features.
-In our example, we find... to be the four most important global features.
+
 Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
 Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
 
-Below in figure \@ref(fig:fig14) and \@ref(fig:fig15), we display the stability paths for different observations for random forest and MARS.
+Below in figure \@ref(fig:fig14), we display the stability paths for different observations for the random forest.
 
 ```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Stability paths for the bycicle data set explaining a random forest"}
 knitr::include_graphics("images/04-09-14.png")
 ```
 
-```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Stability paths for the bycicle data set explaining a MARS model."}
-knitr::include_graphics("images/04-09-15.png")
-```
-
 We, somewhat surprisingly, see that they look very similar for all observations for both models.
-MARS only seems to faster stabilise than the random forest.
-It seems as if both models have a slightly different order of important features, though.
-(CHECK)
 We observe both effects described in the literature: instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones which we already discovered for simulated data.
 For real data, however, it is hard to locate the area we identified for simulated data where we find a stable __and__ local model.
 For example, consider the random forest.
-We may conclude that in fact for observations 1 and 3 a stable and local explanation would involve the season, the temperature and the weather situation.
-Both observations...
-However, for observation 3, a possible (less) stable explanation would also involve the season, the temperature and the indicator for a working day.
-... more and earth ...
+We may conclude that in fact for observations 1 and 2 a stable and local explanation would involve the season, the temperature and the weather situation.
+However, for observation 2, a possible (less) stable explanation would also involve the season, the temperature and the indicator for a working day.
 So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations' goodness.
+Furthermore, "local" explanations still seem quite global as they occur for many different observations.
 The only truly stable explanations remain essentially global explanations.
 It seems as if the predictive surface is too complex to facilitate local and stable surrogate models properly.
+
 
 ## Discussion and outlook
 

@@ -1,10 +1,5 @@
-library(devtools)
-install_github("https://github.com/thomasp85/lime")
-library(lime)
-library(mlr)
-library(gridExtra)
-library(ggplot2)
-source("~/utils.R")
+source("R-scripts/packages.R")
+source("R-scripts/utils.R")
 
 ### First simulation
 ### We simulate normally distributed data.
