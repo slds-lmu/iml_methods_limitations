@@ -292,11 +292,12 @@ plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
+library(ggplot2)
 library(mlbench)
 library(mlr)
 
 
-nice_plot = function(means, sds, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight", angle = 0, hjust = 0) {
+book_plot = function(means, sds, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight", angle = 0, hjust = 0) {
 
   ggplot(data = NULL, aes(x = names(means), y = means)) +
     geom_bar(stat = "identity", fill = color1) +
@@ -312,18 +313,43 @@ nice_plot = function(means, sds, color1 = rgb(135/255, 150/255, 40/255), color2 
     ylab(ylab)
 }
 
+presi_plot = function(means, lower, upper, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight", angle = 0, hjust = 0, ylim = NULL) {
+
+  ggplot(data = NULL, aes(x = names(means), y = means, ymin = lower, ymax = upper)) +
+    geom_errorbar(color = color1, width = 1L, size = 1.6) +
+    geom_point(color = color2, size = 2L) +
+    geom_hline(yintercept = 0L) +
+    theme_minimal() +
+    theme(
+      text = element_text(size = 25),
+      axis.title.x = element_text(vjust = -4),
+      axis.text.x = element_text(angle = angle, hjust = hjust),
+      plot.margin = ggplot2::margin(20,20,30,20)
+    ) +
+    xlab(xlab) +
+    ylab(ylab) +
+    ylim(ylim)
+}
+
+
 data("BostonHousing", package = "mlbench")
 # removing categorical feature
 boston     = BostonHousing[, -4]
 # normalizing standard deviation to make coefficients comparable
 boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
 
-plots = lapply(names(boston[-ncol(boston)]), function(feat) qplot(get(feat), medv, data = boston, ylab = "", xlab = feat))
+plots = lapply(
+  names(boston[-ncol(boston)]), function(feat) qplot(get(feat), medv, data = boston, ylab = "", xlab = feat) + theme(
+  axis.text.x = element_blank(),
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank(),
+  text = element_text(size = 20))
+)
 args = paste0("plots[[", 1:12, "]]", collapse = ", ")
 grid_plot_func = paste0("gridExtra::grid.arrange(", args, ", nrow = 3)")
 
-filename = paste0("images/boston.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/boston_prezi.png")
+png(filename, width = 700L, height = 500)
 eval(parse(text = grid_plot_func))
 dev.off()
 
@@ -344,22 +370,27 @@ limes = sapply(1:100, function(k) {
   weights_l
 })
 
-
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
+filename = paste0("images/boston_standard_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+dev.off()
 
 filename = paste0("images/boston_100iter_standard.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -376,19 +407,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/boston_outlier_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+dev.off()
 
 
 filename = paste0("images/boston_100iter_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 # switch to bins
@@ -407,19 +445,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/boston_bins_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+dev.off()
 
 
 filename = paste0("images/boston_100iter_bins.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_bins_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -439,16 +484,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_100iter_bins_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_bins_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -470,19 +515,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/boston_lm_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
+dev.off()
 
 
 filename = paste0("images/boston_lm.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -502,16 +554,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 # switch to bins
@@ -533,16 +585,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_bins.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_bins_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -562,16 +614,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_bins_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_bins_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -593,19 +645,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/boston_tree_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
+dev.off()
 
 
 filename = paste0("images/boston_tree.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_tree_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -625,16 +684,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_tree_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_tree_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 ```
@@ -659,9 +718,6 @@ knitr::include_graphics("images/boston_100iter_standard.png")
 
 <!-- Too small -->
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "All weights scaled to 1.0 -- the standard deviation is highly varying to the weight size"}
-knitr::include_graphics("images/boston_100iter_scaled.png")
-```
 
 ###### comparing results with outlying data point
 - same experiment settings
@@ -672,9 +728,6 @@ knitr::include_graphics("images/boston_100iter_outlier.png")
 
 <!-- Really so bad? Well if the obs is not normal why expect the model to behave nicely? -->
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights as previous figure, but scaled to 1.0 -- standard deviation is extremely varying"}
-knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
-```
 
 ##### using binning (default) option as sampling strategy
 - same other settings as before (average data point vs outlying data point)
@@ -683,18 +736,11 @@ knitr::include_graphics("images/boston_100iter_outlier_scaled.png")
 knitr::include_graphics("images/boston_100iter_bins.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights, but rescaled to 1.0 -- differing and partly extremely high standard deviation raising questions about outcome validity"}
-knitr::include_graphics("images/boston_100iter_bins_scaled.png")
-```
 
-###### vs outlyer
+###### vs outlier
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of outlying data point -- different weight sizes as before, but the standard deviation is not clearly different"}
 knitr::include_graphics("images/boston_100iter_bins_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same LIME weights, but scaled to 1.0 -- coefficient standard deviation of the almost-zero weight dominating the rest"}
-knitr::include_graphics("images/boston_100iter_bins_outlier_scaled.png")
 ```
 
 - binning is pretty bad
@@ -708,19 +754,13 @@ knitr::include_graphics("images/boston_100iter_bins_outlier_scaled.png")
 knitr::include_graphics("images/boston_lm.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same LIME weights, but rescaled -- standard deviation is neglectably small as expected"}
-knitr::include_graphics("images/boston_lm_scaled.png")
-```
 
-###### vs outlyer
+###### vs outlier
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same linear model as before, but with the LIME weights of an outlying data point"}
 knitr::include_graphics("images/boston_lm_outlier.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same LIME weights, but rescaled -- standard deviation still neglectably small, but visually clearly higher as in the case of the mean data point"}
-knitr::include_graphics("images/boston_lm_outlier_scaled.png")
-```
 
 ##### vs binning
 
@@ -728,35 +768,21 @@ knitr::include_graphics("images/boston_lm_outlier_scaled.png")
 knitr::include_graphics("images/boston_lm_bins.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- noticably higher standard deviation making results very questionable"}
-knitr::include_graphics("images/boston_lm_bins_scaled.png")
-```
 
-###### vs binning with outlyer
+###### vs binning with outlier
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same settings but with outlying data point for weights -- weight size notably different to the case of the mean point"}
 knitr::include_graphics("images/boston_lm_bins_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation surprisingly smaller than in the mean data point case"}
-knitr::include_graphics("images/boston_lm_bins_outlier_scaled.png")
 ```
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
 knitr::include_graphics("images/boston_tree.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation is for smaller weights high enough to make these untrustworthy"}
-knitr::include_graphics("images/boston_tree_scaled.png")
-```
-
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
 knitr::include_graphics("images/boston_tree_outlier.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- too much standard deviation making every result untrustworthy except feature 'rm'"}
-knitr::include_graphics("images/boston_tree_outlier_scaled.png")
-```
 
 <!-- AGAIN: Way too many plots. Better show only some and rather focus on it.
 Then just describe the other results in your text.
@@ -958,14 +984,14 @@ bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
 set.seed(123)
 pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
 
-resultsc = feature_growth(
-  bikes, "cnt", pts_to_predict,
-  type = "regr", dim_increment = 1L, repeats = 100,
-  bin_continuous = TRUE,
-  use_density = TRUE
-)
-saveRDS(resultsc, "feature_growth_bikes_repeats100")
-#resultsc = readRDS("feature_growth_bikes_repeats100")
+#resultsc = feature_growth(
+#  bikes, "cnt", pts_to_predict,
+#  type = "regr", dim_increment = 1L, repeats = 100,
+#  bin_continuous = TRUE,
+#  use_density = TRUE
+#)
+#saveRDS(resultsc, "feature_growth_bikes_repeats100")
+resultsc = readRDS("feature_growth_bikes_repeats100")
 resultsc$type = "categorical"
 
 
@@ -1029,24 +1055,25 @@ plot_data$type = c(results_sd$type)#, resultsc_sd$type)
 
 
 plot = ggplot(plot_data, aes(y = sd, x = p, color = type)) +
-  geom_line() +
+  geom_line(size = 2) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20),
+    text = element_text(size = 25L),
+    axis.title.x = element_text(vjust = -4L),
+    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
   xlab("Added feature") +
   scale_x_continuous(
-    breaks = 1:12,
+    breaks = 1L:12L,
     labels = c("", "crim & zn", names(boston[c(-1, -2, -13)]))
-  )
+  ) +
+  ylim(c(0, 0.35))
 
-filename = paste0("images/sd_p.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/sd_p_presi.png")
+png(filename, width = 700L, height = 500)
 plot
 dev.off()
 
@@ -1057,24 +1084,26 @@ plot_datac = data.frame(
 )
 
 plotc = ggplot(plot_datac, aes(y = sd, x = p, color = type)) +
-  geom_line() +
+  geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20),
+    text = element_text(size = 25L),
+    axis.title.x = element_text(vjust = -4L),
+    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
   xlab("Added feature") +
   scale_x_continuous(
-    breaks = 1:11,
+    breaks = 1L:11L,
     labels = c("", "season & yr", names(bikes[c(-1, -2, -12)]))
-  )
+  ) +
+  ylim(c(0, 0.35))
 
-filename = paste0("images/sd_pc.png")
-png(filename, width = 700, height = 500)
+
+filename = paste0("images/sd_pc_presi.png")
+png(filename, width = 700L, height = 500)
 plotc
 dev.off()
 
@@ -1129,30 +1158,31 @@ resultsc_sd = as.data.frame(dplyr::summarize(
 ))
 
 plot_data = data.frame(
-  sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row) & !is.na(row)])),
+  sd = apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row) & !is.na(row)])),
   n_features = results_sd$n_features,
   type = results_sd$type
 )
 
 plot = ggplot(plot_data, aes(y = sd, x = n_features, color = type)) +
-  geom_line() +
+  geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20),
+    text = element_text(size = 25L),
+    axis.title.x = element_text(vjust = -4L),
+    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
   xlab("Amount selected features") +
   scale_x_continuous(
-    breaks = 1:12,
-    labels = 1:12
-  )
+    breaks = 1:12L,
+    labels = 1:12L
+  ) +
+  ylim(c(0, 0.1))
 
-filename = paste0("images/sd_nfeat.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/sd_nfeat_presi.png")
+png(filename, width = 700L, height = 500)
 plot
 dev.off()
 
@@ -1164,24 +1194,25 @@ plot_datac = data.frame(
 )
 
 plotc = ggplot(plot_datac, aes(y = sd, x = n_features, color = type)) +
-  geom_line() +
+  geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20),
+    text = element_text(size = 25L),
+    axis.title.x = element_text(vjust = -4L),
+    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
   xlab("Amount selected features") +
   scale_x_continuous(
-    breaks = 1:11,
-    labels = 1:11)
-  )
+    breaks = 1L:11L,
+    labels = 1L:11L
+  ) +
+  ylim(c(0, 0.1))
 
-filename = paste0("images/sd_nfeatc.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/sd_nfeatc_presi.png")
+png(filename, width = 700L, height = 500)
 plotc
 dev.off()
 
@@ -1335,37 +1366,40 @@ set.seed(123)
 pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
 
 # this may take a while
-results = permutation_growth(
-  boston, "medv", pts_to_predict,
-  type = "regr",
-  dim_increment = 1L,
-  repeats = 100,
-  permutation_seq = c(1000, 2000, 4000, 8000, 16000, 32000)
-)
-saveRDS(results, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
+#results = permutation_growth(
+#  boston, "medv", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  permutation_seq = c(1000, 2000, 4000, 8000, 16000, 32000)
+#)
+#saveRDS(results, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
+results = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
 results$type = "kernel_est"
 
-resultsb = permutation_growth(
-  boston, "medv", pts_to_predict,
-  type = "regr",
-  dim_increment = 1L,
-  repeats = 100,
-  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
-  bin_continuous = TRUE,
-  use_density = TRUE
-)
-saveRDS(resultsb, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
+#resultsb = permutation_growth(
+#  boston, "medv", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+#  bin_continuous = TRUE,
+#  use_density = TRUE
+#)
+#saveRDS(resultsb, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
+resultsb = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
 resultsb$type = "bins"
 
-resultsn = permutation_growth(
-  boston, "medv", pts_to_predict,
-  type = "regr",
-  dim_increment = 1L,
-  repeats = 100,
-  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
-  use_density = TRUE
-)
-saveRDS(resultsn, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
+#resultsn = permutation_growth(
+#  boston, "medv", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+#  use_density = TRUE
+#)
+#saveRDS(resultsn, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
+resultsn = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
 resultsn$type = "normal_dis"
 
 ### categorical data
@@ -1389,16 +1423,17 @@ bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
 set.seed(123)
 pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
 
-resultsc = permutation_growth(
-  bikes, "cnt", pts_to_predict,
-  type = "regr",
-  dim_increment = 1L,
-  repeats = 100,
-  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
-  bin_continuous = TRUE,
-  use_density = TRUE
-)
-saveRDS(resultsc, "permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
+#resultsc = permutation_growth(
+#  bikes, "cnt", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+#  bin_continuous = TRUE,
+#  use_density = TRUE
+#)
+#saveRDS(resultsc, "permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
+resultsc = readRDS("permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
 resultsc$type = "categorical"
 
 results = rbind(results, resultsb, resultsn)
@@ -1460,25 +1495,20 @@ plot_data$n_permutations = c(results_sd$n_permutations, as.numeric(as.character(
 plot_data$type = c(results_sd$type, resultsc_sd$type)
 
 plot = ggplot(plot_data, aes(y = sd, x = n_permutations, color = type)) +
-  geom_line() +
+  geom_line(size = 2L) +
   geom_vline(xintercept = 5000L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15L),
+    text = element_text(size = 25L),
     axis.title.x = element_text(vjust = -4L),
     axis.text.x = element_text(angle = 45L, hjust = 1L),
-    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L)#,
-    #axis.ticks.x = element_blank()
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L)
   ) +
   ylab("Average Standard Deviation") +
-  xlab("Sample size")# +
-#  scale_x_continuous(
-#    breaks = 1:12,
-#    labels = names(boston[-13])
-#  )
+  xlab("Sample size")
 
-filename = paste0("images/sd_npermutations.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/sd_npermutations_presi.png")
+png(filename, width = 700L, height = 500)
 plot
 dev.off()
 
@@ -1525,21 +1555,21 @@ plot = ggplot() +
     data = data.frame(x_grid, y_pred=y_pred$data$response),
     aes(x = x_grid, y = y_pred),
     color = "#00C5CD",
-    size  = 1.5
+    size  = 2L
   ) +
-  geom_point(data = boston, aes(y = medv, x = lstat)) +
+  geom_point(data = boston, aes(y = medv, x = lstat), size = 3L) +
   ylim(c(0, 50)) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
+    text = element_text(size = 25L),
     axis.title.x = element_text(vjust = -4),
     plot.margin = ggplot2::margin(20,20,30,20)
   ) +
   ylab("target (medv)") +
   xlab("feature (lstat)")
 
-filename = paste0("images/boston_sampled_tree.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/boston_sampled_tree_presi.png")
+png(filename, width = 700L, height = 500)
 plot
 dev.off()
 ```
@@ -1579,15 +1609,15 @@ plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 2
   
   # visualize everything
   ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
-    geom_line(color = "#00C5CD", size = 1.5) +
-    geom_point(data = data, aes(x = x, y = y)) +
-    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 1) +
-    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 3) +
+    geom_line(color = "#00C5CD", size = 2) +
+    geom_point(data = data, aes(x = x, y = y), size = 3) +
+    geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 2) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 5) +
     geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
     geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
     theme_minimal() +
     theme(
-      text = element_text(size = 15),
+      text = element_text(size = 25),
       axis.title.x = element_text(vjust = -4),
       plot.margin = ggplot2::margin(20,20,30,20)
     ) +
@@ -1601,8 +1631,8 @@ plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 2
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
-filename = paste0("images/boston_sampled_tree_fst.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/boston_sampled_tree_1_presi.png")
+png(filename, width = 700L, height = 500)
 plot_lime_boston(sample_seed = 1, kernel_width = 1)
 dev.off()
   
@@ -1615,7 +1645,7 @@ knitr::include_graphics("images/boston_sampled_tree_fst.png")
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd.png")
-png(filename, width = 700, height = 500)
+png(filename, width = 700L, height = 500)
 plot_lime_boston(sample_seed = 5, kernel_width = 1)
 dev.off()
   
@@ -1638,18 +1668,10 @@ knitr::include_graphics("images/boston_sampled_tree_snd.png")
 knitr::include_graphics("images/boston_tree.png")
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation is for smaller weights high enough to make these untrustworthy"}
-knitr::include_graphics("images/boston_tree_scaled.png")
-```
-
 ###### vs outlying data point:
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
 knitr::include_graphics("images/boston_tree_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- too much standard deviation making every result untrustworthy except feature 'rm'"}
-knitr::include_graphics("images/boston_tree_outlier_scaled.png")
 ```
 
 - highly increased weight instability
@@ -1790,13 +1812,15 @@ results = readRDS("complexity_growth_boston_xgboost10")
 results$type = "kernel"
 
 # this may take a while
-resultsb = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
-saveRDS(resultsb, "complexity_growth_boston_xgboost10_bins")
+#resultsb = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsb, "complexity_growth_boston_xgboost10_bins")
+resultsb = readRDS("complexity_growth_boston_xgboost10_bins")
 resultsb$type = "bins"
 
 # this may take a while
-resultsn = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, use_density = TRUE)
-saveRDS(resultsn, "complexity_growth_boston_xgboost10_nd")
+#resultsn = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, use_density = TRUE)
+#saveRDS(resultsn, "complexity_growth_boston_xgboost10_nd")
+resultsn = readRDS("complexity_growth_boston_xgboost10_nd")
 resultsn$type = "normal_dis"
 
 ### categorical data
@@ -1825,8 +1849,9 @@ bikes = createDummyFeatures(
 set.seed(123)
 pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -1] # "cnt" switched position
 
-resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
-saveRDS(resultsc, "complexity_growth_bikes_xgboost10")
+#resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsc, "complexity_growth_bikes_xgboost10")
+resultsc = readRDS("complexity_growth_bikes_xgboost10")
 resultsc$type = "categorical"
 
 # merge results
@@ -1877,7 +1902,6 @@ results_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(results_sd)
 # bikes
-# holy shit (change this if no dummy encoding is used)
 #feat = names(resultsc)[50:97]
 #resultsc_sd = eval(parse(text = paste0(
 #  "as.data.frame(dplyr::summarize(
@@ -1916,7 +1940,8 @@ plot_data = data.frame(
   type = c(results_sd$type, resultsc_sd$type)
 )
 
-# calculate train error
+############################
+### calculate train error
 
 # set exponential size for nrounds hyperparameter
 degree_seq = rep(1:10)
@@ -1946,19 +1971,16 @@ errors_data = lapply(#parallel::mclapply(
 # concatenate dataframes
 errors_data = data.table::rbindlist(errors_data)
       
-      
-      
 
 plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
-  geom_line() +
-  geom_line(data = errors_data, aes(y = mse/max(mse) * 0.02, x = smoothness, color = NULL)) +
+  geom_line(size = 2L) +
+  geom_line(data = errors_data, aes(y = mse/max(mse) * 0.02, x = smoothness, color = NULL), size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
+    text = element_text(size = 25L),
     axis.title.x = element_text(vjust = -4),
     axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20)#,
-    #axis.ticks.x = element_blank()
+    plot.margin = ggplot2::margin(20,20,30,20)
   ) +
   ylab("Average Standard Deviation") +
   xlab("Amount of trees") +
@@ -1967,8 +1989,112 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
     labels = 2^(1:10)
   )
 
-filename = paste0("images/sd_overfitting.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/sd_overfitting_presi.png")
+png(filename, width = 700L, height = 500)
+plot
+dev.off()
+
+```
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation"}
+results = readRDS("complexity_growth_boston_100repeats")
+results$type = "kernel"
+
+resultsb = readRDS("complexity_growth_boston_100repeats_bins")
+resultsb$type = "bins"
+
+resultsn = readRDS("complexity_growth_boston_100repeats_nd")
+resultsn$type = "normal_dis"
+
+### categorical data
+resultsc = readRDS("complexity_growth_bikes_100repeats")
+resultsc$type = "categorical"
+
+# merge results
+results = rbind(results, resultsb, resultsn)
+# boston
+results_gr = dplyr::group_by(
+  results,
+  smoothness,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc,
+  smoothness,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = sd(crim, na.rm = TRUE),
+  sd_zn    = sd(zn, na.rm = TRUE),
+  sd_indus = sd(indus, na.rm = TRUE),
+  sd_nox   = sd(nox, na.rm = TRUE),
+  sd_rm    = sd(rm, na.rm = TRUE),
+  sd_age   = sd(age, na.rm = TRUE),
+  sd_dis   = sd(dis, na.rm = TRUE),
+  sd_rad   = sd(rad, na.rm = TRUE),
+  sd_tax   = sd(tax, na.rm = TRUE),
+  sd_ptratio = sd(ptratio, na.rm = TRUE),
+  sd_b     = sd(b, na.rm = TRUE),
+  sd_lstat = sd(lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
+  sd_yr         = sd(as.numeric(as.character(yr)), na.rm = TRUE),
+  sd_mnth       = sd(as.numeric(as.character(mnth)), na.rm = TRUE),
+  sd_holiday    = sd(as.numeric(as.character(holiday)), na.rm = TRUE),
+  sd_weekday    = sd(as.numeric(as.character(weekday)), na.rm = TRUE),
+  sd_workingday = sd(as.numeric(as.character(workingday)), na.rm = TRUE),
+  sd_weathersit = sd(as.numeric(as.character(weathersit)), na.rm = TRUE),
+  sd_temp       = sd(as.numeric(as.character(temp)), na.rm = TRUE),
+  sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
+  sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
+  sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
+))
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
+
+plot_data = data.frame(
+  sd = c(
+    apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
+    apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
+  ),
+  smoothness = c(
+    results_sd$smoothness,
+    as.numeric(as.character(resultsc_sd$smoothness))
+  ),
+  type = c(results_sd$type, resultsc_sd$type)
+)
+
+plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
+  geom_line(size = 2L) +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 25),
+    axis.title.x = element_text(vjust = -4),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.margin = ggplot2::margin(20,20,30,20)#,
+    #axis.ticks.x = element_blank()
+  ) +
+  ylab("Average Standard Deviation") +
+  xlab("Min. node size and tree amount [x10]") +
+  scale_x_continuous(
+    breaks = 1:10,
+    labels = 1:10
+  )
+
+filename = paste0("images/sd_smoothness_presi.png")
+png(filename, width = 700L, height = 500)
 plot
 dev.off()
 
@@ -2012,12 +2138,18 @@ bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
 bikes$cnt = bikes$cnt / sd(bikes$cnt)
 bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
 
-plots = lapply(names(bikes[-ncol(bikes)]), function(feat) qplot(get(feat), cnt, data = bikes, ylab = "", xlab = feat, geom = "boxplot"))
+plots = lapply(names(bikes[-ncol(bikes)]), function(feat) qplot(get(feat), cnt, data = bikes, ylab = "", xlab = feat, geom = "boxplot") + theme(
+  axis.text.x = element_blank(),
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank(),
+  text = element_text(size = 20))
+)
+
 args = paste0("plots[[", 1:11, "]]", collapse = ", ")
 grid_plot_func = paste0("gridExtra::grid.arrange(", args, ", nrow = 3)")
 
-filename = paste0("images/bikes.png")
-png(filename, width = 700, height = 500)
+filename = paste0("images/bikes_prezi.png")
+png(filename, width = 700L, height = 500)
 eval(parse(text = grid_plot_func))
 dev.off()
 
@@ -2044,19 +2176,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/bikes_standard_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
+dev.off()
 
 
 filename = paste0("images/bikes_standard.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 
@@ -2076,19 +2215,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/bikes_outlier_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
+dev.off()
 
 
 filename = paste0("images/bikes_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 
@@ -2113,19 +2259,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/bikes_lm_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 0.7))
+dev.off()
 
 
 filename = paste0("images/bikes_lm.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_lm_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 
@@ -2148,16 +2301,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_lm_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_lm_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 ####
@@ -2183,19 +2336,26 @@ limes = sapply(1:100, function(k) {
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
+ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
+ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
+
+filename = paste0("images/bikes_tree_presi.png")
+png(filename, width = 700L, height = 500)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 0.7))
+dev.off()
 
 
 filename = paste0("images/bikes_tree.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_tree_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 
@@ -2218,16 +2378,16 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_tree_outlier.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_tree_outlier_scaled.png")
-png(filename, width = 700, height = 500)
-nice_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 ```
@@ -2355,8 +2515,8 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_bins_lime.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
 # quantile binning with 4 bins
@@ -2404,8 +2564,8 @@ means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
 
 filename = paste0("images/bikes_manual_bins.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
 ##########
@@ -2435,8 +2595,8 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_no_bins.png")
-png(filename, width = 700, height = 500)
-nice_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
+png(filename, width = 700L, height = 500)
+book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
 ```
@@ -2580,7 +2740,7 @@ plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_wi
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_fst_better.png")
-png(filename, width = 700, height = 500)
+png(filename, width = 700L, height = 500)
 plot_better_lime_boston(sample_seed = 1, kernel_width = 1)
 dev.off()
   
@@ -2593,7 +2753,7 @@ knitr::include_graphics("images/boston_sampled_tree_fst_better.png")
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_better.png")
-png(filename, width = 700, height = 500)
+png(filename, width = 700L, height = 500)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 1)
 dev.off()
   
@@ -2609,7 +2769,7 @@ knitr::include_graphics("images/boston_sampled_tree_snd_better.png")
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_better_slim.png")
-png(filename, width = 700, height = 500)
+png(filename, width = 700L, height = 500)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 0.01)
 dev.off()
   
@@ -2624,7 +2784,7 @@ knitr::include_graphics("images/boston_sampled_tree_snd_better_slim.png")
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_slim.png")
-png(filename, width = 700, height = 500)
+png(filename, width = 700L, height = 500)
 plot_lime_boston(sample_seed = 2, kernel_width = 0.01)
 dev.off()
   
@@ -2634,3 +2794,10 @@ dev.off()
 knitr::include_graphics("images/boston_sampled_tree_snd_slim.png")
 ```
 
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+
+# PRESENTATION PLOTS
+
+
+```
