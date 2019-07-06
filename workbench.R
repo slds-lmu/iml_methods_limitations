@@ -331,3 +331,56 @@ bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
 bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
 
 
+simulated = data.frame(
+  x0 = runif(10000, 0, 1),
+  x1 = runif(10000, 0, 1),
+  x2 = runif(10000, 0, 1),
+  x3 = runif(10000, 0, 1),
+  x4 = runif(10000, 0, 1),
+  x5 = runif(10000, 0, 1),
+  x6 = runif(10000, 0, 1),
+  x7 = runif(10000, 0, 1),
+  x8 = runif(10000, 0, 1),
+  x9 = runif(10000, 0, 1)
+#  x0 = runif(10000, 0, 1024),
+#  x1 = runif(10000, 0, 512),
+#  x2 = runif(10000, 0, 256),
+#  x3 = runif(10000, 0, 128),
+#  x4 = runif(10000, 0, 64),
+#  x5 = runif(10000, 0, 32),
+#  x6 = runif(10000, 0, 16),
+#  x7 = runif(10000, 0, 8),
+#  x8 = runif(10000, 0, 4),
+#  x9 = runif(10000, 0, 2)
+)
+simulated$y = 
+  log(eval(parse(text =paste0("simulated$x", 0:9, collapse = " * "))), base = 10)
+#  sin(simulated$x0) *
+#  sin(simulated$x1) #*
+#  sin(simulated$x2) *
+#  sin(simulated$x3) *
+#  sin(simulated$x4) *
+#  sin(simulated$x5) *
+#  sin(simulated$x6) *
+#  sin(simulated$x7) *
+#  sin(simulated$x8) *
+#  sin(simulated$x9)
+simulated = data.frame(x=as.character(c("a", "b", "c")), y=1:3)
+combined = createDummyFeatures(
+  simulated, target = "y",
+  cols = c(
+    "x"
+  )
+)
+t = makeRegrTask(data = simulated, target = "y")  
+t = makeRegrTask(data = combined, target = "y")  
+
+lrn = makeLearner("regr.xgboost", par.vals = list(nrounds = 50))
+lrn = makeLearner("regr.ranger")
+model = subsample(lrn, t, split = 2/3, iters = 1)
+
+
+ggplot(data = simulated, aes(x = x0, y = y)) +
+  geom_point()
+
+resample(lrn, t, makeResampleDesc("CV"), measures = mse)

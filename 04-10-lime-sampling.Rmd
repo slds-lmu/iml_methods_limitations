@@ -737,7 +737,6 @@ knitr::include_graphics("images/boston_lm_bins_outlier_scaled.png")
 
 library(mlbench)
 library(mlr)
-#library(dplyr)
 library(lime)
 library(ggplot2)
 
@@ -746,13 +745,15 @@ library(ggplot2)
 #' of feature dimensions and amount of selected features (n_features parameter)
 #' @return dataframe of feature weights
 #' @example result = feature_growth(iris, "Species", dim_increment = 1)
-feature_growth <- function(
+feature_growth = function(
   data,
   target,
   pts_to_predict,
   type,
   repeats = 10L,
-  dim_increment = 10L
+  dim_increment = 10L,
+  bin_continuous = FALSE,
+  use_density = FALSE
   ) {
   
   # dimension of feature space
@@ -767,7 +768,8 @@ feature_growth <- function(
   pts_to_predict = pts_to_predict[names(pts_to_predict) != target]
 
   # iterate over amount of feature dimensions
-  outer_return = lapply(
+  outer_return = parallel::mclapply(
+    mc.cores = 4,
     seq(2L, p_max, by = dim_increment),
     function(p) {
       
@@ -789,7 +791,14 @@ feature_growth <- function(
       }
       
       black_box = train(learner, task)
-      explainer = lime(train_data[1L:p], black_box, bin_continuous = FALSE, use_density = FALSE)
+      explainer = lime(train_data[1L:p], black_box, bin_continuous = bin_continuous, use_density = use_density)
+
+      if (!bin_continuous && use_density) {
+        lapply(1:length(explainer$feature_distribution), function(i) {
+          explainer$feature_distribution[[i]]["mean"] <<- mean(explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+          explainer$feature_distribution[[i]]["sd"]   <<- sd(  explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+        })
+      }
       
       # create sequence of "n_feature" arguments
       n_feat_seq = seq(1L, p, by = dim_increment)
@@ -857,16 +866,78 @@ set.seed(123)
 pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
 
 # this may take a while
-results = feature_growth(boston, "medv", pts_to_predict, type = "regr", dim_increment = 1L, repeats = 100)
-saveRDS(results, "feature_growth_boston_repeats100")
+#results = feature_growth(boston, "medv", pts_to_predict, type = "regr", dim_increment = 1L, repeats = 100)
+#saveRDS(results, "feature_growth_boston_repeats100")
+results  = readRDS("feature_growth_boston_repeats100")
+results$type = "kernel_est"
+#resultsb = feature_growth(
+#  boston, "medv", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  bin_continuous = TRUE,
+#  use_density = TRUE
+#)
+#saveRDS(resultsb, "feature_growth_boston_repeats100_bins")
+resultsb = readRDS("feature_growth_boston_repeats100_bins")
+resultsb$type = "bins"
+#resultsn = feature_growth(
+#  boston, "medv", pts_to_predict,
+#  type = "regr",
+#  dim_increment = 1L,
+#  repeats = 100,
+#  use_density = TRUE
+#)
+#saveRDS(resultsn, "feature_growth_boston_repeats100_nd")
+resultsn = readRDS("feature_growth_boston_repeats100_nd")
+resultsn$type = "normal_dis"
 
+### categorical data
+bikes = read.csv("datasets/day.csv")
+# remove undesired variables
+bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
+
+# quantile binning with 4 bins
+bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
+  bikes[c("temp", "atemp", "hum", "windspeed")],
+  function(vec) {
+    quantiles = quantile(vec)
+    quantiles[5] = Inf
+    sapply(vec, function(x) sum(x >= quantiles))
+  }
+)
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
+
+bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
+set.seed(123)
+pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
+
+resultsc = feature_growth(
+  bikes, "cnt", pts_to_predict,
+  type = "regr", dim_increment = 1L, repeats = 100,
+  bin_continuous = TRUE,
+  use_density = TRUE
+)
+saveRDS(resultsc, "feature_growth_bikes_repeats100")
+#resultsc = readRDS("feature_growth_bikes_repeats100")
+resultsc$type = "categorical"
+
+
+results = rbind(results, resultsb, resultsn)
+# boston
 results_gr = dplyr::group_by(
   results,
-  #data_crim, data_zn, data_indus, data_nox, data_rm, data_age, data_dis, data_rad, data_tax, data_ptratio, data_b, data_lstat,
-  #n_features,
-  p
+  p,
+  type
 )
-
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc,
+  p,
+  type
+)
+# boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
   sd_crim  = sd(crim, na.rm = TRUE),
@@ -881,25 +952,38 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_ptratio = sd(ptratio, na.rm = TRUE),
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
-  # pr means pick ratio - the frequency of non NAs
-  #pr_crim  = sum(!is.na(crim))/10,
-  #pr_zn    = sum(!is.na(zn))/10,
-  #pr_indus = sum(!is.na(indus))/10,
-  #pr_nox   = sum(!is.na(nox))/10,
-  #pr_rm    = sum(!is.na(rm))/10,
-  #pr_age   = sum(!is.na(age))/10,
-  #pr_dis   = sum(!is.na(dis))/10,
-  #pr_rad   = sum(!is.na(rad))/10,
-  #pr_tax   = sum(!is.na(tax))/10,
-  #pr_ptratio = sum(!is.na(ptratio))/10,
-  #pr_b     = sum(!is.na(b))/10,
-  #pr_lstat = sum(!is.na(lstat))/10
 ))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
+  sd_yr         = sd(as.numeric(as.character(yr)), na.rm = TRUE),
+  sd_mnth       = sd(as.numeric(as.character(mnth)), na.rm = TRUE),
+  sd_holiday    = sd(as.numeric(as.character(holiday)), na.rm = TRUE),
+  sd_weekday    = sd(as.numeric(as.character(weekday)), na.rm = TRUE),
+  sd_workingday = sd(as.numeric(as.character(workingday)), na.rm = TRUE),
+  sd_weathersit = sd(as.numeric(as.character(weathersit)), na.rm = TRUE),
+  sd_temp       = sd(as.numeric(as.character(temp)), na.rm = TRUE),
+  sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
+  sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
+  sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
+))
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
 
-plot_data = data.frame(sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row)])))
-plot_data$p = results_sd$p
+plot_data = data.frame(sd = c(
+  apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))#,
+#  apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
+))
+plot_data$p = c(results_sd$p)#, as.numeric(as.character(resultsc_sd$p)))
+plot_data$type = c(results_sd$type)#, resultsc_sd$type)
 
-plot = ggplot(plot_data, aes(y = sd, x = p)) +
+
+plot = ggplot(plot_data, aes(y = sd, x = p, color = type)) +
   geom_line() +
   theme_minimal() +
   theme(
@@ -913,7 +997,7 @@ plot = ggplot(plot_data, aes(y = sd, x = p)) +
   xlab("Added feature") +
   scale_x_continuous(
     breaks = 1:12,
-    labels = names(boston[-13])
+    labels = c("", "crim & zn", names(boston[c(-1, -2, -13)]))
   )
 
 filename = paste0("images/sd_p.png")
@@ -921,17 +1005,53 @@ png(filename, width = 700, height = 500)
 plot
 dev.off()
 
+plot_datac = data.frame(
+  sd = apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)], na.rm = TRUE)),
+  p = as.numeric(as.character(resultsc_sd$p)),
+  type = resultsc_sd$type
+)
+
+plotc = ggplot(plot_datac, aes(y = sd, x = p, color = type)) +
+  geom_line() +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 15),
+    axis.title.x = element_text(vjust = -4),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.margin = ggplot2::margin(20,20,30,20),
+    axis.ticks.x = element_blank()
+  ) +
+  ylab("Average Standard Deviation") +
+  xlab("Added feature") +
+  scale_x_continuous(
+    breaks = 1:11,
+    labels = c("", "season & yr", names(bikes[c(-1, -2, -12)]))
+  )
+
+filename = paste0("images/sd_pc.png")
+png(filename, width = 700, height = 500)
+plotc
+dev.off()
+
+
 ####################
 ### plotting n_features
-
+# boston
 results_12 = results[results$p == 12, ]
 results_gr = dplyr::group_by(
   results_12,
-  #data_crim, data_zn, data_indus, data_nox, data_rm, data_age, data_dis, data_rad, data_tax, data_ptratio, data_b, data_lstat,
+  type,
   n_features#,
-  #p
+)
+# bikes
+resultsc_11 = resultsc[resultsc$p == 11, ]
+resultsc_gr = dplyr::group_by(
+  resultsc_11,
+  type,
+  n_features#,
 )
 
+# boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
   sd_crim  = sd(crim, na.rm = TRUE),
@@ -945,26 +1065,31 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_tax   = sd(tax, na.rm = TRUE),
   sd_ptratio = sd(ptratio, na.rm = TRUE),
   sd_b     = sd(b, na.rm = TRUE),
-  sd_lstat = sd(lstat, na.rm = TRUE)#,
-  # pr means pick ratio - the frequency of non NAs
-  #pr_crim  = sum(!is.na(crim))/10,
-  #pr_zn    = sum(!is.na(zn))/10,
-  #pr_indus = sum(!is.na(indus))/10,
-  #pr_nox   = sum(!is.na(nox))/10,
-  #pr_rm    = sum(!is.na(rm))/10,
-  #pr_age   = sum(!is.na(age))/10,
-  #pr_dis   = sum(!is.na(dis))/10,
-  #pr_rad   = sum(!is.na(rad))/10,
-  #pr_tax   = sum(!is.na(tax))/10,
-  #pr_ptratio = sum(!is.na(ptratio))/10,
-  #pr_b     = sum(!is.na(b))/10,
-  #pr_lstat = sum(!is.na(lstat))/10
+  sd_lstat = sd(lstat, na.rm = TRUE)
+))
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
+  sd_yr         = sd(as.numeric(as.character(yr)), na.rm = TRUE),
+  sd_mnth       = sd(as.numeric(as.character(mnth)), na.rm = TRUE),
+  sd_holiday    = sd(as.numeric(as.character(holiday)), na.rm = TRUE),
+  sd_weekday    = sd(as.numeric(as.character(weekday)), na.rm = TRUE),
+  sd_workingday = sd(as.numeric(as.character(workingday)), na.rm = TRUE),
+  sd_weathersit = sd(as.numeric(as.character(weathersit)), na.rm = TRUE),
+  sd_temp       = sd(as.numeric(as.character(temp)), na.rm = TRUE),
+  sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
+  sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
+  sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
 ))
 
-plot_data = data.frame(sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row) & !is.na(row)])))
-plot_data$n_features = results_sd$n_features
+plot_data = data.frame(
+  sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row) & !is.na(row)])),
+  n_features = results_sd$n_features,
+  type = results_sd$type
+)
 
-plot = ggplot(plot_data, aes(y = sd, x = n_features)) +
+plot = ggplot(plot_data, aes(y = sd, x = n_features, color = type)) +
   geom_line() +
   theme_minimal() +
   theme(
@@ -985,6 +1110,36 @@ filename = paste0("images/sd_nfeat.png")
 png(filename, width = 700, height = 500)
 plot
 dev.off()
+
+# bikes
+plot_datac = data.frame(
+  sd = apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)], na.rm = TRUE)),
+  n_features = as.numeric(as.character(resultsc_sd$n_features)),
+  type = resultsc_sd$type
+)
+
+plotc = ggplot(plot_datac, aes(y = sd, x = n_features, color = type)) +
+  geom_line() +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 15),
+    axis.title.x = element_text(vjust = -4),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.margin = ggplot2::margin(20,20,30,20),
+    axis.ticks.x = element_blank()
+  ) +
+  ylab("Average Standard Deviation") +
+  xlab("Amount selected features") +
+  scale_x_continuous(
+    breaks = 1:11,
+    labels = 1:11)
+  )
+
+filename = paste0("images/sd_nfeatc.png")
+png(filename, width = 700, height = 500)
+plotc
+dev.off()
+
 
 ```
 
@@ -1029,7 +1184,9 @@ permutation_growth = function(
   type,
   repeats = 10L,
   permutation_seq = c(2500L, 5000L, 10000L),
-  dim_increment = 10L
+  dim_increment = 10L,
+  bin_continuous = FALSE,
+  use_density = FALSE
   ) {
   
   # dimension of feature space
@@ -1058,11 +1215,18 @@ permutation_growth = function(
   }
   
   black_box = train(learner, task)
-  explainer = lime(train_data[1L:p_max], black_box, bin_continuous = FALSE, use_density = FALSE)
-  
+  explainer = lime(train_data[1L:p_max], black_box, bin_continuous = bin_continuous, use_density = use_density)
+
+  if (!bin_continuous && use_density) {
+    lapply(1:length(explainer$feature_distribution), function(i) {
+      explainer$feature_distribution[[i]]["mean"] <<- mean(explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+      explainer$feature_distribution[[i]]["sd"]   <<- sd(  explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+    })
+  }
   
   # iterate over sequence of permutation amount
-  outer_return = lapply(
+  outer_return = parallel::mclapply(
+    mc.cores = 4,
     permutation_seq,
     function(n_permutations) {
       
@@ -1126,16 +1290,86 @@ set.seed(123)
 pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
 
 # this may take a while
-results = permutation_growth(boston, "medv", pts_to_predict, type = "regr", dim_increment = 1L, repeats = 100, permutation_seq = c(250, 500, 1000, 2000, 4000, 8000))
-saveRDS(results, "permutation_growth_boston_repeats100_perm250x500x1000x2000x4000x8000")
+results = permutation_growth(
+  boston, "medv", pts_to_predict,
+  type = "regr",
+  dim_increment = 1L,
+  repeats = 100,
+  permutation_seq = c(1000, 2000, 4000, 8000, 16000, 32000)
+)
+saveRDS(results, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
+results$type = "kernel_est"
 
+resultsb = permutation_growth(
+  boston, "medv", pts_to_predict,
+  type = "regr",
+  dim_increment = 1L,
+  repeats = 100,
+  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+  bin_continuous = TRUE,
+  use_density = TRUE
+)
+saveRDS(resultsb, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
+resultsb$type = "bins"
+
+resultsn = permutation_growth(
+  boston, "medv", pts_to_predict,
+  type = "regr",
+  dim_increment = 1L,
+  repeats = 100,
+  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+  use_density = TRUE
+)
+saveRDS(resultsn, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
+resultsn$type = "normal_dis"
+
+### categorical data
+bikes = read.csv("datasets/day.csv")
+# remove undesired variables
+bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
+
+# quantile binning with 4 bins
+bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
+  bikes[c("temp", "atemp", "hum", "windspeed")],
+  function(vec) {
+    quantiles = quantile(vec)
+    quantiles[5] = Inf
+    sapply(vec, function(x) sum(x >= quantiles))
+  }
+)
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
+
+bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
+set.seed(123)
+pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
+
+resultsc = permutation_growth(
+  bikes, "cnt", pts_to_predict,
+  type = "regr",
+  dim_increment = 1L,
+  repeats = 100,
+  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
+  bin_continuous = TRUE,
+  use_density = TRUE
+)
+saveRDS(resultsc, "permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
+resultsc$type = "categorical"
+
+results = rbind(results, resultsb, resultsn)
+# boston
 results_gr = dplyr::group_by(
   results,
-  #data_crim, data_zn, data_indus, data_nox, data_rm, data_age, data_dis, data_rad, data_tax, data_ptratio, data_b, data_lstat,
-  #n_features,
-  n_permutations
+  n_permutations,
+  type
 )
-
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc,
+  n_permutations,
+  type
+)
+# boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
   sd_crim  = sd(crim, na.rm = TRUE),
@@ -1150,32 +1384,45 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_ptratio = sd(ptratio, na.rm = TRUE),
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
-  # pr means pick ratio - the frequency of non NAs
-  #pr_crim  = sum(!is.na(crim))/10,
-  #pr_zn    = sum(!is.na(zn))/10,
-  #pr_indus = sum(!is.na(indus))/10,
-  #pr_nox   = sum(!is.na(nox))/10,
-  #pr_rm    = sum(!is.na(rm))/10,
-  #pr_age   = sum(!is.na(age))/10,
-  #pr_dis   = sum(!is.na(dis))/10,
-  #pr_rad   = sum(!is.na(rad))/10,
-  #pr_tax   = sum(!is.na(tax))/10,
-  #pr_ptratio = sum(!is.na(ptratio))/10,
-  #pr_b     = sum(!is.na(b))/10,
-  #pr_lstat = sum(!is.na(lstat))/10
 ))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
+  sd_yr         = sd(as.numeric(as.character(yr)), na.rm = TRUE),
+  sd_mnth       = sd(as.numeric(as.character(mnth)), na.rm = TRUE),
+  sd_holiday    = sd(as.numeric(as.character(holiday)), na.rm = TRUE),
+  sd_weekday    = sd(as.numeric(as.character(weekday)), na.rm = TRUE),
+  sd_workingday = sd(as.numeric(as.character(workingday)), na.rm = TRUE),
+  sd_weathersit = sd(as.numeric(as.character(weathersit)), na.rm = TRUE),
+  sd_temp       = sd(as.numeric(as.character(temp)), na.rm = TRUE),
+  sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
+  sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
+  sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
+))
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
 
-plot_data = data.frame(sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row)])))
-plot_data$n_permutations = results_sd$n_permutations
+plot_data = data.frame(sd = c(
+  apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
+  apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
+))
+plot_data$n_permutations = c(results_sd$n_permutations, as.numeric(as.character(resultsc_sd$n_permutations)))
+plot_data$type = c(results_sd$type, resultsc_sd$type)
 
-plot = ggplot(plot_data, aes(y = sd, x = n_permutations)) +
+plot = ggplot(plot_data, aes(y = sd, x = n_permutations, color = type)) +
   geom_line() +
+  geom_vline(xintercept = 5000L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 15),
-    axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = ggplot2::margin(20,20,30,20)#,
+    text = element_text(size = 15L),
+    axis.title.x = element_text(vjust = -4L),
+    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    plot.margin = ggplot2::margin(20L, 20L, 30L, 20L)#,
     #axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
@@ -1221,7 +1468,7 @@ boston = BostonHousing[sample(nrow(BostonHousing), 20), ]
 
 # create task and leaner
 btask      = makeRegrTask(data = boston[c("lstat", "medv")], target = "medv")
-regr_model = makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
+regr_model = makeLearner("regr.xgboost", nrounds = 50)#, min.node.size = 1, num.trees = 1)#makeLearner("regr.ranger", min.node.size = 1, num.trees = 1)
 # run model and get prediction surface
 black_box  = train(regr_model, btask)
 x_grid     = 1:4000 / 100
@@ -1324,7 +1571,7 @@ knitr::include_graphics("images/boston_sampled_tree_fst.png")
 
 filename = paste0("images/boston_sampled_tree_snd.png")
 png(filename, width = 700, height = 500)
-plot_lime_boston(sample_seed = 2, kernel_width = 1)
+plot_lime_boston(sample_seed = 5, kernel_width = 1)
 dev.off()
   
 ```
@@ -1390,7 +1637,9 @@ complexity_growth = function(
   pts_to_predict,
   type,
   repeats = 10L,
-  max_degree = 10
+  max_degree = 10L,
+  bin_continuous = FALSE,
+  use_density = FALSE
 ) {
   
 
@@ -1402,9 +1651,11 @@ complexity_growth = function(
   train_data           = data[names(data) != target]
   train_data[[target]] = data[[target]]
 
+  # set exponential size for nrounds hyperparameter
   degree_seq = rep(1:max_degree, each = repeats)
-  # iterate over sequence of polynomial degrees
-  outer_return = lapply(
+  # iterate over sequence of exponential degrees
+  outer_return = lapply(#parallel::mclapply(
+    #mc.cores = 4,
     degree_seq,
     function(degree) {
 
@@ -1413,21 +1664,32 @@ complexity_growth = function(
       # less overfitting
       min.node.size = degree
       
+      # more overfitting
+      nrounds = 2^degree
+      
       # define task and learner based on data type
       if (type == "classif") {
         task = makeClassifTask(data = train_data, target = target)
-        learner = makeLearner("classif.ranger", num.trees = num.trees, min.node.size = min.node.size, predict.type = "prob")
+        #learner = makeLearner("classif.ranger", num.trees = num.trees, min.node.size = min.node.size, predict.type = "prob")
+        learner = makeLearner("classif.xgboost", nrounds = nrounds, predict.type = "prob")
         
       } else if (type == "regr") {
         task = makeRegrTask(data = train_data, target = target)
-        learner = makeLearner("regr.ranger", num.trees = num.trees, min.node.size = min.node.size)
+        learner = makeLearner("regr.xgboost", nrounds = nrounds)
         
       } else {
         stop("Wrong type, buddy")
       }
       
       black_box = train(learner, task)
-      explainer = lime(train_data[1L:p_max], black_box, bin_continuous = FALSE, use_density = FALSE)
+      explainer = lime(train_data[1L:p_max], black_box, bin_continuous = bin_continuous, use_density = use_density)
+    
+      if (!bin_continuous && use_density) {
+        lapply(1:length(explainer$feature_distribution), function(i) {
+          explainer$feature_distribution[[i]]["mean"] <<- mean(explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+          explainer$feature_distribution[[i]]["sd"]   <<- sd(  explainer$feature_distribution[[i]]$x, na.rm = TRUE)
+        })
+      }
       
       inner_return = apply(
         pts_to_predict,
@@ -1477,16 +1739,80 @@ set.seed(123)
 pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
 
 # this may take a while
-results = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100)
-saveRDS(results, "complexity_growth_boston_100repeats")
+#results = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L)
+#saveRDS(results, "complexity_growth_boston_xgboost10")
+results = readRDS("complexity_growth_boston_xgboost10")
+results$type = "kernel"
 
+# this may take a while
+resultsb = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
+saveRDS(resultsb, "complexity_growth_boston_xgboost10_bins")
+resultsb$type = "bins"
+
+# this may take a while
+resultsn = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, use_density = TRUE)
+saveRDS(resultsn, "complexity_growth_boston_xgboost10_nd")
+resultsn$type = "normal_dis"
+
+### categorical data
+bikes = read.csv("datasets/day.csv")
+# remove undesired variables
+bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
+
+# quantile binning with 4 bins
+bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
+  bikes[c("temp", "atemp", "hum", "windspeed")],
+  function(vec) {
+    quantiles = quantile(vec)
+    quantiles[5] = Inf
+    sapply(vec, function(x) sum(x >= quantiles))
+  }
+)
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
+
+bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
+# dummy encoding
+bikes = createDummyFeatures(
+  bikes, target = "cnt",
+  cols = names(bikes[-ncol(bikes)])
+)
+set.seed(123)
+pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -1] # "cnt" switched position
+
+resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
+saveRDS(resultsc, "complexity_growth_bikes_xgboost10")
+resultsc$type = "categorical"
+
+# merge results
+results = rbind(results, resultsb, resultsn)
+# boston
 results_gr = dplyr::group_by(
   results,
-  #data_crim, data_zn, data_indus, data_nox, data_rm, data_age, data_dis, data_rad, data_tax, data_ptratio, data_b, data_lstat,
-  #n_features,
-  smoothness
+  smoothness,
+  type
 )
 
+# bikes...
+resultsc$season = resultsc$season.1 + resultsc$season.2 + resultsc$season.3 + resultsc$season.4
+resultsc$yr = resultsc$yr.0 + resultsc$yr.1
+resultsc$mnth = eval(parse(text = paste0("resultsc$mnth.", 1:12, collapse = " + ")))
+resultsc$holiday = eval(parse(text = paste0("resultsc$holiday.", 0:1, collapse = " + ")))
+resultsc$weekday = eval(parse(text = paste0("resultsc$weekday.", 0:6, collapse = " + ")))
+resultsc$workingday = eval(parse(text = paste0("resultsc$workingday.", 0:1, collapse = " + ")))
+resultsc$weathersit = eval(parse(text = paste0("resultsc$weathersit.", 1:3, collapse = " + ")))
+resultsc$temp = eval(parse(text = paste0("resultsc$temp.", 1:4, collapse = " + ")))
+resultsc$atemp = eval(parse(text = paste0("resultsc$atemp.", 1:4, collapse = " + ")))
+resultsc$hum = eval(parse(text = paste0("resultsc$hum.", 1:4, collapse = " + ")))
+resultsc$windspeed = eval(parse(text = paste0("resultsc$windspeed.", 1:4, collapse = " + ")))
+
+resultsc_gr = dplyr::group_by(
+  resultsc,
+  smoothness,
+  type
+)
+
+# boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
   sd_crim  = sd(crim, na.rm = TRUE),
@@ -1501,26 +1827,86 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_ptratio = sd(ptratio, na.rm = TRUE),
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
-  # pr means pick ratio - the frequency of non NAs
-  #pr_crim  = sum(!is.na(crim))/10,
-  #pr_zn    = sum(!is.na(zn))/10,
-  #pr_indus = sum(!is.na(indus))/10,
-  #pr_nox   = sum(!is.na(nox))/10,
-  #pr_rm    = sum(!is.na(rm))/10,
-  #pr_age   = sum(!is.na(age))/10,
-  #pr_dis   = sum(!is.na(dis))/10,
-  #pr_rad   = sum(!is.na(rad))/10,
-  #pr_tax   = sum(!is.na(tax))/10,
-  #pr_ptratio = sum(!is.na(ptratio))/10,
-  #pr_b     = sum(!is.na(b))/10,
-  #pr_lstat = sum(!is.na(lstat))/10
 ))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+# holy shit (change this if no dummy encoding is used)
+#feat = names(resultsc)[50:97]
+#resultsc_sd = eval(parse(text = paste0(
+#  "as.data.frame(dplyr::summarize(
+#    resultsc_gr,",
+#    paste0("sd_", feat, " = sd(as.numeric(as.character(", feat, ")), na.rm = TRUE)", collapse = ", "),
+#  "))"
+#)))
 
-plot_data = data.frame(sd = apply(results_sd[-1], MARGIN = 1, function(row) mean(row[!is.nan(row)])))
-plot_data$smoothness = results_sd$smoothness
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
+  sd_yr         = sd(as.numeric(as.character(yr)), na.rm = TRUE),
+  sd_mnth       = sd(as.numeric(as.character(mnth)), na.rm = TRUE),
+  sd_holiday    = sd(as.numeric(as.character(holiday)), na.rm = TRUE),
+  sd_weekday    = sd(as.numeric(as.character(weekday)), na.rm = TRUE),
+  sd_workingday = sd(as.numeric(as.character(workingday)), na.rm = TRUE),
+  sd_weathersit = sd(as.numeric(as.character(weathersit)), na.rm = TRUE),
+  sd_temp       = sd(as.numeric(as.character(temp)), na.rm = TRUE),
+  sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
+  sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
+  sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
+))
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
 
-plot = ggplot(plot_data, aes(y = sd, x = smoothness)) +
+plot_data = data.frame(
+  sd = c(
+    apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
+    apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
+  ),
+  smoothness = c(
+    results_sd$smoothness,
+    as.numeric(as.character(resultsc_sd$smoothness))
+  ),
+  type = c(results_sd$type, resultsc_sd$type)
+)
+
+# calculate train error
+
+# set exponential size for nrounds hyperparameter
+degree_seq = rep(1:10)
+# iterate over sequence of exponential degrees
+errors_data = lapply(#parallel::mclapply(
+  #mc.cores = 4,
+  degree_seq,
+  function(degree) {
+
+    # more overfitting
+    nrounds = 2^degree
+    
+    task = makeRegrTask(data = boston, target = "medv")
+    learner = makeLearner("regr.xgboost", nrounds = nrounds)
+      
+    # let's assume 10 times 99,9% of the training data have almost equal train error as 100%
+    black_box = train(learner, task)
+    
+    preds = predict(black_box, task)
+
+    data.frame(
+      smoothness = degree,
+      mse = mean((preds$data$response - preds$data$truth)^2, na.rm = TRUE)
+    )
+  }
+)
+# concatenate dataframes
+errors_data = data.table::rbindlist(errors_data)
+      
+      
+      
+
+plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
   geom_line() +
+  geom_line(data = errors_data, aes(y = mse/max(mse) * 0.02, x = smoothness, color = NULL)) +
   theme_minimal() +
   theme(
     text = element_text(size = 15),
@@ -1530,13 +1916,13 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness)) +
     #axis.ticks.x = element_blank()
   ) +
   ylab("Average Standard Deviation") +
-  xlab("Model smoothness") +
+  xlab("Amount of trees") +
   scale_x_continuous(
     breaks = 1:10,
-    labels = 1:10
+    labels = 2^(1:10)
   )
 
-filename = paste0("images/sd_smoothness.png")
+filename = paste0("images/sd_overfitting.png")
 png(filename, width = 700, height = 500)
 plot
 dev.off()
@@ -1544,7 +1930,7 @@ dev.off()
 ```
 
 ```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before but with black box model smoothness/complexity iterated over. As a base model a random forest with only one tree and minimum node size of one was used and each iteration the amount of trees was increased by 10 and the minimum node size by one. This means the last tick in this graph is corresponding to a random forest with 91 trees and minimum node size of 10. It's nicely shown how important the smoothness of the model is for the weight stability. Keep in mind the model was fitted on some training data, which means if we would pick more complex data, the line may take much longer to flatten out, and vice versa for less complex data."}
-knitr::include_graphics("images/sd_smoothness.png")
+knitr::include_graphics("images/sd_overfitting.png")
 ```
 
 - big influence of the smoothness
@@ -1577,7 +1963,8 @@ bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
     sapply(vec, function(x) sum(x >= quantiles))
   }
 )
-
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
 bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
 
 plots = lapply(names(bikes[-ncol(bikes)]), function(feat) qplot(get(feat), cnt, data = bikes, ylab = "", xlab = feat, geom = "boxplot"))
@@ -1890,6 +2277,9 @@ bikes[c("temp", "atemp", "hum", "windspeed")] = as.data.frame(lapply(
   bikes[c("temp", "atemp", "hum", "windspeed")],
   function(x) x/sd(x)
 ))
+
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
 
 bikes_num = as.data.frame(bikes[c("temp", "atemp", "hum", "windspeed")])
 bikes_num$cnt = bikes$cnt
