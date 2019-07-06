@@ -180,3 +180,7 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   theme(text = element_text(size = 35)) + ylab("Coefficient")
 dev.off()
 
+saveRDS(km_1_1, file = "R-results/kernelmatrix-local_linear1_1")
+saveRDS(km_1_2, file = "R-results/kernelmatrix-local_linear1_2")
+saveRDS(km_2_1, file = "R-results/kernelmatrix-local_linear2_1")
+saveRDS(km_2_2, file = "R-results/kernelmatrix-local_linear2_2")

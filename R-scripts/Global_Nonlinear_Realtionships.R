@@ -159,3 +159,7 @@ panel2_3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
 png("04-09-13.png", width = 2800, height = 1000)
 grid.arrange(panel2_1, panel2_2, panel2_3, nrow = 1)
 dev.off()
+
+saveRDS(km_1, file = "R-results/kernelmatrix-global_linear1")
+saveRDS(km_2, file = "R-results/kernelmatrix-global_linear2")
+saveRDS(km_3, file = "R-results/kernelmatrix-global_linear3")
