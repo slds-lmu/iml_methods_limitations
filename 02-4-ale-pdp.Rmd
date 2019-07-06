@@ -2,24 +2,143 @@
 
 *Author: Jakob Bodensteiner*
 
-short intro
+This subchapter of ALE will focus on the comparison of ALE and PDP, especially on correlated data. At first the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two dimensional ALEs will be introduced and their difference to PDPs will be explained. At the end there will be a runtime comparison and a example in which a classic PDP might outperform the ALE. 
 
 ## Comparison one feature
-Here the focus will lie on a short explenation to point out the differences in interpretation. 
 
-Especially we will see, pdp is not working for correlated data.
-Here a real world problem seems to be apropriate
+So far in this book one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solutions for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP usually fails in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation. 
+Given a value for the feature of interest ...
+
+... the 1D PDP shows the mean prediction value. 
+... the 1D ALE shows the expected and centered first order effect.
+
+With this interpretations in mind the first example with artifical data will be discussed.
+
+### Example 1: Multiplicative prediction function
+
+The following Problem is constructed: There is a data set consisting of three features ($x_1$, $x_2$, $x_3$) and the target variable $y = x_1 \times x_2 \times x_3$.
+The the features of each observation are sampled from the these disrtibutions.
+<!-- TODO: correct values in dists -->
+$ X_1 \sim \mathcal{U}(a,~b) $, $ X_2 \sim \mathcal{N}(a,~b)$ and $ X_3\mid X_2 \sim \mathcal{N}(X_2,X_1)$
+So features one and two are independent from each other, while $x_3$ is strongly correlated with $x_2$ and not independent from $x_1$, although there is no influence of $x_1$ on the expected value of $x_3$. In this example the prediction function is not fitted but set as the target variable  $f(x_1, x_2, x_3) = y = x_1 \times x_2 \times x_3$.
+
+<!-- TODO: plots, guess best is with 150 examples -->
+
+Plot 1 shows the 1D PDP for each of the features. One can clearly see that the PDP detects a linear influence on the prediction for all 3 of the features.
+On the other hand the ALE attests the linear influence to the feature $x_1$ only. The two other features seem to rather have an exponential influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and features. Feature $x_3$ has (in expectation) the same value as $x_2$. So especially for a uniform distribution close to zero for feature $x_1$ the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the exponential influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 \times x_2^2$ the following PDP and ALE plots are estimated.
+
+<!-- TODO: plots with other prediction function  -->
+These plots show clearly the linear influence of $x_1$ again and this time both (ALE and PDP) attest an exponential influence to feature $x_2$ on the prediction. Since $x_3$ does not have any influence on the prediction function, it is correct, that there is no influence detected.
+The reason for this is the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features, the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.
+
+In the next example PDP and ALE will be applied to an additive prediction function. 
+
+### Example 2: Additive prediction function
+
+Again a data set consisting of three features ($x_1$, $x_2$, $x_3$) is constructed. In this case the target variable is $y = x_1 + x_2 - x_3$. Again the prediction function is exactly the same as the target variable.
+The distributions are the same as in example 1.
+<!-- TODO: correct values in dists -->
+$ X_1 \sim \mathcal{U}(a,~b) $, $ X_2 \sim \mathcal{N}(a,~b)$ and $ X_3\mid X_2 \sim \mathcal{N}(X_2,X_1)$
+
+<!-- TODO: plots -->
+
+For this example one can see that the ALE and PDP are basically the same. Ignoring the centering both attest the same linear influence for all three features. And since it is an additive model this is actually correct. But neither the ALE nor the PDP recognise the correlation between the features. The real influence of features $x_2$ and $x_3$ is in expectation zero, since it is $x_2 - x_3$ and $E[X_3] = X_2$. So $E[X_2 - X_3 \mid X_2] = 0$.
+This shows a few points one has to be aware of.
+In this example if one uses the interpretation of the PDP for feature x_2 and states 'If the value of feature $x_2$ is TODO, then I expect the prediction to be TODO' it is wrong. The problem here is the extrapolation in the estimation of the PDP. 
+Regarding the ALE the advantage is that there is just a very small chance of extrapolation in the estimation of the ALE. But this does not mean in general it would recognise any correlation between the features. And it is in general not possible to state something about the prediction with only one 1D ALE. The ALE is just showing the the expected and centered main effect of the feature. In this example an interpretation like 'If feature $x_2$ has value TODO then in expectation the prediction will be TODO higher than the average prediction' is wrong. If one needs a statement like that the other strongly correlated features have to be taken into account as well. This other 1D ALEs need to be combined. Also one has to be aware of higher order effects of the ALE.
+
+To conclude this 2D ALEs are necessary so this example will be continued to analyse later in this chapter.
+But before the the 2D ALE is introduced a real prediction prblem will be discussed.
+
+
+### Example 3: Real world data - munich rents
+
+Now a real world problem will be shown. This is an example with data for rents in munich from 2003. The target variable 'rent' is the rent per month per flat. The features deserving special attention are 'wfl' (size in square meters) and 'rooms' (number of rooms). These two variables are clearly positively correlated (see scatterplot), since there will not be an appartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated. 
+<!-- TODO: correlation plot -->
+
+To predict the rent a random forest was fitted. 
+
+<!-- TODO: interpret differences and add ice to explain them  -->
+
+So far so good, the one dimensional differences in interpretation and the advantages of the ALE over the PDP should be clear now. In cases with correlated data there usually the ALE is superior to the PDP. Other cases will be investigated later in the chapter, showing that the PDP still can be worth a look. But before that the 2D ALE will be introduced.
+
 
 ## Comparison two features
-The comparison for two features will have two parts:
+Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE will be derived. In the first place the theoretical formula will be defined. Thereafter the estimation will be explained and then the comparison to the 2D PDP will be made.
+
+### Theoretical Formula 2D ALE
+
+Similar to one variable of interest there is a theoretical formula for a 2-dimensional ALE. This ALE aims to visualize the 2nd order effect. It means one will only see the additional effect of interaction between those two features. The main effects of the features will not be shown in the 2D ALE. To explain the formula it will be assumed that $j$ and $l$ are the two features of interest and the rest of the features is represented by $c$. So in the following variable $x_c$ can be of higher dimension than 1. As for the 1D ALE there is again the theoretical derivative for the fittet function $\hat{f}$. But this time there is need for a derivative in the direction of both features of interest. So in the following this notation will hold: 
+$$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}$$
+
+The whole formula would be very long, so it is split in 3 parts:
+1. The 2nd order effect (formula xx)
+2. 2nd order effect centered for both main effects (formula xx)
+3. The 2D ALE; the centered 2D ALE centered for its mean overall effect (formula xx)
+
+$$  \widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l} E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j$$
+This is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE aims to.
+
+$$ \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) ~ -  \int_{z_{0,~j}}^{x_j}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_j}\mid X_j = z_j]~dz_j ~ - \int_{z_{0,~l}}^{x_l}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_l}\mid X_l = z_l]~dz_l$$
+
+Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are subtracted. In this way the main effects of $x_j$ and $x_l$ on the final ALE $ALE_{\hat{f},~j,~l}(x_j, x_l)$ are both zero (apley). But be carefull, this is not centering by a constant as in the one dimensional ALE. This is a correction for the also accumulated main effects which of course varies in the directions of the features.
+
+$$ ALE_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) ~ -  E[\widetilde{ALE}_{\hat{f},~j,~l}(X_j, X_l)]$$
+
+This shows the final (centered) 2D ALE. The subtraction in the formula is now the real centering to shift the 2nd order effect (corrected for the main effects) to zero with respect to the marginal distribution of $(X_j, ~ X_l)$.
+<!-- TODO: for the appindex calculate that for a simple example x1*x2*x3 -->
 
 ### Estimation 2D ALE
-First the estimation function will be derived (maybe the theoretical function is shown, but main part is on the estimation)
+Analogously to the 1D ALE in most cases it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be a explenation with a visualization as well to clarify the estimation method.
+
+<!-- TODO: first make nice definition of variables and stuff apley seite 12 -->
+$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}), $$
+The $\Delta$ function is:
+$$ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = [\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]~ - [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] $$ 
+
+Now the correction for the main effects is estimated:
+$$ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l)  $$
+
+$$-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]$$
+$$ - \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})] $$
+This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of substracting a constant value. Now it will be centered for its estimation $ E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)] $ and this is a constant, so there will be no effect on the shpe. Again this expected value has to be estimated, to complete the 2D ALE. 
+$$ \widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = 
+\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
+\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) $$
+
+In difference to the ALE for one feature of interest, the 2D ALE is a two dimensional stepfunction, so there is no smoothing or something similar to make it a continuous function. 
+
+This formulas are pretty long and a bit confusing, so to get an intuition of the estimation plot TODO will be helpfull.
+
+<!-- TODO plot with estimation -->
+vgl apley
+To calculate the delta (gleichung x) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in, in this case a,b,c,d. The delta for point x in this example would be calculated like this:
+$$ \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})]~ - [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})]$$
+The same would be done for point y and then the deltas would be averaged to get the mean delte for cell $N_{\{j,~l\}}(4,3)$. This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in $N_{\{j,~l\}}(4,3)$. 
+
+The correction for the main effects extracts the effect of the single features on the ALE so far and substracts it from the raw formula. To stick with this example the correction for the main effect of feature $x_j$ for values in $N_j(4)$ takes into account all cells in the first 4 columns and aggregates the first order effect. In cell $N_{\{j,~l\}}(4,3)$ this would look like this
+$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(a)$$
+Correction for $x_l$ would look pretty much the same just from the other direction and it would take into account the first 3 rows. So in cell $N_{\{j,~l\}}(4,3)$ the first order effect would be
+$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(d) $$
+
+Thereafter the corrected ALE is centered for its mean, pretty much the same as in one dimension just aggregating over grid instead of a line.
+
+If there are cells without data points the can either be greyed out or they recieve the same value as their nearest cell with datapoints. In the iml package I actually don't know what happens, for sure none of these two options.
+<!-- TODO: was passiert mit leeren zellen im iml? -->
+To see how these plots look like, the next paragraph will compare 2D ALEs with 2D PDPs.
+
+
 
 ### 2D ALE vs 2D PDP
-Here the difference in interpretation will be explained. The point here is, that ALE only shows 'joint' effects of the two features without the maineffects. So just the additional effect for the different combinations of the two features is visualized. Whereas for the PDP it is again the 'average prediction' for the different combinations.
 
-Here it will be interesting to see the different effects for correlated features especially for the PDP. 
+First theoretical 123
+
+plus minus to show no 2D ALE and then add 1Ds to compare with PDP again and then also add data points
+
+
+
+
+
 
 ## Runtime comparison 
 Here it is the plan to compare the runtime of the two algos with the package micro benchmark. All comparisons one small data set (100 points), one bigger (around 1000) and one 'huge' (10000 points) will be used.
