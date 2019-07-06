@@ -72,4 +72,5 @@ png("04-09-14.png", width = 1500, height = 1500)
 grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], nrow = 2)
 dev.off()
 
-saveRDS(km_real, file = "R-results/kernelmatrix-bike-randomforest")
+saveRDS(km_real, file = "R-results/kernelmatrix-bike-randomforest.RDS")
+saveRDS(kernel_widths, file = "R-results/kw_real.RDS")

@@ -34,10 +34,11 @@ dev.off()
 ### This creates plot # 2: The predictions are displayed together with the 
 ### true marginal predictive surface.
 Fun <- function(x) 4 * (sin(0.06 * x^2) + 0.1 * x)
-png("04-09-03.png", width = 1000, height = 848)
-ggplot(pred_frame, aes(x = x1, y = y_hat)) +
+p <- ggplot(pred_frame, aes(x = x1, y = y_hat)) +
   geom_point(size = 5) + stat_function(fun = Fun, size = 2) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
+png("04-09-03.png", width = 1000, height = 848)
+p
 dev.off()
 
 # This creates plot # 3: A linear approximation of plot #2.
@@ -63,7 +64,7 @@ dev.off()
 ### test_obs is the true observation, test is only necessary for plotting
 test_obs <- data.frame(y = 4, x1 = 12.75, x2 = 4)
 test_pred <- predict(black_box, newdata = test_obs)
-test <- data.frame(y_hat = test_pred$data$response, x1 = test_obs$x1)
+test_1 <- data.frame(y_hat = test_pred$data$response, x1 = test_obs$x1)
 
 ### We now Set up LIME a explainer for the black box.
 ### We use do not bin cont. features.
@@ -76,11 +77,13 @@ explainer <- lime(data_set$train[ , 2:3], black_box,
 ### We found the kernel size of 0.08 to be reasonable by grid search.
 set.seed(1)
 local_model1 <- extract_average_local_model(test_obs[ , 2:3], explainer,
-                                           n_features = 1, 
-                                           n_permutations = 5000, 
-                                           kernel_width = 0.08, 
-                                           dist_fun = "euclidean")
-
+                                            n_features = 1, 
+                                            n_permutations = 5000, 
+                                            kernel_width = 0.08, 
+                                            dist_fun = "euclidean",
+                                            seed = 1,
+                                            feature_select = "auto")
+local_model1 <- local_model1[[1]][1:2]
 ### This creates plot #5: The local model found by LIME for the kernel size
 ### 0.08 and (randomly chosen) 2 in order to contrast the results.
 Fun <- function(x, local_model) {
@@ -91,17 +94,20 @@ local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             n_features = 1, 
                                             n_permutations = 5000, 
                                             kernel_width = 2, 
-                                            dist_fun = "euclidean")
-
+                                            dist_fun = "euclidean", 
+                                            seed = 1, 
+                                            feature_select = "auto")
+local_model2 <- local_model2[[1]][1:2]
 kernel_widths <- c(0.08, 2)
 png("04-09-05.png", width = 1000, height = 848)
-p4 + stat_function(fun = Fun, size = 2, 
+p + stat_function(fun = Fun, size = 2, 
                    args = list(local_model = local_model1),
                    aes(colour = as.character(kernel_widths[1])))  +
   stat_function(fun = Fun, size = 2, 
                 args = list(local_model = local_model2),
                 aes(colour = as.character(kernel_widths[2]))) +
-  coord_cartesian(ylim = c(-1, 9))  +
+  coord_cartesian(ylim = c(-1, 9)) +
+  geom_point(data = test_1, colour = "green", size = 8) +
   scale_colour_manual("Kernel Width", 
                       values = c("red", "yellow")) + ylab("Predicted Value")
 dev.off()
@@ -111,22 +117,20 @@ dev.off()
 ### width on two observations at very different points in space.
 kernel_widths <- seq(0, 2, 0.05)
 kernel_widths[1] <- 0.01
-kernel_widths <- c(0.005, kernel_widths)
-set.seed(2)
+kernel_widths <- c(0.01, kernel_widths)
 result_1 <- analyse_univariate_kernel_width(kernel_widths,
                                             test_obs[, 2:3],
                                             explainer,
                                             n_features = 1, 
                                             n_permutations = 3000,
                                             dist_fun = "euclidean", 
-                                            iterations = 100)
+                                            iterations = 100,
+                                            seed = 2)
 
 ### This creates the first panel of plot 6: Different kernel widths for an
 ### observation where negative slope is appropriate.
 p1 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
   geom_point(size = 5) +
-  stat_function(fun = function(x) result_1[1, 1] + result_1[1, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[1]))) +
   stat_function(fun = function(x) result_1[3, 1] + result_1[3, 2] * x, 
                 size = 3, aes(colour = as.character(kernel_widths[3]))) + 
   stat_function(fun = function(x) result_1[4, 1] + result_1[4, 2] * x, 
@@ -144,7 +148,7 @@ p1 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
 p1 <- p1 + scale_colour_manual("Kernel Width", 
                                values = c("red", "orange", "yellow", 
                                           "darkgreen", "lightblue", "blue", 
-                                          "purple", "grey")) +
+                                          "purple")) +
   geom_point(data = test_1, colour = "green", size = 8) +
   theme(text = element_text(size = 35)) +
   ylim(-1, 9) + labs(title = "True slope is negative.") + 
@@ -155,19 +159,17 @@ p1 <- p1 + scale_colour_manual("Kernel Width",
 test_obs_2 <- data.frame(y = 5, x1 = 10.2, x2 = 4)
 test_pred_2 <- predict(black_box, newdata = test_obs_2)
 test_2 <- data.frame(y_hat = test_pred_2$data$response, x1 = test_obs_2$x1)
-set.seed(2)
 result_2 <- analyse_univariate_kernel_width(kernel_widths,
                                             test_obs_2[, 2:3],
                                             explainer,
                                             n_features = 1, 
                                             n_permutations = 3000,
                                             dist_fun = "euclidean", 
-                                            iterations = 100)
+                                            iterations = 100,
+                                            seed = 2)
 
 p2 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
   geom_point(size = 5) +
-  stat_function(fun = function(x) result_2[1, 1] + result_2[1, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[1]))) +
   stat_function(fun = function(x) result_2[3, 1] + result_2[3, 2] * x, 
                 size = 3, aes(colour = as.character(kernel_widths[3]))) + 
   stat_function(fun = function(x) result_2[4, 1] + result_2[4, 2] * x, 
@@ -185,12 +187,24 @@ p2 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
 p2 <- p2 + scale_colour_manual("Kernel Width", 
                                values = c("red", "orange", "yellow",
                                           "darkgreen", "lightblue", 
-                                          "blue", "purple", "grey")) +
+                                          "blue", "purple")) +
   geom_point(data = test_2, colour = "green", size = 8) +
   theme(text = element_text(size = 35)) +
   ylim(-1, 9) + labs(title = "True slope is positive.") + 
   theme(plot.title = element_text(hjust = 0.5)) + ylab("Predicted Value")
 
+png("04-09-06a.png", width = 1000, height = 848)
+p1
+dev.off()
+
+png("04-09-06b.png", width = 1000, height = 848)
+p2
+dev.off()
+
 png("04-09-06.png", width = 1000, height = 1760)
 grid.arrange(p1, p2, nrow = 2)
 dev.off()
+
+saveRDS(result_1, file = "R-results/univariate_1.RDS")
+saveRDS(result_2, file = "R-results/univariate_2.RDS")
+saveRDS(kernel_widths, file = "R-results/kw_univariate.RDS")
