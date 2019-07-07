@@ -32,7 +32,7 @@ calculate_PFI <- function(data, features, target, mod, mid, local = TRUE, replac
   
   
   pfi <- lapply(features, function(feat){
-    imp <- featureImportance(mod, data = data, features = list(feat), target = target, mid = "mse", local = TRUE, replace.ids = obs.id)
+    imp <- featureImportance(mod, data = data, features = list(feat), target = target, mid = mid, local = TRUE, replace.ids = obs.id)
     summary(imp)
     imp$importance
   })

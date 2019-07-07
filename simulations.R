@@ -48,7 +48,7 @@ Z_4 <- rnorm(n = n_sim1_1, mean = 0, sd = 1)
 eps_sim1_1 <- rnorm(n_sim1_1, sd = 0.5)
 
 X_sim1_1 <- as.data.frame(cbind(Z_1, Z_2, Z_3, Z_4))
-X_sim1_1$y_sim1_1 <- Z_1 + Z_2 + Z_3 + Z_4 + ifelse(Z_3 == 0, 10*Z_2, 0) + Z_2*Z_4 + eps_sim1_1
+X_sim1_1$y_sim1_1 <- Z_1 + Z_2 + Z_3 + Z_4 + ifelse(Z_3 == 0, 10*Z_2, 10*Z_1) + eps_sim1_1
 
 
 
@@ -69,6 +69,9 @@ ici.curves_sim1_1 <- plotImportance(pfi_sim1_1, feat ="Z_2", mid = "mse", indivi
 grid.arrange(pi.curve_sim1_1, ici.curves_sim1_1, nrow = 1)
 
 ## Plot dICI curves
+
+dICI_sim1_1_dev2 <- dICI_2(data = pfi_sim1_1, feature = "Z_2", measure = "mse")
+dICI_sim1_1_dev2_plot <- dICI_plot(dICI_sim1_1_dev2, feature = "Z_2")
 
 
 ## Explain Interaction Effects
@@ -195,10 +198,10 @@ ici_sim1[["factorC"]] <- as.factor(as.numeric(ici_sim1$factorC) - 1)
 ## factor 2: X_2 <= 2 & X_3 = 0
 ## factor 3: X_2 
 
-pi_X_2_0_0 <- subset(ici_sim1, row.id %in% use0_sim1 & replace.id %in% use0_sim1 & replace.id %in% use00_sim1)
-pi_X_2_0_1 <- subset(ici_sim1, row.id %in% use0_sim1 & replace.id %in% use0_sim1 & replace.id %in% use01_sim1)
-pi_X_2_1_0 <- subset(ici_sim1, row.id %in% use1_sim1 & replace.id %in% use1_sim1 & replace.id %in% use00_sim1)
-pi_X_2_1_1 <- subset(ici_sim1, row.id %in% use1_sim1 & replace.id %in% use1_sim1 & replace.id %in% use01_sim1)
+pi_X_2_0_0 <- subset(ici_sim1, row.id %in% use0_sim1 & replace.id %in% use0_sim1 & row.id %in% use00_sim1)
+pi_X_2_0_1 <- subset(ici_sim1, row.id %in% use0_sim1 & replace.id %in% use0_sim1 & row.id %in% use01_sim1)
+pi_X_2_1_0 <- subset(ici_sim1, row.id %in% use1_sim1 & replace.id %in% use1_sim1 & row.id %in% use00_sim1)
+pi_X_2_1_1 <- subset(ici_sim1, row.id %in% use1_sim1 & replace.id %in% use1_sim1 & row.id %in% use01_sim1)
 
 
 by <- c("replace.id", "features", "feature.value", "factorC")
@@ -408,11 +411,23 @@ ici.curves_sim6 <- plotImportance(pfi_sim6, feat ="T_2", mid = "mse", individual
 grid.arrange(pi.curve_sim6, ici.curves_sim6, nrow = 1)
 
 
+sin_test_list <- c(seq(-12, 12, 0.5))
+
+sin_test_values <- unlist(lapply(sin_test_list, function(x) sin(x)))
 
 
+sin_plot_data <- cbind(sin_test_list, sin_test_values)
+sin_plot_data <- as.data.frame(sin_plot_data)
 
+ggplot(sin_plot_data, aes(x = sin_test_list, y = sin_test_values)) +
+  geom_point() + 
+  geom_point(data = sin_plot_data, aes(sin_test_list = 5.0), color = "blue") +
+  geom_line() + 
+  geom_vline(xintercept = 5, linetype = "dotted", color = "blue") + 
+  geom_vline(xintercept = 11.02, linetype = "dotted", color = "red")
+ 
 
-########## Simulation 7 with non-linear relationship (example 2) and interaction effect
+ ########## Simulation 7 with non-linear relationship (example 2) and interaction effect
 
 
 n_sim7 <- 1000
