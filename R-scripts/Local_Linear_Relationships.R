@@ -117,6 +117,22 @@ png("04-09-10.png", width = 2000, height = 1700)
 grid.arrange(panel1, panel2, panel3, panel4, nrow = 2)
 dev.off()
 
+png("04-09-10a.png", width = 1000, height = 848)
+panel1
+dev.off()
+
+png("04-09-10b.png", width = 1000, height = 848)
+panel2
+dev.off()
+
+png("04-09-10c.png", width = 1000, height = 848)
+panel3
+dev.off()
+
+png("04-09-10d.png", width = 1000, height = 848)
+panel4
+dev.off()
+
 x1_frame <- as.data.frame(cbind(kernel_widths,
                                 km_2_1[[1]][[2]], 
                                 km_2_1[[2]][[2]], 
@@ -146,8 +162,8 @@ ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
     geom_ribbon(data = x1_plot, aes(ymin = lower, ymax = upper), 
                 alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                          fun = function(x) 0) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient")
-  
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width")
 dev.off()
   
 x2_plot <- x2_frame
@@ -160,7 +176,8 @@ ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
   geom_ribbon(data = x2_plot, aes(ymin = lower, ymax = upper), 
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) -4) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient") 
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width")
 dev.off()
 
 x3_plot <- x3_frame
@@ -173,7 +190,28 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   geom_ribbon(data = x3_plot, aes(ymin = lower, ymax = upper), 
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) 3) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient")
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width")
+dev.off()
+
+true_data <- simulate_data(2500, 
+                           3,
+                           piece_wise_intervals = list(
+                             list(lower = -10, upper = 5), NULL,
+                             NULL), 
+                           seed = 1, 
+                           mu = c(5, 5, 5), 
+                           Sigma = matrix(
+                             c(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6),
+                             ncol = 3, nrow = 3, byrow = TRUE), 
+                           true_coefficients = c(5, 0, 0), 
+                           intercept = 2.5,
+                           shock = 0)
+
+png("04-09-10-comp.png", width = 1000, height = 848)
+ggplot(true_data, aes(y = y, x = x1)) +
+  geom_line(size = 2.5) +
+  theme(text = element_text(size = 35)) + xlab("x1") + ylab("y")
 dev.off()
 
 saveRDS(km_1_1, file = "R-results/kernelmatrix-local_linear1_1.RDS")

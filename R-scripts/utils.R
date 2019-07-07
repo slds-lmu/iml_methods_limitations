@@ -2,7 +2,8 @@ library(MASS)
 library(foreach)
 library(doRNG)
 library(doParallel)
-make_split <- function(data, share) {
+make_split <- function(data, share, seed = 100) {
+  set.seed(seed)
   split <- sample(1:nrow(data), floor(share * nrow(data)))
   return(list(train = data[split, ], test = data[-split, ]))
 }

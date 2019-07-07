@@ -100,6 +100,19 @@ png("04-09-12.png", width = 2800, height = 1000)
 grid.arrange(panel1, panel2, panel3, nrow = 1)
 dev.off()
 
+png("04-09-12a.png", width = 1000, height = 848)
+panel1
+dev.off()
+
+png("04-09-12b.png", width = 1000, height = 848)
+panel2
+dev.off()
+
+png("04-09-12c.png", width = 1000, height = 848)
+panel3
+dev.off()
+
+
 frame1 <- as.data.frame(cbind(kernel_widths,
                               km_1[[1]][[3]], 
                               km_1[[2]][[3]], 
@@ -130,6 +143,7 @@ panel2_1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) -4) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width") +
   labs(title = "True local coefficient for x2 is -4.")
 
 plotframe2 <- frame2
@@ -142,6 +156,7 @@ panel2_2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) 6) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width") +
   labs(title = "True local coefficient for x2 is 6.")
 
 plotframe3 <- frame3
@@ -153,11 +168,41 @@ panel2_3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
   geom_ribbon(data = plotframe3, aes(ymin = lower, ymax = upper), 
               alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
                                        fun = function(x) -3) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width") +
   labs(title = "True local coefficient for x2 is -3.")
 
 png("04-09-13.png", width = 2800, height = 1000)
 grid.arrange(panel2_1, panel2_2, panel2_3, nrow = 1)
+dev.off()
+
+png("04-09-13a.png", width = 1000, height = 848)
+panel2_1
+dev.off()
+
+png("04-09-13b.png", width = 1000, height = 848)
+panel2_2
+dev.off()
+
+png("04-09-13c.png", width = 1000, height = 848)
+panel2_3
+dev.off()
+
+true_data <- simulate_data(3000, 
+                           3,
+                           nonlinear_intervals = nonlinear_intervals, 
+                           seed = 2, 
+                           mu = c(5, 5, 5), 
+                           Sigma = matrix(
+                             c(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6),
+                             ncol = 3, nrow = 3, byrow = TRUE), 
+                           true_coefficients = c(0, NA, 0), 
+                           intercept = 2.5, shock = 0)
+
+png("04-09-12-comp.png", width = 1000, height = 848)
+ggplot(true_data, aes(y = y, x = x2)) +
+  geom_line(size = 2.5) +
+  theme(text = element_text(size = 35)) + xlab("x2") + ylab("y")
 dev.off()
 
 saveRDS(km_1, file = "R-results/kernelmatrix-global_nonlinear1.RDS")
