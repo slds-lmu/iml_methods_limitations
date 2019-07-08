@@ -147,7 +147,7 @@ $$ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = \widehat{\widetilde{\w
 
 $$-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]$$
 $$ - \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})] $$
-This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of substracting a constant value. Now it will be centered for its estimation $ E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)] $ and this is a constant, so there will be no effect on the shpe. Again this expected value has to be estimated, to complete the 2D ALE. 
+This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of substracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the shpe. Again this expected value has to be estimated, to complete the 2D ALE. 
 
 $$ \widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = 
 \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
@@ -318,7 +318,7 @@ If one samples enough points for x1 then the ALE looks basically the same as the
 
 Features $x_1$, $x_2$, $x_3$ and the prediction function $\hat{f}(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$ are given.
 The features are sampled from the these disrtibutions:
-$X_1 \sim \mathcal{U}(a,~b)$, $ X_2 \sim \mathcal{N}(\mu,~\sigma)$ and $X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)$
+$X_1 \sim \mathcal{U}(a,~b)$, $X_2 \sim \mathcal{N}(\mu,~\sigma)$ and $X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)$
 The theoretical 2D ALE for features $x_1$ and $x_2$ will be calculated.
 
 1. Calculation of uncorrected and uncentered 2nd order effect:
