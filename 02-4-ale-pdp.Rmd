@@ -159,7 +159,7 @@ This formulas are pretty long and a bit confusing, so to get an intuition of the
 
 ```{r ale2DEstimation, fig.cap='(ref:ale2DEstimationCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_ALE_2D_estimation.png")
+knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 ```
 (ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect TODO vgl apley.
 
