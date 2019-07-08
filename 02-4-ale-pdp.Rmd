@@ -77,32 +77,6 @@ In this example if one uses the interpretation of the PDP for feature x_2 and st
 Regarding the ALE the advantage is that there is just a very small chance of extrapolation in the estimation of the ALE. But this does not mean in general it would recognise any correlation between the features. And it is in general not possible to state something about the prediction with only one 1D ALE. The ALE is just showing the the expected and centered main effect of the feature. In this example an interpretation like 'If feature $x_2$ has value 2.5 then in expectation the prediction will be 0.5 higher than the average prediction' is wrong. If one needs a statement like that the other strongly correlated features have to be taken into account as well. One has to be aware of higher order effects of the ALE, too.
 To conclude the analysis of this example 2D ALEs are necessary so it will be continued to analyse later in this chapter.
 
-But before the the 2D ALE is introduced a real world prediction prblem will be discussed.
-
-
-### Example 3: Real world data - Munich rents
-
-Now a real world problem will be shown. This is an example with data for rents in Munich from 2003. The target variable 'nm' is the rent per month per flat. To predict the rent a random forest was fitted. The features deserving special attention are 'wfl' (size in square meters) and 'rooms' (number of rooms). These two variables are clearly positively correlated, since there will not be an appartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \@ref(fig:correlationMatrixRents):
-
-```{r correlationMatrixRents, fig.cap='(ref:correlationMatrixRentsCap)', echo=FALSE}
-
-knitr::include_graphics("images/ale_1_correlation_munich_rents.png")
-```
-(ref:correlationMatrixRentsCap) Correlatin matrix for rents in Munich.
-
-<!-- TODO: add ice to to maybe explain difference in area with many squaremeters  -->
-
-```{r pdpaleRents, fig.cap='(ref:pdpaleRentsCap)', echo=FALSE}
-
-knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl.png")
-```
-(ref:pdpaleRentsCap) PDP and ALE plots for influence of space on rents in Munich.
-
-Figure \@ref(fig:pdpaleRents) shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100 the PDP looks more straight then the ALE which is again a bit shaky. In the area with not that much observations it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Maybe the ICE curve could be helpfull to see why there is such a significant drop in the PDP. So here it seems like the ALE outperforms the PDP. 
-
-So far so good, the one dimensional differences in interpretation and the advantages of the ALE over the PDP should be clear now. In cases with correlated data there usually the ALE is superior to the PDP because it does hardly extrapolate in the estimation. Other cases will be investigated later in the chapter, showing that the PDP still can be worth a look. But before that the 2D ALE will be introduced.
-
-
 ## Comparison two features
 Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE will be derived. In the first place the theoretical formula will be defined. Thereafter the estimation will be explained and then the comparison to the 2D PDP will be made.
 
@@ -135,7 +109,9 @@ In the appindex (ref TODO) one can find the calculation of the theoretical ALE f
 #### Estimation 2D ALE
 Analogously to the 1D ALE in most cases it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be a explenation with a visualization as well to clarify the estimation method.
 
-<!-- TODO: first make nice definition of variables and stuff apley seite 12 -->
+First all variables will be defined. The two features of interest are $x_j$ and $x_l$. The prediction function is $\hat{f}(x_j, x_l, x_{\setminus\{j,~l\}})$, while $x_{\setminus\{j,~l\}}$ represents all the rest of the features, so it can be of higher dimension than 1. 
+The areas including data for feature $x_j$ and $x_l$ are divided into the same number of intervals, namely K. The intervals intervals in $x_j$ direction are separated by $z_{k,j}$ for $k \in \{0,...,K\}$. $k_j(x_j)$ returns the intervalnumber in which $x_j$ lies. This holds for $z_{m,l}$ and $k_l(x_l)$ respectively in direction of $x_l$. $N_{\{j,~l\}}(k,m)}$ is the crossproduct of the k-th and m-th interval (in $x_j$ and $x_l$ direction), so it is defined as $(z_{k-1,j}, z_{k,j}] \times z_{m-1,j}, z_{m,j}]$. $n_{\{j,~l\}}(k,m)$ is the number of those observations lying in this $N_{\{j,~l\}}(k,m)}$ cell. The parameter i represents the i-th observation. With this definitions in mind, the definition of the 2D ALE estimation can begin.
+
 $$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}), $$
 The $\Delta$ function is:
 
@@ -174,8 +150,7 @@ $$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetild
 
 Thereafter the corrected ALE is centered for its mean, pretty much the same as in one dimension just aggregating over grid instead of a line.
 
-If there are cells without data points the can either be greyed out or they recieve the same value as their nearest cell with datapoints. In the iml package I actually don't know what happens, for sure none of these two options.
-<!-- TODO: was passiert mit leeren zellen im iml? -->
+There are a few questions that might arise. First, how is the grid for the estimation defined? In the iml package the cells are the crossproducts of the intervals used for the 1D estimation. It would be very hard to make rectangles where each of it includes roughly the same amount of data points. The second question would be, what in the calculation with empty cells including no datapoints? There are two options, they can either be ignored and greyed out or they recieve the value of their nearest neighbor rectangle, which is determined by the center of the cells. The last method is implemented in iml. This happens right after averaging over the $\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}})$s before the correction for the 1st order effects is done.
 
 
 #### Example 1 continued - Theoretical and estimated 2D ALE
@@ -201,7 +176,7 @@ Figure \@ref(fig:theo2Dale) shows the theoretical ALE compared to the estimated 
 ### 2D ALE vs 2D PDP
 In this Chapter mainly 2D plots for examples will be analysed. To show statement, that there are no main effects in the 2D ALE example 1 will be discussed again.
  
-#### Example 2 continued
+#### Example 2 - 2D comparison
 
 Just a short reminder of example 2: the prediction function here is $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$ and $x_2$ and $x_3$ are strongly poitive correlated.
 
@@ -225,7 +200,7 @@ This plot \@ref(fig:ale2DaddedUp) shows the ALE added up with the corresponding 
 
 With this is mind, example 1 deserves another look regarding the 2nd order effect in comparison to the PDP.
 
-#### Example 1 comparison 2D ALE and PDP
+#### Example 1 - 2D comparison
 
 To ba able to compare the 2D ALE from the last chapter for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$ with the 2D PDP one also should add up the 1st order effects. 
 
@@ -238,83 +213,136 @@ knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_x1x2x3_150_0_0p5_
 
 This plot \@ref(fig:ale2DaddedUpx1x2x3) shows exactly what happens in this case, when the 1st order effects of the ALE are added up to the 2nd order effects. One can see that although the connection between $x_2$ and $x_3$ has been detected by the 1st order ALEs (figure \@ref(fig:alesx1x2x3)) and has not been by the 1D PDPs (figure \@ref(fig:pdpsx1x2x3)), the comparable 2D plots look pretty much the same.
 
-<!-- TODO: I don't know if I can find an example where 2D ALE outperforms 2D PDP  -->
+In this two examples it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values exposes the sensitivite of the PDP for extrapolation.
 
-In this two examples it seems like the 2D ALE is not that much better than the ALE, but for sure there are examples where the 2D ALE outperforms the 2D PDP. One big advantages of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at seperated 1st and 2nd order effects, which can be very helpful, especially for real blackbox models. Furthermore in the next chapter the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
+#### Example 1 modified - 2D comparison
+
+The setting of the problem stays the same basically the same. Just a small - actually irrelavant - change is made for the prediction function. It is not anymore $f(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$ but
+$$
+f(x_1, x_2, x_3) =  
+     \begin{cases}
+       x_3^3, \quad\quad\quad\quad\quad~~\text{if}~x_3\ge6 ~~ \text{&} ~~x_2\le4\\
+       x_1 \times x_2 \times x_3, \quad\text{else}\\
+     \end{cases}
+$$
+This seem a bit unrealistic but especially tree based predictors tend to do 'strange' things in areas without data. The result of the 2D PDP compared to the ALE (figure \@ref(fig:pdp2Ddamaged)) shows the problem. In the are where $x_2 < 4$ the values of the PDP are huge, since the big values for $x_3^3$ if $x_3 > 6$ increase the average drastically. These values are very unlikely for the underlying distribution but the PDP pretends them to be possible. This is the problem of the extrapolation in the PDP estimation. This is not a problem for the ALE, here one can not recognise any difference to figure \@ref(fig:ale2DaddedUpx1x2x3), where the prediction function is just $f(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$.
+
+```{r pdp2Ddamaged, fig.cap='(ref:pdp2DdamagedCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_and_smaller3_bigger6_x1x2x3_150_0_0p5_5_1.png")
+```
+(ref:pdp2DdamagedCap) 2D PDP vs 2D ALE with added up 1st order effects of features $x_1$ and $x_2$ for stepwise prediction function.
+
+
+One big advantages of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at seperated 1st and 2nd order effects, which can be very helpful, especially for real blackbox models with complicated links. Furthermore in the next chapter the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
 
 ## Runtime comparison 
-Here it is the plan to compare the runtime of the two algos with the package microbenchmark. For comparison one small data set (100 points), one bigger (around 1000) and one 'huge' (10000 points) will be used.
-The plots to be compared will be PDP vs ALE for:
+In this chapter the runtime of ALE and PDP will be compared. Therefor three general sizes of data sets hav been sampled. One small with 100, a bigger one with 1,000 and the biggest with 10,000 observations. The number of features vary between 5 and 40, while there are always 2 categorial features and the others are numeric, as is the target variable. The predictor applied to these datasets is a regular SVM. It is way faster than the random forest, where the PDP estimation can easily take half a minute for just 1000 observations.
+To compare the runtime, the package 'microbenchmark' has been used. So the discussed results will all have the same structure, which will be explained with the first example.
+The comparison will cover the runtime for...
 
-1. one numerical feature of interest
-2. two numerical features of interest
-3. one categorical feature of interest
+1. ...one numerical feature of interest
+2. ...two numerical features of interest
+3. ...one categorial feature of interest.
 
-The outcomes will be analysed. It is expected that The ALE is faster.
-<!-- TODO: At the moment it seems with my laptop, PDP for 10000 points is just not possible :-( -->
+Each of these three will be compared for the different numbers of observations of course but also for different grid sizes (number of intervals the ALE and PDP are estimated) and varying feature numbers. 
 
-## Weakness of ALE
+### One numerical feature of interest
 
-Compared to PDP ALE is almost always the better choice, at least for one feature of interest. It is faster and unbiased also for correlated features. But in some special cases PDP can be superior to ALE.
+```{r runtime1DnumColAndSize, fig.cap='(ref:runtime1DnumericColAndSizeCap)', echo=FALSE}
 
-
-``` {r eval=FALSE}
-library(crs)
-library(iml)
-
-# create data frame with target variable y = sinus(x1)
-# x1 uniformely between min_int and max_int 
-# x2 has no influence on the target variable
-# nor is it correlated with x1
-get_sin_df <- function(n, min_int, max_int) {
-  x1 <- runif(n, min_int, max_int)
-  sinus <- sin(x1)
-  x2 <- numeric(n)
-  return(as.data.frame(cbind(x1, x2, sinus)))
-}
-
-# create example df
-sin_df <- get_sin_df(15, -4, 4)
-
-# fit splines on df
-spl <- crs(sinus ~ x1, data = sin_df)
-
-# generate predictor set
-X = sin_df[which(names(sin_df) != 'sinus')]
-predictor = Predictor$new(spl, data = X, y = sin_df$sinus)
-
-# plot ale
-ale = FeatureEffect$new(predictor, feature = 'x1')
-plot(ale)
-
-# plot pdp on same situation
-pdp = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
-pdp$plot()
+knitr::include_graphics("images/ale_1_one_numeric_cols_and_gridsize.png")
 ```
+(ref:runtime1DnumColAndSizeCap) Runtime comparison ALE vs. PDP for one numeric feature. Differences for number of features and grid size.
 
-```{r aleSinusSpline, fig.cap='(ref:aleSinusSplineCap)', echo=FALSE}
+Figure \@ref(fig:runtime1DnumColAndSize) shows the runtimes for different configurations in milliseconds. The microbenchmark output shows the compared expressions (here the calculation of ALE and PDP) in the first collumn. The other columns are the measured runtime for 10 different runs. From left to right it is the minimum runtime, the lower quantile of the runtimes, the mean, the median, the upper quantile and the maximal runtime. The main attention usually lies on the mean except there is a way too high maximal runtime compared to the median. In the expression there are also configurations for the sampled dataset integrated. For example 'ale_one_numeric(svm.regr_100_5, grid.size = 20)' means that an ALE for one numeric feature of interest has been estimated. The prediction funciton was a SVM fitted and evaluated on a sample of 100 observations with 5 features. The grid size in this case was 20, so evaluated on 20 intervals.
+So this plot \@ref(fig:runtime1DnumColAndSize) shows the comparison for a change in grid size an number of features for one numeric feature of interest. It seems like the number of features does barely have an influence on the runtime. Additionally for the ALE the grid size is not signifcantly changing the runtime. That is comletely different for the PDP, here a factor 5 for number of intervals increases the runtime by the same factor. This can be derived from the estimation. The ALE does the same number of predictions for any number of intervals, namely #observaions $\times$ 2, it just averages more often for mor intervals. But that happens without the prediction function and is just a simple calculation, so it barely needs time. The PDP on the other estimates the mean prediction for each interval border. So here (#intervals + 1) $\times$ #observations predictions have to be calculated. So the runtime grows linearly with the grid size and factor #observations. This is also the explanation for the next comparison (figure \@ref(fig:runtime1DnumNrow)). Here again one can see a way faster increas of runtime for PDPs than for ALEs when increasing the number of observations
 
-knitr::include_graphics("images/ale_1_sinus_splines_15_points_ale.png")
+```{r runtime1DnumNrow, fig.cap='(ref:runtime1DnumNrowCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_one_numeric_nrows.png")
 ```
-(ref:aleSinusSplineCap) ALE estimated on a sinus function fitted with splines. Feature x1 is independent of x2.
+(ref:runtime1DnumNrowCap) Runtime comparison ALE vs. PDP for one numeric feature. Differences for number of observations.
 
-```{r pdpSinusSpline, fig.cap='(ref:pdpSinusSplineCap)', echo=FALSE}
+### Two numerical features of interest
 
-knitr::include_graphics("images/ale_1_sinus_splines_15_points_pdp.png")
+```{r runtime2DnumColAndSize, fig.cap='(ref:runtime2DnumericColAndSizeCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_two_numeric_cols_and_gridsize.png")
 ```
-(ref:pdpSinusSplineCap) PDP calculated on the same setting like the ALE above in figure \@ref(fig:aleSinusSpline).
+(ref:runtime2DnumColAndSizeCap) Runtime comparison ALE vs. PDP for two numeric features. Differences for number of features and grid size.
 
-Figure \@ref(fig:pdpSinusSpline) shows a PDP calculated on the data set from the r code above. For the target variable y it holds that y = sinus(x1). Feature x1 is uniformely sidtributed between -4 and 4. Feature x2 has no influence on the target variable nor is it correlated with x1.
-Since there is absolutely no connection between x2 and x1 or y, the PDP shows simply the prediction of the fitted spline function. So obviously the spline fits the real sinus pretty well. 
-In contrast to that we see that the ALE (\@ref(fig:aleSinusSpline)) struggles to interpret the the fitted spline function. The obvious main problems are:
-A: It can be seen that it does not cover the full range of the sinus function (between -1 and 1). 
-B: It does not show a smooth curve. One could guess a sinus function but it is absolutely not obvious.
-First of all, the most important reason for both problems is the poor data situation in this example. The sample includes just 15 data points.
-The point here for problem A is, that in the peek of the sinus function no point was sampled. There was also no point sampled in the lowest region of the sinus function. But just looking at the range of this ALE it is between -1 and about 0.75. So one could conclude that just the upper range was not evaluated well. This would not be correct. For the ALE one always has to be aware of the centering. Since in the example here more points in feature x1 were sampled with low sinus values the centering of the ALE shifts the uncentered ALE downwards. This can be seen by the value at x1. It is below 0 although sinus(0) = 0. So in both directions the ALE does not get the maximal values of the sinus function. For Problem B on of the main assumptions of the ALE estimation is the reason. In the ALE estimation the change of the function in each interval is estimated in a linear way. And if the intervals become too big for the function, in a way that an interval the change is not approximately linear anymore, then the ALE does not deliver smooth results.
+In figure \@ref(fig:runtime2DnumColAndSize) the runtimes for different 2D ALE and PDP configurations can be seen. Again the number of features is not a great deal for both algoriths. The ALE again has also no huge increase in runtime when the grid size is higher but the PDP has. The issue is here that the estimation for 2D PDP requires $gris.size^2 \times \#observations$ predictions while the ALE jsut needs $4 \times \#observations$ predictions calculated for the estimation. This especially can be seen when increasing the number of observations. 
 
-If one samples enough points for x1 then the ALE looks basically the same as the PDP. So for enough data the ALE is to be preferable to the PDP. Especially in real data no correlation between the features is not often the case. But if the data is sparse, the prediction function relatively complex and the feature of interest has low correlation with the other features the PDP is absolutely worth a look. 
+```{r runtime2DnumNrow, fig.cap='(ref:runtime2DnumNrowCap)', echo=FALSE}
 
-## Calculation theoretic 2D ALE
+knitr::include_graphics("images/ale_1_two_numeric_nrows.png")
+```
+(ref:runtime2DnumNrowCap) Runtime comparison ALE vs. PDP for two numeric features. Differences for number of observations.
+
+Figure \@ref(fig:runtime2DnumNrow) shows such an increas in observations and one can see that factor 100 in observations becomes almost factor 1,000 for the runtime for PDP while it is just a bit more than 10 for ALE. 
+
+### One categorial feature of interest
+
+Lastly a look at the estimation for 1D categorial PDP and ALE will be taken. 
+
+```{r runtime1DcatColAndSize, fig.cap='(ref:runtime1DcatColAndSizeCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_one_cat_cols_and_gridsize.png")
+```
+(ref:runtime1DcatColAndSizeCap) Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of features only.
+
+Figure \@ref(fig:runtime1DcatColAndSize) shows the runtimes of PDP and ALE for a categorial feature of interest. Analyzing categorial features does require a grid size, since the number of categories is also the number of different evaluations. This time one recognises that it is the other way around now. The calculation time stays the same for the PDP with growing number of features, while ALE shows a significant groth. This is clearly caused by the reordering of the features for their category (will be explained in the next chapter). The reordering is based on kind of nearest neighbors, and the calculation of these takes longer the more features have to be taken into account. 
+
+```{r runtime1DcatNrow, fig.cap='(ref:runtime1DcatNrowCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_one_cat_nrows.png")
+```
+(ref:runtime1DcatNrowCap) Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of observations. 
+
+Here (figure \@ref(fig:runtime1DcatNrow)) a similar picture as in figure \@ref(fig:runtime1DnumColAndSize) can be seen. Just this time compared to the estimation for one numeric feature the ALE is way slower for the categorial feature, while the PDP is twice as fast as for the numeric feature. That wight come from the fact that the grid size here (\@ref(fig:runtime1DnumColAndSize)) was 20 and in this case there are just 10 classes for the feature of interest, so half as many calculations for the estimation are required. So it might be the same speed for the PDP from numeric to categorial (at least with comparable parameters). The ALE will always be slower for categorial features, since the reordering of the categories will be necessary. 
+
+In general one can state that ALE is by far faster. For a SVM that might not be that much of a problem but with slower predictors like a random forest with a lot of trees it can be very slow to calculate a PDP for a high grid size and more than 10,000 observations. 
+
+## Comparison for unevenly distributed data - Example 4: Munich rents
+
+Now a real world problem will be shown. This is an example with data for rents in Munich from 2003. The target variable 'nm' is the rent per month per flat. To predict the rent a random forest was fitted. The features in this example are 'wfl' (size in square meters) and 'rooms' (number of rooms). These two variables are clearly positively correlated, since there will not be an appartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \@ref(fig:correlationMatrixRents). For the fit only 'wfl' and 'rooms' were used to fit the random forest.
+
+```{r correlationMatrixRents, fig.cap='(ref:correlationMatrixRentsCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_correlation_munich_rents.png")
+```
+(ref:correlationMatrixRentsCap) Correlatin matrix for rents in Munich.
+
+```{r pdpaleRents, fig.cap='(ref:pdpaleRentsCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl.png")
+```
+(ref:pdpaleRentsCap) PDP and ALE plots for influence of space on rents in Munich.
+
+Figure \@ref(fig:pdpaleRents) shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100 the PDP looks more straight then the ALE which is a bit shaky. In the area with not that much observations it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Since the ALE shows a more expected behavior for the prediction of rents one could tend to state that the ALE outperforms the PDP. One could think that some unrealistic feature combinations in the estimation of the PDP caused this strange drop. But a look at the ICE plot reveals something else.
+
+```{r aleIceRents, fig.cap='(ref:aleIceRentsCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl_ALE_vs_ICE.png")
+```
+(ref:aleIceRentsCap) ICE, ALE and PDP plots for influence of space on rents in Munich.
+
+Figure \@ref(fig:aleIceRents) additionally shows the ICE curves for this example. Since the only other feature used for the fit was 'rooms'. Since in the data set are just flats with 6 or less rooms, there are just 6 graphs. Now one could argue, maybe the appartments with less than 4 rooms (which are way more in this data set than those with 4 or more rooms) somehow cause the strange drop for the PDP. But figure (ref:iceZoomedRents) shows that almost all rooms have this drop, especially the apartments with 4 and 5 rooms. 
+
+```{r iceZoomedRents, fig.cap='(ref:iceZoomedRentsCap)', echo=FALSE}
+
+knitr::include_graphics("images/ale_1_ice_zoomed.png")
+```
+(ref:iceZoomedRentsCap) ICE for rents in Munich, zoomed in for the critical area.
+
+The issue here is that rooms dont have a strong influence on the prediction so, the PDP does not get problems with it. And the PDP in the iml implementation generates a equidistant grid on the area with observations for feature 'wfl'. On the other hand the ALE divides this area aiming for equally many observations of the feature in each interval. This results in very small intervalls for apartments with less than 100 squaremeters space. But the flats with 109 or more squaremeters are evaluated in one interval. This simply yields to this ALE plot, where it just ignores/skips this drop. And as one can see this can be dangerous when interpreting the prediction function. In this special situtation the ALE might get better the true link between the rent and the size of the apartments but that is not what one is interested. The goal is always to interpret the predictor and not the data. 
+
+This example demonstrated a crucual weakness of the ALE regarding the size of the intervals, which will be discussed in the next chapter. It also shows that ICE and PDP might still be worth a look despite their issues with correlated features and runtime. 
+
+
+
+## For the Appindex - Calculation theoretic 2D ALE
 
 Features $x_1$, $x_2$, $x_3$ and the prediction function $\hat{f}(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$ are given.
 The features are sampled from the these disrtibutions:
