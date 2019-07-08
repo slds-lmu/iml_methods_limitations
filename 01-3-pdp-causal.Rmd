@@ -1,33 +1,40 @@
 # PDP and Causal Interpretation
-```{r eval=FALSE, include=FALSE}
+
+*Author: Thommy Dassen*
+
+```{r echo=TRUE}
 library(iml) # for pdp and ice
 library(ggdag) # for structural causal graphs
 library(randomForest) # for modeling
 library(pdp) # for pdp and ice plots
-
+library(Ecdat) # datasets
 # set the number of data points to be created
 N <- 1000
 set.seed(107)
 
 ```
 
-
-*Author: Thommy Dassen*
-
 ## Introduction
 
-In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) will be used to visualize various causal relationships. Judea Pearl's framework of do-calculus will be used to intervene on simulated data. The goal is to observe differences in the curves of PDPs before and after interventions. In order to do so, each scenario will consist of a simulation with and without an intervention. 
+In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) will be used to visualize various causal relationships. Judea Pearl's framework of do-calculus will be used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention. In order to do so, each scenario will consist of a simulation with and without an intervention. 
+
+[@zhaohastie] formulated 3 elements that are needed for a causal interpretation:
+1. A good predictive model which closely approximates the real relationship.
+2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.
+3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)
+
+The first point is an important one, because there is a big difference between being able to causally interpret an effect for the *model* and using it as a causal interpretation for the real world.
+
+## Interventions
+
+When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. The values of this variable then no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. In a graphical sense an intervention means removing an edge that is directed towards the variable we fix. 
+The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
 
 ## Partial Dependence Plots and Directed Acyclical Graphs
 
 A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs have to be acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter.
 
-
-*briefly explain do-calculus*
-
-*pdp as intervention*
-
-A path is any consecutive connection of edges, regardless of the direction of the edges. A "back-door" path, on the other hand, is any path containing an arrow into a subset of variables $X_S$ [@zhaohastie]. These back-door paths can be seen as a common cause of both $X_S$ and $Y$ and would need to be adjusted for in order to compute the causal effect of $X_S$ on $Y$.
+A path is any consecutive connection of edges, regardless of the direction of the edges. A "back-door" path, on the other hand, is any path containing an arrow into a subset of variables $X_S$ [@zhaohastie]. These back-door paths can be seen as a common cause of both $X_S$ and $Y$ and would need to be adjusted for in order to compute the causal effect of $X_S$ on $Y$ in observational data. Since we will be working with simulated data we can directly access the probability $P_m$, which prevails in the manipulated model. Still, we will shortly explain the method for observational data.
 
 An important formula introduced by  [@pearl1993] is that of the back-door adjustment. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
 
@@ -48,16 +55,44 @@ These last two formulas thus seem to be the same, if $C$ is the complement of $S
 2. Every "back-door" path between $X_S$ and $Y$ has to be blocked by $X_C$.
 
 
+## Reverse Causality
 
+Before we have a look at various scenarios and interventions, let's look at an example that shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
+Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+data("Icecream")
+ rf.icecream = randomForest(cons ~ temp
+                         , data = Icecream, importance = T)
+  mod = Predictor$new(rf.icecream, data = Icecream)
+  pdp.obj = Partial$new(mod, feature = c("temp"))  
+  p1 <- plot(pdp.obj) 
+  
+    rf.icecream_reverse = randomForest(temp ~ cons
+                             , data = Icecream, importance = T)
+  mod_reverse = Predictor$new(rf.icecream_reverse, data = Icecream)
+  pdp.obj_reverse = Partial$new(mod_reverse, feature = c("cons"))  
+  p2 <- plot(pdp.obj_reverse) 
+  grid.arrange(p1, p2, ncol = 2)
+```
+
+
+This domain knowledge can then be portrayed in a DAG in the following way:
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+dagify(cons ~ temp
+       ) %>% 
+  ggdag() 
+```
 
 ## Interventions on simulated data
+
 The complexity of scenarios will increase throughtout this chapter.
 
 **Scenario 1: Direct Effect**
 
-The simplest scenario one can think of is that of a single direct effect between a feature $x_1$ and an outcome $Y$. This can be visualized by the DAG in \@ref(fig:directeffect).
+The simplest scenario one can think of is that of a single direct effect between a feature $x_1$ and an outcome $Y$. This can be visualized by the DAG in the plot below.
 
-```{r eval=FALSE, include=FALSE}
+```{r echo=TRUE}
 ###############################################
 # Scenario 1: Direct Effect
 ###############################################
@@ -67,14 +102,9 @@ dagify(y ~ x1
   ggdag() 
 ```
 
-```{r directeffect, fig.cap='(ref:directeffect)', echo=FALSE, out.width='60%'}
-knitr::include_graphics("images/direct_effect.jpeg")
-```
-(ref:directeffect) A DAG with a direct effect.
-
 A very basic linear regression on simulated data with the relationship as seen in this DAG leads naturally to a linear relationship in the PDP. Since in this scenario we know there are no other variables, either known or unknown, impacting our outcome variable $Y$ a causal interpretation of this PDP seems reasonable. No additional intervention is needed. It is clear there is no back-door path and furthermore $X_C$ does not exist.
 
-```{r}
+```{r echo=TRUE}
 # simulate data 
 b1 <- 1
 x1 <- rnorm(N, 10, 5) 
@@ -88,9 +118,9 @@ partial(lm.direct, pred.var="x1", plot = TRUE, rug = TRUE, plot.engine = "ggplot
 ```
 
 **Scenario 2: Collider**
-*explain colliders, both d-separated and d-connected. run simulations*
+Would this not have the same result as a direct effect?
 
-```{r eval=FALSE, include=FALSE}
+```{r echo=TRUE}
 ###############################################
 # Scenario 2: Collider
 ###############################################
@@ -98,63 +128,77 @@ collider_dag <- collider_triangle(x = "x1",
                                y = "x2", 
                                m = "y") 
 
-ggdag(collider_dag, text = FALSE, use_labels = "label")
-
 ggdag_dseparated(collider_dag, text = FALSE, use_labels = "label")
 
 ggdag_dseparated(collider_dag, controlling_for = "m", 
                  text = FALSE, use_labels = "label")
 ```
-```{r collider, fig.cap='(ref:collider)', echo=FALSE, out.width = "100%"}
-knitr::include_graphics("images/colliders.jpg")
 
-```
-(ref:collider) A d-separated and d-connected collider.
 
 **Scenario 3: Confounding**
 
-In the case of a confounding variable, the outcome $Y$ is again impacted by the features $x_1$ and $x_2$, as in the collider example before. However, this time the value of $x_2$ is dependent on the value of $x_1$ as well. As such $x_1$ does not only impact $Y$ directly, but also throught its impact on $x_2$. \@ref(fig:confounding) shows such a relationship.
-```{r eval=FALSE, include=FALSE}
+In the case of a confounding variable, the outcome $Y$ is again impacted by the features $x_1$, $x_2$ and $x_3$, as in the collider example before. However, this time the value of $x_2$ is dependent on the value of $x_1$ as well. As such $x_1$ does not only impact $Y$ directly, but also throught its impact on $x_2$. The below plot shows such a relationship.
+```{r echo=TRUE}
 ###############################################
 # Scenario 3: Confounding Variables
 ###############################################
 # create structural graph of what the data set looks like
 dagify(y ~ x2,
        x2 ~ x1,
-       y ~ x1) %>% 
+       y ~ x1,
+       y ~ x3) %>% 
   ggdag() 
 ```
-```{r confounding, fig.cap='(ref:confounding)', echo=FALSE, out.width='70%'}
-knitr::include_graphics("images/confounding.jpeg")
+
+We are interested in the effect $x_2$ has on $y$. The causal effect $P(Y = y | do(X_2=x_2))$ is equal to $P_m(Y=y|X_2 = x_2)$, where $P_m$ is the manipulated model where we have fixed the value for $x_2$. Graphically this means removing the edge between $x_1$ and $x_2$ in the above plot.
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+  # confounding 
+  set.seed(18)
+  x1 <- rnorm(N, 0, .5) #confounding variable for x and y
+  x2 <- x1 + rnorm(N, 1, 2)
+  x3 <- sin(rnorm(N,3,1))
+  y <- x1 + x2^2 + x3 + rnorm(N, 2,1)
+  #create a dataframe
+  df <- data.frame(x1, x2, x3, y)
+  
+  
+  rf.test = randomForest(y ~ x1 + x2 + x3
+                         , data = df, importance = T)
+
+  mod = Predictor$new(rf.test, data = df)
+  pdp.obj = Partial$new(mod, feature = c("x2"))  
+  p1 <- plot(pdp.obj) 
+  
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 4, nrow = 0)), c("x1", "x2", "x3", "y"))
+  for(i in 1:length(unique(df$x2))){
+    x2 <- unique(df$x2)[i]
+    y <- x1 + x2^2 + x3 + rnorm(N, 2,1)
+    df_intervention <- data.frame( x1, x2, x3, y)
+    df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+  } 
+  
+  df_intervention_group <- df_intervention_all %>%
+    group_by(x2) %>%
+    summarise(y_mean = mean(y),
+              n = n()) %>%
+    arrange(x2)
+  
+  p2 <- ggplot(aes(x2, y_mean), data = df_intervention_group) + geom_line()
+grid.arrange(p1,p2,ncol=2)
+
+
 ```
-(ref:confounding) A DAG with a confounding effect.
 
-```{r}
-# simulate 
-b1 <- 0.1
-b2 <- 0.9
-
-x1 <- rnorm(N, 10, .5) #confounding variable for x and y
-x2 <- x1 + rnorm(N, 3, 2)
-y <- b1 * x1 + b2 * x2 + rnorm(N, 2,1)
-#create a dataframe
-df <- data.frame(x1, x2, y)
-
-# create random forest model
-rf.Confound <- randomForest(y ~ x1 + x2, data = df, importance = TRUE, do.trace = FALSE, keep.forest = TRUE)
-
-partialPlot(rf.Confound, pred.data = df, x.var = "x2", ylab='Predicted Y') 
-
-
-```
-
-*Describe how an intervention can be managed here and simulate*
+After simulating data and an intervention on $x-2$, we get the above results, where the PDP is on the left and the plot for $E[P(Y = y | do(X_2=x_2))]$ on the right. The PDP does not manage to accurately portray the relationship over the entire spectrum of $x_2$. In the area of $[-2.5, 2.5]$ the shape of the parabolica is captured, but in the more extreme regions where less observations lie (notice the rug on the x-axis) the PDP is inaccurate.
 
 **Scenario 4: Latent Variable**
 
-Imagine an unmeasured latent variable $L$ exists that affects both $x_1$ and $x_2$, but not $Y$ directly. Such a scenario can be seen in \@ref(fig:latent).
+Imagine an latent variable $L$ exists that affects both $x_1$ and $x_2$, but not $Y$ directly. Such a scenario can be seen in the plot below. Again, in order to see the 'pure' effect of $x_1$ on $Y$ we need to sever any edges coming into $x_1$ as seen in the second plot. In the case of observational data, we would have to find a variable in $X_C$ that adheres to the back-door criterion. $x_2$ meets this standard. It is not a descendant of $x_1$ and it can block the back-door path from $Y$ to $x_1$ ($Y \leftarrow x_2 \leftarrow L \rightarrow x_1$). Intervening on $x_2$ should thus give the causal effect of $x_1$ on $Y$.
 
-```{r eval=FALSE, include=FALSE}
+
+```{r echo=TRUE}
 ###############################################
 # Scenario 4: Latent Variable
 ###############################################
@@ -165,13 +209,56 @@ dagify(y ~ x2,
        x2 ~ L
        ) %>% 
   ggdag() 
-```
-```{r latent, fig.cap='(ref:latent)', echo=FALSE, out.width='70%'}
-knitr::include_graphics("images/latent.jpeg")
-```
-(ref:latent) A DAG with a latent variable.
 
-If in this scenario we would want to intervene and see the effect of $x_1$ on $Y$ we have to find a variable in $X_C$ that adheres to the back-door criterion. $x_2$ meets this standard. It is not a descendant of $x_1$ and it can block the back-door path from $Y$ to $x_1$ ($Y \leftarrow x_2 \leftarrow L \rightarrow x_1$). Intervening on $x_2$ should thus give the causal effect of $x_1$ on $Y$. Using Pearl's adjustment formula, this can be estimated.
+# sever edge from L to x1
+dagify(y ~ x2,
+       y ~ x1,
+       x2 ~ L
+       ) %>% 
+  ggdag()
+```
+
+Since we are using simulated data, we can again directly intervene on $x_1$.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+  # latent 
+  set.seed(200)
+  L <- rnorm(N, 10, .5) #latent variable
+  x1 <- L + rnorm(N, 3, 2)
+  x2 <- L + rnorm(N, 7, 0.5)
+  y <- x1 + x2 + rnorm(N, 2,1)
+  #create a dataframe
+  df <- data.frame(L, x1, x2, y)
+  
+  rf.latent = randomForest(y ~ x1 + x2 
+                         , data = df, importance = T)
+  mod = Predictor$new(rf.latent, data = df)
+  pdp.obj = Partial$new(mod, feature = c("x1"))  
+  p1 <- plot(pdp.obj) 
+  
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 4, nrow = 0)), c("L", "x1", "x2", "y"))
+  for(i in 1:length(unique(df$x1))){
+    x1 <- unique(df$x1)[i]
+    y <- x1 + x2 + rnorm(N, 2,1)
+    df_intervention <- data.frame(L, x1, x2, y)
+    df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+  } 
+  
+  df_intervention_group <- df_intervention_all %>%
+    group_by(x1) %>%
+    summarise(y_mean = mean(y),
+              n = n()) %>%
+    arrange(x1)
+  
+  p2 <- ggplot(aes(x1, y_mean), data = df_intervention_group) + geom_line()
+  grid.arrange(p1, p2, ncol = 2)
+
+
+```
+
+Again we see the PDP performs more poorly in the areas where data is sparse. Even in the areas where data is not sparse, the PDP curve isn't perfectly straight like the line for $E[P(Y = y | do(X_1=x_1))]$ on the right.
+
+
 
 ## Discussion
 
@@ -180,6 +267,6 @@ If in this scenario we would want to intervene and see the effect of $x_1$ on $Y
 
 ## To Do
 
-1. Finish simulations+interventions for all scenarios, discuss differences between PDPs 
+Is it possible to evaluate the differences in PDP curves in a more formal way, rather than just a visual approach?
 
-2. Is it possible to evaluate the differences in PDP curves in a more formal way, rather than just a visual approach?
+
