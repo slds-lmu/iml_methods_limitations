@@ -7,6 +7,9 @@ jobs:
     steps:
       - run:
           command: |
+            sudo apt-get update && sudo apt-get install libudunits2-dev
+      - run:
+          command: |
             wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb;
             dpkg -i pandoc-2.7.2-1-amd64.deb;
             rm pandoc-2.7.2-1-amd64.deb
