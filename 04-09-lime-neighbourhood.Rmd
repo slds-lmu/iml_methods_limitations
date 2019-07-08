@@ -453,3 +453,7 @@ For example, LIME's sampling for text data is very local, only creating perturba
 For our analysis we use R (@R-base).
 For all black box models we used the mlr package (@R-mlr) and the lime package (@R-lime) for the lime explanations.
 All plots are created using @R-ggplot2.
+
+
+Show Gower global model stability, talk about binning, 
+proof plots 

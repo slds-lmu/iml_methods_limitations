@@ -1,3 +1,6 @@
+devtools::install_github("cran/ElemStatLearn")
+library(ElemStatLearn)
+library(MASS)
 get_stability_paths <- function(model, data, reps = 100, method = "subsample",
                                 strata = NULL, fraction = 0.5) {
   stopifnot(inherits(model, "regsubsets"))
@@ -154,12 +157,10 @@ plot_stability_paths <- function(stability_paths){
   variable <- stability_paths$variable
   p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
   p <- p + geom_line(aes(color = variable)) + geom_point(aes(color = variable)) + 
-    labs(x = "# covariates", y = expression(pi))
+    labs(x = "# covariates", y = expression(pi)) + 
+    theme(text = element_text(size = 35))
   return(p)
 }
-devtools::install_github("cran/ElemStatLearn")
-library(ElemStatLearn)
-library(MASS)
 data(prostate)
 data <- prostate
 max_formula <- lpsa ~ (. - train)
@@ -170,3 +171,7 @@ model <-  regsubsets(max_formula,
 
 set.seed(20141020)
 stability_paths <- get_stability_paths(model, data, reps = 10)
+
+png("04-09-stabpath.png", width = 1000, height = 848)
+plot_stability_paths(stability_paths)
+dev.off()

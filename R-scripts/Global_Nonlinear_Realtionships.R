@@ -209,3 +209,28 @@ saveRDS(km_1, file = "R-results/kernelmatrix-global_nonlinear1.RDS")
 saveRDS(km_2, file = "R-results/kernelmatrix-global_nonlinear2.RDS")
 saveRDS(km_3, file = "R-results/kernelmatrix-global_nonlinear3.RDS")
 saveRDS(kernel_widths, file = "R-results/kw_global_nonlinear.RDS")
+
+
+
+
+gower_model <- analyse_multivariate_kernel_width(1,
+                                                 obs_2[, 2:4], 
+                                                 explainer,
+                                                 n_features = 3, 
+                                                 n_permutations = 6500, 
+                                                 dist_fun = "gower",
+                                                 seed = 1,
+                                                 ci = TRUE,
+                                                 feature_select = "auto",
+                                                 iterations = 48)[[1]]
+
+frame <- data.frame(kernel = kernel_widths, coefficient = km_2[[1]][, 3])
+       
+ggplot(data = frame, aes(y = coefficient, x = kernel)) + 
+         geom_line(size = 2, color = "green") + 
+         geom_point(size = 3, color = "green") + 
+         labs(x = "Kernel width", y = "Coefficient") +
+         #theme(text = element_text(size = 35)) +
+  geom_path(colour = ", i, 
+   " + 1, stat = 'function', size = 1.5, ", 
+   "fun = function(x) true_coefficients[", i, "])", sep = "")
