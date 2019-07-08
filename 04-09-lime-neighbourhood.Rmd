@@ -11,9 +11,10 @@ This section will discuss the effect of the neighbourhood on LIME's explanations
 This is very critical for tabular data.
 Hence, we will limit ourselves to the analysis of tabular data for the remainder of this chapter.
 
-As described in the previous chapter, LIME aims to create local surrogate models that operate in the proximity or _neighbourhood_ of the instance to be explained.
-Typically, this neighbourhood is achieved by a weighted model.
-The weights come from a kernelised distance.
+As described in the previous chapter, LIME aims to create local surrogate models for each observation to be explained.
+These local models operate in the proximity or _neighbourhood_ of the instance to be explained.
+They are fit based on weights which indicate their proximity to the observation to be explained.
+The weights are typically determined using kernels that transform the proximity measure.
 
 The proper parametrisation of the kernel is an obvious issue.
 However, this issue exists in any approach that uses kernels, such as kernel density estimations.
@@ -208,12 +209,8 @@ $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
 We set the true coefficients to be $\beta_1 = 4$, $\beta_2 = -3$, $\beta_3 = 5$.
 
 We use linear regression (the true model) as a black-box model.
-Below we indicate the test set performance of the model in figure \@ref(fig:fig7).
+Using cross-validation, we confirm that the model has high predictive capacity.
 Not surprisingly, the linear model describes the association very well. 
-
-```{r fig7, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Model evaluation for a linear model."}
-knitr::include_graphics("images/04-09-07.png")
-```
 
 We choose random observations and compute the local LIME model for each one w.r.t. different kernel sizes.
 In this case, we assume that the kernel size may be infinitely large as the global model should equal good local models.
@@ -250,18 +247,16 @@ $$ y = \beta_0 + \beta_1 x_1 1_{x_1<c_1} + \beta_2 x_2 + \beta_3 x_3 + \epsilon 
 where $x_1$ only affects $y$ within the given interval. 
 $\gamma_0$ corrects the predictive surface by another intercept in order to avoid discontinuities.
 This time, we fit a MARS model (@friedman1991multivariate) which can deal with this property of local features.
-Note that a random forest would have the same property.
-However, models like a random forest, which are not good at extrapolating, may produce implausible predictions for many permutations possibly causing less stable explanations.
-For our simulated data, all of our results are _qualitatively_ identical between MARS and random forest, though.
-The random forest explanations are less stable and tend to be more biased towards a global surrogate ceteris paribus.
-LIME should be able to detect this as well -- given an appropriate kernel for each observation.
-To illustrate this, we investigate _representative_ observations, i.e. one belonging to each _bin_ of the predictive surface in figure \@ref(fig:fig9).
-
-```{r, fig9, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: MARS predictions for piece-wise local associations."}
-knitr::include_graphics("images/04-09-09.png")
-```
+MARS is able to reproduce the data generating process perfectly and hence our first choice.
+Using cross-validation, we in fact confirm that the model has high predictive capacity.
+However, note that all of our results would be _qualitatively_ identical between MARS and random forest.
+Given an appropriate kernel LIME should succeed in recovering the local predicitve surface.
 
 We set $\beta_1 = 5$, $\beta_2 = -4$, $\beta_3 = 3$ and $c_1 = 5$.
+This means that the slope of $\beta_1$ equals to $5$ until $x_1 = 5$ andto $0$ afterwards.
+This results in an average slope of $2.5$.
+
+We investigate _representative_ observations, i.e. one belonging to each _bin_ of the predictive surface in order to check if LIME recovers the local coefficients.
 
 Representative now means that we should investigate observations with the following properties:
 
@@ -280,7 +275,7 @@ knitr::include_graphics("images/04-09-10.png")
 
 We can clearly see that in this case, we __cannot__ simply set an arbitrary kernel width.
 The true local coefficient for $x_1$ is only approximated well within a narrow interval of the kernel width.
-In our scenario, good kernel widths are between $0.25$ and $0.75$.
+In our scenario, good kernel widths are between $0.25$ and $0.75$. (??)
 As before, we observe that a too-small kernel width, however, produces non-meaningful coefficients.
 In the limit, the true coefficient is not approximated, but rather the global (average) linear coefficient:
 For $x_1$ a large kernel_width results in a linear model that averages the local slopes.
@@ -399,35 +394,38 @@ We search the full grid of kernel widths and can repeat this procedure for diffe
 Our pseudo stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
 
-We observe that stability paths for all observations converge to the same set of covariates if we set the kernel width large.
-These are the global features.
-There is one interesting observation about this.
-Different observations sometimes converge to different global surrogate models.
-The covariates humidity and temperature are always selected.
-Then, either the windspeed or the season is selected as global feature.
-We believe that this is due to the fact that both covariates are similarly strong on the global scope and the forward selection applied 
-
-Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
-Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
-
-Below in figure \@ref(fig:fig14), we display the stability paths for different observations for the random forest.
+In figure \@ref(fig:fig14), we display the stability paths for different observations for our random forest.
 
 ```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Stability paths for the bycicle data set explaining a random forest"}
 knitr::include_graphics("images/04-09-14.png")
 ```
 
-We, somewhat surprisingly, see that they look very similar for all observations for both models.
-We observe both effects described in the literature: 
-instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones.
-We already validated this for simulated data.
-For real data, however, it is hard to locate the area we identified for simulated data where we find a stable __and__ local model.
-For example, consider the random forest.
+We observe that stability paths converge to a set of covariates if we set the kernel width large.
+These are the global features.
+There is one interesting observation about this.
+Different observations sometimes converge to different global surrogate models.
+The covariates humidity and temperature are always selected.
+Then, either the windspeed or the season is selected as global feature.
+We believe that this is due to the fact that both covariates are similarly strong on the global scope.
+
+Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
+Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
+
+For some observations, there seems to be a narrow range where there are stable and local explanation.
+For instance, consider ... and...
 We may conclude that in fact for observations 1 and 2 a stable and local explanation would involve the season, the temperature and the weather situation.
 However, for observation 2, a possible (less) stable explanation would also involve the season, the temperature and the indicator for a working day.
+
 So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations' goodness.
 Furthermore, "local" explanations still seem quite global as they occur for many different observations.
 The only truly stable explanations remain essentially global explanations.
 It seems as if the predictive surface is too complex to facilitate local and stable surrogate models properly.
+
+We observe both effects that are described in the literature for our real data example: 
+instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones.
+For simulated data, we could observe these effects as well.
+At the same time, we were able to identify local and stable explanations in this controlled environment.
+For real data, however, it is hard to locate the area which we identified for simulated data where we find a stable __and__ local model.
 
 
 ## Discussion and outlook
@@ -458,7 +456,7 @@ Within these domains, LIME works differently from tabular data.
 For example, LIME's sampling for text data is very local, only creating perturbations based on the instance to be explained.
 
 
-## Note to the reader.
+## Note to the reader
 
 
 ### Packages used
@@ -483,7 +481,7 @@ In the current (July 2019) R implementation, when working with Gower distance th
 Explanations do not correspond to altering the kernel width.
 As we have seen, a proper kernel width may look very different depending on the associated problem.
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in the proper kernel width.
-In figure \@ref{fig:fig15} we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation.
+In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation.
 
 ```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data (non-linear): Gower distance vs. Euclidean distance"}
 knitr::include_graphics("images/04-09-15.png")
@@ -491,5 +489,5 @@ knitr::include_graphics("images/04-09-15.png")
 
 Even though we think that Gower distance may result in some cases in good local models, its (currently) lacking flexibility most likely causes non-local surrogates.
 
-Usually LASSO is the preferred option for variable selection as it is less deterministic as, let's say, step-wise forward selection.
+Usually, LASSO is the preferred option for variable selection as it is less deterministic as, let's say, step-wise forward selection.
 However, we do not use LASSO but step-wise forward selection because the current implementation of LASSO has shortcomings and does not deliver results suitable for our analysis.
