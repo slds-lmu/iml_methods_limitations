@@ -157,3 +157,16 @@ plot_stability_paths <- function(stability_paths){
     labs(x = "# covariates", y = expression(pi))
   return(p)
 }
+devtools::install_github("cran/ElemStatLearn")
+library(ElemStatLearn)
+library(MASS)
+data(prostate)
+data <- prostate
+max_formula <- lpsa ~ (. - train)
+model <-  regsubsets(max_formula,
+                     data = data, nbest = 1, nvmax = 8,
+                     really.big = TRUE
+)
+
+set.seed(20141020)
+stability_paths <- get_stability_paths(model, data, reps = 10)

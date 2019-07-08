@@ -137,9 +137,9 @@ knitr::include_graphics("images/04-09-05.png")
 More systematically, we review explanations resulting from altering the kernel size in figure \@ref(fig:fig6). 
 We average over many different models to achieve more robust local models.
 We do that because we observe some coefficient variations resulting from the (random) sampling.
-In figure \@ref(fig:fig6) (upper panel) we see these averaged models for 8 different kernel sizes.
+In figure \@ref(fig:fig6) (upper panel) we see these averaged models for 7 different kernel sizes.
 We observe that the larger we set the kernel size, the more we converge to a linear model that operates globally.
-In fact, the largest three kernel sizes ($0.5$, $1$ and $2$) appear very global while $0.005$, $0.05$ and $0.1$ seem to fit good local models.
+In fact, the largest three kernel sizes ($0.5$, $1$ and $2$) appear very global while $0.05$ and $0.1$ seem to fit good local models.
 $0.25$ and $0.3$ are neither global nor very local.
 This is very intuitive and complies with the idea of a weighted local regression.
 
@@ -447,3 +447,9 @@ The problems described in this chapter are mainly associated with tabular data.
 Domains where LIME has been applied successfully include image data and text data.
 Within these domains, LIME works differently from tabular data.
 For example, LIME's sampling for text data is very local, only creating perturbations based on the instance to be explained.
+
+## Note to the reader.
+
+For our analysis we use R (@R-base).
+For all black box models we used the mlr package (@R-mlr) and the lime package (@R-lime) for the lime explanations.
+All plots are created using @R-ggplot2.
