@@ -285,7 +285,7 @@ As before, we observe that a too-small kernel width, however, produces non-meani
 In the limit, the true coefficient is not approximated, but rather the global (average) linear coefficient:
 For $x_1$ a large kernel_width results in a linear model that averages the local slopes.
 Additionally, we observe that for lower kernel widths, the local models are rather volatile.
-More systematically, @alvarez2018robustness investigate this volatility and find that LIME is prone to finding unstable explanations.
+More systematically, @alvarez2018robustness investigate this volatility and find that LIME is prone to finding instable explanations.
 
 This motivates us to further investigate this volatility.
 We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure \@ref(fig:fig11) for $x_1$.
@@ -344,7 +344,7 @@ knitr::include_graphics("images/04-09-13.png")
 
 Having investigated simulated data where we knew the ground truth gave us a good feeling on how the kernel size affects the resulting explainer model.
 The neighbourhood problem can be described briefly by the following.
-A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model.
+A (too) small kernel width creates instable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.
 We may formulate the problem as a mininmisation problem w.r.t. the kernel size subjected to the constraint that coefficients need to be stable.
 
@@ -380,7 +380,7 @@ Note that we only use a subset of all possible features as some are somewhat col
 Using this data we aim to use a random forest to predict the number of daily bicycle hires. 
 We tune the forest using cross-validation.
 We use LIME to explain the black box.
-The model performs (on average) reasonably well with a mean absolute error 952 on the held-out data while the mean of the bicycle rental count is 4284. (MAKE CV!!)
+The model performs (on average) reasonably well with a root mean squared error of 1233 on the held-out data while the mean of the bicycle rental count is 4284. 
 
 When working with LIME in practice, we want to obtain stable explanations. 
 An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
@@ -431,7 +431,7 @@ A proper locality is expressed by the minimal kernel width producing stable coef
 However, we see that especially the sampling procedure makes it - in practise - difficult to find these models.
 In fact, we were unable to detect explanations that were both, stable and local, for our real data application -- at least with certainty.
 We largely observe the pattern described by @laugel2018defining who claim that LIME explanations are strongly biased towards global features.
-At the same time, our study agrees with @alvarez2018robustness who find that local explanations are highly unstable.
+At the same time, our study agrees with @alvarez2018robustness who find that local explanations are highly instable.
 We confirm these findings using the bicycle rental data set. 
 Additionally, also for simulated data, it becomes harder to detect a good locality if the predictive surface becomes too complex as the interval for suitable localities becomes narrower.
 

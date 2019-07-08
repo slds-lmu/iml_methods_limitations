@@ -18,7 +18,9 @@ learner <- makeLearner("regr.randomForest", ntree = 100)
 black_box <- train(learner, task)
 ### predict
 task_pred <- predict(black_box, newdata = data_set$test)
-mean(abs(task_pred$data$truth - task_pred$data$response))
+
+### resampling
+crossval(learner, task, iters = 10, measures = list(mae, mse))
 
 # fit not as good as before but not that important because we don't know truth.
 ggplot(data = task_pred$data, aes(x = response, y = truth)) +
