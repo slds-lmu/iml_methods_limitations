@@ -1,7 +1,7 @@
 ---
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 # LIME and Neighbourhood
 
@@ -398,8 +398,14 @@ We search the full grid of kernel widths and can repeat this procedure for diffe
 
 Our pseudo stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
+
 We observe that stability paths for all observations converge to the same set of covariates if we set the kernel width large.
 These are the global features.
+There is one interesting observation about this.
+Different observations sometimes converge to different global surrogate models.
+The covariates humidity and temperature are always selected.
+Then, either the windspeed or the season is selected as global feature.
+We believe that this is due to the fact that both covariates are similarly strong on the global scope and the forward selection applied 
 
 Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
 Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
@@ -411,7 +417,9 @@ knitr::include_graphics("images/04-09-14.png")
 ```
 
 We, somewhat surprisingly, see that they look very similar for all observations for both models.
-We observe both effects described in the literature: instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones which we already discovered for simulated data.
+We observe both effects described in the literature: 
+instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones.
+We already validated this for simulated data.
 For real data, however, it is hard to locate the area we identified for simulated data where we find a stable __and__ local model.
 For example, consider the random forest.
 We may conclude that in fact for observations 1 and 2 a stable and local explanation would involve the season, the temperature and the weather situation.
@@ -423,6 +431,7 @@ It seems as if the predictive surface is too complex to facilitate local and sta
 
 
 ## Discussion and outlook
+
 
 LIME is capable of finding local models.
 We show this with simulated data.
@@ -448,12 +457,39 @@ Domains where LIME has been applied successfully include image data and text dat
 Within these domains, LIME works differently from tabular data.
 For example, LIME's sampling for text data is very local, only creating perturbations based on the instance to be explained.
 
+
 ## Note to the reader.
 
+
+### Packages used
+
+
 For our analysis we use R (@R-base).
-For all black box models we used the mlr package (@R-mlr) and the lime package (@R-lime) for the lime explanations.
+For all black box models we used the mlr package (@R-mlr) and the lime package (@R-lime) for the LIME explanations.
 All plots are created using @R-ggplot2.
 
 
-Show Gower global model stability, talk about binning, 
-proof plots 
+### How we used the lime R package and why
+
+
+We strongly recommend to not bin numerical features.
+The next chapter will outline in detail why this is not a good idea.
+However, in the first place there was no reason for the binning except enhanced interpretability.
+We suggest, though, that the same interpretability can be obtained by the absolute contribution of the feature to the prediction.
+This means instead of the local coefficient, LIME should rather print the local coefficient times the feature value within its explanation.
+
+While we think Gower distance is an interesting approach to deal with mixed data, we explicitely promote not to use it.
+In the current (July 2019) R implementation, when working with Gower distance there is no kernel applied.
+Explanations do not correspond to altering the kernel width.
+As we have seen, a proper kernel width may look very different depending on the associated problem.
+So it is highly unlikely that a one-size-fits-all implicit kernel width always results in the proper kernel width.
+In figure \@ref{fig:fig15} we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation.
+
+```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data (non-linear): Gower distance vs. Euclidean distance"}
+knitr::include_graphics("images/04-09-15.png")
+```
+
+Even though we think that Gower distance may result in some cases in good local models, its (currently) lacking flexibility most likely causes non-local surrogates.
+
+Usually LASSO is the preferred option for variable selection as it is less deterministic as, let's say, step-wise forward selection.
+However, we do not use LASSO but step-wise forward selection because the current implementation of LASSO has shortcomings and does not deliver results suitable for our analysis.

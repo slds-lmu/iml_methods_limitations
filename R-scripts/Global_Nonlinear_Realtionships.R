@@ -210,9 +210,7 @@ saveRDS(km_2, file = "R-results/kernelmatrix-global_nonlinear2.RDS")
 saveRDS(km_3, file = "R-results/kernelmatrix-global_nonlinear3.RDS")
 saveRDS(kernel_widths, file = "R-results/kw_global_nonlinear.RDS")
 
-
-
-
+### Figure 15
 gower_model <- analyse_multivariate_kernel_width(1,
                                                  obs_2[, 2:4], 
                                                  explainer,
@@ -224,13 +222,21 @@ gower_model <- analyse_multivariate_kernel_width(1,
                                                  feature_select = "auto",
                                                  iterations = 48)[[1]]
 
-frame <- data.frame(kernel = kernel_widths, coefficient = km_2[[1]][, 3])
+frame <- data.frame(coefficient = km_2[[1]][, 3],
+                    gower = rep(gower_model[[3]], length(kernel_widths)),
+                    true = rep(6, length(kernel_widths)))
+melted_frame <- data.frame(kernel = rep(kernel_widths, 3), melt(frame))
        
-ggplot(data = frame, aes(y = coefficient, x = kernel)) + 
-         geom_line(size = 2, color = "green") + 
-         geom_point(size = 3, color = "green") + 
-         labs(x = "Kernel width", y = "Coefficient") +
-         #theme(text = element_text(size = 35)) +
-  geom_path(colour = ", i, 
-   " + 1, stat = 'function', size = 1.5, ", 
-   "fun = function(x) true_coefficients[", i, "])", sep = "")
+png("04-09-15.png", width = 1000, height = 848)
+ggplot(data = melted_frame, aes(x = kernel, 
+                                y = value, group = variable)) +
+  geom_line(aes(color = variable), size = 1.75) + 
+  scale_color_discrete(name = "Local coefficent",
+                      breaks = c("coefficient", "gower", "true"),
+                      labels = c("Euclidean distance", 
+                                 "Gower distance", 
+                                 "True local coefficient")) +
+  geom_point(data = melted_frame[1:34, ], aes(color = variable), size = 3) +
+  theme(text = element_text(size = 35)) + xlab("Coefficient") + 
+  ylab("Kernel width")
+dev.off()
