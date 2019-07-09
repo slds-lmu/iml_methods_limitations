@@ -22,7 +22,7 @@ Such as kernel density estimations.
 Figure \@ref(fig:fig1) illustrates kernel densities from a standard normal distribution.
 We applied different kernel widths for the curve estimation.
 
-```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "The appropriate kernel width for kernel density estimations."}
+```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "In( appropriate) kernel widths for kernel density estimations."}
 knitr::include_graphics("images/04-09-01.png")
 ```
 
@@ -104,7 +104,7 @@ knitr::include_graphics("images/04-09-02.png")
 Now we fit a random forest on this problem which should be able to detect the non-linearity and incorporate it into its predictive surface.
 In fact, we observe that the predictions of the random forest look very accurate in figure \@ref(fig:fig3)
 
-```{r, fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random Forest Predictions."}
+```{r, fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for non-linear univariate relationship."}
 knitr::include_graphics("images/04-09-03.png")
 ```
 
@@ -113,7 +113,7 @@ LIME could now be used to explain this random forest locally.
 We could describe the data locally well by piece-wise linear models.
 This is depicted in figure \@ref(fig:fig4).
 
-```{r, fig4, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship linearly interpolated."}
+```{r, fig4, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship explained by piece-wise linear model."}
 knitr::include_graphics("images/04-09-04.png")
 ```
 
@@ -126,7 +126,7 @@ This is indicated by the red line in figure \@ref(fig:fig5).
 However, if we increased the kernel width to $2$ the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure \@ref(fig:fig5).
 The yellow line does not seem to fit a local linear model but rather a global one.
 
-```{r, fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Possible local models for univariately non-linear data."}
+```{r, fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Possible local models for non-linear univariate relationship."}
 knitr::include_graphics("images/04-09-05.png")
 ```
 
@@ -142,7 +142,7 @@ This is very intuitive and complies with the idea of a weighted local regression
 Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure \@ref(fig:fig6).
 We observe a similar behaviour.
 
-```{r, fig6, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for univariately non-linear data with different kernel sizes."}
+```{r, fig6, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local models for non-linear univariate relationship with different kernel sizes for different observations."}
 knitr::include_graphics("images/04-09-06.png")
 ```
 
@@ -214,7 +214,7 @@ The figures below (all four panels of figure \@ref(fig:fig8)) indicate the local
 The three vertical lines indicate the true global coefficients.
 This behaviour is representative of all observations.
 
-```{r fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Coefficients for different kernel widhts."}
+```{r fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Coefficients for different kernel widhts explaning a globally linear relationship."}
 knitr::include_graphics("images/04-09-08.png")
 ```
 
@@ -262,7 +262,7 @@ We think these observations are best explained in areas with reasonable margin t
 Below in figure \@ref(fig:fig10), we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels $x_1 < 5$, lower panels $x_1 > 5$).
 The true local coefficients are displayed by solid vertical lines.
 
-```{r, fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+```{r, fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaning piece-wise local relationship (for x1)."}
 knitr::include_graphics("images/04-09-10.png")
 ```
 
@@ -284,7 +284,7 @@ The grey shaded area is the (capped) 95% confidence intervals.
 For very low kernel widths we observe massive volatility.
 The volatility decreases to an acceptable level only after $0.25$ for all covariates.
 
-```{r, fig11,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for piece-wise local associations."}
+```{r, fig11,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficient and confidence intervals for different kernel widths explaning piece-wise local relationship (for x1)."}
 knitr::include_graphics("images/04-09-11-1.png")
 ```
 
@@ -326,11 +326,11 @@ It seems as if the more complex the predictive surface, the harder it is for LIM
 
 For globally non-linear associations, we also find that we prefer a small kernel which also produces stable coefficients.
 
-```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for non-linear associations"}
+```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for x2)."}
 knitr::include_graphics("images/04-09-12.png")
 ```
 
-```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and cofidence bands for different kernel widths for non-linear associations (for x2)."}
+```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and cofidence intervals for different kernel widths explaining non-linear relationship (for x2)."}
 knitr::include_graphics("images/04-09-13.png")
 ```
 
@@ -398,7 +398,7 @@ Furthermore, they should not change extremely when the kernel width slightly cha
 
 In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
 
-```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Stability paths for the bycicle data set explaining a random forest"}
+```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for the bycicle data set explaining a random forest"}
 knitr::include_graphics("images/04-09-14.png")
 ```
 
@@ -495,7 +495,7 @@ As we have seen, a proper kernel width may look very different depending on the 
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper kernel width.
 In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
-```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data (non-linear): Gower distance vs. Euclidean distance"}
+```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship)."}
 knitr::include_graphics("images/04-09-15.png")
 ```
 
