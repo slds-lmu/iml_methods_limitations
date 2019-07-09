@@ -2,7 +2,7 @@
 
 *Author: Thommy Dassen*
 
-```{r echo=TRUE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(iml) # for pdp and ice
 library(ggdag) # for structural causal graphs
 library(randomForest) # for modeling
