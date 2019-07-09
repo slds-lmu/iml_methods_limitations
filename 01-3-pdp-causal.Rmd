@@ -8,6 +8,7 @@ library(ggdag) # for structural causal graphs
 library(randomForest) # for modeling
 library(pdp) # for pdp and ice plots
 library(Ecdat) # datasets
+library(dplyr) # for group by
 # set the number of data points to be created
 N <- 1000
 set.seed(107)
@@ -191,7 +192,7 @@ grid.arrange(p1,p2,ncol=2)
 
 ```
 
-After simulating data and an intervention on $x_2$, we get the above results, where the PDP is on the left and the plot for $E[P(Y = y | do(X_2=x_2))]$ on the right. The PDP does not manage to accurately portray the relationship over the entire spectrum of $x_2$. In the area of $[-2.5, 2.5]$ the shape of the parabolica is captured, but in the more extreme regions where less observations lie (notice the rug on the x-axis) the PDP is inaccurate.
+After simulating data and an intervention on $x_2$, we get the above results, where the PDP is on the left and the plot for $E[P(Y = y | do(X_2=x_2))]$ on the right. The PDP does not manage to accurately portray the relationship over the entire spectrum of $x_2$. In the area of $[-2.5, 2.5]$ the shape of the parabola is captured, but in the more extreme regions where less observations lie (notice the rug on the x-axis) the PDP is inaccurate.
 
 **Scenario 4: Latent Variable**
 
