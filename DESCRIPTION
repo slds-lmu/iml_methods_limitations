@@ -9,6 +9,8 @@ Depends:
   iml,
   randomForest,
   ggdag,
-  pdp
+  pdp,
+  Ecdat,
+  dplyr
 
   
