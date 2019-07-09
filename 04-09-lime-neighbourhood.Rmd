@@ -290,19 +290,23 @@ knitr::include_graphics("images/04-09-11-1.png")
 
 Note that we obtain the same picture for every covariate and other representative observations.
 We observe that there is a trade-off between stable coefficients and locality (expressed by small kernel width).
-In our analysis, it seems as if a good kernel size should tend to be as small as possible as long as the resulting explainer produces non-volatile coefficients.
+Our analysis suggests the following.
+Large kernel sizes result in explanations biased towards a global surrogate.
+At the same time, the kernel width must result in stable coefficients.
+This means, we cannot set it infinitissimately small.
+The resulting trade-off suggests to choose the minimal kernel size with stable coefficients.
 Mathematically speaking, we aim minimal kernel size which still satisfies a volatility condition.
 
 
 #### Global Non-Linearity {#id413}
 
 
-More generally, we aim to show that similar behaviour occurs if we induce more severe non-linearity.
-As we strongly favour linear relationships, we further generalise the approache from the previous section and simulate data with the underlying data generating mechanism:
+More generally, we aim to show that LIME succeeds in finding local models if we induce more severe non-linearity.
+We further generalise the approach from the previous section and simulate data with the underlying data generating mechanism:
 
 $$ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2<c_1} + \beta_{2,2} x_2 1_{c_1 < x_2 < c_2} +  \beta_{2,3} x_2 1_{c_2 < x_2} + \beta_3 x_3 + \epsilon + \gamma_0 1_{c_1 < x_1 < c_2} + \gamma_0 1_{x_1 > c_2} $$
 
-where the slope $\beta_2$ changes over the whole domain of $x_2$.
+where the slope $\beta_2$ is piece-wise linear and changes over the whole domain of $x_2$.
 We set $\beta_1 = 5$, $\beta_{2,1} = -4$, $\beta_{2,2} = 3$, $\beta_{2,3} = -3$ $\beta_3 = 3$, $c_1 = 4$ and $c_2 = 6$.
 
 We study three _representative_ observations complying with:
@@ -314,14 +318,13 @@ We study three _representative_ observations complying with:
 3. $6 < x_2$
 
 As before, we use a MARS model as our black box.
-When explaining the black box with LIME we observe the same pattern as before in figures \@ref(fig:fig12) and \@ref(fig:fig13).
-However, the interval if "good" solutions are -- naturally -- much smaller.
-If we further increase the number of non-linear effects, this effect increases.
+When explaining the black box with LIME we observe the same pattern as before.
+Figures \@ref(fig:fig12) and \@ref(fig:fig13) look very similiar to the corresponding figures of the previous section,
+However, the intervals of "good" solutions are -- naturally -- much smaller.
+The more complex the true associations become, the more we observe this trend of decreasing solution intervals.
 It seems as if the more complex the predictive surface, the harder it is for LIME to even find a good local model.
 
-We also find for globally non-linear associations that we prefer a small kernel width which however yields stable coefficients in order to achieve a (second best) optimal local model.
-This observation is very crucial with regard to real-world data.
-As soon as explanations are stable, we may easily end up with explainers that are biased towards the global surrogate.
+For globally non-linear associations, we also find that we prefer a small kernel which also produces stable coefficients.
 
 ```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths for non-linear associations"}
 knitr::include_graphics("images/04-09-12.png")
@@ -335,7 +338,8 @@ Having investigated simulated data where we knew the ground truth gave us a good
 The neighbourhood problem can be described briefly by the following.
 A (too) small kernel width creates instable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.
-We may formulate the problem as a mininmisation problem w.r.t. the kernel size subjected to the constraint that coefficients need to be stable.
+We may formulate the problem as a mininmisation problem w.r.t. the kernel size.
+However, the minimisation needs to consider the constraint that coefficients need to be stable.
 
 
 ### Real data {#id42}
@@ -344,8 +348,8 @@ We may formulate the problem as a mininmisation problem w.r.t. the kernel size s
 Leaving the controlled environment we may face more challenges than we used to.
 Many, however, are related to the sampling of LIME and thus will be neglected in this chapter.
 
-1. High-dimensional data is also for the kernel width an issue to consider.
-LIME computes dissimilarities of observations to each other.
+1. High-dimensional data may be an issue for the computation of the kernel width.
+LIME computes dissimilarities.
 It is well-known that dissimilarities get increasingly less meaningful as the feature space expands.
 This is one consequence of the curse of dimensionality.
 
@@ -355,37 +359,41 @@ Thus, LIME should always apply scaling.
 3. When working with real data sets with many features, we typically want a sparse explanation.
 In order to achieve this, we should let LIME do the feature selection.
 
-Note that the latter two are featured in the Python and R implementations.
+Luckily, the latter two are featured in the Python and R implementations.
 
-Within this section, we study whether we find the same behaviour as we did for simulated data in the previous sections for a real data set.
+Within this section, we study whether we can confirm our simulated data findings for real world data.
 We will work with the well-known Washington D.C. bicycle rental data set.
 This dataset contains daily bicycle hire counts of a Washington D.C. based rental company. The data has been made openly available by the company itself (Capital-Bikeshare). 
 @fanaee2014event added supplementary information on the weather data and season associated with each day.
 For details on the data set please refer to @molnar2019. (https://christophm.github.io/interpretable-ml-book/bike-data.html).
-We select this data set because it is well-known in the machine learning community and this regression problem is accessible to most people.
+We select this data set because it is well-known in the machine learning community and this regression problem is easily accessible to most people.
 Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality of the distance measures.
-Note that we only use a subset of all possible features as some are somewhat colinear.
+We only make use of a subset of all possible features as some are somewhat colinear.
 
 Using this data we aim to use a random forest to predict the number of daily bicycle hires. 
 We tune the forest using cross-validation.
+The model has a cross-validated root mean squared error of 1233 while the mean of the bicycle rental count is 4284.
 We use LIME to explain the black box.
-The model has a cross-validated root mean squared error of 1233 while the mean of the bicycle rental count is 4284. 
 
 When working with LIME in practice, we want to obtain stable explanations. 
 An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
 We evaluate this property with the aid of modified stability paths (@meinshausen2010stability).
 Stability paths are used for sparse (regularised) models and indicate how likely each covariate is part of the model.
-Normally, they analyse the association of the regularisation strength and these inclusion probabilities.
-In our context, we rather aim to study how likely a covariate is part of the model for a given regularisation (number of features) over a grid of kernel widths.
+Normally, they analyse the association of the regularisation strength and inclusion probabilities of features.
+On the x-axis one depicts the regularisation strength and on the y-axis the inclusion probabilities (for all covariates). 
+The probabilities for different regularisations are grouped by feature.
+
+However, we rather aim to study how likely a covariate is part of the (sparse) model over a grid of kernel widths.
 Stability paths are much easier to use when there are many features to be analysed.
 
 Over a grid of kernel widths (from almost 0 to 20), we compute multiple sparse explanations for the same kernel width.
 Sparse means that we limit our explainer to only the three most influential local features.
-We count how frequently each covariate has been part of the explanation model for all explanations we computed for the same kernel width.
+We count how frequently each covariate has been part of the explanation model (out of all iterations).
 We divide by the total number of iterations and achieve estimates for the sampling probability for a given observation, a given number of features and a given kernel width.
-We search the full grid of kernel widths and can repeat this procedure for different observations.
+We search the full grid of kernel widths.
+We can repeat this procedure for another observation.
 
-Our pseudo stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
+Our _pseudo_ stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
 
 In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
@@ -399,30 +407,30 @@ These are the global features.
 There is one interesting observation about this.
 Different observations sometimes converge to different global surrogate models.
 The covariates humidity and temperature are always selected.
-Then, either the windspeed (all observations except number 3) or the season (observation 3) is selected as global feature.
+Then, either the windspeed (all observations except number 3) or the season (e.g. observation 3) is selected as global feature.
 We believe that this is due to the fact that both covariates are similarly strong on the global scope.
 
-Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
-Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
+Furthermore, we observe that for small values of the kernel width, we have -- like in our simulation -- high variation.
+Here, this variation is expressed by intersecting paths where most covariates are (almost) equally likely to be sampled.
 
 For some observations, there seems to be a narrow range where there are stable and local explanation.
 For instance, consider observation 1 and 8 where the local models seem quite clear.
 For observation 1 between kernel widths of $0.5$ and $1$, it seems as if the temperature, the humidity and the weather situation are most influential.
 For observation 8, the selected local features are temperature, humidity and season.
-For other observations, such as observations 3 and 4, we may argue that there local somewhat stable local explanations.
+For other observations, such as observations 3 and 4, we may argue that there are local and stable local explanations, too.
 These are, however, by far less convincing than the previous ones.
 Additionally, we are struggling to identify stable local models for many observations, like observation 2 and 6.
 For those observations, there is only instability for small kernel widths which transforms immiediately to the global surrogate once stabilised.
-The reasons for this varying behaviour can be manifold.
-However, not knowing the ground truth it is hard to evaluate what is going on here in particular.
+The reasons for this variation behaviour can be manifold.
+However, not knowing the ground truth, it is hard to evaluate what is going on here in particular.
 
 So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations' goodness.
-Furthermore, "local" explanations still seem quite global as they occur for many different observations.
-Considering our explanations, the sparse explanations were highly correlated consisting of similar features.
-The only truly stable explanations remain essentially global explanations.
+Furthermore, "local" explanations still seem quite global as they seem quite similar for many different observations.
+Considering our explanations, the sparse models were highly correlated consisting of similar features for different observations.
+The only truly stable explanations remain essentially global ones with large kernel width.
 It seems as if the predictive surface is too complex to facilitate local and stable surrogate models properly.
 
-We observe both effects that are described in the literature for our real data example: 
+We observe both effects being described in literature for our real data example: 
 instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for larger ones.
 For simulated data, we could observe these effects as well.
 At the same time, we were able to identify local and stable explanations in this controlled environment.
@@ -436,25 +444,27 @@ LIME is capable of finding local models.
 We show this with simulated data.
 The specification of a proper kernel width is crucial in order to achieve this.
 A proper locality is expressed by the minimal kernel width producing stable coefficients.
-However, we see that especially the sampling procedure makes it - in practise - difficult to find these models.
+However, we see that it is difficult to find these models in practise.
 In fact, we were unable to detect explanations that were both, stable and local, for our real data application -- at least with certainty.
 We largely observe the pattern described by @laugel2018defining who claim that LIME explanations are strongly biased towards global features.
 At the same time, our study agrees with @alvarez2018robustness who find that local explanations are highly instable.
 We confirm these findings using the bicycle rental data set. 
-Additionally, also for simulated data, it becomes harder to detect a good locality if the predictive surface becomes too complex as the interval for suitable localities becomes narrower.
+Additionally, also for simulated data, it becomes harder to detect a good locality if the predictive surface becomes more complex.
 
 Note that we, in fact, found similar behaviour for many different data sets.
 For the practitioner using LIME (for tabular data) this means that LIME should be used with great care.
-Furthermore, we suggest analysing the resulting explanations for their stability.
+Furthermore, we suggest analysing the resulting explanations' stability when making use of LIME.
 
-We propose that LIME should be altered in the way proposed by @laugel2018defining to LIME-K.
+We think that the global sampling of LIME is responsible for many of the pitfalls identifed.
+Hence, we propose that LIME should be altered in the way proposed by @laugel2018defining to LIME-K.
 Local sampling should replace global sampling to better control for the locality.
 
 Even though having said this, we think that LIME is one of the most promising contributions to the Interpretable Machine Learning community.
 The problems described in this chapter are mainly associated with tabular data.
 Domains where LIME has been applied successfully include image data and text data.
 Within these domains, LIME works differently from tabular data.
-For example, LIME's sampling for text data is very local, only creating perturbations based on the instance to be explained.
+For example, LIME's sampling for text data is already very local.
+It only creates perturbations based on the instance to be explained.
 
 
 ## Note to the reader {#id6}
@@ -463,32 +473,33 @@ For example, LIME's sampling for text data is very local, only creating perturba
 ### Packages used {#id61}
 
 
-For our analysis we use R (@R-base).
+For our analysis we used R (@R-base).
 For all black box models we used the mlr package (@R-mlr) and the lime package (@R-lime) for the LIME explanations.
-All plots are created using @R-ggplot2.
+All plots have been created using @R-ggplot2.
 
 
 ### How we used the lime R package and why {#id62}
 
-
+Using the lime package we heavily deviate from the deafult package options.
 We strongly recommend to not bin numerical features.
-The next chapter will outline in detail why this is not a good idea.
-However, in the first place there was no reason for the binning except enhanced interpretability.
+The next chapter will outline in detail why this is a good idea.
+In the first place the main argument for binning was enhanced interpretability.
 We suggest, though, that the same interpretability can be obtained by the absolute contribution of the feature to the prediction.
 This means instead of the local coefficient, LIME should rather print the local coefficient times the feature value within its explanation.
+This arguments makes binning -- provided that there is no additional benefit except interpretability (cross reference next chapter) -- obsolete.
 
 While we think Gower distance is an interesting approach to deal with mixed data, we explicitely promote not to use it.
 In the current (July 2019) R implementation, when working with Gower distance there is no kernel applied.
 Explanations do not correspond to altering the kernel width.
 As we have seen, a proper kernel width may look very different depending on the associated problem.
-So it is highly unlikely that a one-size-fits-all implicit kernel width always results in the proper kernel width.
-In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation.
+So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper kernel width.
+In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
 ```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data (non-linear): Gower distance vs. Euclidean distance"}
 knitr::include_graphics("images/04-09-15.png")
 ```
 
-Even though we think that Gower distance may result in some cases in good local models, its (currently) lacking flexibility most likely causes non-local surrogates.
+Even though we think that Gower distance may result in some cases in good local models, its (currently) lacking flexibility most likely causes either instable or global explanations.
 
 Usually, LASSO is the preferred option for variable selection as it is less deterministic as, let's say, step-wise forward selection.
 However, we do not use LASSO but step-wise forward selection because the current implementation of LASSO has shortcomings and does not deliver results suitable for our analysis.

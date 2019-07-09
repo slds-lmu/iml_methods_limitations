@@ -156,7 +156,8 @@ plot_stability_paths <- function(stability_paths){
   y <- stability_paths$probality
   variable <- stability_paths$variable
   p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
-  p <- p + geom_line(aes(color = variable)) + geom_point(aes(color = variable)) + 
+  p <- p + geom_line(aes(color = variable), size = 2) + 
+    geom_point(aes(color = variable), size = 3) + 
     labs(x = "# covariates", y = expression(pi)) + 
     theme(text = element_text(size = 35))
   return(p)
