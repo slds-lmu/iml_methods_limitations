@@ -80,8 +80,9 @@ for (i in 2:(length(km_real2) - 1)) {
 }
 
 
-png("04-09-14.png", width = 1500, height = 4500)
-grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], nrow = 2)
+png("04-09-14.png", width = 2000, height = 2000)
+grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], panels[[6]],
+             panels[[8]], nrow = 3)
 dev.off()
 
 png("04-09-14a.png", width = 1000, height = 848)

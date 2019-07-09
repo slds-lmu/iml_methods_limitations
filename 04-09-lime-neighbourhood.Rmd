@@ -375,7 +375,7 @@ Note that we only use a subset of all possible features as some are somewhat col
 Using this data we aim to use a random forest to predict the number of daily bicycle hires. 
 We tune the forest using cross-validation.
 We use LIME to explain the black box.
-The model performs (on average) reasonably well with a root mean squared error of 1233 on the held-out data while the mean of the bicycle rental count is 4284. 
+The model has a cross-validated root mean squared error of 1233 while the mean of the bicycle rental count is 4284. 
 
 When working with LIME in practice, we want to obtain stable explanations. 
 An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
@@ -394,7 +394,7 @@ We search the full grid of kernel widths and can repeat this procedure for diffe
 Our pseudo stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
 
-In figure \@ref(fig:fig14), we display the stability paths for different observations for our random forest.
+In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
 
 ```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Stability paths for the bycicle data set explaining a random forest"}
 knitr::include_graphics("images/04-09-14.png")
@@ -405,19 +405,25 @@ These are the global features.
 There is one interesting observation about this.
 Different observations sometimes converge to different global surrogate models.
 The covariates humidity and temperature are always selected.
-Then, either the windspeed or the season is selected as global feature.
+Then, either the windspeed (all observations except number 3) or the season (observation 3) is selected as global feature.
 We believe that this is due to the fact that both covariates are similarly strong on the global scope.
 
 Furthermore, we observe that for small values of the kernel width we have - like in our simulation - high variation.
 Here, this variation is expressed with intersecting paths where most covariates are equally likely to be sampled.
 
 For some observations, there seems to be a narrow range where there are stable and local explanation.
-For instance, consider ... and...
-We may conclude that in fact for observations 1 and 2 a stable and local explanation would involve the season, the temperature and the weather situation.
-However, for observation 2, a possible (less) stable explanation would also involve the season, the temperature and the indicator for a working day.
+For instance, consider observation 1 and 8 where the local models seem quite clear.
+For observation 1 between kernel widths of $0.5$ and $1$, it seems as if the temperature, the humidity and the weather situation are most influential.
+For observation 8, the selected local features are temperature, humidity and season.
+For other observations, such as observations 3 and 4, we may argue that there local somewhat stable local explanations.
+These are, however, by far less convincing than the previous ones.
+Additionally, we are struggling to identify stable local models for many observations, like observation 2 and 6.
+The reasons for this varying behaviour can be manifold.
+However, not knowing the ground truth it is hard to evaluate what is going on here in particular.
 
 So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations' goodness.
 Furthermore, "local" explanations still seem quite global as they occur for many different observations.
+Considering our explanations, the sparse explanations were highly correlated consisting of similar features.
 The only truly stable explanations remain essentially global explanations.
 It seems as if the predictive surface is too complex to facilitate local and stable surrogate models properly.
 
