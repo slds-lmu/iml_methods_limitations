@@ -332,7 +332,7 @@ Figure \@ref(fig:aleIceRents) additionally shows the ICE curves for this example
 
 ```{r iceZoomedRents, fig.cap='(ref:iceZoomedRentsCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_ice_zoomed.png")
+knitr::include_graphics("images/ale_1_ice_zoomed.PNG")
 ```
 (ref:iceZoomedRentsCap) ICE for rents in Munich, zoomed in for the critical area.
 
