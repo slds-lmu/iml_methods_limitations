@@ -221,7 +221,7 @@ The setting of the problem stays the same basically the same. Just a small - act
 $$
 f(x_1, x_2, x_3) =  
      \begin{cases}
-       x_3^3, \quad\quad\quad\quad\quad~~\text{if}~x_3\ge6 ~~ \text{&} ~~x_2\le4\\
+       x_3^3, \quad\quad\quad\quad\quad~~\text{if}~x_3\ge6 ~~, ~~x_2\le4\\
        x_1 \times x_2 \times x_3, \quad\text{else}\\
      \end{cases}
 $$
