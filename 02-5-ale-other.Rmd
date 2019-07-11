@@ -398,7 +398,7 @@ Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)*
 The folowing grafic shows the estimated ALE and the theoretical one for three different grid sizes. 
 
 
-```{r datasetALE2,  out.width='100%', echo=FALSE}
+```{r example3_3gs,  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example3_3gs.png")
 ```
