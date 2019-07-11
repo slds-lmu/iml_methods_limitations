@@ -319,7 +319,7 @@ We study three _representative_ observations complying with:
 
 As before, we use a MARS model as our black box.
 When explaining the black box with LIME we observe the same pattern as before.
-Figures \@ref(fig:fig12) and \@ref(fig:fig13) look very similiar to the corresponding figures of the previous section,
+Figures \@ref(fig:fig12) and \@ref(fig:fig13) look very similiar to the corresponding figures of the previous section.
 However, the intervals of "good" solutions are -- naturally -- much smaller.
 The more complex the true associations become, the more we observe this trend of decreasing solution intervals.
 It seems as if the more complex the predictive surface, the harder it is for LIME to even find a good local model.
@@ -334,7 +334,7 @@ knitr::include_graphics("images/04-09-12.png")
 knitr::include_graphics("images/04-09-13.png")
 ```
 
-Having investigated simulated data where we knew the ground truth gave us a good feeling on how the kernel size affects the resulting explainer model.
+Having investigated simulated data where we knew the ground truth, gave us a good feeling on how the kernel size affects the resulting explainer model.
 The neighbourhood problem can be described briefly by the following.
 A (too) small kernel width creates instable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.
