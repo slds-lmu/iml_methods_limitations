@@ -251,7 +251,7 @@ Each of these three will be compared for the different numbers of observations o
 
 ```{r runtime1DnumColAndSize, fig.cap='(ref:runtime1DnumericColAndSizeCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_one_numeric_cols_and_gridsize.png")
+knitr::include_graphics("images/ale_1_one_numeric_cols_and_gridsize.PNG")
 ```
 (ref:runtime1DnumColAndSizeCap) Runtime comparison ALE vs. PDP for one numeric feature. Differences for number of features and grid size.
 
