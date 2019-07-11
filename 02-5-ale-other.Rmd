@@ -411,7 +411,127 @@ As the following examples will show problems can occur due to unlucky data in th
 
 ###Example 4
 
-WiP
+
+
+``` {r eval = FALSE}
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+
+
+library (ggplot2)
+prediction_function_4_4 <- function(x_1, x_2){
+  if(x_1 < 4.9){
+    y = 0
+  }else if(x_1> 5.1){
+    y = 0
+  } else {
+    y =10
+  }
+  return(y)
+}
+set.seed(1)
+dataset_3_3 <- sample_uniform_sq(100, prediction_function_4_4, a = 3, b = 3)
+
+p <- ggplot2::ggplot(dataset_3_3, ggplot2::aes(x_1, x_2))
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3")+
+  geom_segment(aes(x = 4.9, y = 0, xend = 4.9, yend = 9))+
+  geom_segment(aes(x = 5.1, y = 0, xend = 5.1, yend = 9))+
+  annotate("text", x = 5, y = 9.5, label = "f   =   10", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5+10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5-10/3, label = "f = 0", color = "red")
+
+
+
+```
+
+
+```{r pwc_example4_dataset_predf,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example4_dataset_predf.png")
+```
+
+``` {r eval = FALSE}
+
+library(crs)
+library(iml)
+
+model = crs(y~., data = dataset_3_3)
+predictor_4_4 = Predictor$new(model, data = dataset_3_3, y = "y", predict.fun = function(model, newdata){
+  #a<-predict(model, newdata)
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_4_4(newdata[i, 1], newdata[i, 2])
+  }
+  return(a)
+})
+
+ale.1 = FeatureEffect$new(predictor_4_4, feature = "x_1", grid.size = 20)
+fun.1 <- function(x) ale.1$predict(x)
+
+
+plot_20 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-10,10)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 20",  x = "x _ j", y = "ALE(x _ j)")
+
+
+ale.2 = FeatureEffect$new(predictor_4_4, feature = "x_1", grid.size = 30)
+fun.2 <- function(x) ale.2$predict(x)
+
+
+plot_30 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-10,10)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 30",  x = "x _ j", y = "ALE(x _ j)")
+
+ale.3 = FeatureEffect$new(predictor_4_4, feature = "x_1", grid.size = 50)
+fun.3 <- function(x) ale.3$predict(x)
+
+
+plot_50 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.3, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-10,10)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 50",  x = "x _ j", y = "ALE(x _ j)")
+
+ale.4 = FeatureEffect$new(predictor_4_4, feature = "x_1", grid.size = 100)
+fun.4 <- function(x) ale.4$predict(x)
+
+
+plot_100 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.4, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-10,10)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 100",  x = "x _ j", y = "ALE(x _ j)")
+
+ggpubr::ggarrange(plot_20, plot_30,plot_50, plot_100, ncol=2, nrow=2, common.legend = TRUE, legend="bottom")
+
+
+
+```
+
+
+
+
+```{r pwc_example4_4plots,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example4_4plots.png")
+```
+
 
 
 
@@ -425,7 +545,7 @@ WiP
 
 ### Outlook 
 
-Ideas how to reslove this pronblem. Diffrent methods to select the intervals. Adaptive method?
+Ideas how to reslove this problem. Diffrent methods to select the intervals. Adaptive method?
 
 
 ## Categorical Features
