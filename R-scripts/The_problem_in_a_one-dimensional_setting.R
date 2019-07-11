@@ -108,7 +108,7 @@ p + stat_function(fun = Fun, size = 2,
                 aes(colour = as.character(kernel_widths[2]))) +
   coord_cartesian(ylim = c(-1, 9)) +
   geom_point(data = test_1, colour = "green", size = 8) +
-  scale_colour_manual("Kernel Width", 
+  scale_colour_manual("Kernel width", 
                       values = c("red", "yellow")) + ylab("Predicted Value")
 dev.off()
 
@@ -145,7 +145,7 @@ p1 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
                 size = 3, aes(colour = as.character(kernel_widths[22]))) +
   stat_function(fun = function(x) result_1[42, 1] + result_1[42, 2] * x, 
                 size = 3, aes(colour = as.character(kernel_widths[42])))
-p1 <- p1 + scale_colour_manual("Kernel Width", 
+p1 <- p1 + scale_colour_manual("Kernel width", 
                                values = c("red", "orange", "yellow", 
                                           "darkgreen", "lightblue", "blue", 
                                           "purple")) +
@@ -184,7 +184,7 @@ p2 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
                 size = 3, aes(colour = as.character(kernel_widths[22]))) +
   stat_function(fun = function(x) result_2[42, 1] + result_2[42, 2] * x, 
                 size = 3, aes(colour = as.character(kernel_widths[42])))
-p2 <- p2 + scale_colour_manual("Kernel Width", 
+p2 <- p2 + scale_colour_manual("Kernel width", 
                                values = c("red", "orange", "yellow",
                                           "darkgreen", "lightblue", 
                                           "blue", "purple")) +

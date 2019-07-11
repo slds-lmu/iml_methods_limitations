@@ -396,6 +396,21 @@ We can repeat this procedure for another observation.
 Our _pseudo_ stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
 
+Figure \@ref(fig:fig131) displays ideal stability paths with the three distinct ares observed earlier:
+
+1. High variability for small kernels.
+
+2. Local stability for _optimal_ kernels.
+
+3. Convergence to a global surrogate for large kernels.
+
+```{r fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas."}
+knitr::include_graphics("images/04-09-14optimal.png")
+```
+
+The stability paths suggest that temperature, weather situation and holiday are the local features while temperature, humidity and wind speed are deemed as the global ones.
+
+However, in real life things mostly are more complex.
 In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
 
 ```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for the bycicle data set explaining a random forest"}
@@ -414,7 +429,8 @@ Furthermore, we observe that for small values of the kernel width, we have -- li
 Here, this variation is expressed by intersecting paths where most covariates are (almost) equally likely to be sampled.
 
 For some observations, there seems to be a narrow range where there are stable and local explanation.
-For instance, consider observation 1 and 8 where the local models seem quite clear.
+For instance, consider observation 1 and 8.
+Here the local models seem quite clear.
 For observation 1 between kernel widths of $0.5$ and $1$, it seems as if the temperature, the humidity and the weather situation are most influential.
 For observation 8, the selected local features are temperature, humidity and season.
 For other observations, such as observations 3 and 4, we may argue that there are local and stable local explanations, too.
@@ -492,8 +508,8 @@ While we think Gower distance is an interesting approach to deal with mixed data
 In the current (July 2019) R implementation, when working with Gower distance there is no kernel applied.
 Explanations do not correspond to altering the kernel width.
 As we have seen, a proper kernel width may look very different depending on the associated problem.
-So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper kernel width.
-In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
+So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result.
+In figure \@ref(fig:fig15) we analyse this statement by comparing the gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
 ```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship)."}
 knitr::include_graphics("images/04-09-15.png")
@@ -503,3 +519,5 @@ Even though we think that Gower distance may result in some cases in good local 
 
 Usually, LASSO is the preferred option for variable selection as it is less deterministic as, let's say, step-wise forward selection.
 However, we do not use LASSO but step-wise forward selection because the current implementation of LASSO has shortcomings and does not deliver results suitable for our analysis.
+
+All in all, we strongly discourage the user of the lime R package to use the default settings.
