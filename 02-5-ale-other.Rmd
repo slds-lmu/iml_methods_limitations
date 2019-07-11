@@ -353,11 +353,14 @@ knitr::include_graphics("images/ALE_2_example2_zoom.PNG")
 
 Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the x_2 values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole AlE curve from that point on.
 
-This is also shown by the following grafic, which shows 50 ALE estimations (on different data samples) with grid size 10 and 25. The expected higher variance of the estimations with grid size 25 has especially strong effects in the region from $x_1 = 7$ to $x_1 = 10$  
+This is also shown by the following grafic, which shows the delta of the maximum and the minimum of 100 ALE estimations (on different data samples) with grid size 10, 25 and 50. The expected higher variance of the estimations with higher grid sizes have especially strong effects in the region from $x_1 = 7$ to $x_1 = 10$.  
 
-Grafic : Wip!!!!
+```{r exampleALE2.1_delta,  out.width='100%', echo=FALSE}
 
-As the the theoretical ALE in this example was quite smooth grid.size 10 gave reasonable estimates. The following example shows problems that occur once the prediction function is quite shaky.
+knitr::include_graphics("images/ALE_2_example2.1_delta.PNG")
+```
+
+As the the theoretical ALE in this example was quite smooth grid.size 10 gave reasonable estimates. The following example shows problems that occur once the prediction function is quite shaky especially in regions with only few observations.
 
 ### Example 3
 
