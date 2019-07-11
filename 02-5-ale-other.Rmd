@@ -537,8 +537,458 @@ knitr::include_graphics("images/ALE_2_pwc_example4_4plots.png")
 
 ###Example 5 
 
-WiP
+``` {r eval = FALSE}
+prediction_function_4_1 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    y = 2
+  }else if(x_1> 20/3){
+    y = 1
+  } else {
+    y =3
+  }
+  return(y)
+}
 
+
+
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+set.seed(123)
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_1, a = 3, b = 3)
+
+
+
+p <- ggplot2::ggplot(dataset_3, ggplot2::aes(x_1, x_2))
+
+
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3", subtitle = "Predictionfunction 1 ")+
+  geom_segment(aes(x = 10/3, y = 0, xend = 10/3, yend = 10))+
+  geom_segment(aes(x = 20/3, y = 0, xend = 20/3, yend = 10))+
+  geom_segment(aes(y = 10/3, x = 0, yend = 10/3, xend = 10))+
+  geom_segment(aes(y = 20/3, x = 0, yend = 20/3, xend = 10))+
+  annotate("text", x = 5, y = 5, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5, label = "f = 1", color = "red") +
+  annotate("text", x = 5, y = 5-10/3, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5-10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5-10/3, label = "f = 1", color = "red")  +
+  annotate("text", x = 5, y = 5+10/3, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5+10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5+10/3, label = "f = 1", color = "red")
+
+
+
+
+```{r pwc_example5_predf_1,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_predf_1.png")
+```
+``` {r eval = FALSE}
+prediction_function_4_1 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    y = 2
+  }else if(x_1> 20/3){
+    y = 1
+  } else {
+    y =3
+  }
+  return(y)
+}
+
+
+
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+set.seed(123)
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_1, a = 3, b = 3)
+
+
+
+p <- ggplot2::ggplot(dataset_3, ggplot2::aes(x_1, x_2))
+
+
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3", subtitle = "Predictionfunction 2 ")+
+  geom_segment(aes(x = 10/3, y = 0, xend = 10/3, yend = 10))+
+  geom_segment(aes(x = 20/3, y = 0, xend = 20/3, yend = 10))+
+  geom_segment(aes(y = 10/3, x = 0, yend = 10/3, xend = 10))+
+  geom_segment(aes(y = 20/3, x = 0, yend = 20/3, xend = 10))+
+  annotate("text", x = 5, y = 5, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5, y = 5-10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5-10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5-10/3, label = "f = 1", color = "red")  +
+  annotate("text", x = 5, y = 5+10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5+10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5+10/3, label = "f = 1", color = "red")
+
+```
+
+```{r pwc_example5_predf_2,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_predf_2.png")
+```
+``` {r eval = FALSE}
+
+
+prediction_function_4_1 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    y = 2
+  }else if(x_1> 20/3){
+    y = 1
+  } else {
+    y =3
+  }
+  return(y)
+}
+
+
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_1, a = 3, b = 3)
+
+
+library(crs)
+library(iml)
+
+model = crs(y~., data = dataset_3)
+predictor_4_1 = Predictor$new(model, data = dataset_3, y = "y", predict.fun = function(model, newdata){
+  #a<-predict(model, newdata)
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_4_1(newdata[i, 1], newdata[i, 2])
+  }
+  return(a)
+})
+
+X_1 = dataset_3[which(names(df) != "y")]
+
+
+ale.1 = FeatureEffect$new(predictor_4_1, feature = "x_1", grid.size = 5)
+fun.1 <- function(x) ale.1$predict(x)
+
+library(ggplot2)
+plot1 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 5",  x = "x _ j", y = "ALE(x _ j)")
+plot1
+
+
+
+prediction_function_4_2 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    if(x_2 < 10/3){
+      y = 2
+    }else if(x_2> 20/3){
+      y = 2
+    }else{
+      y = 0
+    }
+
+  }else if(x_1> 20/3){
+    if(x_2 < 10/3){
+      y = 1
+    }else if(x_2> 20/3){
+      y = 1
+    }else{
+      y = 0
+    }
+  } else {
+    if(x_2 < 10/3){
+      y = 0
+    }else if(x_2> 20/3){
+      y = 0
+    }else{
+      y = 3
+    }
+  }
+  return(y)
+}
+
+
+set.seed(123)
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_2, a = 3, b = 3)
+p <- ggplot2::ggplot(dataset_3, ggplot2::aes(x_1, x_2))
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3", subtitle = "Uniform ")
+
+
+library(crs)
+library(iml)
+
+model = crs(y~., data = dataset_3)
+predictor_4_2 = Predictor$new(model, data = dataset_3, y = "y", predict.fun = function(model, newdata){
+  #a<-predict(model, newdata)
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_4_2(newdata[i, 1], newdata[i, 2])
+  }
+  return(a)
+})
+
+X_1 = dataset_3[which(names(df) != "y")]
+
+
+ale.2 = FeatureEffect$new(predictor_4_2, feature = "x_1", grid.size = 5)
+fun.2 <- function(x) ale.2$predict(x)
+
+library(ggplot2)
+plot2 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 5",  x = "x _ j", y = "ALE(x _ j)")
+
+plot2
+plot1
+
+gs5<-ggpubr::ggarrange(plot1, plot2, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
+
+gs5
+
+ale.1 = FeatureEffect$new(predictor_4_1, feature = "x_1", grid.size = 10)
+fun.1 <- function(x) ale.1$predict(x)
+
+library(ggplot2)
+plot1_10 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 10",  x = "x _ j", y = "ALE(x _ j)")
+plot1_10
+ale.2 = FeatureEffect$new(predictor_4_2, feature = "x_1", grid.size = 10)
+fun.2 <- function(x) ale.2$predict(x)
+
+library(ggplot2)
+plot2_10 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 10",  x = "x _ j", y = "ALE(x _ j)")
+
+gs10<-ggpubr::ggarrange(plot1_10, plot2_10, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
+
+gs10
+ale.1 = FeatureEffect$new(predictor_4_1, feature = "x_1", grid.size = 20)
+fun.1 <- function(x) ale.1$predict(x)
+
+library(ggplot2)
+plot1_20 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 20",  x = "x _ j", y = "ALE(x _ j)")
+plot1_20
+ale.2 = FeatureEffect$new(predictor_4_2, feature = "x_1", grid.size = 20)
+fun.2 <- function(x) ale.2$predict(x)
+
+library(ggplot2)
+plot2_20 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 20",  x = "x _ j", y = "ALE(x _ j)")
+
+
+gs20<-ggpubr::ggarrange(plot1_20, plot2_20, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
+gs20
+
+ale.1 = FeatureEffect$new(predictor_4_1, feature = "x_1", grid.size = 50)
+fun.1 <- function(x) ale.1$predict(x)
+
+library(ggplot2)
+plot1_50 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.1, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 50",  x = "x _ j", y = "ALE(x _ j)")
+plot1_50
+ale.2 = FeatureEffect$new(predictor_4_2, feature = "x_1", grid.size = 50)
+fun.2 <- function(x) ale.2$predict(x)
+
+library(ggplot2)
+plot2_50 <- ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
+  stat_function(fun = fun.2, aes(colour = "red")) +
+  xlim(c(0,10)) +
+  ylim(c(-2,2)) +
+  scale_colour_manual("Legende", values = c("red"), labels = c( "estimated ALE")) +
+  labs(title = "grid.size = 50",  x = "x _ j", y = "ALE(x _ j)")
+
+
+gs50<-ggpubr::ggarrange(plot1_50, plot2_50, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
+gs50
+
+
+gs_all1<-ggpubr::ggarrange(gs5,gs10,  ncol=1, nrow=2, common.legend = TRUE, legend="bottom")
+gs_all1
+gs_all2<-ggpubr::ggarrange(gs20,gs50,  ncol=1, nrow=2, common.legend = TRUE, legend="bottom")
+gs_all2
+
+```
+
+```{r pwc_example5_gs5_10,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_gs5_10.png")
+```
+
+
+```{r pwc_example5_gs20_50,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_gs20_50.png")
+
+```
+``` {r eval = FALSE}
+prediction_function_4_1 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    y = 2
+  }else if(x_1> 20/3){
+    y = 1
+  } else {
+    y =3
+  }
+  return(y)
+}
+
+
+
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+set.seed(123)
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_1, a = 3, b = 3)
+
+
+
+p <- ggplot2::ggplot(dataset_3, ggplot2::aes(x_1, x_2))
+
+
+
+
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3", subtitle = "Predictionfunction 2 ")+
+  geom_segment(aes(x = 10/3, y = 0, xend = 10/3, yend = 10))+
+  geom_segment(aes(x = 20/3, y = 0, xend = 20/3, yend = 10))+
+  geom_segment(aes(y = 10/3, x = 0, yend = 10/3, xend = 10))+
+  geom_segment(aes(y = 20/3, x = 0, yend = 20/3, xend = 10))+
+  annotate("text", x = 5, y = 5, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5, y = 5-10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5-10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5-10/3, label = "f = 1", color = "red")  +
+  annotate("text", x = 5, y = 5+10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5+10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5+10/3, label = "f = 1", color = "red") +
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[31],] , pch = 1, color = "red")+
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[32],] , pch = 1, color = "red")+
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[33],] , pch = 1, color = "red")+
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[34],] , pch = 1, color = "red")+
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[35],] , pch = 1, color = "red")
+
+
+
+
+```
+
+
+```{r ALE_2_pwc_example5_critical_points 2,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_critical_points 2.png")
+```
+``` {r eval = FALSE}
+prediction_function_4_1 <- function(x_1, x_2){
+  if(x_1 < 10/3){
+    y = 2
+  }else if(x_1> 20/3){
+    y = 1
+  } else {
+    y =3
+  }
+  return(y)
+}
+
+
+
+sample_uniform_sq <- function(n, FUN = prediction_function_4_1, a = 3, b = 3){
+  x_1 <- runif(n = n, min = 0, max = 10)
+  x_2 <- runif(n = n, min = pmax(x_1 - a, 0), max = pmin(x_1 + b, 10))
+  y <- numeric(0)
+  for (i in 1:n){
+    y[i] <- FUN(x_1[i], x_2[i])
+  }
+  return(as.data.frame(cbind(x_1, x_2, y)))
+}
+set.seed(123)
+dataset_3 <- sample_uniform_sq(100, prediction_function_4_1, a = 3, b = 3)
+
+
+
+p <- ggplot2::ggplot(dataset_3, ggplot2::aes(x_1, x_2))
+
+
+
+p + ggplot2::geom_point() +
+  ggplot2::labs(title = "Dataset 3", subtitle = "Predictionfunction 2 ")+
+  geom_segment(aes(x = 10/3, y = 0, xend = 10/3, yend = 10))+
+  geom_segment(aes(x = 20/3, y = 0, xend = 20/3, yend = 10))+
+  geom_segment(aes(y = 10/3, x = 0, yend = 10/3, xend = 10))+
+  geom_segment(aes(y = 20/3, x = 0, yend = 20/3, xend = 10))+
+  annotate("text", x = 5, y = 5, label = "f = 3", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5, label = "f = 0", color = "red") +
+  annotate("text", x = 5, y = 5-10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5-10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5-10/3, label = "f = 1", color = "red")  +
+  annotate("text", x = 5, y = 5+10/3, label = "f = 0", color = "red") +
+  annotate("text", x = 5 - 10/3, y = 5+10/3, label = "f = 2", color = "red") +
+  annotate("text", x = 5 + 10/3, y = 5+10/3, label = "f = 1", color = "red") +
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[67],] , pch = 1, color = "red")+
+  geom_point(size = 5,data =dataset_3[order(dataset_3$x_1)[68],] , pch = 1, color = "red")
+
+```
+```{r ALE_2_pwc_example5_critical_points,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_pwc_example5_critical_points.png")
+```
 ###Example 6
 
 WiP
