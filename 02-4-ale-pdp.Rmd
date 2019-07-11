@@ -260,7 +260,7 @@ So this plot \@ref(fig:runtime1DnumColAndSize) shows the comparison for a change
 
 ```{r runtime1DnumNrow, fig.cap='(ref:runtime1DnumNrowCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_one_numeric_nrows.png")
+knitr::include_graphics("images/ale_1_one_numeric_nrows.PNG")
 ```
 (ref:runtime1DnumNrowCap) Runtime comparison ALE vs. PDP for one numeric feature. Differences for number of observations.
 
@@ -268,7 +268,7 @@ knitr::include_graphics("images/ale_1_one_numeric_nrows.png")
 
 ```{r runtime2DnumColAndSize, fig.cap='(ref:runtime2DnumericColAndSizeCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_two_numeric_cols_and_gridsize.png")
+knitr::include_graphics("images/ale_1_two_numeric_cols_and_gridsize.PNG")
 ```
 (ref:runtime2DnumColAndSizeCap) Runtime comparison ALE vs. PDP for two numeric features. Differences for number of features and grid size.
 
@@ -276,7 +276,7 @@ In figure \@ref(fig:runtime2DnumColAndSize) the runtimes for different 2D ALE an
 
 ```{r runtime2DnumNrow, fig.cap='(ref:runtime2DnumNrowCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_two_numeric_nrows.png")
+knitr::include_graphics("images/ale_1_two_numeric_nrows.PNG")
 ```
 (ref:runtime2DnumNrowCap) Runtime comparison ALE vs. PDP for two numeric features. Differences for number of observations.
 
@@ -288,7 +288,7 @@ Lastly a look at the estimation for 1D categorial PDP and ALE will be taken.
 
 ```{r runtime1DcatColAndSize, fig.cap='(ref:runtime1DcatColAndSizeCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_one_cat_cols_and_gridsize.png")
+knitr::include_graphics("images/ale_1_one_cat_cols_and_gridsize.PNG")
 ```
 (ref:runtime1DcatColAndSizeCap) Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of features only.
 
@@ -296,7 +296,7 @@ Figure \@ref(fig:runtime1DcatColAndSize) shows the runtimes of PDP and ALE for a
 
 ```{r runtime1DcatNrow, fig.cap='(ref:runtime1DcatNrowCap)', echo=FALSE}
 
-knitr::include_graphics("images/ale_1_one_cat_nrows.png")
+knitr::include_graphics("images/ale_1_one_cat_nrows.PNG")
 ```
 (ref:runtime1DcatNrowCap) Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of observations. 
 
