@@ -9,7 +9,7 @@ This subchapter of ALE will focus on the comparison of ALE and PDP, especially o
 So far in this book one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solutions for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP usually fails in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation. 
 Given a value for the feature of interest ...
 
-... the 1D PDP shows the mean prediction value.
+...the 1D PDP measures the expected prediction for this value by averaging over the prediction of all observations pretending the feature of interest is that value.
 
 ... the 1D ALE shows the expected and centered first order effect.
 
@@ -21,6 +21,102 @@ The following Problem is constructed: There is a data set consisting of 150 obse
 The the features of each observation are sampled from the these disrtibutions.
 $X_1 \sim \mathcal{U}(0,~0.5)$, $X_2 \sim \mathcal{N}(2,~2)$ and $X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)$
 So features one and two are independent from each other, while $x_3$ is strongly correlated with $x_2$ and not independent from $x_1$, although there is no influence of $x_1$ on the expected value of $x_3$. In this example the prediction function is not fitted but set as the target variable  $f(x_1, x_2, x_3) = y = x_1 \times x_2 \times x_3$.
+
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, ew, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, ew, sd)
+  x3 <- rnorm(n, x2, x1)
+  y <- x1 * x2 * x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "0p5"
+ew <- "5"
+va <- "1"
+# create example df
+cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
+
+# fit splines on df just to make predictor run
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 * x2 * x3: #################
+prediction_function_123 <- function(x1, x2, x3) {
+  return(x1 * x2 * x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_123(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+  }
+  return(a)
+})
+
+
+# plot ale x1 
+ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
+p_ale_x1 <- plot(ale_x1) + theme_bw()
+# plot pdp on same situation x1
+pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+p_pdp_x1 <- plot(pdp_x1) + theme_bw()
+
+# plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
+
+# plot ale x2
+ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
+p_ale_x2 <- plot(ale_x2) + theme_bw()
+# plot pdp on same situation x2
+pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
+p_pdp_x2 <- plot(pdp_x2) + theme_bw()
+
+# plot ale x3
+ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
+p_ale_x3 <- plot(ale_x3) + theme_bw()
+# plot pdp on same situation x3
+pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
+p_pdp_x3 <- plot(pdp_x3) + theme_bw()
+
+form <- "x1x2x3"
+# make a nice plot:
+title_text <- paste("ALEs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_ale_x1, p_ale_x2, p_ale_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "ALEs"
+save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 14, height = 7, units = "cm")
+
+title_text <- paste("PDPs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_pdp_x1, p_pdp_x2, p_pdp_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "PDPs"
+# save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep = "")
+# ggsave(save_text,
+#        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+#        width = 14, height = 7, units = "cm")
+
+```
 
 ```{r pdpsx1x2x3, fig.cap='(ref:pdpsx1x2x3Cap)', echo=FALSE}
 
@@ -58,6 +154,104 @@ In this example PDP and ALE will be applied to an additive prediction function.
 Again a data set consisting of three features ($x_1$, $x_2$, $x_3$) is constructed. In this case the target variable is $y = x_1 + x_2 - x_3$. Again the prediction function is exactly the same as the target variable.
 The distributions are similar to tho ones from example 1 and again 150 observations were sampled.
 $X_1 \sim \mathcal{U}(0,~2)$, $X_2 \sim \mathcal{N}(2,~0.5)$ and $X_3\mid X_2 \sim \mathcal{N}(X_2,~0.5)$
+
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, 2, sd)
+  x3 <- rnorm(n, x2, sd)
+  y <- x1 + x2 - x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "2"
+va <- "0p5"
+# create example df
+cor_df <- get_cor_df(n, 0, 2, 0.5)
+
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 + x2 - x3: #################
+prediction_function_1plus2minus3 <- function(x1, x2, x3) {
+  return(x1 + x2 - x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+                            a <- numeric(0)
+                            for (i in 1:nrow(newdata)){
+                              a[i]<- prediction_function_1plus2minus3(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+                            }
+                            return(a)
+                          })
+
+################### 1D all linear ###############################################
+
+# plot ale x1 
+ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
+p_ale_x1 <- plot(ale_x1) + theme_bw()
+# plot pdp on same situation x1
+pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+p_pdp_x1 <- plot(pdp_x1) + theme_bw()
+#ggplotly(p_ale_x1)
+# plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
+
+# plot ale x2
+ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
+p_ale_x2 <- plot(ale_x2) + theme_bw()
+# plot pdp on same situation x2
+pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
+p_pdp_x2 <- plot(pdp_x2) + theme_bw()
+
+# plot ale x3
+ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
+p_ale_x3 <- plot(ale_x3) + theme_bw()
+# plot pdp on same situation x3
+pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
+p_pdp_x3 <- plot(pdp_x3) + theme_bw()
+
+
+form <- "x1_plus_x2_minus_x3"
+# make a nice plot:
+title_text <- paste("ALEs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_ale_x1, p_ale_x2, p_ale_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "ALEs"
+save_text <- paste(paste(meth, form, n, mi, ma, va, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 14, height = 7, units = "cm")
+
+
+title_text <- paste("PDPs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_pdp_x1, p_pdp_x2, p_pdp_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "PDPs"
+save_text <- paste(paste(meth, form, n, mi, ma, va, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 14, height = 7, units = "cm")
+```
 
 ```{r pdpsx1px2mx3, fig.cap='(ref:pdpsx1px2mx3Cap)', echo=FALSE}
 
@@ -165,6 +359,84 @@ So feature $x_2$ is expected to be 5 and has a lower variance than it has in exa
 
 With the formulas in the appindex (ref TODO) it is possible to calculate the theoretical 2D ALE.
 
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, ew, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, ew, sd)
+  x3 <- rnorm(n, x2, x1)
+  y <- x1 * x2 * x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "0p5"
+ew <- "5"
+va <- "1"
+# create example df
+cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 * x2 * x3: #################
+prediction_function_123 <- function(x1, x2, x3) {
+  return(x1 * x2 * x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_123(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+  }
+  return(a)
+})
+
+############# plot 2D ale (x1,x2) theo vs real  #######
+ale = FeatureEffect$new(predictor, feature = c('x1','x2'))
+ggplotly(plot(ale))
+
+theoretical_ale_x1x2x3 <- function(a, b, mu, si, z01, z02) {
+  function(x1, x2) {
+    uncentered <- 0.5 * (x2^2 * x1 - (x1 - z01) * (mu^2 + si^2) - ((a + b) / 2) * (x2^2 - z02^2))
+    centering <- 0.5 * (z01 * (mu^2 + si^2) + z02^2 * (a + b) / 2 - (mu^2 + si^2) * (a + b) / 2)
+    return(uncentered - centering)
+  }
+}
+
+x1_col <- ale$results$x1
+x2_col <- ale$results$x2
+theo_results <- numeric(441)
+for (i in 1:length(x1_col)) {
+  theo_results[i] <- theoretical_ale_x1x2x3(0, 0.5, 5, 1, 0, 2.4)(x1_col[i], x2_col[i])
+}
+
+estimated <- plot(ale) + theme_bw()
+ale$results$.ale <- theo_results
+theo <- plot(ale) + theme_bw()
+
+title_text <- paste("ALE 2D - Theoretic vs. Estimated", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(theo, estimated, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "ALE_2D_theo_vs_estim"
+```
+
+
 ```{r theo2Dale, fig.cap='(ref:theo2DaleCap)', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1.png")
@@ -180,6 +452,69 @@ In this Chapter mainly 2D plots for examples will be analysed. To show statement
 
 Just a short reminder of example 2: the prediction function here is $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$ and $x_2$ and $x_3$ are strongly poitive correlated.
 
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, 2, sd)
+  x3 <- rnorm(n, x2, sd)
+  y <- x1 + x2 - x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "2"
+va <- "0p5"
+# create example df
+cor_df <- get_cor_df(n, 0, 2, 0.5)
+
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 + x2 - x3: #################
+prediction_function_1plus2minus3 <- function(x1, x2, x3) {
+  return(x1 + x2 - x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+                            a <- numeric(0)
+                            for (i in 1:nrow(newdata)){
+                              a[i]<- prediction_function_1plus2minus3(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+                            }
+                            return(a)
+                          })
+
+####################2D plots #######################
+ale_2d = FeatureEffect$new(predictor, feature = c('x2','x3'))
+ale_2d$results$.ale <- round(ale_2d$results$.ale, 15)
+ale <- plot(ale_2d) + theme_bw() + ggtitle("ALE")
+
+pdp_2d = FeatureEffect$new(predictor, feature = c('x2','x3'), method = "pdp")
+pdp <- plot(pdp_2d) + theme_bw() + ggtitle("PDP")
+
+meth <- "2d_comp"
+form <- "x1_plus_x2_minus_x3"
+title_text <- paste("2D PDP vs. ALE", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(pdp, ale, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+```
+
 ```{r x1px2mx3ale2D, fig.cap='(ref:x1px2mx3ale2DCap)', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_2d_comp_x1_plus_x2_minus_x3_150_0_2_0p5.png")
@@ -189,6 +524,105 @@ knitr::include_graphics("images/ale_1_2d_comp_x1_plus_x2_minus_x3_150_0_2_0p5.pn
 Figure \@ref(fig:x1px2mx3ale2D) shows the direct comparison of 2D PDP and 2D ALE. The ALE is almost completely zero as expected. In this additive example there are main effects only and since the 2D ALE is corrected for the main effects of the features, there is no pure 2nd order effect in this example. The PDP in comparison shows the mean prediction so of course there are the main effects estimated within the 2D PDP as well. So it is hard to compare those two just like this. 
 
 To get a better comparison one can add the main effects (1D ALEs) of the two features of interest to the 2D ALE.
+
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, 2, sd)
+  x3 <- rnorm(n, x2, sd)
+  y <- x1 + x2 - x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "2"
+va <- "0p5"
+# create example df
+cor_df <- get_cor_df(n, 0, 2, 0.5)
+
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 + x2 - x3: #################
+prediction_function_1plus2minus3 <- function(x1, x2, x3) {
+  return(x1 + x2 - x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+                            a <- numeric(0)
+                            for (i in 1:nrow(newdata)){
+                              a[i]<- prediction_function_1plus2minus3(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+                            }
+                            return(a)
+                          })
+
+################### 1D all linear ###############################################
+
+# plot ale x1 
+ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
+p_ale_x1 <- plot(ale_x1) + theme_bw()
+# plot pdp on same situation x1
+pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+p_pdp_x1 <- plot(pdp_x1) + theme_bw()
+#ggplotly(p_ale_x1)
+# plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
+
+# plot ale x2
+ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
+p_ale_x2 <- plot(ale_x2) + theme_bw()
+# plot pdp on same situation x2
+pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
+p_pdp_x2 <- plot(pdp_x2) + theme_bw()
+
+# plot ale x3
+ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
+p_ale_x3 <- plot(ale_x3) + theme_bw()
+# plot pdp on same situation x3
+pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
+p_pdp_x3 <- plot(pdp_x3) + theme_bw()
+
+
+####################2D plots with added up first order effects #######################
+ale_2d = FeatureEffect$new(predictor, feature = c('x2','x3'))
+ale_2d$results$.ale <- round(ale_2d$results$.ale, 15)
+ale <- plot(ale_2d) + theme_bw() + ggtitle("ALE")
+
+for (i in 1:nrow(ale_2d$results)) {
+  ale_2d$results$.ale[i] <- ale_2d$results$.ale[i] + 
+    ale_x2$predict(ale_2d$results$x2[i]) +
+    ale_x3$predict(ale_2d$results$x3[i])
+}
+ale_plus <- plot(ale_2d) + theme_bw() + ggtitle("ALE")  
+ale_plus_points <- plot(ale_2d) + theme_bw() + geom_point(data = cor_df) + ggtitle("ALE")
+
+meth <- "2d_ale_plus"
+form <- "x1_plus_x2_minus_x3"
+title_text <- paste("2D ALE added up with 1st order effects", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(ale_plus, ale_plus_points, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+save_text <- paste(paste(meth, form, n, mi, ma, va, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 14, height = 7, units = "cm")
+
+```
 
 ```{r ale2DaddedUp, fig.cap='(ref:ale2DaddedUpCap)', echo=FALSE}
 
@@ -204,6 +638,94 @@ With this is mind, example 1 deserves another look regarding the 2nd order effec
 
 To ba able to compare the 2D ALE from the last chapter for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$ with the 2D PDP one also should add up the 1st order effects. 
 
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, ew, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, ew, sd)
+  x3 <- rnorm(n, x2, x1)
+  y <- x1 * x2 * x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 * x2 * x3: #################
+prediction_function_123 <- function(x1, x2, x3) {
+  return(x1 * x2 * x3)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+  a <- numeric(0)
+  for (i in 1:nrow(newdata)){
+    a[i]<- prediction_function_123(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+  }
+  return(a)
+})
+
+
+# plot ale x1 
+ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
+p_ale_x1 <- plot(ale_x1) + theme_bw()
+# plot pdp on same situation x1
+pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+p_pdp_x1 <- plot(pdp_x1) + theme_bw()
+
+# plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
+
+# plot ale x2
+ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
+p_ale_x2 <- plot(ale_x2) + theme_bw()
+# plot pdp on same situation x2
+pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
+p_pdp_x2 <- plot(pdp_x2) + theme_bw()
+
+# plot ale x3
+ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
+p_ale_x3 <- plot(ale_x3) + theme_bw()
+# plot pdp on same situation x3
+pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
+p_pdp_x3 <- plot(pdp_x3) + theme_bw()
+
+###############################################################
+
+############## adding up 1st order ########
+ale_2d = FeatureEffect$new(predictor, feature = c('x1','x2'))
+pdp_2d = FeatureEffect$new(predictor, feature = c('x1','x2'), method = "pdp")
+
+for (i in 1:nrow(ale_2d$results)) {
+  ale_2d$results$.ale[i] <- ale_2d$results$.ale[i] + 
+    ale_x1$predict(ale_2d$results$x1[i]) +
+    ale_x2$predict(ale_2d$results$x2[i])
+}
+ale_plus <- plot(ale_2d) + theme_bw() + ggtitle("ALE + 1st order")
+
+title_text <- paste("2D PDP vs. ALE (1st order effects added up)", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(plot(pdp_2d) + theme_bw() + ggtitle("PDP"), ale_plus, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "comp_2d_1st_orders_added"
+save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 14, height = 7, units = "cm")
+```
 
 ```{r ale2DaddedUpx1x2x3, fig.cap='(ref:ale2DaddedUpx1x2x3Cap)', echo=FALSE}
 
@@ -227,6 +749,129 @@ f(x_1, x_2, x_3) =
 $$
 This seem a bit unrealistic but especially tree based predictors tend to do 'strange' things in areas without data. The result of the 2D PDP compared to the ALE (figure \@ref(fig:pdp2Ddamaged)) shows the problem. In the are where $x_2 < 4$ the values of the PDP are huge, since the big values for $x_3^3$ if $x_3 > 6$ increase the average drastically. These values are very unlikely for the underlying distribution but the PDP pretends them to be possible. This is the problem of the extrapolation in the PDP estimation. This is not a problem for the ALE, here one can not recognise any difference to figure \@ref(fig:ale2DaddedUpx1x2x3), where the prediction function is just $f(x_1, x_2, x_3) = x_1 \times x_2 \times x_3$.
 
+```{r eval = FALSE}
+library(crs)
+library(iml)
+library(plotly)
+library(cowplot)
+
+# create data frame with target variable y = x1 * x2 * x3
+# x1 uniformely between min_int and max_int
+# x2 normal with E(x2) = ew and sd = sd
+# x3 normal with E(x3) = x2 and sd = x1
+get_cor_df <- function(n, min_int, max_int, ew, sd) {
+  x1 <- runif(n, min_int, max_int)
+  x2 <- rnorm(n, ew, sd)
+  x3 <- rnorm(n, x2, x1)
+  y <- x1 * x2 * x3
+  return(as.data.frame(cbind(y, x1, x2, x3)))
+}
+
+n <- 150
+mi <- "0"
+ma <- "0p5"
+ew <- "5"
+va <- "1"
+# create example df
+cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
+
+# fit splines on df
+model <- crs(y ~ x1, data = cor_df)
+
+############# define function = x1 * x2 * x3: #################
+prediction_function_123 <- function(x1, x2, x3) {
+  result <- 0
+  if (x3 > 6 && x2 < 4) {
+    result <- x3^3
+  } else {
+    result <- x1 * x2 * x3
+  }
+  return(result)
+}
+
+# generate predictor set
+X = cor_df[which(names(cor_df) != 'y')]
+#predictor = Predictor$new(spl, data = X, y = cor_df$y)
+predictor = Predictor$new(model, data = X,
+                          y = cor_df$y, predict.fun = function(model, newdata){
+                            a <- numeric(0)
+                            for (i in 1:nrow(newdata)){
+                              a[i]<- prediction_function_123(newdata[i, 1], newdata[i, 2], newdata[i, 3])
+                            }
+                            return(a)
+                          })
+
+
+# plot ale x1 
+ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
+p_ale_x1 <- plot(ale_x1) + theme_bw()
+# plot pdp on same situation x1
+pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
+p_pdp_x1 <- plot(pdp_x1) + theme_bw()
+
+# plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
+
+# plot ale x2
+ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
+p_ale_x2 <- plot(ale_x2) + theme_bw()
+# plot pdp on same situation x2
+pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
+p_pdp_x2 <- plot(pdp_x2) + theme_bw()
+
+# plot ale x3
+ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
+p_ale_x3 <- plot(ale_x3) + theme_bw()
+# plot pdp on same situation x3
+pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
+p_pdp_x3 <- plot(pdp_x3) + theme_bw()
+
+form <- "x1x2x3"
+# make a nice plot:
+title_text <- paste("ALEs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_ale_x1, p_ale_x2, p_ale_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "ALEs"
+# save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep = "")
+# ggsave(save_text,
+#        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+#        width = 14, height = 7, units = "cm")
+
+title_text <- paste("PDPs for each feature", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(p_pdp_x1, p_pdp_x2, p_pdp_x3, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "PDPs"
+# save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep = "")
+# ggsave(save_text,
+#        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+#        width = 14, height = 7, units = "cm")
+
+###############################################################
+
+############## adding up 1st order ########
+ale_2d = FeatureEffect$new(predictor, feature = c('x1','x2'))
+pdp_2d = FeatureEffect$new(predictor, feature = c('x1','x2'), method = "pdp")
+#ggplotly(plot(ale_2d))
+
+for (i in 1:nrow(ale_2d$results)) {
+  ale_2d$results$.ale[i] <- ale_2d$results$.ale[i] + 
+    ale_x1$predict(ale_2d$results$x1[i]) +
+    ale_x2$predict(ale_2d$results$x2[i])
+}
+ale_plus <- plot(ale_2d) + theme_bw() + ggtitle("ALE + 1st order")  
+#ggplotly(plot(ale_plus))
+
+title_text <- paste("2D PDP vs. ALE (1st order effects added up)", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(plot(pdp_2d) + theme_bw() + ggtitle("PDP"), ale_plus, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+meth <- "comp_2d_1st_orders_added_and_smaller3_bigger6"
+```
+
 ```{r pdp2Ddamaged, fig.cap='(ref:pdp2DdamagedCap)', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_and_smaller3_bigger6_x1x2x3_150_0_0p5_5_1.png")
@@ -248,6 +893,159 @@ The comparison will cover the runtime for...
 Each of these three will be compared for the different numbers of observations of course but also for different grid sizes (number of intervals the ALE and PDP are estimated) and varying feature numbers. 
 
 ### One numerical feature of interest
+
+
+```{r eval = FALSE}
+library(iml)
+library(mlr)
+library(microbenchmark)
+library(e1071)
+library(party)
+
+############## sample datasets ##################
+get_numeric_sampling <- function(nrows, ncols) {
+  y_regr <- c(1:ncols)
+  for (i in 1:(ncols-2)) {
+    mu <- runif(1, 0, 100)
+    si <- runif(1, 5, 10)
+    y_regr <- cbind(y_regr, rnorm(nrows, mu, si))
+  }
+  y_regr <- as.data.frame(y_regr)
+  multi_fact <- as.factor(c(1:10))
+  p <- runif(1, 0, 1)
+  V_bin <- as.factor(rbinom(nrows, 1, p))
+  y_regr <- cbind(y_regr, multi_fact, V_bin)
+  return(y_regr)
+}
+
+regr_100_5    <- get_numeric_sampling(100, 5)
+regr_100_20   <- get_numeric_sampling(100, 20)
+regr_100_40   <- get_numeric_sampling(100, 40)
+regr_1000_5   <- get_numeric_sampling(1000, 5)
+regr_10000_5  <- get_numeric_sampling(10000, 5)
+
+t.regr_100_5    <- makeRegrTask(data = regr_100_5, target = "y_regr")
+t.regr_100_20   <- makeRegrTask(data = regr_100_20, target = "y_regr")
+t.regr_100_40   <- makeRegrTask(data = regr_100_40, target = "y_regr")
+t.regr_1000_5   <- makeRegrTask(data = regr_1000_5, target = "y_regr")
+t.regr_10000_5  <- makeRegrTask(data = regr_10000_5, target = "y_regr")
+###########################################
+
+############### fit svm ###################
+l.svm <- makeLearner("regr.svm")
+fit.svm.regr_100_5    <- train(l.svm, t.regr_100_5)
+fit.svm.regr_100_20   <- train(l.svm, t.regr_100_20)
+fit.svm.regr_100_40   <- train(l.svm, t.regr_100_40)
+fit.svm.regr_1000_5   <- train(l.svm, t.regr_1000_5)
+fit.svm.regr_10000_5  <- train(l.svm, t.regr_10000_5)
+
+svm.regr_100_5    <- Predictor$new(fit.svm.regr_100_5, data = regr_100_5, y = regr_100_5$y_regr)
+svm.regr_100_20   <- Predictor$new(fit.svm.regr_100_20, data = regr_100_20, y = regr_100_20$y_regr)
+svm.regr_100_40   <- Predictor$new(fit.svm.regr_100_40, data = regr_100_40, y = regr_100_40$y_regr)
+svm.regr_1000_5   <- Predictor$new(fit.svm.regr_1000_5, data = regr_1000_5, y = regr_1000_5$y_regr)
+svm.regr_10000_5  <- Predictor$new(fit.svm.regr_10000_5, data = regr_10000_5, y = regr_10000_5$y_regr)
+########################################
+
+############### define functions t´for microbenchmark #################
+#one numeric
+ale_one_numeric <- function(predi, feature = "V2", grid.size) {
+  return(FeatureEffect$new(predi, feature = feature, grid.size = grid.size))
+}
+
+pdp_one_numeric <- function(predi, feature = "V2", grid.size) {
+  return(FeatureEffect$new(predi, feature = feature, grid.size = grid.size, method = "pdp"))
+}
+
+# two numeric
+ale_two_numeric <- function(predi, feature = c("V2","V3"), grid.size) {
+  return(FeatureEffect$new(predi, feature = feature, grid.size = grid.size))
+}
+
+pdp_two_numeric <- function(predi, feature = c("V2","V3"), grid.size) {
+  return(FeatureEffect$new(predi, feature = feature, grid.size = grid.size, method = "pdp"))
+}
+
+# one categorial
+ale_one_cat <- function(predi, feature = "multi_fact") {
+  return(FeatureEffect$new(predi, feature = feature))
+}
+
+pdp_one_cat <- function(predi, feature = "multi_fact") {
+  return(FeatureEffect$new(predi, feature = feature, method = "pdp"))
+}
+####################################################################
+
+############################## one numeric feature ##########
+# pdp vs ale increasing columns and grid size
+microbenchmark(ale_one_numeric(svm.regr_100_5,  grid.size = 20),
+               ale_one_numeric(svm.regr_100_5, grid.size = 100),
+               ale_one_numeric(svm.regr_100_20, grid.size = 20),
+               ale_one_numeric(svm.regr_100_40, grid.size = 20),
+               pdp_one_numeric(svm.regr_100_5,  grid.size = 20),
+               pdp_one_numeric(svm.regr_100_5, grid.size = 100),
+               pdp_one_numeric(svm.regr_100_20, grid.size = 20),
+               pdp_one_numeric(svm.regr_100_40, grid.size = 20),
+               times = 10)
+
+# pdp vs ale increasing rows
+# pdp_one_numeric(svm.regr_1000_5, grid.size = 20)
+# microbenchmark(pdp_one_numeric(svm.regr_100_5,  grid.size = 20),
+#                pdp_one_numeric(svm.regr_1000_5, grid.size = 20),
+#                times = 10)
+# ale_one_numeric(svm.regr_10000_5, grid.size = 20)
+
+microbenchmark(ale_one_numeric(svm.regr_100_5,   grid.size = 20),
+               ale_one_numeric(svm.regr_1000_5,  grid.size = 20),
+               ale_one_numeric(svm.regr_10000_5, grid.size = 20),
+               pdp_one_numeric(svm.regr_100_5,   grid.size = 20),
+               pdp_one_numeric(svm.regr_1000_5,  grid.size = 20),
+               pdp_one_numeric(svm.regr_10000_5, grid.size = 20),
+               times = 5)
+##########################################################################
+
+############################## two numeric features ##########
+# pdp vs ale increasing columns and grid size
+microbenchmark(ale_two_numeric(svm.regr_100_5,  grid.size = 20),
+               ale_two_numeric(svm.regr_100_5, grid.size = 100),
+               ale_two_numeric(svm.regr_100_20, grid.size = 20),
+               ale_two_numeric(svm.regr_100_40, grid.size = 20),
+               pdp_two_numeric(svm.regr_100_5,  grid.size = 20),
+               pdp_two_numeric(svm.regr_100_5, grid.size = 100),
+               pdp_two_numeric(svm.regr_100_20, grid.size = 20),
+               pdp_two_numeric(svm.regr_100_40, grid.size = 20),
+               times = 10)
+
+# pdp vs ale increasing rows
+microbenchmark(ale_two_numeric(svm.regr_100_5,   grid.size = 20),
+               ale_two_numeric(svm.regr_1000_5,  grid.size = 20),
+               ale_two_numeric(svm.regr_10000_5, grid.size = 20),
+               pdp_two_numeric(svm.regr_100_5,   grid.size = 20),
+               pdp_two_numeric(svm.regr_1000_5,  grid.size = 20),
+               pdp_two_numeric(svm.regr_10000_5, grid.size = 20),
+               times = 1)
+##########################################################################
+
+############################## one categorial feature ##########
+# pdp vs ale increasing columns and grid size
+microbenchmark(ale_one_cat(svm.regr_100_5),
+               ale_one_cat(svm.regr_100_20),
+               ale_one_cat(svm.regr_100_40),
+               pdp_one_cat(svm.regr_100_5),
+               pdp_one_cat(svm.regr_100_20),
+               pdp_one_cat(svm.regr_100_40),
+               times = 10)
+
+# pdp vs ale increasing rows
+microbenchmark(ale_one_cat(svm.regr_100_5),
+               ale_one_cat(svm.regr_1000_5),
+               ale_one_cat(svm.regr_10000_5),
+               pdp_one_cat(svm.regr_100_5),
+               pdp_one_cat(svm.regr_1000_5),
+               pdp_one_cat(svm.regr_10000_5),
+               times = 10)
+##########################################################################
+
+```
 
 ```{r runtime1DnumColAndSize, fig.cap='(ref:runtime1DnumericColAndSizeCap)', echo=FALSE}
 
@@ -307,6 +1105,80 @@ In general one can state that ALE is by far faster. For a SVM that might not be 
 ## Comparison for unevenly distributed data - Example 4: Munich rents
 
 Now a real world problem will be shown. This is an example with data for rents in Munich from 2003. The target variable 'nm' is the rent per month per flat. To predict the rent a random forest was fitted. The features in this example are 'wfl' (size in square meters) and 'rooms' (number of rooms). These two variables are clearly positively correlated, since there will not be an appartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \@ref(fig:correlationMatrixRents). For the fit only 'wfl' and 'rooms' were used to fit the random forest.
+
+```{r eval = FALSE}
+library(ggcorrplot)
+library(randomForest)
+library(iml)
+library(cowplot)
+library(dplyr)
+library(plotly)
+
+#import data
+dataTrain <- read.csv( file="munich_rents_03.csv", 
+                      header = TRUE , sep = "," , stringsAsFactors = FALSE)
+
+
+
+
+dataTrain <- select(dataTrain, nm, wfl, rooms, bj, bez)
+# analyze for correlation
+cor(dataTrain)
+ggplotly(ggcorrplot(cor(dataTrain)))
+
+dataTrain$rooms <- as.factor(dataTrain$rooms)
+# corr wfl to rooms: 0.84
+
+# train rf
+rf.rents <- randomForest(`nm` ~ wfl + rooms, data = dataTrain) # , importance = T)
+rf.rents <- svm(`nm` ~ wfl + rooms, data = dataTrain) #
+rf.pred <- predict(rf.rents, data = dataTrain)
+dataWithPred <- as.data.frame(cbind(rf.pred, dataTrain))
+
+
+# analyze fitted predictor
+mod = Predictor$new(rf.rents, data = dataTrain) #, type = "prob", class = 2)
+ale = FeatureEffect$new(mod, feature = "wfl", grid.size = 15)
+# plot(ale)
+ale <- plot(ale) + theme_bw()
+pdp = FeatureEffect$new(mod, feature = "wfl", method = "pdp")
+# plot(pdp)
+pdp <- plot(pdp)+ theme_bw()
+ice = FeatureEffect$new(mod, feature = "wfl", method = "ice")
+ggplotly(plot(ice))
+# plot(ice)
+ice <- plot(ice) + theme_bw()
+
+# rbind(dataTrain[1993,],
+#       dataTrain[1839,],
+#       dataTrain[2049,],
+#       dataTrain[2052,],
+#       dataTrain[2053,],
+#       dataTrain[2048,])
+# 
+# ale$results
+
+#           nm nmqm wfl rooms   bj bez
+# 1993 1159.36 7.63 152     5 2000  19
+# 1839  779.37 7.22 108     6 1948  20
+# 2049  802.99 8.54  94     4 1992  19
+# 2052  323.42 9.24  35     1 1970  21
+# 2053  506.19 7.79  65     3 1966   7
+# 2048  260.15 5.00  52     2 1948  16
+
+# compare plots:
+form <- "rf_rent_for_rooms_and_wfl_ALE_vs_ICE"
+title_text <- paste("PDP, ICE and ALE for rents in Munich", sep="")
+title <- ggdraw() + draw_label(title_text, fontface='bold')
+plot_row <- plot_grid(ice, ale, pdp, nrow = 1)
+# rel_heights values control title margins
+plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
+save_text <- paste(paste(form, sep = "_"), ".png", sep = "")
+ggsave(save_text,
+       plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
+       width = 18, height = 7, units = "cm")
+
+```
 
 ```{r correlationMatrixRents, fig.cap='(ref:correlationMatrixRentsCap)', echo=FALSE}
 
