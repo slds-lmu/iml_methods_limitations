@@ -3,65 +3,41 @@
 *Author: Sebastian Gruber*
 
 
-## Introduction
+## Understanding Sampling in LIME
 
-The idea behind LIME reduced to its most basic scheme is basically fitting a simpler local model on a more complex model with weights definining an area of higher relevance for the loss function.
-Let's remember how an arbitrary machine learning model is fit:
-We search the function (= model) $f^*$ out of our hypothesis space $\mathcal{H}$ offering the best minimization of a loss function $L$ plus a regularization term $J(f)$ for counteracting overfitting as can be seen by
+In this chapter we will discuss the fundamentals of LIME from a slightly different angle, compared to the introductional chapter, to receive further understanding of what enables sampling, the different implementations in the current R package (called ```LIME```) and how a basic result may look like.
 
-$$ f^* = \arg\min_{f \in \mathcal{H}} \sum_{i=1}^{n} L\Big(y^{(i)}, f\big(x^{(i)}\big) \Big) + \lambda \times J(f) $$
+### Formula
 
-A more specific description of this is given in @bishop and is beyond the scope of this book.
-The interesting part is now, how this is related to the LIME equation.
-Let's assume we just fit successfully a very complex model on a not less intimidating dataset.
-This means we identified our $f^*$, that is -- of course -- still a function of $x$ $f^*(x)$.
-So we have our black box model and predict $ŷ'$ of a new point $x'$, but we are possibly not satisfied with the received output and want to have an explanation of how the features in $x'$ are weighted to receive $ŷ'$.
-This is the point, where LIME is applied to deliver an explainer model $g^*$, whose parameters we can interpret.
-Recall from the introduction how this looks as a minimization problem:
-$$ explanation\left(x'\right) := g^* = arg\,min_{g \epsilon G} \,\mathcal{L}\left(f^*, g, \pi_{x'} \right) + \Omega\left(g\right) $$
-If we now do some small changes of notations, the task of calculating the LIME explainer can be seen as a very similar problem as the minimization problem of any original machine learning task:
+Recall the minimzation formula of LIME in the introductional chapter.
+If we may do some small changes of notations, the task of calculating the LIME explainer can be seen as
 
-$$ g^* = \arg\min_{g \epsilon G} \sum_{i=1}^{n'} \pi_{x'}(x^{(i)}) \times L\Big( f^*\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big) + \lambda \times J(g) $$
+$$ g^* = \arg\min_{g \epsilon G} \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big) + \Omega\left(g\right) $$
 
-with $\Omega\left(g\right) := \lambda \times J(g)$ and $\mathcal{L}\left(f, g, \pi_{x'} \right) := \sum_{i=1}^{n'} \pi_{x'}(x^{(i)}) \times L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big)$.
-Besides the fact of $G$ being supposed to only hold easily interpretable functions compared to $\mathcal{H}$, the difference between fitting a LIME model and a normal supervised model can be precisely indentified to three parts.
-The first is the replacement of the original target variable $y$ with the response $ŷ := f^*\big(x^{(i)} \big)$ of the black box model.
-This means nothing more besides the fact that we do not care about our original target variable anymore.
-We just don't, it's gone.
-We only want to explain the black box model $f^*$ and thus completely ignore everything of distraction for a best fit of $g^*$ on $f^*$ -- even the original target.
-The second difference is the factor $\pi_{x'}(x^{(i)})$ scaling the loss value of each observation.
-As we have already discussed in the introduction, $\pi_{x'}$ is simply a proximity measure giving observations $x^{(i)}$ more weight the closer they are to $x'$, ensuring significantly lower loss contribution on more distant points and thus being responsible for a local fit around $x'$ instead of a global fit of the whole available feature space.
-<!-- Pretty much everything up to here is to my mind not necessary. -->
-When you read the last few words, there may just have popped up a small question mark in the back of your head.
-Why 'feature space'?
-Isn't it simply the original dataset instead?
-The feature space is basically infinitely large for the numerical case, and almost always by more than a few factors bigger than the dataset for categorical cases. <!-- What do you mean? -->
-So how does it make sense talking about the feature space instead of the real, given samples of this space?
-Long story short, the answer is the solely reason why this Chapter 10 even exists.
-And the answer also leads to another set of gigantic problems in practice -- it's the third difference between the equations: $n'$ is not the same as $n$.
-Usually one would assume $n' < n$ because you can't simulate the data generation process, but in our case $n' >> n$. <!-- Hard to understand -->
-The reason why this works is due to our target.
-The original target $y$ is a vector of values of fixed size.
-Full stop.
-But because our new target is not a fixed vector <!-- I know what you mean but this is not very well phrased. -->, but rather a function $f^*$, we can basically generate an infinite amount of new target observations (assuming the codomain is also infinite) and these observations represent exactly the ground truth <!-- Well, it's not the truth though --> $f^*(x)$ without any stochastic noise or whatsoever -- afterall functions are deterministic.
-But why should someone burden this computational effort?
-Isn't our real dataset enough?
+with $\mathcal{L}\left(f, g, \pi_{\tilde x} \right) := \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) \times L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big)$ further expressed more in detail as in the introduction and $\tilde x$ as our desired point to explain.
+This change of notation allows us to spot the enabling property for sampling.
+As one may have already noticed, the original target variable $y$ is replaced by the response $ŷ := f\big(x^{(i)} \big)$ of the black box model.
+This means nothing more besides the fact that we can minimize this problem without accessing the original target at all.
+We just don't care about it anymore, it's gone.
+The great thing about this is, that $f$ can be evaluated for any value in the feature space, giving us -- theoretically -- an arbitrarily amount $n'$ of non-stochastic observations compared to before.
+This may sound absolutely great at first, but we still need values of our feature space we can evaluate.
+And this is where problems arise in the horizon.
+At first, one may ask why even try to receive new values of the feature space?
+Is our real dataset not enough?
 The short answer is 'no'.
-The long answer is that we want a local fit of a new observation $x'$, but what if $x'$ lies in a very sparse area, or on the edge, or even far away of the space consumed by $\{x^{(i)}: i = 1, ..., n\}$?
-A general advice in machine learning is to never ever assume you have a reliable fit in these cases due to local overfitting or -- the worst nightmare -- extrapolation. <!-- Well, what does this mean for our black box then?. -->
-These problems occure because $\{x^{(i)}: i = 1, ..., n\}$ may not offer enough anchor points for $g*$ to deliver a good fit on $\{(x, f^*(x)): x \in X\}$ for a new $x' \in X$.
+The long answer is that we want a local fit of a new observation $\tilde x$ to receive an explanation, but what if $\tilde x$ lies in a very sparse area, or on the edge, or even far away of the space consumed by $\{x^{(i)}: i = 1, ..., n\}$?
+A general advice in machine learning is to never ever assume you have a reliable fit of the ground truth in these cases due to local overfitting or -- the worst nightmare -- extrapolation.
+These problems occure because $\{x^{(i)}: i = 1, ..., n\}$ may not offer enough anchor points for $g*$ to deliver a good fit on $\{(x, f(x)): x \in X\}$ for a new $\tilde x \in X$.
 So, generating more data sounds suddenly like a solid plan.
 The first (and certainly not the last) issue here is the definition of the feature space.
-We need a new set $\{x: x \sim X\}$ with feature space $X$ to receive the responses of $f^*$.
+We need a new set $\{x: x \sim X\}$ with feature space $X$ to receive the responses of $f$.
 However, a priori it is not clear what $X$ looks like, and our original dataset is a finite sample of an infinite space (numerical features) or 'only' an exponentially large space with respect to $dim(X)$.
 As a consequence, we can't assume producing a dataset equal to the size of our feature space -- we need strategies to receive the best possible representation with respect to our task.
 
 
-## Sampling strategies
+### Sampling strategies
 
-This chapter is about different approaches of generating a sample representing the original feature space as appropriately as possible.
-To see how absolutely non-trivial this is, just keep in mind that we possibly don't even need an approximation of the probability density in the feature space, but just areas where the assumed possibility of data is measureably larger than zero, due to the deterministic nature of $f^*(x)$, and uniformly sample there.
-<!-- Long sentence, hard to understand -->
+This chapter is about different approaches of generating a sample representing the original feature space.
 The word 'possibly' was used here because we could also decide to use the density and draw more samples in certain areas, this would give the explanation $g^*$ of our $x'$ more anchor points in it's surrounding for a more precise fit, assuming $x'$ is located in areas of higher probability.
 But what if $x'$ is located in an area of lower probability?
 Unlikely, but absolutely possible with potentially disastrous results due to a missing locality around $x'$.
@@ -79,7 +55,7 @@ Both extremes are not a smart choice, because the former ignores the Curse of Di
 The following strategies take up a position somewhere between, but something like a perfect middle has still to be found for the general case.
 
 
-### Categorical features
+#### Categorical features
 
 <!-- It would be helpful if you outlined where these ideas come from. -->
 Categorical features are handled a bit more straight forward then numerical ones due to finite space.
@@ -101,26 +77,33 @@ The dimension of this feature space is easily in the thousands, making it imposs
 On the other hand, due to the way language works, most of the possible word combinations make no sense at all, so staying close to the original combinations is a sound plan.
 
 
-### Numerical features
+#### Numerical features
 
 Numerical features rise the challenge even further.
 While categorical features make it possible for at least very low dimensions to gather a dataset with all possible values, numerical features are theoretically of infinite size.
-Fortunately in practice one can at least give a good approximation of the lower and upper bounds, making sure a certain density <!-- ??--> of the samples is possible.
-<!-- Is this your outline? -->
-<!-- You should defo talk about correlation structures here! -->
- - bins
- - normal distribution
- - kernel approximated distribution
- - danger of extrapolating areas 
+Fortunately in practice one can at least give a good approximation of the lower and upper bounds, making sure a certain denseness of the samples is possible.
 
-## Understanding basic LIME by examples
+There are currently three different options implemented in the LIME package for sampling numerical features.
+The first -- and default -- one uses a fixed amount of bins.
+The limits of these bins are picked so the original data is approximately equally distributed to each bin.
+In the sampling step, one of these bins will be randomly picked and after that a value is uniformly sampled between the lower and upper limit of that bin.
+The benefit here is being allowed to fine tune the amount of bins, leading to a rougher or more detailed sample representation of the original feature.
+The downside is having a lower and upper limit of all bins, i.e. it is possible the new point for explanation lies outside of all bins.
+The current implementation handles this by discretizing the explanation with each bin as a category class, making it possible to assign values to the lowest (or highest) bin even if it lies below (or above) that bin.
+But this has the highly undesired consequence that the order of the bins is lost, thus risking the loss of a global fit as each bin receives its own weight.
+Another option would be to approximate the original feature through a normal distribution and then sample out of that one.
+This is relatively straight forward, but one may ask if the asumption of normally distributed features is correct.
+Namely, it is not possible to change options for each feature, so by chosing this distribution, all your features will be handled as normally distributed -- but they do get their own mean and variance.
+The consequence of a violated assumption is that the explained data point lies more likely in an area of less denseness, for example if the real distribution is very skewed to one side.
+The danger of this happening is lower for the third and last option for numerical features: Approximating the real feature distribution through a kernel density estimation.
+Any downsides besides slightly increased computational effort have not been encountered with this option.
+Thus -- and after gathering empirical evidence supporting this -- we choose to not use bins, but rather kernel density estimation for most of our trials following down.
 
-<!-- I like your approach. However, I decided against it as it is simply very non-standard to code it yourself; and I assume it does not help that much here as more complex sampling will be time consuming to be implemented. -->
 
-- using continuous, convex black box model
-- following code snippet setting environment for LIME
+### Visualization of an easy example
 
-```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation preliminaries", warning = FALSE}
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME implementation preliminaries", warning = FALSE}
 
 # default input parameters
 model_smoothness = 270
@@ -139,9 +122,8 @@ x_ex = runif(1, 1, 1000)
 y_ex = black_box(x_ex)
 ```
 
-- following code snippet showing core functionality of LIME
 
-```{r, eval = FALSE, echo = TRUE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
 
 set.seed(sample_seed)
 # sample new data points uniformly
@@ -157,7 +139,298 @@ model = lm(y ~ x, data = samples, weights = proximity)
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
+
+The next figure shows LIME results of a simple numerical example.
+Black box model in blue is tried to be explained by the surrogate model as the red line.
+The black dots are the sampled values dealing as train data set for the surrogate model.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled", warning=FALSE}
+
+knitr::include_graphics(c("images/convex_samples_1.png", "images/convex_samples_2.png"))
+#plot_lime(sample_seed = 2)
+#plot_lime(sample_seed = 1)  
+```
+
+As we can see, the surrogate models depend only on randomly generated samples, that lie closer or further spread across the feature space, giving raise to the following questions.
+How much influences a new sample the explanation?
+What is the average confidence of certain weights?
+Do settings influence these and is there a tendency?
+
+
+## Sketching Problems of Sampling
+
+A sinus shaped black box model makes two LIME explanations of the same scenario and with the same settings hold totally different results.
+This indicates how untrusty single explanations could be.
+What can we do here?
+
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
+
+knitr::include_graphics(c("images/nonconvex_samples_1.png", "images/nonconvex_samples_2.png"))
+#plot_lime(sample_seed = 1, model_smoothness = 50)
+#plot_lime(sample_seed = 2, model_smoothness = 50)
+
+```
+
+The most obvious solution is increasing the sample size.
+This indeed shrinks the problem to almost non-existence.
+But this is computationally very intensive, so it would be good to know when the additional computational effort is necessary.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased sample size - resampled plot on the right", warning=FALSE}
+
+knitr::include_graphics(c("images/nonconvex_samples_1_size100.png", "images/nonconvex_samples_2_size100.png"))
+#plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
+#plot_lime(sample_seed = 2, model_smoothness = 50, sample_size = 100)
+  
+```
+
+A little quickcheck what an increase of the kernel width would do in this toy example.
+As we can see, the explanations are more similar, but the locality is lost.
+We won't deal with this further in this chapter, because chapter 9 gave an extensive look into this subtopic, plus we don't want to lose locality and thus rather investigate further options possibly influencing weight stability of the explanation.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width - resampled plot on the right", warning=FALSE}
+
+knitr::include_graphics(c("images/nonconvex_samples_1_width81000.png", "images/nonconvex_samples_2_width81000.png"))
+#plot_lime(sample_seed = 2, model_smoothness = 50, kernel_width = 81000)
+#plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 81000)
+  
+```
+
+
+## Real World Problems with LIME
+
+So far, only artificial problems have been shown, but how does LIME act applied on real world problems?
+We are using real datasets in the following to show weight stability associated with different samples.
+
+### Boston Housing Data
+
+Boston housing dataset is a well-known data set, so a deeper description of its properties are skipped here.
+It's offering a good amount of numerical features (p = 12) and can be seen as a typical case of a numerical regression task.
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
+
+knitr::include_graphics("images/boston_prezi.png")
+
+```
+
+
+#### Mean point versus outlying point
+In the following weight stability is explored by resampling an explanation 100 times of specific settings.
+Of the each weight the mean and the empirical quantiles of the 100 results are calculated and depicted in the figures.
+Out of the quantiles we calculate and then plot the 95% confidence interval (by assuming the weights are approximately normally distributed due to the central limit theorem).
+As black box model, a random forest model with untuned default parameters is used.
+In the first case, the mean data point in the feature space is compared with an extreme outlier (having the maximum value of each feature in the original data set).
+As we can see, the outlier has clearly larger confidence intervals as the mean point.
+This suggests that either the model is behaving really roughly in its area, or, more likely, the sample size in the neighborhood has big influence on our stability.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
+
+knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_outlier_presi.png"))
+
+```
+
+
+#### Decision tree versus linear regression model
+Here, the same settings as above have been used, but both plots use the mean data point and the left plot shows the weights explaining a decision tree as black box model, while the right figure shows the case of a linear regression model.
+As we can see, the differences are striking, suggesting the black box model may have huge influence on the weight stability.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
+
+knitr::include_graphics(c("images/boston_tree_presi.png", "images/boston_lm_presi.png"))
+
+```
+
+
+#### Kernel density estimation versus binning
+Again, the same settings as above, but using different sampling options.
+And again, the differences are clearly visible, leading to the question if their are strict ranks in weight stability of the sampling options.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of mean data point with binning as sampling strategy -- standard deviation highly increased compared to previous results"}
+
+knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_bins_presi.png"))
+
+```
+
+
+### Rental Bikes Data
+
+We only used numerical features so far.
+We are using a dataset with only categorical features now (rental bikes).
+This means, we are forced to use gower distance (binary distance here).
+Do we get similar results as for numerical features?
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
+
+knitr::include_graphics("images/bikes_prezi.png")
+
+```
+
+
+#### Mean point versus outlying point
+Same settings as in the boston case.
+Comparing the majority data point versus the minority data point.
+The differences are a lot more subtle, almost not visible.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
+
+knitr::include_graphics(c("images/bikes_standard_presi.png", "images/bikes_outlier_presi.png"))
+
+```
+
+
+#### Decision tree versus linear regression model
+Again, same settings as before.
+Comparing a decision tree with a linar regression model as black box model.
+The differences are visible, but by far not as much as in the numerical case.
+This suggests we include this categorical data set in our experiments further down, but expect the results won't be as clear cut as in the numerical case.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
+
+knitr::include_graphics(c("images/bikes_tree_presi.png", "images/bikes_lm_presi.png"))
+
+```
+
+
+
+## Experiments about Sampling stability
+
+We saw several evaluations of explanations of single points under different settings.
+How is the general trend over certain settings?
+
+### Influence of feature dimension
+
+Is Curse of dimensionality real?
+How is the general trend over amount of feature dimensions in the train data set?
+
+#### Feature dimension setup
+
+Experiment design: 10 randomly sampled data points of the original data set are explained 10 times under increasing feature dimension.
+Each iteration adds a new feature to the existing feature set with a new black box model being trained on that set.
+The results of the experiment in terms of stability (= standard deviation of each weight) are averaged over all features.
+The plot of feature dimension vs stability is in the following.
+
+#### Feature dimension results
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation of 10 randomly sampled points for explanation repeated 100 times. Each feature is sequentially added with a new black box model being calculated each time. Increased feature amount has no monotonous effect on coefficient stability. Curse of dimensionality is not applying in this case."}
+
+knitr::include_graphics(c("images/sd_p_presi.png", "images/sd_pc_presi.png"))
+
+```
+
+No clear tendency can be found.
+This suggests a general curse of dimensionality can not be confirmed.
+As a further thought, the weight stability may depend on learned interactions of the black box model, but not on the actual train data.
+
+#### Amount of features selected setup
+
+But what about the option of selecting a small subset of the weights?
+Can this option deliver higher stability in the results?
+
+#### Amount of features selected results
+
+Full data set used.
+Averaged standard deviation of all features plotted versus the amount of features selected for explanation.
+Again, no tendency can be found.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the amount of features selected for the explainer. As can be seen, the weight stability is remarkably constant for low amount of features and suddenly becomes very jumpy for higher amount of selected feature. If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately no real rule of thumb can be suggested in this case. The shape of the graph may result due to globally linear predictions for the lesser important features -- assuming the features are picked by weight size."}
+
+knitr::include_graphics(c("images/sd_nfeat_presi.png", "images/sd_nfeatc_presi.png"))
+
+```
+
+We can say overall no curse of dimensionality is visible.
+
+
+### Influence of sample size
+
+How does increased denseness in the feature space (by increasing sample size) increase stability of the surrogate model?
+Results of single trials above suggest a lot.
+
+#### Sample size setup
+Experiment design: 10 randomly picked datapoints of the original data set explained 10 times with iteration over amount of permutations/size of sample.
+Again standard deviation of each weight calculated and averaged over all weights.
+
+#### Sample size results
+
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
+knitr::include_graphics(c("images/sd_npermutations_presi.png"))
+```
+
+Clear and monotonous trend of more permutations giving better stability can be seen.
+Feature dimension is unrelated to weight stability, but sample size highly related - does this make sense?
+We should move focus from train data to black box model.
+
+
+### Influence of black box fit
+The simulation suggests more overfitting and less smoothness of the prediction surface influences weight stability.
+Interim explanation of the random forest hyperparameters:
+Higher tree amount gives the prediction surface more smoothness (by reducing average step size of each step in the prediction function), while higher minimum node size reduces overfitting (by making predictions dependent on more train data points).
+
+#### Motivation
+We are demonstrating the problem by a small semi simulation.
+We are using sampled boston housing data of sample size 20, modelling only medv ~ lstat.
+Because LIME doesn't know the original data, the resulting black box fit seems like an impossible task to approximate linearly in an appropriate manner with only samples.
+
+```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
+knitr::include_graphics(c("images/boston_sampled_tree_presi.png", "images/boston_sampled_tree_1_presi.png"))
+```
+
+
+#### Black box fit setup
+We expected: Better stability of smoother models (random forest and linear model).
+Experiment: 10 randomly picked data points of the original data set explained 10 times are used for iteration over random forest with different hyperparameter settings (each iteration more trees are added and minimum node size increased, leading to less overfitting and more smoothness)
+Results again used to get average standard deviation (= average weight stability).
+
+
+#### Black box fit results
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before but with black box model smoothness/complexity iterated over. As a base model a random forest with only one tree and minimum node size of one was used and each iteration the amount of trees was increased by 10 and the minimum node size by one. This means the last tick in this graph is corresponding to a random forest with 91 trees and minimum node size of 10. It's nicely shown how important the smoothness of the model is for the weight stability. Keep in mind the model was fitted on some training data, which means if we would pick more complex data, the line may take much longer to flatten out, and vice versa for less complex data."}
+knitr::include_graphics("images/sd_smoothness_presi.png")
+```
+
+As can be seen, a big influence of the smoothness is present.
+Although the influence flattens quickly, but this may be different for more complex data sets requiring more "overfitting" (meant is less smooth fitting).
+This gives raise to the last experiment.
+
+#### Black box overfit setup
+
+Before, we started with a really unsmooth model and gradually added more regularisation (more trees and higher minimum node size).
+But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure with increase of only a single hyperparameter: extreme gradient boosting.
+We start with only two trees (often known as 'M' or 'nrounds' or as 'the stopping parameter') and double the amount with each iteration.
+All the other settings and the procedure for receiving the results are kept the same.
+
+#### Black box overfit results
+
+```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Uniform sampling strategy -- black dots are sampled data points, red line is the LIME explanation, yellow dot the explained data point and the horizontal lines the square root of the kernel width, approximating size of neighborhood"}
+
+knitr::include_graphics("images/sd_overfitting_presi.png")
+
+```
+
+As we can see, as long as the xgboost learner is able to reduce the train error, the weight stability gets consistently worse.
+Let's try to get an idea of why this is happening in such a clear manner.
+What makes the train error get smaller? 
+Reducing the residuals.
+What consequence has reducing the residuals in this case on the prediction surface? 
+It becomes more volatile, assuming a certain level of noise.
+And this volatility kills our weight stability.
+
+## Conclusion
+Categorical data and numerical data have weight stability issues, but categorical data offers less settings, making it easier to handle.
+But, numerical data can be improved a lot more by tweaking some settings.
+On of these is turning of binning, which is the default option in the LIME package.
+This results in a huge benefit in the weight stability in all encountered cases.
+What makes us have trust in a single explanation?
+Weight stability is almost independent of the weight size, so high weights are very trustworthy.
+Also picking a very high sample size increases the stability.
+Do this whenever possible.
+Furthermore, what makes us have no trust in the result?
+When we know the data set is very complex with a curvy/wavy fit almost surely going to happen.
+And if the model we are using is capable of extreme overfitting.
+In this case the less regularisation we put onto it, the less trustworthy our LIME explanations are going to be.
+
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
 req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
 install_these = req_packages[!(req_packages %in% installed.packages())]
 # Wo bleibt meine Zitation ;-)? Better work with the Description file, though!
@@ -206,89 +479,6 @@ plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sa
 }
   
 ```
-
-- showing LIME results of simple numerical example
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 2)
-  
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 1)
-  
-```
-
-- as we can see, the surrogate models depend only on randomly generated samples, that randomly lie closer or further spread across the feature space, giving raise to the following investigation
-
-
-
-## Sampling stability
-
-- using continuous, non-convex black box model
-- giving raise of question about weight stability in certain settings
-- which settings are worse/have biggest influence?
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 2, model_smoothness = 50)
-  
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 1, model_smoothness = 50)
-  
-```
-
-- increase of sampling size helps
-- not feasable for higher dimensions (curse of dimensionality)
-<!-- good!! -->
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 2, model_smoothness = 50, sample_size = 100)
-  
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
-  
-```
-
-- quick sanity check: kernel width doesn't help (careful about intersections with philipp)
-<!-- What do you mean by this`? -->
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 2, model_smoothness = 50, kernel_width = 9000)
-  
-```
-
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-
-plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 9000)
-  
-```
-
-<!-- Way too many plots!, try to reduce it to the essence or at least work with panels -->
-
-## Sampling stability
-
-- using real datasets in the following to show weight stability associated with different samples
-
-### Numerical features
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -349,7 +539,7 @@ args = paste0("plots[[", 1:12, "]]", collapse = ", ")
 grid_plot_func = paste0("gridExtra::grid.arrange(", args, ", nrow = 3)")
 
 filename = paste0("images/boston_prezi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 eval(parse(text = grid_plot_func))
 dev.off()
 
@@ -376,12 +566,12 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_standard_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
 dev.off()
 
 filename = paste0("images/boston_100iter_standard.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -389,7 +579,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -411,13 +601,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_outlier_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
 dev.off()
 
 
 filename = paste0("images/boston_100iter_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -425,7 +615,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -449,13 +639,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_bins_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
 dev.off()
 
 
 filename = paste0("images/boston_100iter_bins.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -463,7 +653,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_bins_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -484,7 +674,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_100iter_bins_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -492,7 +682,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_100iter_bins_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -519,13 +709,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_lm_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
 dev.off()
 
 
 filename = paste0("images/boston_lm.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -533,7 +723,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -554,7 +744,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -562,7 +752,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -585,7 +775,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_bins.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -593,7 +783,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_bins_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -614,7 +804,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_lm_bins_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -622,7 +812,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_lm_bins_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -649,13 +839,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_tree_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
 dev.off()
 
 
 filename = paste0("images/boston_tree.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -663,7 +853,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_tree_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
@@ -684,7 +874,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/boston_tree_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
@@ -692,114 +882,12 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/boston_tree_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 ```
 
-- boston housing dataset well known
-- offering good amount of numerical features
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
-knitr::include_graphics("images/boston.png")
-```
-
-<!-- Too small -->
-<!-- why? -->
-
-##### Average data point explanation
-- experiment: average data point explanation resampled 100 times
-- weight average and standard deviation of each feature
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
-knitr::include_graphics("images/boston_100iter_standard.png")
-```
-
-<!-- Too small -->
-
-
-###### comparing results with outlying data point
-- same experiment settings
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
-knitr::include_graphics("images/boston_100iter_outlier.png")
-```
-
-<!-- Really so bad? Well if the obs is not normal why expect the model to behave nicely? -->
-
-
-##### using binning (default) option as sampling strategy
-- same other settings as before (average data point vs outlying data point)
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of mean data point with binning as sampling strategy -- standard deviation highly increased compared to previous results"}
-knitr::include_graphics("images/boston_100iter_bins.png")
-```
-
-
-###### vs outlier
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of outlying data point -- different weight sizes as before, but the standard deviation is not clearly different"}
-knitr::include_graphics("images/boston_100iter_bins_outlier.png")
-```
-
-- binning is pretty bad
-
-##### using a globally linear black box model (sanity check)
-- expected: very stable results and same results for average and outlying data point
-- same experiment settings as before
-
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of the mean data point applied on a linar model as black box model"}
-knitr::include_graphics("images/boston_lm.png")
-```
-
-
-###### vs outlier
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same linear model as before, but with the LIME weights of an outlying data point"}
-knitr::include_graphics("images/boston_lm_outlier.png")
-```
-
-
-##### vs binning
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with a linear model as black box and binning as sampling strategy"}
-knitr::include_graphics("images/boston_lm_bins.png")
-```
-
-
-###### vs binning with outlier
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same settings but with outlying data point for weights -- weight size notably different to the case of the mean point"}
-knitr::include_graphics("images/boston_lm_bins_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
-knitr::include_graphics("images/boston_tree.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
-knitr::include_graphics("images/boston_tree_outlier.png")
-```
-
-
-<!-- AGAIN: Way too many plots. Better show only some and rather focus on it.
-Then just describe the other results in your text.
-You cannot show the reader everything you did.
-You already overloaded me being familiar with the topic.
-What is even your point?-->
-- we saw several evaluations of explanations of single points under different settings
-- how is the general trend over certain settings?
-- feature dimension vs stability and amount of selected features vs stability in the following
-<!-- You gave me too much input. I cannot judge what is most important / interesting -->
-
-#### Influence of feature dimension
-- Is Curse of dimensionality real?
-- how is the general trend over amount of feature dimensions in the train data set?
-- experiment design: 10 random data points explained 100 times under different feature dimension
-- results of experiment in terms of stability (= standard deviation) averaged
-- plots of feature dimension vs stability and amount of selected features vs stability in the following
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -839,8 +927,8 @@ feature_growth = function(
   pts_to_predict = pts_to_predict[names(pts_to_predict) != target]
 
   # iterate over amount of feature dimensions
-  outer_return = parallel::mclapply(
-    mc.cores = 4,
+  outer_return = lapply(#parallel::mclapply(
+    #mc.cores = 4,
     seq(2L, p_max, by = dim_increment),
     function(p) {
       
@@ -934,34 +1022,34 @@ boston     = BostonHousing[, -4]
 boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
 # forgot seed, pls dont kill me
 set.seed(123)
-pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
+pts_to_predict = boston[sample(1:nrow(boston), 10), -ncol(boston)]
 
 # this may take a while
-#results = feature_growth(boston, "medv", pts_to_predict, type = "regr", dim_increment = 1L, repeats = 100)
-#saveRDS(results, "feature_growth_boston_repeats100")
-results  = readRDS("feature_growth_boston_repeats100")
-results$type = "kernel_est"
+#results = feature_growth(boston, "medv", pts_to_predict, type = "regr", dim_increment = 1L, repeats = 10)
+#saveRDS(results, "LIME_experiment_results/feature_growth_boston_repeats10")
+results  = readRDS("LIME_experiment_results/feature_growth_boston_repeats10")
+results$type = "kernel"
 #resultsb = feature_growth(
 #  boston, "medv", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  bin_continuous = TRUE,
 #  use_density = TRUE
 #)
-#saveRDS(resultsb, "feature_growth_boston_repeats100_bins")
-resultsb = readRDS("feature_growth_boston_repeats100_bins")
+#saveRDS(resultsb, "LIME_experiment_results/feature_growth_boston_repeats10_bins")
+resultsb = readRDS("LIME_experiment_results/feature_growth_boston_repeats10_bins")
 resultsb$type = "bins"
 #resultsn = feature_growth(
 #  boston, "medv", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  use_density = TRUE
 #)
-#saveRDS(resultsn, "feature_growth_boston_repeats100_nd")
-resultsn = readRDS("feature_growth_boston_repeats100_nd")
-resultsn$type = "normal_dis"
+#saveRDS(resultsn, "LIME_experiment_results/feature_growth_boston_repeats10_nd")
+resultsn = readRDS("LIME_experiment_results/feature_growth_boston_repeats10_nd")
+resultsn$type = "normal"
 
 ### categorical data
 bikes = read.csv("datasets/day.csv")
@@ -986,12 +1074,12 @@ pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
 
 #resultsc = feature_growth(
 #  bikes, "cnt", pts_to_predict,
-#  type = "regr", dim_increment = 1L, repeats = 100,
+#  type = "regr", dim_increment = 1L, repeats = 10,
 #  bin_continuous = TRUE,
 #  use_density = TRUE
 #)
-#saveRDS(resultsc, "feature_growth_bikes_repeats100")
-resultsc = readRDS("feature_growth_bikes_repeats100")
+#saveRDS(resultsc, "LIME_experiment_results/feature_growth_bikes_repeats10")
+resultsc = readRDS("LIME_experiment_results/feature_growth_bikes_repeats10")
 resultsc$type = "categorical"
 
 
@@ -999,15 +1087,40 @@ results = rbind(results, resultsb, resultsn)
 # boston
 results_gr = dplyr::group_by(
   results,
+  data_crim,
+  data_zn,
+  data_indus,
+  data_nox,
+  data_rm,
+  data_age,
+  data_dis,
+  data_rad,
+  data_tax,
+  data_ptratio,
+  data_b,
+  data_lstat,
   p,
   type
 )
+
 # bikes
 resultsc_gr = dplyr::group_by(
   resultsc,
+  data_season,
+  data_yr,
+  data_mnth,
+  data_holiday,
+  data_weekday,
+  data_workingday,
+  data_weathersit,
+  data_temp,
+  data_atemp,
+  data_hum,
+  data_windspeed,
   p,
   type
 )
+
 # boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
@@ -1046,6 +1159,54 @@ resultsc_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(resultsc_sd)
 
+results_gr = dplyr::group_by(
+  results_sd,
+  p,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc_sd,
+  p,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = mean(sd_crim, na.rm = TRUE),
+  sd_zn    = mean(sd_zn, na.rm = TRUE),
+  sd_indus = mean(sd_indus, na.rm = TRUE),
+  sd_nox   = mean(sd_nox, na.rm = TRUE),
+  sd_rm    = mean(sd_rm, na.rm = TRUE),
+  sd_age   = mean(sd_age, na.rm = TRUE),
+  sd_dis   = mean(sd_dis, na.rm = TRUE),
+  sd_rad   = mean(sd_rad, na.rm = TRUE),
+  sd_tax   = mean(sd_tax, na.rm = TRUE),
+  sd_ptratio = mean(sd_ptratio, na.rm = TRUE),
+  sd_b     = mean(sd_b, na.rm = TRUE),
+  sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = mean(as.numeric(as.character(sd_season)), na.rm = TRUE),
+  sd_yr         = mean(as.numeric(as.character(sd_yr)), na.rm = TRUE),
+  sd_mnth       = mean(as.numeric(as.character(sd_mnth)), na.rm = TRUE),
+  sd_holiday    = mean(as.numeric(as.character(sd_holiday)), na.rm = TRUE),
+  sd_weekday    = mean(as.numeric(as.character(sd_weekday)), na.rm = TRUE),
+  sd_workingday = mean(as.numeric(as.character(sd_workingday)), na.rm = TRUE),
+  sd_weathersit = mean(as.numeric(as.character(sd_weathersit)), na.rm = TRUE),
+  sd_temp       = mean(as.numeric(as.character(sd_temp)), na.rm = TRUE),
+  sd_atemp      = mean(as.numeric(as.character(sd_atemp)), na.rm = TRUE),
+  sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
+  sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
+))
+
 plot_data = data.frame(sd = c(
   apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))#,
 #  apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
@@ -1070,10 +1231,10 @@ plot = ggplot(plot_data, aes(y = sd, x = p, color = type)) +
     breaks = 1L:12L,
     labels = c("", "crim & zn", names(boston[c(-1, -2, -13)]))
   ) +
-  ylim(c(0, 0.35))
+  ylim(c(0, 0.2))
 
-filename = paste0("images/sd_p_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_p_presi2.png")
+png(filename, width = 700L, height = 500L)
 plot
 dev.off()
 
@@ -1099,11 +1260,11 @@ plotc = ggplot(plot_datac, aes(y = sd, x = p, color = type)) +
     breaks = 1L:11L,
     labels = c("", "season & yr", names(bikes[c(-1, -2, -12)]))
   ) +
-  ylim(c(0, 0.35))
+  ylim(c(0, 0.2))
 
 
-filename = paste0("images/sd_pc_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_pc_presi2.png")
+png(filename, width = 700L, height = 500L)
 plotc
 dev.off()
 
@@ -1112,17 +1273,43 @@ dev.off()
 ### plotting n_features
 # boston
 results_12 = results[results$p == 12, ]
-results_gr = dplyr::group_by(
-  results_12,
-  type,
-  n_features#,
-)
 # bikes
 resultsc_11 = resultsc[resultsc$p == 11, ]
+
+results_gr = dplyr::group_by(
+  results_12,
+  data_crim,
+  data_zn,
+  data_indus,
+  data_nox,
+  data_rm,
+  data_age,
+  data_dis,
+  data_rad,
+  data_tax,
+  data_ptratio,
+  data_b,
+  data_lstat,
+  n_features,
+  type
+)
+
+# bikes
 resultsc_gr = dplyr::group_by(
   resultsc_11,
-  type,
-  n_features#,
+  data_season,
+  data_yr,
+  data_mnth,
+  data_holiday,
+  data_weekday,
+  data_workingday,
+  data_weathersit,
+  data_temp,
+  data_atemp,
+  data_hum,
+  data_windspeed,
+  n_features,
+  type
 )
 
 # boston
@@ -1139,8 +1326,11 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_tax   = sd(tax, na.rm = TRUE),
   sd_ptratio = sd(ptratio, na.rm = TRUE),
   sd_b     = sd(b, na.rm = TRUE),
-  sd_lstat = sd(lstat, na.rm = TRUE)
+  sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1155,6 +1345,57 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_atemp      = sd(as.numeric(as.character(atemp)), na.rm = TRUE),
   sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
   sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
+))
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
+
+results_gr = dplyr::group_by(
+  results_sd,
+  n_features,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc_sd,
+  n_features,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = mean(sd_crim, na.rm = TRUE),
+  sd_zn    = mean(sd_zn, na.rm = TRUE),
+  sd_indus = mean(sd_indus, na.rm = TRUE),
+  sd_nox   = mean(sd_nox, na.rm = TRUE),
+  sd_rm    = mean(sd_rm, na.rm = TRUE),
+  sd_age   = mean(sd_age, na.rm = TRUE),
+  sd_dis   = mean(sd_dis, na.rm = TRUE),
+  sd_rad   = mean(sd_rad, na.rm = TRUE),
+  sd_tax   = mean(sd_tax, na.rm = TRUE),
+  sd_ptratio = mean(sd_ptratio, na.rm = TRUE),
+  sd_b     = mean(sd_b, na.rm = TRUE),
+  sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = mean(as.numeric(as.character(sd_season)), na.rm = TRUE),
+  sd_yr         = mean(as.numeric(as.character(sd_yr)), na.rm = TRUE),
+  sd_mnth       = mean(as.numeric(as.character(sd_mnth)), na.rm = TRUE),
+  sd_holiday    = mean(as.numeric(as.character(sd_holiday)), na.rm = TRUE),
+  sd_weekday    = mean(as.numeric(as.character(sd_weekday)), na.rm = TRUE),
+  sd_workingday = mean(as.numeric(as.character(sd_workingday)), na.rm = TRUE),
+  sd_weathersit = mean(as.numeric(as.character(sd_weathersit)), na.rm = TRUE),
+  sd_temp       = mean(as.numeric(as.character(sd_temp)), na.rm = TRUE),
+  sd_atemp      = mean(as.numeric(as.character(sd_atemp)), na.rm = TRUE),
+  sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
+  sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
 ))
 
 plot_data = data.frame(
@@ -1179,10 +1420,10 @@ plot = ggplot(plot_data, aes(y = sd, x = n_features, color = type)) +
     breaks = 1:12L,
     labels = 1:12L
   ) +
-  ylim(c(0, 0.1))
+  ylim(c(0, 0.3))
 
-filename = paste0("images/sd_nfeat_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_nfeat_presi2.png")
+png(filename, width = 700L, height = 500L)
 plot
 dev.off()
 
@@ -1209,37 +1450,16 @@ plotc = ggplot(plot_datac, aes(y = sd, x = n_features, color = type)) +
     breaks = 1L:11L,
     labels = 1L:11L
   ) +
-  ylim(c(0, 0.1))
+  ylim(c(0, 0.3))
 
-filename = paste0("images/sd_nfeatc_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_nfeatc_presi2.png")
+png(filename, width = 700L, height = 500L)
 plotc
 dev.off()
 
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of 10 randomly sampled points for explanation repeated 100 times. Each feature is sequentially added with a new black box model being calculated each time. Increased feature amount has no monotonous effect on coefficient stability. Curse of dimensionality is not applying in this case."}
-knitr::include_graphics("images/sd_p.png")
-```
-
-- no tendency found
-- may depend on learned interactions of the black box model, but not on the actual train data
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the amount of features selected for the explainer. As can be seen, the weight stability is remarkably constant for low amount of features and suddenly becomes very jumpy for higher amount of selected feature. If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately no real rule of thumb can be suggested in this case. The shape of the graph may result due to globally linear predictions for the lesser important features -- assuming the features are picked by weight size."}
-
-knitr::include_graphics("images/sd_nfeat.png")
-
-```
-
-- tendency of less weights selected being better, but no clear tendency for higher amounts
-- no curse of dimensionality visible
-
-
-#### Does the amount of chosen samples influence stability?
-- how does increased denseness in the feature space (by increasing sample size) increase stability of the surrogate model?
-- experiment design: 10 randomly picked datapoints explained 100 times iterated over amount of permutations/size of sample
-- again standard deviation of all weights calculated and averaged
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -1363,44 +1583,44 @@ boston     = BostonHousing[, -4]
 # normalizing standard deviation to make coefficients comparable
 boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
 set.seed(123)
-pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
+pts_to_predict = boston[sample(1:nrow(boston), 10), -ncol(boston)]
 
 # this may take a while
 #results = permutation_growth(
 #  boston, "medv", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  permutation_seq = c(1000, 2000, 4000, 8000, 16000, 32000)
 #)
-#saveRDS(results, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
-results = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k")
-results$type = "kernel_est"
+#saveRDS(results, "LIME_experiment_results/permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k")
+results = readRDS("LIME_experiment_results/permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k")
+results$type = "kernel (boston)"
 
 #resultsb = permutation_growth(
 #  boston, "medv", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
 #  bin_continuous = TRUE,
 #  use_density = TRUE
 #)
-#saveRDS(resultsb, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
-resultsb = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_bins")
-resultsb$type = "bins"
+#saveRDS(resultsb, "LIME_experiment_results/permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k_bins")
+resultsb = readRDS("LIME_experiment_results/permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k_bins")
+resultsb$type = "bins (boston)"
 
 #resultsn = permutation_growth(
 #  boston, "medv", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
 #  use_density = TRUE
 #)
-#saveRDS(resultsn, "permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
-resultsn = readRDS("permutation_growth_boston_repeats100_perm1kx2kx4kx8kx16kx32k_nd")
-resultsn$type = "normal_dis"
+#saveRDS(resultsn, "permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k_nd")
+resultsn = readRDS("LIME_experiment_results/permutation_growth_boston_repeats10_perm1kx2kx4kx8kx16kx32k_nd")
+resultsn$type = "normal (boston)"
 
 ### categorical data
 bikes = read.csv("datasets/day.csv")
@@ -1427,28 +1647,53 @@ pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -ncol(bikes)]
 #  bikes, "cnt", pts_to_predict,
 #  type = "regr",
 #  dim_increment = 1L,
-#  repeats = 100,
+#  repeats = 10,
 #  permutation_seq = c(16000, 32000, 1000, 2000, 4000, 8000),
 #  bin_continuous = TRUE,
 #  use_density = TRUE
 #)
-#saveRDS(resultsc, "permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
-resultsc = readRDS("permutation_growth_bikes_repeats100_perm1kx2kx4kx8kx16kx32k")
-resultsc$type = "categorical"
+#saveRDS(resultsc, "permutation_growth_bikes_repeats10_perm1kx2kx4kx8kx16kx32k")
+resultsc = readRDS("LIME_experiment_results/permutation_growth_bikes_repeats10_perm1kx2kx4kx8kx16kx32k")
+resultsc$type = "categorical (bikes)"
 
 results = rbind(results, resultsb, resultsn)
 # boston
 results_gr = dplyr::group_by(
   results,
+  data_crim,
+  data_zn,
+  data_indus,
+  data_nox,
+  data_rm,
+  data_age,
+  data_dis,
+  data_rad,
+  data_tax,
+  data_ptratio,
+  data_b,
+  data_lstat,
   n_permutations,
   type
 )
+
 # bikes
 resultsc_gr = dplyr::group_by(
   resultsc,
+  data_season,
+  data_yr,
+  data_mnth,
+  data_holiday,
+  data_weekday,
+  data_workingday,
+  data_weathersit,
+  data_temp,
+  data_atemp,
+  data_hum,
+  data_windspeed,
   n_permutations,
   type
 )
+
 # boston
 results_sd = as.data.frame(dplyr::summarize(
   results_gr,
@@ -1487,6 +1732,58 @@ resultsc_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(resultsc_sd)
 
+results_gr = dplyr::group_by(
+  results_sd,
+  n_permutations,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc_sd,
+  n_permutations,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = mean(sd_crim, na.rm = TRUE),
+  sd_zn    = mean(sd_zn, na.rm = TRUE),
+  sd_indus = mean(sd_indus, na.rm = TRUE),
+  sd_nox   = mean(sd_nox, na.rm = TRUE),
+  sd_rm    = mean(sd_rm, na.rm = TRUE),
+  sd_age   = mean(sd_age, na.rm = TRUE),
+  sd_dis   = mean(sd_dis, na.rm = TRUE),
+  sd_rad   = mean(sd_rad, na.rm = TRUE),
+  sd_tax   = mean(sd_tax, na.rm = TRUE),
+  sd_ptratio = mean(sd_ptratio, na.rm = TRUE),
+  sd_b     = mean(sd_b, na.rm = TRUE),
+  sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = mean(as.numeric(as.character(sd_season)), na.rm = TRUE),
+  sd_yr         = mean(as.numeric(as.character(sd_yr)), na.rm = TRUE),
+  sd_mnth       = mean(as.numeric(as.character(sd_mnth)), na.rm = TRUE),
+  sd_holiday    = mean(as.numeric(as.character(sd_holiday)), na.rm = TRUE),
+  sd_weekday    = mean(as.numeric(as.character(sd_weekday)), na.rm = TRUE),
+  sd_workingday = mean(as.numeric(as.character(sd_workingday)), na.rm = TRUE),
+  sd_weathersit = mean(as.numeric(as.character(sd_weathersit)), na.rm = TRUE),
+  sd_temp       = mean(as.numeric(as.character(sd_temp)), na.rm = TRUE),
+  sd_atemp      = mean(as.numeric(as.character(sd_atemp)), na.rm = TRUE),
+  sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
+  sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
+))
+
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
+
 plot_data = data.frame(sd = c(
   apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
   apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
@@ -1507,28 +1804,13 @@ plot = ggplot(plot_data, aes(y = sd, x = n_permutations, color = type)) +
   ylab("Average Standard Deviation") +
   xlab("Sample size")
 
-filename = paste0("images/sd_npermutations_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_npermutations_presi2.png")
+png(filename, width = 1000L, height = 500L)
 plot
 dev.off()
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
-knitr::include_graphics("images/sd_npermutations.png")
-```
-
-- clear and monotonous trend of more permutations giving better stability
-- feature dimension unrelated to weight stability, but sample size highly related - does this make sense?
-- moving focus from train data to black box model
-
-
-#### Demonstrating LIME in combination with overfitting
-
-- demonstrating by 2D simulation
-- sampled boston housing data: medv ~ lstat
-- decision tree with node size = 1 (overfitting + non-smoothness)
-- random forest with more trees and higher node size still non-continuous, but less overfitting
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Random forest with 'node size = 1' and 'trees = 1'", warning=FALSE}
 
@@ -1569,13 +1851,9 @@ plot = ggplot() +
   xlab("feature (lstat)")
 
 filename = paste0("images/boston_sampled_tree_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot
 dev.off()
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Non-smooth and non-continuous overfit of a decision tree on the feature 'lstat' of the boston housing dataset -- this will be used as black box model in the following"}
-knitr::include_graphics("images/boston_sampled_tree.png")
 ```
 
 
@@ -1632,59 +1910,22 @@ plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 2
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_1_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_lime_boston(sample_seed = 1, kernel_width = 1)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Uniform sampling strategy -- black dots are sampled data points, red line is the LIME explanation, yellow dot the explained data point and the horizontal lines the square root of the kernel width, approximating size of neighborhood"}
-knitr::include_graphics("images/boston_sampled_tree_fst.png")
-```
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_lime_boston(sample_seed = 5, kernel_width = 1)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Exact same settings, but simple rerun of the sampling leading to catastrophic differences due to missing anchor points in the neighborhood"}
-knitr::include_graphics("images/boston_sampled_tree_snd.png")
-```
-
-- giving raise to further investigations
-
-##### Numerical features with overfitting model
-
-- using decision tree with minimum node size of 1 as black box model
-- expected: worse stability compared to smoother models (random forest and linear model)
-- same experiment settings as before (100 iterations; no binning)
-- average data point:
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point with an overfitting decision tree as black box model"}
-knitr::include_graphics("images/boston_tree.png")
-```
-
-###### vs outlying data point:
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree -- weights differ strongly compared to the mean data point"}
-knitr::include_graphics("images/boston_tree_outlier.png")
-```
-
-- highly increased weight instability
-- giving raise to more general experiment
-
-
-#### How does the black box model smoothness influence weight stability?
-- 2D simulation suggests more overfitting and less smoothness of the prediction surface influences weight stability
-- interim explanation: random forest hyperparameters tree amount and minimum node size
-- higher tree amount giving prediction surface more smoothness (by reducing average step size of each step in the prediction function)
-- higher minimum node size reducing overfitting (by making predictions dependent on more train data points)
-- experiment: 10 randomly picked data points explained 100 times, iterated over random forest with different hyperparameter settings (each iteration more trees are added and minimum node size increased, leading to less overfitting and more smoothness)
-- results again used to get average standard deviation (= average weight stability)
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 #################################
@@ -1721,8 +1962,8 @@ complexity_growth = function(
   # set exponential size for nrounds hyperparameter
   degree_seq = rep(1:max_degree, each = repeats)
   # iterate over sequence of exponential degrees
-  outer_return = lapply(#parallel::mclapply(
-    #mc.cores = 4,
+  outer_return = parallel::mclapply(
+    mc.cores = 4,
     degree_seq,
     function(degree) {
 
@@ -1737,12 +1978,13 @@ complexity_growth = function(
       # define task and learner based on data type
       if (type == "classif") {
         task = makeClassifTask(data = train_data, target = target)
-        #learner = makeLearner("classif.ranger", num.trees = num.trees, min.node.size = min.node.size, predict.type = "prob")
-        learner = makeLearner("classif.xgboost", nrounds = nrounds, predict.type = "prob")
+        learner = makeLearner("classif.ranger", num.trees = num.trees, min.node.size = min.node.size, predict.type = "prob")
+        #learner = makeLearner("classif.xgboost", nrounds = nrounds, predict.type = "prob")
         
       } else if (type == "regr") {
         task = makeRegrTask(data = train_data, target = target)
-        learner = makeLearner("regr.xgboost", nrounds = nrounds)
+        #learner = makeLearner("regr.xgboost", nrounds = nrounds)
+        learner = makeLearner("regr.ranger", num.trees = num.trees, min.node.size = min.node.size)
         
       } else {
         stop("Wrong type, buddy")
@@ -1803,25 +2045,25 @@ boston     = BostonHousing[, -4]
 # normalizing standard deviation to make coefficients comparable
 boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
 set.seed(123)
-pts_to_predict = boston[sample(10, 1:nrow(boston)), -ncol(boston)]
+pts_to_predict = boston[sample(1:nrow(boston), 10), -ncol(boston)]
 
 # this may take a while
-#results = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L)
-#saveRDS(results, "complexity_growth_boston_xgboost10")
-results = readRDS("complexity_growth_boston_xgboost10")
+#results = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L)
+#saveRDS(results, "LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10")
+results = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10")
 results$type = "kernel"
 
 # this may take a while
-#resultsb = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
-#saveRDS(resultsb, "complexity_growth_boston_xgboost10_bins")
-resultsb = readRDS("complexity_growth_boston_xgboost10_bins")
+#resultsb = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsb, "LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10_bins")
+resultsb = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10_bins")
 resultsb$type = "bins"
 
 # this may take a while
-#resultsn = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 100L, use_density = TRUE)
-#saveRDS(resultsn, "complexity_growth_boston_xgboost10_nd")
-resultsn = readRDS("complexity_growth_boston_xgboost10_nd")
-resultsn$type = "normal_dis"
+#resultsn = complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L, use_density = TRUE)
+#saveRDS(resultsn, "LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10_nd")
+resultsn = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10_xgboost10_nd")
+resultsn$type = "normal"
 
 ### categorical data
 bikes = read.csv("datasets/day.csv")
@@ -1849,19 +2091,13 @@ bikes = createDummyFeatures(
 set.seed(123)
 pts_to_predict = bikes[sample(10, 1:nrow(bikes)), -1] # "cnt" switched position
 
-#resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 100L, bin_continuous = TRUE, use_density = TRUE)
-#saveRDS(resultsc, "complexity_growth_bikes_xgboost10")
-resultsc = readRDS("complexity_growth_bikes_xgboost10")
+#resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 10L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsc, "LIME_experiment_results/complexity_growth_bikes_xgboost10")
+resultsc = readRDS("LIME_experiment_results/complexity_growth_bikes_xgboost10")
 resultsc$type = "categorical"
 
 # merge results
 results = rbind(results, resultsb, resultsn)
-# boston
-results_gr = dplyr::group_by(
-  results,
-  smoothness,
-  type
-)
 
 # bikes...
 resultsc$season = resultsc$season.1 + resultsc$season.2 + resultsc$season.3 + resultsc$season.4
@@ -1876,8 +2112,52 @@ resultsc$atemp = eval(parse(text = paste0("resultsc$atemp.", 1:4, collapse = " +
 resultsc$hum = eval(parse(text = paste0("resultsc$hum.", 1:4, collapse = " + ")))
 resultsc$windspeed = eval(parse(text = paste0("resultsc$windspeed.", 1:4, collapse = " + ")))
 
+resultsc$data_season = resultsc$season.1 + resultsc$season.2*2 + resultsc$season.3*3 + resultsc$season.4*4
+resultsc$data_yr = resultsc$yr.0 + resultsc$yr.1 * 2
+resultsc$data_mnth = eval(parse(text = paste0("resultsc$data_mnth.", 1:12, "*", 1:12, collapse = " + ")))
+resultsc$data_holiday = eval(parse(text = paste0("resultsc$data_holiday.", 0:1, "*", 1:2, collapse = " + ")))
+resultsc$data_weekday = eval(parse(text = paste0("resultsc$data_weekday.", 0:6, "*", 1:7, collapse = " + ")))
+resultsc$data_workingday = eval(parse(text = paste0("resultsc$data_workingday.", 0:1, "*", 1:2, collapse = " + ")))
+resultsc$data_weathersit = eval(parse(text = paste0("resultsc$data_weathersit.", 1:3, "*", 1:3, collapse = " + ")))
+resultsc$data_temp = eval(parse(text = paste0("resultsc$data_temp.", 1:4, "*", 1:4, collapse = " + ")))
+resultsc$data_atemp = eval(parse(text = paste0("resultsc$data_atemp.", 1:4, "*", 1:4, collapse = " + ")))
+resultsc$data_hum = eval(parse(text = paste0("resultsc$data_hum.", 1:4, "*", 1:4, collapse = " + ")))
+resultsc$data_windspeed = eval(parse(text = paste0("resultsc$data_windspeed.", 1:4, "*", 1:4, collapse = " + ")))
+
+
+# boston
+results_gr = dplyr::group_by(
+  results,
+  data_crim,
+  data_zn,
+  data_indus,
+  data_nox,
+  data_rm,
+  data_age,
+  data_dis,
+  data_rad,
+  data_tax,
+  data_ptratio,
+  data_b,
+  data_lstat,
+  smoothness,
+  type
+)
+
+# bikes
 resultsc_gr = dplyr::group_by(
   resultsc,
+  data_season,
+  data_yr,
+  data_mnth,
+  data_holiday,
+  data_weekday,
+  data_workingday,
+  data_weathersit,
+  data_temp,
+  data_atemp,
+  data_hum,
+  data_windspeed,
   smoothness,
   type
 )
@@ -1902,14 +2182,6 @@ results_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(results_sd)
 # bikes
-#feat = names(resultsc)[50:97]
-#resultsc_sd = eval(parse(text = paste0(
-#  "as.data.frame(dplyr::summarize(
-#    resultsc_gr,",
-#    paste0("sd_", feat, " = sd(as.numeric(as.character(", feat, ")), na.rm = TRUE)", collapse = ", "),
-#  "))"
-#)))
-
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
   sd_season     = sd(as.numeric(as.character(season)), na.rm = TRUE),
@@ -1928,16 +2200,68 @@ resultsc_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(resultsc_sd)
 
+results_gr = dplyr::group_by(
+  results_sd,
+  smoothness,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc_sd,
+  smoothness,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = mean(sd_crim, na.rm = TRUE),
+  sd_zn    = mean(sd_zn, na.rm = TRUE),
+  sd_indus = mean(sd_indus, na.rm = TRUE),
+  sd_nox   = mean(sd_nox, na.rm = TRUE),
+  sd_rm    = mean(sd_rm, na.rm = TRUE),
+  sd_age   = mean(sd_age, na.rm = TRUE),
+  sd_dis   = mean(sd_dis, na.rm = TRUE),
+  sd_rad   = mean(sd_rad, na.rm = TRUE),
+  sd_tax   = mean(sd_tax, na.rm = TRUE),
+  sd_ptratio = mean(sd_ptratio, na.rm = TRUE),
+  sd_b     = mean(sd_b, na.rm = TRUE),
+  sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = mean(as.numeric(as.character(sd_season)), na.rm = TRUE),
+  sd_yr         = mean(as.numeric(as.character(sd_yr)), na.rm = TRUE),
+  sd_mnth       = mean(as.numeric(as.character(sd_mnth)), na.rm = TRUE),
+  sd_holiday    = mean(as.numeric(as.character(sd_holiday)), na.rm = TRUE),
+  sd_weekday    = mean(as.numeric(as.character(sd_weekday)), na.rm = TRUE),
+  sd_workingday = mean(as.numeric(as.character(sd_workingday)), na.rm = TRUE),
+  sd_weathersit = mean(as.numeric(as.character(sd_weathersit)), na.rm = TRUE),
+  sd_temp       = mean(as.numeric(as.character(sd_temp)), na.rm = TRUE),
+  sd_atemp      = mean(as.numeric(as.character(sd_atemp)), na.rm = TRUE),
+  sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
+  sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
+))
+
+# the following shows that the standard deviation is the same across (almost) all features
+# thus standardizing would do more harm than good
+#summary(resultsc_sd)
+
 plot_data = data.frame(
   sd = c(
-    apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
-    apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
+    apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))#,
+    #apply(resultsc_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))
   ),
   smoothness = c(
-    results_sd$smoothness,
-    as.numeric(as.character(resultsc_sd$smoothness))
+    results_sd$smoothness#,
+    #as.numeric(as.character(resultsc_sd$smoothness))
   ),
-  type = c(results_sd$type, resultsc_sd$type)
+  type = c(results_sd$type)#, resultsc_sd$type)
 )
 
 ############################
@@ -1989,32 +2313,98 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
     labels = 2^(1:10)
   )
 
-filename = paste0("images/sd_overfitting_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_overfitting_presi2.png")
+png(filename, width = 1000L, height = 500L)
 plot
 dev.off()
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation"}
-results = readRDS("complexity_growth_boston_100repeats")
-results$type = "kernel"
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation"}
+#results = readRDS("complexity_growth_boston_100repeats")
+#results$type = "kernel (boston)"
 
-resultsb = readRDS("complexity_growth_boston_100repeats_bins")
-resultsb$type = "bins"
+#resultsb = readRDS("complexity_growth_boston_100repeats_bins")
+#resultsb$type = "bins (boston)"
 
-resultsn = readRDS("complexity_growth_boston_100repeats_nd")
-resultsn$type = "normal_dis"
+#resultsn = readRDS("complexity_growth_boston_100repeats_nd")
+#resultsn$type = "normal (boston)"
 
 ### categorical data
-resultsc = readRDS("complexity_growth_bikes_100repeats")
+#resultsc = readRDS("complexity_growth_bikes_100repeats")
+#resultsc$type = "categorical (bikes)"
+
+data("BostonHousing", package = "mlbench")
+# removing categorical feature
+boston     = BostonHousing[, -4]
+# normalizing standard deviation to make coefficients comparable
+boston     = as.data.frame(lapply(boston, function(x) x/sd(x)))
+set.seed(123)
+pts_to_predict = boston[sample(1:nrow(boston), 10), -ncol(boston)]
+
+# this may take a while
+results = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10")
+#complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L)
+#saveRDS(results, "LIME_experiment_results/complexity_growth_boston_repeats10")
+results$type = "kernel"
+
+# this may take a while
+resultsb = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10_bins")
+#complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsb, "LIME_experiment_results/complexity_growth_boston_repeats10_bins")
+resultsb$type = "bins"
+
+# this may take a while
+resultsn = readRDS("LIME_experiment_results/complexity_growth_boston_repeats10_nd")
+#complexity_growth(boston, "medv", pts_to_predict, type = "regr", repeats = 10L, use_density = TRUE)
+#saveRDS(resultsn, "LIME_experiment_results/complexity_growth_boston_repeats10_nd")
+resultsn$type = "normal"
+
+### categorical data
+bikes = read.csv("datasets/day.csv")
+# remove undesired variables
+bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
+
+# quantile binning with 4 bins
+bikes[c("temp", "atemp", "hum", "windspeed")] = lapply(
+  bikes[c("temp", "atemp", "hum", "windspeed")],
+  function(vec) {
+    quantiles = quantile(vec)
+    quantiles[5] = Inf
+    sapply(vec, function(x) sum(x >= quantiles))
+  }
+)
+# normalize
+bikes$cnt = bikes$cnt / sd(bikes$cnt)
+
+bikes[-ncol(bikes)] = lapply(bikes[-ncol(bikes)], as.factor)
+
+set.seed(123)
+pts_to_predict = bikes[sample(1:nrow(bikes), 10), -ncol(bikes)]
+
+#resultsc = complexity_growth(bikes, "cnt", pts_to_predict, type = "regr", repeats = 10L, bin_continuous = TRUE, use_density = TRUE)
+#saveRDS(resultsc, "LIME_experiment_results/complexity_growth_bikes_repeats10")
+resultsc = readRDS("LIME_experiment_results/complexity_growth_bikes_repeats10")
 resultsc$type = "categorical"
+
 
 # merge results
 results = rbind(results, resultsb, resultsn)
 # boston
 results_gr = dplyr::group_by(
   results,
+  data_crim,
+  data_zn,
+  data_indus,
+  data_nox,
+  data_rm,
+  data_age,
+  data_dis,
+  data_rad,
+  data_tax,
+  data_ptratio,
+  data_b,
+  data_lstat,
   smoothness,
   type
 )
@@ -2022,6 +2412,17 @@ results_gr = dplyr::group_by(
 # bikes
 resultsc_gr = dplyr::group_by(
   resultsc,
+  data_season,
+  data_yr,
+  data_mnth,
+  data_holiday,
+  data_weekday,
+  data_workingday,
+  data_weathersit,
+  data_temp,
+  data_atemp,
+  data_hum,
+  data_windspeed,
   smoothness,
   type
 )
@@ -2064,6 +2465,54 @@ resultsc_sd = as.data.frame(dplyr::summarize(
 # thus standardizing would do more harm than good
 #summary(resultsc_sd)
 
+results_gr = dplyr::group_by(
+  results_sd,
+  smoothness,
+  type
+)
+
+# bikes
+resultsc_gr = dplyr::group_by(
+  resultsc_sd,
+  smoothness,
+  type
+)
+
+# boston
+results_sd = as.data.frame(dplyr::summarize(
+  results_gr,
+  sd_crim  = mean(sd_crim, na.rm = TRUE),
+  sd_zn    = mean(sd_zn, na.rm = TRUE),
+  sd_indus = mean(sd_indus, na.rm = TRUE),
+  sd_nox   = mean(sd_nox, na.rm = TRUE),
+  sd_rm    = mean(sd_rm, na.rm = TRUE),
+  sd_age   = mean(sd_age, na.rm = TRUE),
+  sd_dis   = mean(sd_dis, na.rm = TRUE),
+  sd_rad   = mean(sd_rad, na.rm = TRUE),
+  sd_tax   = mean(sd_tax, na.rm = TRUE),
+  sd_ptratio = mean(sd_ptratio, na.rm = TRUE),
+  sd_b     = mean(sd_b, na.rm = TRUE),
+  sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
+))
+# the following shows that the standard deviation is the same across all features
+# thus standardizing would do more harm than good
+#summary(results_sd)
+# bikes
+resultsc_sd = as.data.frame(dplyr::summarize(
+  resultsc_gr,
+  sd_season     = mean(as.numeric(as.character(sd_season)), na.rm = TRUE),
+  sd_yr         = mean(as.numeric(as.character(sd_yr)), na.rm = TRUE),
+  sd_mnth       = mean(as.numeric(as.character(sd_mnth)), na.rm = TRUE),
+  sd_holiday    = mean(as.numeric(as.character(sd_holiday)), na.rm = TRUE),
+  sd_weekday    = mean(as.numeric(as.character(sd_weekday)), na.rm = TRUE),
+  sd_workingday = mean(as.numeric(as.character(sd_workingday)), na.rm = TRUE),
+  sd_weathersit = mean(as.numeric(as.character(sd_weathersit)), na.rm = TRUE),
+  sd_temp       = mean(as.numeric(as.character(sd_temp)), na.rm = TRUE),
+  sd_atemp      = mean(as.numeric(as.character(sd_atemp)), na.rm = TRUE),
+  sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
+  sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
+))
+
 plot_data = data.frame(
   sd = c(
     apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
@@ -2093,26 +2542,12 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
     labels = 1:10
   )
 
-filename = paste0("images/sd_smoothness_presi.png")
-png(filename, width = 700L, height = 500)
+filename = paste0("images/sd_smoothness_presi2.png")
+png(filename, width = 1000L, height = 500L)
 plot
 dev.off()
 
 ```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before but with black box model smoothness/complexity iterated over. As a base model a random forest with only one tree and minimum node size of one was used and each iteration the amount of trees was increased by 10 and the minimum node size by one. This means the last tick in this graph is corresponding to a random forest with 91 trees and minimum node size of 10. It's nicely shown how important the smoothness of the model is for the weight stability. Keep in mind the model was fitted on some training data, which means if we would pick more complex data, the line may take much longer to flatten out, and vice versa for less complex data."}
-knitr::include_graphics("images/sd_overfitting.png")
-```
-
-- big influence of the smoothness
-- influence flattens quickly, but may be different for more complex data sets requiring more "overfitting" (=less smooth fitting)
-
-### LIME with categorical data
-
-- only numerical features so far
-- using dataset with only categorical features now (rental bikes)
-- forced gower distance (equal or not // every other distance not possible)
-- do we get similar results as for numerical features?
 
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
@@ -2149,7 +2584,7 @@ args = paste0("plots[[", 1:11, "]]", collapse = ", ")
 grid_plot_func = paste0("gridExtra::grid.arrange(", args, ", nrow = 3)")
 
 filename = paste0("images/bikes_prezi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 eval(parse(text = grid_plot_func))
 dev.off()
 
@@ -2165,7 +2600,9 @@ data_point = as.data.frame(lapply(
   bikes[, -ncol(bikes)],
   function(vec) names(table(vec))[which.max(table(vec))]
 ))
-# set index of datapoint to use
+
+set.seed(123)
+# repeat explanation 100 times
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
   weights_l = interim$feature_weight
@@ -2180,13 +2617,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_standard_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
 dev.off()
 
 
 filename = paste0("images/bikes_standard.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2194,7 +2631,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2204,6 +2641,8 @@ data_point = as.data.frame(lapply(
   bikes[, -ncol(bikes)],
   function(vec) names(table(vec))[which.min(table(vec))]
 ))
+
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
@@ -2219,13 +2658,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_outlier_presi.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
 dev.off()
 
 
 filename = paste0("images/bikes_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2233,7 +2672,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2248,7 +2687,9 @@ data_point = as.data.frame(lapply(
   bikes[, -ncol(bikes)],
   function(vec) names(table(vec))[which.max(table(vec))]
 ))
-# set index of datapoint to use
+
+set.seed(123)
+# repeat explanation 100 times
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
   weights_l = interim$feature_weight
@@ -2263,13 +2704,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_lm_presi.png")
-png(filename, width = 700L, height = 500)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 0.7))
+png(filename, width = 700L, height = 500L)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 1.1))
 dev.off()
 
 
 filename = paste0("images/bikes_lm.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2277,7 +2718,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_lm_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2301,7 +2742,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_lm_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2309,7 +2750,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_lm_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2325,7 +2766,9 @@ data_point = as.data.frame(lapply(
   bikes[, -ncol(bikes)],
   function(vec) names(table(vec))[which.max(table(vec))]
 ))
-# set index of datapoint to use
+
+set.seed(123)
+# repeat explanation 100 times
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
   weights_l = interim$feature_weight
@@ -2340,13 +2783,13 @@ ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
 ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_tree_presi.png")
-png(filename, width = 700L, height = 500)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 0.7))
+png(filename, width = 700L, height = 500L)
+presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 1.1))
 dev.off()
 
 
 filename = paste0("images/bikes_tree.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2354,7 +2797,7 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_tree_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2378,7 +2821,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_tree_outlier.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
@@ -2386,88 +2829,12 @@ means_scaled = means / means
 sds_scaled   = sds / abs(means)
 
 filename = paste0("images/bikes_tree_outlier_scaled.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 ```
 
-- overview of data set
-- good amount of categorical features
-- only 2 numerical features, discretized by binning
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the features in the bike rental dataset with respect to the target variable 'cnt', describing amount of rented bikes for a day"}
-knitr::include_graphics("images/bikes.png")
-```
-
-- average case
-- same experiment settings as before (100 iterations)
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME weights of the modal data point with a random forest model of standard regularisations"}
-knitr::include_graphics("images/bikes_standard.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights but rescaled -- weight coefficients varying to the weight size, similar to the case of numerical features"}
-knitr::include_graphics("images/bikes_scaled.png")
-```
-
-###### vs outlying data point
-- same settings
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of a LIME model applied on an outlying data point"}
-knitr::include_graphics("images/bikes_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights but rescaled -- lower weight values seem highly untrustworthy similar to the case of numerical features"}
-knitr::include_graphics("images/bikes_outlier_scaled.png")
-```
-
-##### using linear model (maybe remove this, because linear models don't provide a global fit for categorical features with category size higher than 2)
-- average data point:
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the modal data points with a linear model as black box -- high discrepancy to the random forest case"}
-knitr::include_graphics("images/bikes_lm.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights but rescaled -- similar behaviour as the random forest case"}
-knitr::include_graphics("images/bikes_lm_scaled.png")
-```
-
-###### linear model with ouyling point:
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the linear model as black box -- different weights as in the case of the modal data point, but not surprising due to the nature of linear models with categorical features"}
-knitr::include_graphics("images/bikes_lm_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- same behaviour as before: the higher the weights the more trustworthy"}
-knitr::include_graphics("images/bikes_lm_outlier_scaled.png")
-```
-
-##### using decision tree (overfitting with minimum node size of 1)
-- average data point:
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the modal data point with an extremely overfitting tree as black box -- similar weights as in the case of a linear model"}
-knitr::include_graphics("images/bikes_tree.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights but rescaled"}
-knitr::include_graphics("images/bikes_tree_scaled.png")
-```
-
-###### vs outlying data point
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of an outlying data point with the same tree as above -- very different weight sizes"}
-knitr::include_graphics("images/bikes_tree_outlier.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Same weights rescaled -- standard deviation increased compared to the modal data point"}
-knitr::include_graphics("images/bikes_tree_outlier_scaled.png")
-```
-
-- side observation: categorical weights not as instable as numericals with binning as sampling strategy
-- raising the following question
-
-### Is bin sampling inferior?
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
@@ -2515,7 +2882,7 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_bins_lime.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
@@ -2564,7 +2931,7 @@ means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
 
 filename = paste0("images/bikes_manual_bins.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
@@ -2595,45 +2962,14 @@ sds   = apply(limes, MARGIN = 1, sd)
 
 
 filename = paste0("images/bikes_no_bins.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
 dev.off()
 
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the mean data point, but each feature has been categorized into four bins as preprocessing step"}
-knitr::include_graphics("images/bikes_manual_bins.png")
-```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the same mean data point without preprocessing of the features, but with binning as sampling strategy -- totally different weight sizes but roughly similar standard deviaton (mind the different scales)"}
-knitr::include_graphics("images/bikes_bins_lime.png")
-```
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Weights of the same mean data point without preprocessing and with conventional density sampling -- again totally different weight sizes, but also smaller standard deviation"}
-knitr::include_graphics("images/bikes_no_bins.png")
-```
-
-- LIME binning similarly unstable as data preprocessing
-- totally different results in terms of weight size compared to non binning
-- conclusion: binning in lime (the !DEFAULT! option) is not recommendable as a sampling stability
-
-## Conclusion
-- different settings having high influence on weight stability
-- weight stability independent of weight size (ignore small weights)
-- averaging over several samples recommended
-- selecting low amount of explained features recommended (to remove the smaller weights)
-- train data doesn't matter
-- black box model matters
-- don't use binning
-
-## STOP REVIEW HERE, PHILIPP
-
-## Proposing replacement of proximity measure with new sampling strategy (PROBABLY REMOVED)
-- this chapter and the following probably gets a cut
-- extreme increase of sampling efficiency
-- show mathematically risk minimization of uniform sample + gaussian kernel is the same as normal sample + no kernel with kernel width equal to variance of normal distribution
-
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 plot_better_lime = function(model_smoothness = 50, sample_seed, kernel_width = 900, sample_size = 10) {
   
@@ -2675,14 +3011,14 @@ plot_better_lime = function(model_smoothness = 50, sample_seed, kernel_width = 9
   
 ```
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "Local sampling offers more anchor points in the neighborhood and strongly increases sampling efficiency", warning=FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Local sampling offers more anchor points in the neighborhood and strongly increases sampling efficiency", warning=FALSE}
 
 
 plot_better_lime(sample_seed = 2, model_smoothness = 50, sample_size = 10)
   
 ```
 
-```{r, eval = TRUE, echo = TRUE, fig.align = 'center', fig.cap = "A rerun of the same settings reveals high similarity of the samples", warning=FALSE}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "A rerun of the same settings reveals high similarity of the samples", warning=FALSE}
 
 
 plot_better_lime(sample_seed = 1, model_smoothness = 50, sample_size = 10)
@@ -2740,64 +3076,52 @@ plot_better_lime_boston = function(model_smoothness = 50, sample_seed, kernel_wi
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_fst_better.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_better_lime_boston(sample_seed = 1, kernel_width = 1)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Applying new sampling strategy on overfitting decision tree"}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Applying new sampling strategy on overfitting decision tree"}
 knitr::include_graphics("images/boston_sampled_tree_fst_better.png")
 ```
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_better.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 1)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Even though the surface is an extreme challenge, both runs capture the increasing tendency from left to right"}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Even though the surface is an extreme challenge, both runs capture the increasing tendency from left to right"}
 knitr::include_graphics("images/boston_sampled_tree_snd_better.png")
 ```
 
-- new sampling strategy still works with extreme small kernel width
-- but losses surrounding information (as possibly intended)
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_better_slim.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_better_lime_boston(sample_seed = 2, kernel_width = 0.01)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Kernel width can be arbitrarily small without losing stability -- all samples are close to the explained data point and correctly capture the local plateau"}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Kernel width can be arbitrarily small without losing stability -- all samples are close to the explained data point and correctly capture the local plateau"}
 knitr::include_graphics("images/boston_sampled_tree_snd_better_slim.png")
 ```
-
-- catastrophic failure of global sampling with low kernel width in the following
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
 
 filename = paste0("images/boston_sampled_tree_snd_slim.png")
-png(filename, width = 700L, height = 500)
+png(filename, width = 700L, height = 500L)
 plot_lime_boston(sample_seed = 2, kernel_width = 0.01)
 dev.off()
   
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Global sampling misses a lot of close anchor points to offer a good fit for smaller kernel widths -- leading to a catastrophic failure in this case"}
+```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "Global sampling misses a lot of close anchor points to offer a good fit for smaller kernel widths -- leading to a catastrophic failure in this case"}
 knitr::include_graphics("images/boston_sampled_tree_snd_slim.png")
-```
-
-
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning=FALSE}
-
-# PRESENTATION PLOTS
-
-
 ```
