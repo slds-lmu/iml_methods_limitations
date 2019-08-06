@@ -2,6 +2,7 @@ Package: iml-limitations.book
 Title: Limitations of Interpretable Machine Learning
 Version: 0.0.1
 Depends:
+  devtools,
   knitr,
   bookdown,
   ggplot2,
