@@ -10,17 +10,14 @@ This chapter demonstrates some issue of correlated features and tries to present
 
 ## Effect on Feature Importance by Adding Correlated Features
 
-In this chapter we want to take a closer look at the problem of the interpretation of Feature Importance by adding or having correlated features in the given data set. Our focus is on the behaviour of Permutation Feature Importance by Breiman as well as of the LOCO Feature Importance by Lei et. which have been already introduced. There will be a comparison of these measures apllied on the linear model and random forest model with different correlation intesities using  simulations. Later on an application of a real data set (Boston?) will follow. 
+In this chapter we want to take a closer look at the problem of the interpretation of Feature Importance by adding or having correlated features in the given data set. Our focus is on the behaviour of Permutation Feature Importance by Breiman as well as of the LOCO Feature Importance by Lei et. which have been already introduced. There will be a comparison of these measures apllied on the linear model and random forest model with different correlation intesities using simulations. Later on an application of a real data set (Boston?) will follow. 
 
 ### Simulation
 
 A good way to show the effects of correlated features on the feature importance measures is just to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist. The main focus is here on the simulation of correlated feature and not the application on real data, because the features of real data are most of the time correlated with different kind of intesity among one another. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. 
-In total there will be four different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline for scenario 1-3 and the fourth differs to the extent that there will be more feature involved:
-
+In total there will be four different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline for scenario 1-3 and the fourth differs to the extent that there will be more feature involved: 
 $$
-
 y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
-
 $$
 
 Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $\rho$ betweeen each other. Otherwise, there is no correlation between any feature. Only in scenario 4) the setting changes to more features and more correlations to investigate the behaviour, if there is an increase in the features which are correlated.
@@ -36,30 +33,27 @@ Quelle: Archer and Kimes, Strobl 2008
 **Simulation of uncorrelated feature 1 and 2 (r = 0):**
 
 ```{r Simulation01, message = FALSE, eval=FALSE, fig.height=6, fig.width=12, fig.cap= "Simulation of uncorrelated features 1 and 2 (r=0)"}
-
 library(mvtnorm)
 library(matrixcalc)
-
 set.seed(456)
-# specify entries for covariance matrix
+# Specify entries for covariance matrix
 sigma_u <- diag(1, nrow = 4)
-# simulate data from normal distribution 
+# Simulate data from multivariate normal distribution 
 data_u <- as.data.frame(rmvnorm(n = 1000, 
                               mean = rep(0, times = 4), 
                               sigma = sigma_u))
 colnames(data_u) <- c("X1", "X2", "X3", "X4")
-# check covariance and correlation matrices
+# Check positive definit covariance and correlation matrices
 cov(data_u)
 is.positive.definite(cov(data_u))
-
 cor(data_u)
 is.positive.definite(cor(data_u))
-
+# Added random feature
 data_u <- as.data.frame(data_u)
 data_u['random'] <- runif(nrow(data_u))
 ```
 
-```{r Simulation02, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
+```{r Simulation02, message = FALSE, eval = FALSE , echo=FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -85,7 +79,7 @@ data_c25 <- as.data.frame(data_c25)
 data_c25['random'] <- runif(nrow(data_c25))
 ```
 
-```{r Simulation03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of medium correlated features 1 and 2 (r=0.5) "}
+```{r Simulation03, message = FALSE, eval = FALSE, echo=FALSE,fig.height=6, fig.width=12, fig.cap="Simulation of medium correlated features 1 and 2 (r=0.5) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -111,7 +105,7 @@ data_c5 <- as.data.frame(data_c5)
 data_c5['random'] <- runif(nrow(data_c5))
 ```
 
-```{r Simulation04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of high correlated features 1 and 2 (r=0.75) "}
+```{r Simulation04, message = FALSE, eval = FALSE ,echo=FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of high correlated features 1 and 2 (r=0.75) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -137,7 +131,7 @@ data_c75 <- as.data.frame(data_c75)
 data_c75['random'] <- runif(nrow(data_c75))
 ```
 
-```{r Simulation05, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
+```{r Simulation05, message = FALSE, eval = FALSE ,echo=FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -184,25 +178,17 @@ The choice of noise variance $sd_i^2$ should be hold small in order to make the 
 ```{r szenariolm, message = FALSE, eval = FALSE , fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence with differrent correlation of feature 1 and 2"}
 
 sd_u <- mean(data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4)*0.1
-
 sd_c25 <- mean(data_c25$X1 + data_c25$X2 + data_c25$X3 + data_c25$X4)*0.1
-
 sd_c5 <- mean(data_c5$X1 + data_c5$X2 + data_c5$X3 + data_c5$X4)*0.1
-
 sd_c75 <- mean(data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4)*0.1
-
 sd_c <- mean(data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4)*0.1
 
 #The choice of noise variance should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation.
 
 y1u <- data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4 + rnorm(n = 1000, mean = 0, sd = sd_u) 
-
 y1c25 <- data_c25$X1 + data_c25$X2 + data_c25$X3 + data_c25$X4 + rnorm(n = 1000, mean = 0, sd = sd_c25)
-
 y1c5 <- data_c5$X1 + data_c5$X2 + data_c5$X3 + data_c5$X4 + rnorm(n = 1000, mean = 0, sd = sd_c5)
-
 y1c75 <- data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4 + rnorm(n = 1000, mean = 0, sd = sd_c75)
-
 y1c <- data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4 + rnorm(n = 1000, mean = 0, sd = sd_c) 
 
 
@@ -215,37 +201,66 @@ data_c["y1c"] <- y1c
 
 ```{r PFIAlgo, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "PFI Algo"}
 
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-res_desc <- makeResampleDesc("Subsample", iters = 10, split = 4/5)
-
-
 PFI <- function(data,learner,target,model){
   d <- data
   task = makeRegrTask(data = data , target= target)
   learnerPFI = makeLearner(learner)
   res = resample(learner = learnerPFI, task = task, 
-               resampling = res_desc,show.info = FALSE)
+                   resampling = res_desc,show.info = FALSE, models = TRUE)
   resultPFI <- data.frame(matrix(nrow=5,ncol=1))
-    for(i in 1:10){
-    mod <- Predictor$new(model,
-                          data=d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),1:5], 
-                          y = d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),6])
+  rankPFI <- data.frame(matrix(nrow=5,ncol=1))
+  for(i in 1:10){
+    mod <- Predictor$new(res$models[[i]]$learner.model,
+                           data=d[c(res$pred$instance$test.inds[[i]]),1:5], 
+                           y = d[c(res$pred$instance$test.inds[[i]]),6])
+    
     imp <- FeatureImp$new(mod, loss = "mse" , compare = "ratio")
     impo <- imp$results
     impo <- impo[order(impo$feature),]
     resultPFI[i] <- data.frame(impo$importance)
-    }
-imp.dat <- data.frame(rowSums(resultPFI)/10)
-imp.dat["features"]<- impo$feature
-colnames(imp.dat) <- c("importance","features")
-return(imp.dat)
+    rankPFI[i] <- data.frame(rank(-resultPFI[i]))
+  }
+  imp.dat <- data.frame(rowSums(resultPFI)/10)
+  rank.dat <- data.frame(rowSums(rankPFI)/10)
+  imp.dat["features"]<- impo$feature
+  imp.dat["averagerank"]<- rank.dat
+  imp.dat["rank"] <- rank(-rowSums(resultPFI)/10)
+  colnames(imp.dat) <- c("importance","features","averagerank", "rank")
+  return(imp.dat)
 }
 ```
 
+```{r LOCOAlgo, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "LOCO Algo"}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(randomForest)
+
+LOCO <- function(data,learner,target){
+  d <- data
+  task = makeRegrTask(data = data , target= target)
+  learnerLOCO = makeLearner(learner)
+  feat = getTaskFeatureNames(task)
+  res = resample(learner = learnerLOCO, task = task, 
+               resampling = res_desc,show.info = FALSE)
+  resultLOCO <- data.frame(matrix(nrow=1,ncol=length(feat))) 
+  for(i in 1:length(feat)){
+  taskfeat = dropFeatures(task, feat[i])
+  mod.feat = train(learnerLOCO, dropFeatures(task, feat[i]))
+  resfeat = resample(learner = learnerLOCO, task = taskfeat, resampling = res_desc ,show.info = FALSE);
+  importance = data.frame(resfeat$aggr/res$aggr)
+  feature = c(getTaskFeatureNames(task))
+  resultLOCO[i] <- importance
+  #print(importance)
+}
+resultLOCO
+rownames(resultLOCO) <- "importance"
+FIP <- data.frame(
+  importance= t(resultLOCO),
+  feature= getTaskFeatureNames(task))
+return(FIP)
+}
+```
 
 
 ```{r PFI01, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
@@ -321,40 +336,7 @@ plm <- ggplot(lmPFIu, aes(x=features, y= importance, colour = "0")) +
 plm
 ```
 
-```{r LOCOAlgo, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "LOCO Algo"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
 
-
-LOCO <- function(data,learner,target){
-  d <- data
-  task = makeRegrTask(data = data , target= target)
-  learnerLOCO = makeLearner(learner)
-  feat = getTaskFeatureNames(task)
-  res = resample(learner = learnerLOCO, task = task, 
-               resampling = res_desc,show.info = FALSE)
-  resultLOCO <- data.frame(matrix(nrow=1,ncol=length(feat))) 
-  for(i in 1:length(feat)){
-  taskfeat = dropFeatures(task, feat[i])
-  mod.feat = train(learnerLOCO, dropFeatures(task, feat[i]))
-  resfeat = resample(learner = learnerLOCO, task = taskfeat, resampling = res_desc ,show.info = FALSE);
-  importance = data.frame(resfeat$aggr/res$aggr)
-  feature = c(getTaskFeatureNames(task))
-  resultLOCO[i] <- importance
-  #print(importance)
-}
-resultLOCO
-rownames(resultLOCO) <- "importance"
-FIP <- data.frame(
-  importance= t(resultLOCO),
-  feature= getTaskFeatureNames(task))
-return(FIP)
-}
-
-
-```
 
 
 
