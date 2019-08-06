@@ -423,7 +423,7 @@ p + ggplot2::geom_point() +
 knitr::include_graphics("images/ALE_2_dataset2.PNG")
 ```
 For this example the sample size was 1000. As expected the correlation is clearly recognizeble, but this time only few data points lay in the outer regions, i.e. between 0 and 2.5 and 17.5 and 20, While there is a high concentration of data around the mean at 10.  
-Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)*x_2$. Calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = xsin(x) + \frac{1}{10}cos(10x)~~~$. For centering the expectation of the uncentered ALE $~~~~E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~$was estimated by Monte-Carlo integration to be almost zero. 
+Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)x_2$. Calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = xsin(x) + \frac{1}{10}cos(10x)~~~$. For centering the expectation of the uncentered ALE, i.e.$~~~~E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~$was estimated by Monte-Carlo integration to be almost zero. 
 As well as the prediction function, the theoretical ALE has lots of extreme points. This leads to some troubles especially for low grid sizes.
 The folowing grafic shows the estimated ALE and the theoretical one for three different grid sizes. 
 

@@ -1,0 +1,28 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces Creative Commons License\relax }}{ix}{figure.caption.4}% 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards.\relax }}{4}{figure.caption.6}% 
+\contentsline {figure}{\numberline {2.2}{\ignorespaces The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class.\relax }}{4}{figure.caption.7}% 
+\contentsline {figure}{\numberline {2.3}{\ignorespaces The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males.\relax }}{5}{figure.caption.8}% 
+\contentsline {figure}{\numberline {2.4}{\ignorespaces The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, whilke from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare.\relax }}{5}{figure.caption.9}% 
+\contentsline {figure}{\numberline {2.5}{\ignorespaces The ICE plot indicates that there is underlying heterogeneity in the complement set.\relax }}{6}{figure.caption.10}% 
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Centered ICE plot.\relax }}{7}{figure.caption.11}% 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces The data points within the 4-th interval are shifted to the interval boundaries \(z_{3,\nobreakspace {}1}\) and \(z_{4,\nobreakspace {}1}\).\relax }}{18}{figure.caption.12}% 
+\contentsline {figure}{\numberline {6.2}{\ignorespaces ALE on basis of 5 intervals\relax }}{19}{figure.caption.13}% 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance\relax }}{43}{figure.caption.14}% 
+\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset\relax }}{43}{figure.caption.15}% 
+\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance\relax }}{45}{figure.caption.16}% 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{55}{figure.caption.17}% 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
