@@ -266,6 +266,206 @@ knitr::include_graphics('images/VK_PDP_13_Correlated_cat_num_RF.png', auto_pdf =
 
 Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) with just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the Partial Dependence Plot.  
 
+```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(ggpubr)
+library(ggcorrplot)
+library(mlr)
+library(iml)
+library(e1071) #svm
+library(mgcv) #gam
+
+bike_day <- read.csv("day.csv")
+bike_day$season <- as.factor(bike_day$season)
+bike_day$yr <- as.factor(bike_day$yr)
+bike_day$mnth <- as.factor(bike_day$mnth)
+bike_day$holiday <- as.factor(bike_day$holiday)
+bike_day$workingday <- as.factor(bike_day$workingday)
+bike_day$weathersit <- as.factor(bike_day$weathersit)
+
+# Selection of variables for Prediction
+bike <- bike_day[, c(4,6,8,9,10,11,12,13,16)]   # w/o season & mnth
+bike2 <- bike_day[, c(3,4,5,6,8,9,12,13,16)]    # w/o temp & atemp
+bike3 <- bike_day[, c(3,4,6,8,9,10,12,13,16)]   # w/o mnth & atemp
+
+
+#### CORRELATED NUMERICAL FEATURES ####
+# Correlation Matrix
+cor_data <- cor(bike[, 5:9])
+cor_mat <- 
+  ggcorrplot(cor_data,lab = TRUE, 
+             method = "square", 
+             outline.col = "white", 
+             tl.cex = 12, 
+             show.legend=F, 
+             tl.col="black") + 
+  theme_bw(base_size=12) + 
+  theme(legend.position="none", 
+        axis.title = element_blank(),
+        plot.title = element_text(hjust = 0.5, face="bold", size=15), 
+        axis.text = element_text(colour = "black", face="bold", size=12),
+        axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(title = "Correlation Matrix of numerical features")
+
+cor_mat
+
+# ML models for numerical features
+numerical <- function(learner){
+  ## 1.) Both temp & atemp ## 
+  task <- makeRegrTask(data = bike, target = "cnt")
+  set.seed(1)
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike)
+  eff <- FeatureEffect$new(mod, feature = "temp", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "atemp", method = "pdp", grid.size = 50)
+  
+  p11 <- plot(eff)+ylim(2500,6000)+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with both temp & atemp")+theme_bw()
+  p12 <- plot(eff2)+ylim(2500,6000)+labs(title = " ", subtitle = " ")+theme_bw()
+  
+  ## 2.) Only temp ## 
+  task <- makeRegrTask(data = bike[, -6], target = "cnt")
+  set.seed(1)
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike[, -6])
+  eff <- FeatureEffect$new(mod, feature = "temp", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "hum", method = "pdp", grid.size = 50)
+  
+  p2 <- plot(eff)+ylim(2500,6000)+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with temp only")+theme_bw()
+  
+  ## 3.) Only atemp ## 
+  task <- makeRegrTask(data = bike[, -5], target = "cnt")
+  set.seed(1)
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike[, -5])
+  eff <- FeatureEffect$new(mod, feature = "atemp", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "hum", method = "pdp", grid.size = 50)
+  
+  p3 <- plot(eff)+ylim(2500,6000)+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with atemp only")+theme_bw()
+  
+  ggarrange(p2, p3, p11, p12, ncol=2, nrow=2)
+}
+
+set.seed(123)
+numerical(learner = makeLearner("regr.lm"))
+numerical(learner = makeLearner("regr.svm"))
+numerical(learner = makeLearner("regr.randomForest"))
+
+#### CORRELATED CATEGORICAL FEATURES ####
+# Corrected Contingency Coefficient
+cont_coeff <- function(data, feature1, feature2){
+  a <- as.factor(feature1)
+  b <- as.factor(feature2)
+  
+  chisq <- chisq.test(a, b, correct = F)
+  K <- sqrt(chisq$statistic/(chisq$statistic+nrow(data)))
+  M <- min(length(levels(a)), length(levels(b)))
+  K_korr <- K/sqrt((M-1)/M)
+  K_korr
+}
+
+cont_mat <- data.frame()
+for (i in 1:6){ 
+  for (j in 1:6){
+    cont_mat[i,j] <- round(cont_coeff(bike2, bike2[,i], bike2[,j]),2)
+    colnames(cont_mat)[i] <- names(bike2)[i]
+    rownames(cont_mat)[i] <- names(bike2)[i]
+  }
+  }
+
+plot_cont_mat <- ggcorrplot(as.matrix(cont_mat),lab = TRUE, 
+           method = "square", 
+           outline.col = "white", 
+           tl.cex = 12, 
+           show.legend=F, 
+           tl.col="black") + 
+  labs(title = "Corrected Contingency Coefficients of Categorical Features")+
+  theme_bw(base_size=12) + 
+  theme(legend.position="none", 
+        axis.title = element_blank(),
+        plot.title = element_text(hjust = 0.5, face="bold",size=15), 
+        axis.text = element_text(colour = "black", face="bold", size=12),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+plot_cont_mat
+
+# ML models for categorical features
+categorical <- function(learner){
+  ## 1.) Both season & mnth ## 
+  task <- makeRegrTask(data = bike2, target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike2)
+  eff <- FeatureEffect$new(mod, feature = "season", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "mnth", method = "pdp", grid.size = 50)
+  
+  p11 <- plot(eff)+ylim(c(0,6000))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with both season & mnth")+theme_bw()
+  p12 <- plot(eff2)+ylim(c(0,6000))+labs(title = " ", subtitle = " ")+theme_bw()
+  
+  ## 2.) Only season ## 
+  task <- makeRegrTask(data = bike2[,-3], target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike2[, -3])
+  eff <- FeatureEffect$new(mod, feature = "season", method = "pdp", grid.size = 50)
+  
+  p2 <- plot(eff)+ylim(c(0,6000))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with season only")+theme_bw()
+  
+  ## 3.) Only mnth ## 
+  task <- makeRegrTask(data = bike2[,-1], target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike2[,-1])
+  eff <- FeatureEffect$new(mod, feature = "mnth", method = "pdp", grid.size = 50)
+  
+  p3 <- plot(eff)+ylim(c(0,6000))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with mnth only")+theme_bw()
+  
+  ggarrange(p2, p3, p11, p12, ncol=2, nrow=2)
+}
+
+set.sed(123)
+categorical(learner = makeLearner("regr.lm"))
+categorical(learner = makeLearner("regr.svm"))
+categorical(learner = makeLearner("regr.randomForest"))
+
+#### CORRELATED CATEGORICAL & NUMERICAL FEATURES ####
+mod <- lm(temp~season, data=bike3)
+cor(bike3$temp, mod$fitted.values)
+
+
+### ML models ###
+catnum <- function(learner){
+  ## 1.) Both season & temp ## 
+  task <- makeRegrTask(data = bike3, target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike3)
+  eff <- FeatureEffect$new(mod, feature = "season", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "temp", method = "pdp", grid.size = 50)
+  
+  p11 <- plot(eff)+ylim(c(0,6500))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with both season & temp")+theme_bw()
+  p12 <- plot(eff2)+ylim(c(0,6500))+labs(title = " ", subtitle = " ")+theme_bw()
+  
+  ## 2.) Only season ## 
+  task <- makeRegrTask(data = bike3[,-6], target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike3[, -6])
+  eff <- FeatureEffect$new(mod, feature = "season", method = "pdp", grid.size = 50)
+  
+  p2 <- plot(eff)+ylim(c(0,6500))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with season only")+theme_bw()
+  
+  ## 3.) Only temp ## 
+  task <- makeRegrTask(data = bike3[,-1], target = "cnt")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = bike3[,-1])
+  eff <- FeatureEffect$new(mod, feature = "temp", method = "pdp", grid.size = 50)
+  
+  p3 <- plot(eff)+ylim(c(0,6500))+labs(subtitle = paste0("Learner: ", learner$name), title = "Model with temp only")+theme_bw()
+  
+  ggarrange(p2, p3, p11, p12, ncol=2, nrow=2)
+}
+
+set.seed(123)
+catnum(learner = makeLearner("regr.lm"))
+catnum(learner = makeLearner("regr.svm"))
+catnum(learner = makeLearner("regr.randomForest"))
+```
+
 
 ## Dependent Features: Simulated Data
 A major disadvantage of the analysis of PDPs on the basis of real data examples is, that we cannot exclude other factors to play a role. As an example, underlying interactions could have an impact on the PDP and hide the true effect of a feature on the predicted target variable. In order to illustrate the isolated impact of dependent variables in the feature space, we have simulated data in different settings, which we will discuss in this chapter.  
