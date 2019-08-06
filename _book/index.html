@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Limitations of Interpretable Machine Learning Methods</title>
-  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail.">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
@@ -22,14 +21,14 @@
   <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
   
 
-<meta name="author" content="">
+<meta name="author" content="" />
 
 
-<meta name="date" content="2019-07-31">
+<meta name="date" content="2019-08-06" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 
@@ -71,26 +70,42 @@
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><i class="fa fa-check"></i><b>2</b> Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) Curves</a><ul>
-<li class="chapter" data-level="2.1" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a></li>
-<li class="chapter" data-level="2.2" data-path="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html"><a href="partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>2.2</b> Individual Conditional Expectation Curves</a></li>
+<li class="chapter" data-level="2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><i class="fa fa-check"></i><b>2</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>2.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>3</b> Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>3.1</b> Motivation</a></li>
-<li class="chapter" data-level="3.2" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>3.2</b> The Theoretical Formula</a><ul>
-<li class="chapter" data-level="3.2.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>3.2.1</b> Centering</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>2.2</b> Individual Conditional Expectation Curves</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#centered-ice-plot"><i class="fa fa-check"></i><b>2.2.1</b> Centered ICE Plot</a></li>
+<li class="chapter" data-level="2.2.2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#derivative-ice-plot"><i class="fa fa-check"></i><b>2.2.2</b> Derivative ICE Plot</a></li>
+<li class="chapter" data-level="2.2.3" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>2.2.3</b> Advantages and Limitations of ICE Plots</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>3.3</b> Estimation Formula</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>3.3.1</b> Implementation Formula</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="accumulated-local-effects-ale.html"><a href="accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>3.4</b> Intuition and Interpretation</a></li>
+<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a></li>
+<li class="chapter" data-level="4" data-path="pdp-and-feature-interactions.html"><a href="pdp-and-feature-interactions.html"><i class="fa fa-check"></i><b>4</b> PDP and Feature Interactions</a></li>
+<li class="chapter" data-level="5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a></li>
+<li class="chapter" data-level="6" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="6.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
+<li class="chapter" data-level="6.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="feature-importance.html"><a href="feature-importance.html"><i class="fa fa-check"></i><b>4</b> Feature Importance</a><ul>
-<li class="chapter" data-level="4.1" data-path="feature-importance.html"><a href="feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>4.1</b> Permutation Feature Importance (PFI)</a></li>
-<li class="chapter" data-level="4.2" data-path="feature-importance.html"><a href="feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>4.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
-<li class="chapter" data-level="4.3" data-path="feature-importance.html"><a href="feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>4.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+<li class="chapter" data-level="6.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="local-interpretable-model-agnostic-explanations.html"><a href="local-interpretable-model-agnostic-explanations.html"><i class="fa fa-check"></i><b>5</b> Local Interpretable Model-Agnostic Explanations</a></li>
+<li class="chapter" data-level="6.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a></li>
+<li class="chapter" data-level="8" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a></li>
+<li class="chapter" data-level="9" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="9.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="9.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="9.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a></li>
+<li class="chapter" data-level="11" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a></li>
+<li class="chapter" data-level="12" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a></li>
+<li class="chapter" data-level="13" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a></li>
+<li class="chapter" data-level="14" data-path="lime-and-neighbourhood.html"><a href="lime-and-neighbourhood.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a></li>
+<li class="chapter" data-level="15" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
@@ -114,7 +129,7 @@
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Limitations of Interpretable Machine Learning Methods</h1>
-<p class="date"><em>2019-07-31</em></p>
+<p class="date"><em>2019-08-06</em></p>
 </div>
 <div id="preface" class="section level1 unnumbered">
 <h1>Preface</h1>

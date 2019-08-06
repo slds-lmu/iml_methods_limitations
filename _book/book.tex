@@ -126,7 +126,7 @@
 \bibliographystyle{apalike}
 
 \title{Limitations of Interpretable Machine Learning Methods}
-\date{2019-07-31}
+\date{2019-08-06}
 
 \begin{document}
 \maketitle
@@ -194,13 +194,13 @@ TODO
 
 TODO
 
-\hypertarget{partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves}{%
-\chapter{Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) Curves}\label{partial-dependence-plots-pdp-and-individual-conditional-expectation-ice-curves}}
+\hypertarget{introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice}{%
+\chapter{Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)}\label{introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice}}
 
 \hypertarget{partial-dependence-plots-pdp}{%
 \section{Partial Dependence Plots (PDP)}\label{partial-dependence-plots-pdp}}
 
-The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. It maps the marginal effect of the selected variable(s) and can reveal the nature of dependence structure between target and individual feature variable.\citep{molnar2019}
+The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can show the way a feature impacts an outcome variable. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s).\citep{molnar2019}
 
 The underlying function can be described as follows:
 
@@ -209,58 +209,97 @@ While the general model function \(f(x) = f(x_S, x_C)\) depends on all input var
 
 \[f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\]
 
-The partial dependence function can be estimated by averaging the actual feature values of \(x_C\) in the training data at given values of \(x_S\) or, in other words, it computes the marginal effect of \(x_S\) on the prediction. In order to derive realistic results, a major assumption of the PDP is that the features in \(x_S\) and \(x_C\) are independent and thus uncorrelated.\citep{hastie2013elements}
+The partial dependence function can be estimated by averaging the actual feature values of \(x_C\) in the training data at given values of \(x_S\) or, in other words, it computes the marginal effect of \(x_S\) on the prediction. In order to obtain realistic results, a major assumption of the PDP is that the features in \(x_S\) and \(x_C\) are independent and thus uncorrelated.\citep{hastie2013elements}
 
 \[\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})\]
 
-\begin{figure}
-\includegraphics[width=0.9\linewidth]{images/age_pdp} \caption{The PDP shows that the survival probability is sharply dropping until age 18 and more moderately afterwards.}\label{fig:unnamed-chunk-1}
-\end{figure}
-
-In classification problems with probability outputs, the partial dependence function is modeled separately for all of the K different classes, i.e.~it shows the probability for each respective class at given feature values of \(x_S\).\citep{hastie2013elements}
+An example of a PDP based on the `Titanic' data set, which contains information on the fate of 2224 passengers and crew members during the Titanic's maiden voyage, is given in figure \ref{fig:plot1}.
 
 \begin{figure}
-\includegraphics[width=0.9\linewidth]{images/pdp_class} \caption{The classification PDP reveals that passengers in lower classes had a lower probability to survive than those in a higher class.}\label{fig:unnamed-chunk-2}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_1} 
+
+}
+
+\caption{PDP for predicted survival probability and numeric feature variable 'Age'. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data.}\label{fig:plot1}
 \end{figure}
 
-\textbf{Advantages and Limitations of Partial Dependence Plots}
+When a feature is categorical, rather than continuous, the partial dependence function is modeled separately for all of the K different classes of said feature. It maps the predictions for each respective class at given feature values of \(x_S\).\citep{hastie2013elements}
 
-Partial Dependence Plots are easy to compute and a poular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs perfectly qualify for the communication to non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019}
+For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed \(x_S\)-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories.\citep{molnar2019} As an example, figure \ref{fig:plot2} shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature `passenger class'.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/pdp_2_features_1} \caption{The two-dimensional PDP for the numerical feature Age and the categorical feature Sex shows that while the survival probability for both genders declines as age increases, that there is a difference between genders an that the decrease is much steeper for males.}\label{fig:unnamed-chunk-3}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_2} 
+
+}
+
+\caption{The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class.}\label{fig:plot2}
+\end{figure}
+
+\hypertarget{advantages-and-limitations-of-partial-dependence-plots}{%
+\subsection{Advantages and Limitations of Partial Dependence Plots}\label{advantages-and-limitations-of-partial-dependence-plots}}
+
+Partial Dependence Plots are easy to compute and a popular way to explain insights from black box Machine Learning models. With their intuitive character, PDPs are perfect for communicating to a non-technical audience. However, due to limited visualization techniques and the restriction of human perception to a maximum of three dimensions, only one or two features can reasonably be displayed in one PDP.\citep{molnar2019} \ref{fig:plot3} shows that the combination of one numerical (Age) and one categorical (Sex) feature still allows rather precise interpretation. The combination of two numerical features (Age \& Fare) still works, but already degrades the interpretability with its colour intensity scale as shown in figure \ref{fig:plot4}.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_3} 
+
+}
+
+\caption{Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.}\label{fig:plot3}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/pdp_2_features_2} \caption{The two-dimensional PDP for the numerical features Age and Fare illustrates that survival probability of younger passengers is fairly uniform, whilke from age 20 onwards, passengers travelling at a lower fare also had a much lower probability to survive than those that paid a high fare.}\label{fig:unnamed-chunk-4}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_4} 
+
+}
+
+\caption{Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.}\label{fig:plot4}
 \end{figure}
 
-Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this assumption be violated, the partial dependence function will produce unrealistic data points. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.\citep{molnar2019}
+Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions.\citep{molnar2019}
 
 \hypertarget{individual-conditional-expectation-curves}{%
 \section{Individual Conditional Expectation Curves}\label{individual-conditional-expectation-curves}}
 
-While the partial dependence plots provide the average effect of a feature, the Individual Conditional Expectation (ICE) plots disaggregate this average and plot the functional relationship between the predicted response and the feature for individual instances. Thus, a PDP is the average of the lines of an ICE plot.\citep{molnar2019}
+While partial dependence plots provide the average effect of a feature, Individual Conditional Expectation (ICE) plots are a method to disaggregate these averages. ICE plots visualize the functional relationship between the predicted response and the feature separately for each instance. In other words, a PDP averages the individual lines of an ICE plot.\citep{molnar2019}
 
-A formal definition: consider the response function \(\hat{f}\), for each instance in \({(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}\), the curve \(\hat{f}_S^{(i)}\) is plotted against the observed values of \(x^{(i)}_S\), while \(x^{(i)}_C\) remains fixed.\citep{molnar2019}\citep{Goldstein2013}
+More formally, ICE plots can be derived by considering the estimated response function \(\hat{f}\) and the observations \({(x^{(i)}_S, x^{(i)}_C)}^N_{i=1}\). The curve \(\hat{f}_S^{(i)}\) is plotted against the observed values of \(x^{(i)}_S\) for each of the observed instances while \(x^{(i)}_C\) remains fixed at each point on the x-axis.\citep{molnar2019}\citep{Goldstein2013}
 
-In ICE plots, each line represents separately one instance and shows what would happen to the model's prediction if the feature of a particular instance varied, holding all other features the same (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
+As shown in figure \ref{fig:plot5}, each line represents one instance and visualizes the effect of varying the feature value \(x^{(i)}_S\) (Age) of a particular instance on the model's prediction, given all other features remain constant (c.p.). An ICE plot can highlight the variation in the fitted values across the range of a feature. This suggests where and to what extent heterogeneities might exist.
 
 \begin{figure}
-\includegraphics[width=0.8\linewidth]{images/ice_plot} \caption{The ICE plot indicates that there is underlying heterogeneity in the complement set.}\label{fig:unnamed-chunk-5}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_5} 
+
+}
+
+\caption{ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.}\label{fig:plot5}
 \end{figure}
 
-\#\#\#Centered ICE Plot\#\#\#
-Heterogeneity in the model can be difficult to distinguish when the curves have a wide range of intercepts and ``stacked'' on each other. The so called centered ICE plot (c-ICE) is a simple solution which removes level effects. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point. \citep{molnar2019} After anchoring a location \(x^a\) in the range of \(x_s\) and connecting all prediction lines at that point, the new curves are defined as:
+\hypertarget{centered-ice-plot}{%
+\subsection{Centered ICE Plot}\label{centered-ice-plot}}
+
+If the curves of an ICE plot are stacked or have a wide range of intercepts it can be difficult to observe heterogeneity in the model. The so called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point.\citep{molnar2019} After anchoring a location \(x^a\) in the range of \(x_s\) and connecting all prediction lines at that point, the new curves are defined as:
 
 \[\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)\]
-It is recommended that the most interpretable plots occur when the minimum or the maximum observed value is chosen.
+Experience has shown that the most interpretable plots occur when the anchor point \(x^a\) is chosen as minimum or maximum of the observed values. Figure \ref{fig:plot6} shows the effect of centering the ICE curves of survival probability by Age at the minimum of observed ages in the `Titanic' data set.
 
 \begin{figure}
-\includegraphics[width=0.8\linewidth]{images/c_ice_plot} \caption{Centered ICE plot.}\label{fig:unnamed-chunk-6}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/PDP_Plot_6} 
+
+}
+
+\caption{Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.}\label{fig:plot6}
 \end{figure}
 
-\#\#\#Derivative ICE Plot\#\#\#
+\hypertarget{derivative-ice-plot}{%
+\subsection{Derivative ICE Plot}\label{derivative-ice-plot}}
+
 Another way to explore the heterogeneity is to show plots of the partial derivative
 of \(\hat{f}\) with respect to \(x_s\). Assume that \(x_s\) does not interact
 with the other predictors in the fitted model, the prediction function can be written as:
@@ -269,17 +308,30 @@ with the other predictors in the fitted model, the prediction function can be wr
 
 so that \[\frac{\partial{\hat{f}(\mathbf{x})}}{\partial x_s} = g'(x_s)\]
 
-When no interactions are present in the fitted model, all curves in the d-ICE plot are equivalent, and the plot shows a single line. When interactions do exist, the derivative lines will be heterogeneous. As it can be difficult to visually assess derivatives from ICE plots, it is useful to plot an estimate of the partial derivative directly.\citep{Goldstein2013}
+When no interactions are present in the fitted model, all curves in the d-ICE plot are equivalent and the plot shows a single line. When interactions do exist, the derivative lines will be heterogeneous. As it can be difficult to visually assess derivatives from ICE plots, it is useful to plot an estimate of the partial derivative directly.\citep{Goldstein2013}
 
-\#\#\#Advantages and Limitations of ICE Plots\#\#\#
-\textbf{Advantages}
-ICE plots are more intuitive than PDPs and enable data scientists to drill much deeper to explore individual differences and identify subgroups and interactions between model inputs.
+\hypertarget{advantages-and-limitations-of-ice-plots}{%
+\subsection{Advantages and Limitations of ICE Plots}\label{advantages-and-limitations-of-ice-plots}}
 
-\textbf{Disadvantages}
-Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there will be a problem of overplotting and you would see nothing. Secondly, ICE plots have the same problem as PDPs that some data points in the lines might be invalid. Finally, it might be difficult to see to average in ICE plots.\citep{molnar2019}
+The major advantage of ICE plots is that they are even more intuitive than PDPs which enables data scientists to drill much deeper to explore individual differences. This may help to identify subgroups and interactions between model inputs. However, there are also some disadvantages of ICE plots. Firstly, only one feature can be plotted in an ICE plot meaningfully. Otherwise, there would be a problem of overplotting and it would be hard to distinguish anything in the plot. Secondly, just like PDPs, ICE plots for correlated features may produce invalid data points. Finally, without additionally plotting the PDP it might be difficult to see the average in ICE plots.\citep{molnar2019}
 
-\hypertarget{accumulated-local-effects-ale}{%
-\chapter{Accumulated Local Effects (ALE)}\label{accumulated-local-effects-ale}}
+\hypertarget{pdp-and-correlated-features}{%
+\chapter{PDP and Correlated Features}\label{pdp-and-correlated-features}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{pdp-and-feature-interactions}{%
+\chapter{PDP and Feature Interactions}\label{pdp-and-feature-interactions}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{pdp-and-causal-interpretation}{%
+\chapter{PDP and Causal Interpretation}\label{pdp-and-causal-interpretation}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{introduction-to-accumulated-local-effects-ale}{%
+\chapter{Introduction to Accumulated Local Effects (ALE)}\label{introduction-to-accumulated-local-effects-ale}}
 
 \hypertarget{motivation}{%
 \section{Motivation}\label{motivation}}
@@ -291,7 +343,7 @@ As seen in section 2 PDPs don't work well as soon as two or more features are co
 
 The uncentered ALE with respect to a starting point \(z_{0, j}\) is defined by \citep{Apley2016} as
 \[  \widetilde{ALE}_{\hat{f},~j}(x) = \hat{f}_{x_j,ALE}(x) = \int_{z_{0,~j}}^{x} E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j = z_j]~dz_j,\]
-where \(\hat{f}\) is an arbitrary prediction function on the featurespace \(X = (X_j,X_c)\) (with feature of interest \(X_j\) and other features \(X_c\)) as well as its j-th partial derivative \(\hat{f}^j(*,*)\).
+where \(\hat{f}\) is an arbitrary prediction function on the featurespace, as well as \(\hat{f}^j(*,*)\) its j-th partial derivative. In this context \(X_j\) is the feature of interest while \(X_c\) represents the other features.
 
 \hypertarget{centering}{%
 \subsection{Centering}\label{centering}}
@@ -308,14 +360,15 @@ The centering makes sense as it helps interpreting the ALE in a reasonable way. 
 Since this theoretical formula is of no use for a blackbox model with unknown or even non existing gradients, an approximative approach will be used.
 The uncentered ALE can be approximated by the formula
 
-\[ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}   1_{]z_{k-1,~j},~z_{k,~j}]}(x_j)~ \frac{1}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  \]
+\[ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}    \frac{1_{I_k}(x_j)}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  \]
 
-In a first step the relevant dimension of the feature space is divided into K intervals beginning with the starting point \(z_{0, j}\). As it is not clear how to exactly divide the feature space, section 3.x deals with that question. The upper boundary of the k-th interval is denoted by \(z_{k, ~j}\) as well as the lower boundary by \(z_{k-1, ~j}\). \(N_j(k)\) denotes the k-th interval, i.e.~\(]z_{k-1,~j}, z_{k,~j}]\) and \(n_j(k)\) the total number of observations having the j-value within this interval. \(x_j^{(i)}\) is the j-value of the i-th observation and correspondingly \(x_{\setminus j}^{(i)}\) the values of the other features. The term on the right approximates the expected partial derivative within each interval.
+In a first step the relevant dimension of the feature space is divided into K intervals beginning with the starting point \(z_{0, j}\). As it is not clear how to exactly divide the feature space, section 3.x deals with that question. The upper boundary of the k-th interval is denoted by \(z_{k, ~j}\) as well as the lower boundary by \(z_{k-1, ~j}\). The half open interval \(]z_{k-1,~j},~z_{k,~j}]\) is defined as \(I_k\). \(N_j(k)\) denotes the k-th interval, i.e.~\(]z_{k-1,~j}, z_{k,~j}]\) and \(n_j(k)\) the total number of observations having the j-value within this interval. \(x_j^{(i)}\) is the j-value of the i-th observation and correspondingly \(x_{\setminus j}^{(i)}\) the values of the other features. The term on the right approximates the expected partial derivative within each interval.
 Therefore each instance within an interval is shifted to the upper and lower limit of the interval and the total difference of the prediction is calculated. Devided by the length of the interval this is a reasonable approximation for the ``local'' effect on the prediction, if the feature of interest changes (cet. par.).
 By averaging these approximations over all observations within the k-th interval, we recieve a rough estimator for the term \(E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j \in N_j(k)]\), which we take as constant effect for the k-th interval.
 By integrating over this step function, which represents the locally estimated derivatives, the (local) changes are accumulated. Thats why the name Accumulated Local Effects is quite reasonable.
 The approximative formula for the centered ALE follows directly as
-\[   \widehat{ALE}_{\hat{f},~j}(x) = \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) - \frac{1}{n} \sum_{i=1}^{n} \widehat{\widetilde{ALE}}_{\hat{f},~j}(x_j^{(i)})~. 
+
+\[ \widehat{ALE}_{\hat{f},~j}(x) = \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) - \frac{1}{n} \sum_{i=1}^{n} \widehat{\widetilde{ALE}}_{\hat{f},~j}(x_j^{(i)})~. 
  \]
 
 \hypertarget{implementation-formula}{%
@@ -334,7 +387,7 @@ Since in this formula there is no integral, it is easier to implement.
 As the former sections introduced the theoretical basics for the ALE, this section shall provide an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the ``new'' data points. Figure \ref{fig:dataALE} first offered by \citep{molnar2019} gives a good intuition for this procedure.
 
 \begin{figure}
-\includegraphics[width=13.75in]{images/ale_estimation_intuition} \caption{The data points within the 4-th interval are shifted to the interval boundaries \(z_{3,~1}\) and \(z_{4,~1}\).}\label{fig:dataALE}
+\includegraphics[width=1\linewidth]{images/ale_estimation_intuition} \caption{The data points within the 4-th interval are shifted to the interval boundaries \(z_{3,~1}\) and \(z_{4,~1}\).}\label{fig:dataALE}
 \end{figure}
 
 
@@ -349,21 +402,31 @@ In a last step the uncentered ALE is centered, i.e.~shifted by a constant such t
 Figure \ref{fig:aleEx} shows an example ALE which could match the data situtaion of Figure \ref{fig:dataALE} :
 
 \begin{figure}
-\includegraphics[width=13.75in]{images/ale_example} \caption{ALE on basis of 5 intervals}\label{fig:aleEx}
+\includegraphics[width=1\linewidth]{images/ale_example} \caption{ALE on basis of 5 intervals}\label{fig:aleEx}
 \end{figure}
 
 
 
-To understand the interpretation of the ALE it can be usefull to first have a look on the intuition behind the uncentered ALE.
+To understand the interpretation of the ALE it can be usefull to first have a look at the intuition behind the uncentered ALE.
 If the value of the uncentered ALE at \(x_1 = 2\) equals \(1\), this means that if one samples a data point from the joint distribution of both features but only knows that \(x_1 = 2\), one would expect the prediction to be 1 higher than the average prediction for realistic data points at \(x_1 = z_{0,1}\) (i.e.~data points sampled from the conditional distribution at \(x_1 = z_{0,1}\)). This expectation strongly depends on the reference point \(z_{0,1}\), which per definition is smaller than the smallest \(x_1\)-value of the data.
 By substracting the expectation of the uncentered ALE - which is the mean difference of the prediction of a data point from the joint distibution to the prediction of a realistic data point(i.e.~from the conditional distribution) at \(x_1 = z_{0,1}\) - the interpretation becomes a lot easier. If the value of the (centered) ALE at \(x_1 = 2\) equals for example \(2\), this means that, if one samples a data point from the joint distribution of both features and \(x_1\) equals 2, one would expect the prediction to be 2 higher than the average prediction for an average data point of the joint distribution.
 
 So far only the case of 2-dimensional feature spaces with one feature of interest was taken into account. In the following chapters methods and interpretation for ALE with two numeric features (second order effects) or one categorical feature will be in the focus. Furthermore we will have a look on the size of the intervals the data is evaluated on, which can be crucial for the expressiveness of the ALE.
 
-\hypertarget{feature-importance}{%
-\chapter{Feature Importance}\label{feature-importance}}
+\hypertarget{comparison-of-ale-and-pdp}{%
+\chapter{Comparison of ALE and PDP}\label{comparison-of-ale-and-pdp}}
 
-As in previous chapters already discussed, there exist a variety of methods that enable a better understanding of the relationship between features and the outcome variables, especially for complex machine learning models. For instance, Partial Dependence (PD) plots visualize the feature effects on a global, aggregated level, whereas Individual Conditional Expectation (ICE) plots unravel the average feature effect by analyzing individual observations, allowing to detect, if existing, any heterogeneous relationships. Yet, these methods do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as feature importance. This perspective becomes interesting when recalling that so far black-box machine learning models aim for predictive accuracy rather than for inference, and hence, it is persuasive to also establish agnostic-methods that focus on the performance dimension. In the following, the two most common approaches, Permutation Feature Importance (PFI) by \citet{breiman2001random} and Leave-One-Covariate-Out (LOCO) by \citet{lei2018distribution}, for calculating and visualizing a Feature Importance metric, are introduced. At this point, however, it is worth to clarify that the concepts of feature effects and feature importance can by no means be ranked but rather should be considered as mutual complements that enable the interpretability from different angles. After introducing the concepts of PFI and LOCO, a brief discussion of their interpretability but also its non-negligible limitations will follow.
+\emph{Author: firstname lastname}
+
+\hypertarget{ale-intervals-piece-wise-constant-models-and-categorical-features}{%
+\chapter{ALE Intervals, Piece-Wise Constant Models and Categorical Features}\label{ale-intervals-piece-wise-constant-models-and-categorical-features}}
+
+\emph{Author: Nikolas Fritz}
+
+\hypertarget{introduction-to-feature-importance}{%
+\chapter{Introduction to Feature Importance}\label{introduction-to-feature-importance}}
+
+As in previous chapters already discussed, there exist a variety of methods that enable a better understanding of the relationship between features and the outcome variables, especially for complex machine learning models. For instance, Partial Dependence (PD) plots visualize the feature effects on a global, aggregated level, whereas Individual Conditional Expectation (ICE) plots unravel the average feature effect by analyzing individual observations. The latter allows to detect, if existing, any heterogeneous relationship. Yet, these methods do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as Feature Importance. This perspective becomes interesting when recalling that black-box machine learning models aim for predictive accuracy rather than for inference. Hence, it is persuasive to also establish agnostic-methods that focus on the performance dimension. In the following, the two most common approaches, Permutation Feature Importance (PFI) by \citet{breiman2001random} and Leave-One-Covariate-Out (LOCO) by \citet{lei2018distribution}, for calculating and visualizing a Feature Importance metric, are introduced. At this point, it is worth to clarify that the concepts of feature effects and Feature Importance can by no means be ranked. Instead, they should be considered as mutual complements that enable interpretability from different angles. After introducing the concepts of PFI and LOCO, a brief discussion of their interpretability but also its non-negligible limitations will follow.
 
 \hypertarget{permutation-feature-importance-pfi}{%
 \section{Permutation Feature Importance (PFI)}\label{permutation-feature-importance-pfi}}
@@ -403,22 +466,21 @@ In Figure \ref{fig:PFI} it is illustrated, by a fictional example, how the permu
 
 }
 
-\caption{Example for Permutation Feature Importance}\label{fig:PFI}
+\caption{Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the feature of interest and the target value. Based on the formular underneath the tables, the PFI is calculated.}\label{fig:PFI}
 \end{figure}
 
-To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset ``Boston'' (see Figure \ref{fig:plot}), which is available in R via the \texttt{MASS} package. To predict the house price, seven variables are included, whereby as the results show, the PFIs vary substantially across the variables. The depicted points correspond to the median PFIs over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively (see \texttt{iml} package).
+To show, how the PFI for all features of a model can be visualized and thereby more conveniently compared, the PFI algorithm with a random forest model is applied on the dataset ``Boston'' (see Figure \ref{fig:plot}), which is available in R via the \texttt{MASS} package. To predict the house price, seven variables are included, whereby as the results show, the PFI varies substantially across the variables. In this case, the features \texttt{Status\ of\ Population} and \texttt{Rooms} should be interpreted as the most important ones for the model, whereas \texttt{Blacks} is considered as less important.
 
 \begin{figure}
 \centering
 \includegraphics{book_files/figure-latex/plot-1.pdf}
-\caption{\label{fig:plot}Visualization of Permutation Feature Importance with a random forest applied on Boston dataset}
+\caption{\label{fig:plot}Visualization of Permutation Feature Importance with a random forest applied on Boston dataset. The depicted points correspond to the median PFI over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively (see \texttt{iml} package).}
 \end{figure}
 
 \hypertarget{leave-one-covariate-out-loco}{%
 \section{Leave-One-Covariate-Out (LOCO)}\label{leave-one-covariate-out-loco}}
 
-The concept of Leave-One-Covariate-Out (LOCO) is as already mentioned a different approach to PFI with the same objective, to gain insights on the importance of a specific feature for the prediction performance of a model. Although applications of LOCO exist, where comparable to PFI, the initial values of feature \(j\) are replaced by its mean, median or zero \citep[see][]{hall2017ideas}, and hence, circumvent the disadvantage of re-training the model \(f\), the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model \(f_{-j}\) is then compared to the prediction error resulted from the baseline model. However, re-training the model results in higher computational costs, becoming more severe with an increasing feature space. Besides, as one is actually interested in assessing the Feature Importance of a fixed model \(f\), comparing the performance of a fixed model with the performance of a model \(f_{-j}\) fitted merely with a subset of the data, might raise plausible concerns \citep[see][]{molnar2019}.
-The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out \citep[see][]{lei2018distribution}.
+The concept of Leave-One-Covariate-Out (LOCO) follows the same objective as PFI, to gain insights on the importance of a specific feature for the prediction performance of a model. Although applications of LOCO exist, where comparable to PFI, the initial values of feature \(j\) are replaced by its mean, median or zero \citep[see][]{hall2017ideas}, and hence, circumvent the disadvantage of re-training the model \(f\), the common approach follows the idea to simply leave the respective feature out. The overall prediction error of the re-trained model \(f_{-j}\) is then compared to the prediction error resulted from the baseline model. However, re-training the model results in higher computational costs, which becomes more severe with an increasing feature space. Typically, one is interested in assessing the Feature Importance within a fixed model \(f\). Applying LOCO might raise plausible concerns, as it compares the performance of a fixed model with the performance of a model \(f_{-j}\) which is merely fitted with a subset of the data \citep[see][]{molnar2019}. The pseudo-code shown below, illustrates the algorithm for the common case where the feature is left out \citep[see][]{lei2018distribution}.
 
 \textbf{The Leave-One-Covariate-Out algorithm based on Lei et al.~(2018):}
 
@@ -447,7 +509,7 @@ Input: Trained model \(f\), feature matrix \(X\), target vector \(y\), error mea
   Sort features by descending FI.
 \end{enumerate}
 
-In Figure \ref{fig:LOCO} it is shown, how the LOCO algorithm alters the original dataset, whereby it always differs, depending on the respective feature that is left out. Note, that the qualitative and quantitative interpretations correspond the ones from the PFI method. So do the visualization tools and therefore at this point it is refrained from providing the reader with an additional real data example.
+In Figure \ref{fig:LOCO} it is shown, how the LOCO algorithm alters the original dataset, whereby it always differs, depending on the respective feature that is left out. Note, that the qualitative and quantitative interpretations correspond to the ones from the PFI method. So do the visualization tools and therefore at this point it is refrained from providing the reader with an additional real data example.
 
 \begin{figure}
 
@@ -455,17 +517,31 @@ In Figure \ref{fig:LOCO} it is shown, how the LOCO algorithm alters the original
 
 }
 
-\caption{Example for Leave-One-Covariate-Out Feature Importance}\label{fig:LOCO}
+\caption{Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formular underneath the tables, the Feature Importance of LOCO is calculated.}\label{fig:LOCO}
 \end{figure}
 
 \hypertarget{interpretability-of-feature-importance-and-its-limitations}{%
 \section{Interpretability of Feature Importance and its Limitations}\label{interpretability-of-feature-importance-and-its-limitations}}
 
-After both methods are discussed, the question to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models will be now touched on. By doing so, it is necessary to also reflect upon the limitations of the model regarding the interpretability of the results. The latter will constitute the main focus in the following chapters.
-Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g.~Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts do consider neither the shape of the relationship between the feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure \ref{fig:plot}, PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter XX will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE \citep[see][]{casalicchio2018visualizing}. Besides, two general limitations appear when some features in the feature space are correlated. First, correlation makes an isolated analysis of the explanatory power of a feature complicated which results in an erroneous ranking in Feature Importance and hence, in incorrect conclusions. Second, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter XX will focus on this limitations by comparing the performance of PFI and LOCO for different models and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-methods should be computed on training or test data. As answering that depends highly on the research question and data, it is refrained from going into more detail at this point but will be examined and further discussed in chapter XX.
+After both methods are presented, it will be now questioned to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models. Reflecting upon these limitations will consitute the main focus in the following chapters. Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g.~Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts do consider neither the shape of the relationship between the feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure \ref{fig:plot}, PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter XX will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE \citep[see][]{casalicchio2018visualizing}. Besides, two general limitations appear when some features in the feature space are correlated. First, correlation makes an isolated analysis of the explanatory power of a feature complicated which results in an erroneous ranking in Feature Importance and hence, in incorrect conclusions. Second, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter XX will focus on this limitations by comparing the performance of PFI and LOCO for different models and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-methods should be computed on training or test data. As answering that depends highly on the research question and data, it is refrained from going into more detail at this point but will be examined and further discussed in chapter XX.
 
-\hypertarget{local-interpretable-model-agnostic-explanations}{%
-\chapter{Local Interpretable Model-Agnostic Explanations}\label{local-interpretable-model-agnostic-explanations}}
+\hypertarget{pfi-loco-and-correlated-features}{%
+\chapter{PFI, LOCO and Correlated Features}\label{pfi-loco-and-correlated-features}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{partial-and-individual-permutation-feature-importance}{%
+\chapter{Partial and Individual Permutation Feature Importance}\label{partial-and-individual-permutation-feature-importance}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{pfi-training-vs.-test-data}{%
+\chapter{PFI: Training vs.~Test Data}\label{pfi-training-vs.-test-data}}
+
+\emph{Author: firstname lastname}
+
+\hypertarget{introduction-to-local-interpretable-model-agnostic-explanations-lime}{%
+\chapter{Introduction to Local Interpretable Model-Agnostic Explanations (LIME)}\label{introduction-to-local-interpretable-model-agnostic-explanations-lime}}
 
 When doing machine learning we always build models.
 Models are simplifications of reality.
@@ -526,7 +602,7 @@ As we can see, this is indeed locally very similar to the black box decision bou
 
 }
 
-\caption{Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.}\label{fig:unnamed-chunk-9}
+\caption{Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.}\label{fig:unnamed-chunk-3}
 \end{figure}
 
 This way we receive a single explanation.
@@ -607,6 +683,16 @@ The following two chapters will focus on two very significant hyperparameters:
 the neighbourhood definition and the sampling strategy.
 They will investigate how these affect the results of the method and their interpretability.
 We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results.
+
+\hypertarget{lime-and-neighbourhood}{%
+\chapter{LIME and Neighbourhood}\label{lime-and-neighbourhood}}
+
+\emph{Author: Firstname Lastname}
+
+\hypertarget{lime-and-sampling}{%
+\chapter{LIME and Sampling}\label{lime-and-sampling}}
+
+\emph{Author: Firstname Lastname}
 
   \bibliography{book.bib,packages.bib}
 
