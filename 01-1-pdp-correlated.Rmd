@@ -1,18 +1,127 @@
 ---
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   keep_tex: true
 ---
 # PDP and Correlated Features
 
 *Author: Veronika Kronseder*
 
-```{r echo=FALSE, eval=FALSE, warning=FALSE}
+## Problem Description
 
+As outlined in chapter 2, PDPs and ICE plots are meaningful graphical tools to visualize the impact of individual feature variables. This is particularly true for black box algorithms, where the mechanism of each feature and its influence on the generated predictions may be difficult to retrace.\citep{Goldstein2013}  
+
+The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of depencencies between different types of variables, missing values and the associated implications on marginalized feature effects with a particular focus on PDPs.  
+
+### What is the issue with dependent features?
+
+When looking at PDPs, one should bear in mind that by definition the partial dependence function does not reflect the isolated effect of $x_S$ while the features in $x_C$ are ignored. This approach would correspond to the conditional expectation $\tilde{f}_S(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)|x_S]$, which is only congruent to the partial dependence function $f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$ in case of $x_S$ and $x_C$ being independent.\citep{hastie2013elements}  
+
+Although unlikely in many practical applications, the independence of feature variables is one of the major assumptions to produce meaningful PDPs. Its violation would mean that, when calculating averages of the features in $x_C$, the estimated partial dependence function $\hat{f}_{x_S}(x_S)$ takes unrealistic data points into consideration.\citep{molnar2019}  
+
+Figure \@ref(fig:Figure01) illustrates the problem by contrasting the common distribution of the independent features $x_1$ and $x_2$ on the left with an example where the two features have a strong linear dependency, and thus are highly correlated, on the right.  
+
+```{r Figure01, echo=FALSE, out.width='100%', fig.cap="Simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. The marginal distribution of $x_2$ is displayed on the right side of each plot."}
+knitr::include_graphics('images/VK_PDP_1_Data_ind_dep.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-```{r pdpplot1, echo=FALSE, out.width='100%', fig.cap=""}
-knitr::include_graphics('images/PDP_Sim_Plot1.jpeg')
+When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating its mean (here: $\overline{x}_2 \approx 0$) and keeping the value in $\hat{f}_{x_S}(x_1)$ constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average of $x_2$ is not a realistic value in combination with $x_1$-values in the very left and the very right part of the feature distribution.  
+
+### What is the issue with extrapolation?
+Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter ?? we will see an example where this instant leads to a failure of the Partial Dependence Plots.\citep{molnar2019}  
+
+On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. In the PDP, the resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers.\citep{Goldstein2013}
+
+In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation, which we will see in chapter 3.??. The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
+
+```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations with $x_1$ and $x_2$ [0,1.5] have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
+knitr::include_graphics('images/VK_PDP_2_Data_ind_dep_gap.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+The extrapolation problem in PDPs is strongly linked to the aforementioned independence assumption. Independent features are a prerequisite for the computation of meaningful extrapolation results, therefore one could say that both problems go hand in hand. In the following chapters, the failure of PDPs in case of a violation of the independence assumption shall be discussed by means of real data examples (chapter 3.2) and based on simulated cases (chapter 3.4). 
+
+
+```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
+library(mvtnorm)
+library(matrixcalc)
+library(ggplot2) #is.positive.semi.definite
+library(ggpubr) #ggdensity
+library(cowplot) #plot_grid
+library(mlr)
+library(iml)
+
+simulate_data <- function(obs, correlation){
+  sigma <- diag(1, nrow = 2)
+  sigma[1,2] <- sigma[2,1] <- correlation
+  data <- as.data.frame(rmvnorm(n = obs, 
+                                mean = rep(0, times = 2), 
+                                sigma = sigma))
+  colnames(data) <- c("X1", "X2")
+  std <- abs(mean(sin(data$X1) + data$X2))*0.1
+  data$Y <- sin(data$X1) + data$X2 + rnorm(n = obs, mean = 0, sd = std)
+  invisible(data)
+}
+
+set.seed(123)
+uncorrelated <- simulate_data(obs=1000, correlation = 0)
+correlated <- simulate_data(obs=1000, correlation = 0.99)
+
+# Data Manipulation: Produce area with no observations
+uncorrelated_gap <- uncorrelated
+for (i in 1:nrow(uncorrelated_gap)){
+  uncorrelated_gap$X1[i] <- ifelse(uncorrelated_gap$X2[i] > 0 & uncorrelated_gap$X2[i] <= 1.5 & uncorrelated_gap$X1[i] > 0 & uncorrelated_gap$X1[i] <= 1.5, NA, uncorrelated_gap$X1[i])
+}
+for (i in 1:nrow(uncorrelated_gap)){uncorrelated_gap$X2[i] <- ifelse(is.na(uncorrelated_gap$X1[i]), NA, uncorrelated_gap$X2[i])}
+for (i in 1:nrow(uncorrelated_gap)){uncorrelated_gap$Y[i] <- ifelse(is.na(uncorrelated_gap$X1[i]), NA, uncorrelated_gap$Y[i])} 
+
+correlated_gap <- correlated
+for (i in 1:nrow(correlated_gap)){
+  correlated_gap$X1[i] <- ifelse(correlated_gap$X2[i] > 0 & correlated_gap$X2[i] <= 1.5 & correlated_gap$X1[i] > 0 & correlated_gap$X1[i] <= 1.5, NA, correlated_gap$X1[i])
+}
+for (i in 1:nrow(correlated_gap)){correlated_gap$X2[i] <- ifelse(is.na(correlated_gap$X1[i]), NA, correlated_gap$X2[i])}
+for (i in 1:nrow(correlated_gap)){correlated_gap$Y[i] <- ifelse(is.na(correlated_gap$X1[i]), NA, correlated_gap$Y[i])} 
+
+
+# Visualization of simulated data
+data_plot <- function(data_uncor, data_cor){
+  plot_uncorr <- 
+    ggplot(data = data_uncor, aes(x = X1, y = X2)) + 
+    geom_point(alpha = 0.5) + 
+    labs(title = "Independent Features") + 
+    theme_bw()+
+    theme(plot.title = element_text(size=20, hjust = 0))+
+    ylim(-3,3)
+  density_uncorr <- 
+    ggdensity(data_uncor$X2)+ 
+    geom_density() + 
+    rotate() + 
+    clean_theme()+ 
+    rremove("legend") +
+    xlim(-3,3)
+  
+  plot_corr <- 
+    ggplot(data = data_cor, aes(x = X1, y = X2)) + 
+    geom_point(alpha = 0.5) + 
+    labs(title = "Correlated Features") + 
+    theme_bw()+
+    theme(plot.title = element_text(size=20, hjust = 0))+
+    ylim(-3,3)
+  density_corr <- 
+    ggdensity(data_cor$X2)+ 
+    geom_density() + 
+    rotate() + 
+    clean_theme()+ 
+    rremove("legend") +
+    xlim(-3,3)
+  
+  p1 <- plot_grid(plot_uncorr, density_uncorr, ncol = 2, align = "hv", rel_widths = c(4, 1), rel_heights = c(1, 4))
+  p2 <- plot_grid(plot_corr, density_corr, ncol = 2, align = "hv", rel_widths = c(4, 1), rel_heights = c(1, 4))
+  
+  ggarrange(p1, p2, ncol=2, align = "hv")
+}
+
+data_plot(uncorrelated, correlated)
+data_plot(uncorrelated_gap, correlated_gap)
 ```
 

@@ -8,23 +8,20 @@
 \contentsline {figure}{\numberline {2.5}{\ignorespaces ICE plot of survival probability by Age. The yellow line represents the average of the individual lines and is thus equivalent to the respective PDP. The individual conditional relationships indicate that there might be underlying heterogeneity in the complement set.\relax }}{7}{figure.caption.10}% 
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions.\relax }}{8}{figure.caption.11}% 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Scatterplot of uncorrelated vs. highly correlated features x1 and x2 and marginal distributions of x2.\relax }}{12}{figure.caption.12}% 
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Simulation of linear dependencies. The blue line represents the true effect of x1.\relax }}{13}{figure.caption.13}% 
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Simulation of nonlinear dependencies. The blue line represents the true effect of x1.\relax }}{14}{figure.caption.14}% 
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Simulation of linear dependencies with missing informative feature. The blue line represents the true effect of x1.\relax }}{15}{figure.caption.15}% 
+\contentsline {figure}{\numberline {3.1}{\ignorespaces a\relax }}{13}{figure.caption.12}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance\relax }}{33}{figure.caption.16}% 
-\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset\relax }}{33}{figure.caption.17}% 
-\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance\relax }}{35}{figure.caption.18}% 
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance\relax }}{31}{figure.caption.13}% 
+\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset\relax }}{31}{figure.caption.14}% 
+\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance\relax }}{33}{figure.caption.15}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{45}{figure.caption.19}% 
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{43}{figure.caption.16}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
