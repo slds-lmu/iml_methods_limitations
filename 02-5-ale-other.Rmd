@@ -1,0 +1,5 @@
+# ALE Intervals, Piece-Wise Constant Models and Categorical Features
+
+*Author: Nikolas Fritz*
+
+

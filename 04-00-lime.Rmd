@@ -1,4 +1,4 @@
-# Local Interpretable Model-Agnostic Explanations
+# Introduction to Local Interpretable Model-Agnostic Explanations (LIME)
 
 When doing machine learning we always build models.
 Models are simplifications of reality.
