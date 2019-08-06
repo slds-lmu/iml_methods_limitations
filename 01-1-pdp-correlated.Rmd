@@ -20,7 +20,7 @@ When looking at PDPs, one should bear in mind that by definition the partial dep
 
 Although unlikely in many practical applications, the independence of feature variables is one of the major assumptions to produce meaningful PDPs. Its violation would mean that, when calculating averages of the features in $x_C$, the estimated partial dependence function $\hat{f}_{x_S}(x_S)$ takes unrealistic data points into consideration.\citep{molnar2019}  
 
-Figure \@ref(fig:Figure01) illustrates the problem by contrasting the common distribution of the independent features $x_1$ and $x_2$ on the left with an example where the two features have a strong linear dependency, and thus are highly correlated, on the right.  
+Figure \@ref(fig:Figure01) illustrates the problem by contrasting simulated data with independent features $x_1$ and $x_2$ on the left with an example where the two features have a strong linear dependency, and thus are highly correlated, on the right.  
 
 ```{r Figure01, echo=FALSE, out.width='100%', fig.cap="Simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. The marginal distribution of $x_2$ is displayed on the right side of each plot."}
 knitr::include_graphics('images/VK_PDP_1_Data_ind_dep.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -31,9 +31,9 @@ When computing the PDP for feature $x_1$, we take $x_2$ into account by calculat
 ### What is the issue with extrapolation?
 Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter ?? we will see an example where this instant leads to a failure of the Partial Dependence Plots.\citep{molnar2019}  
 
-On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. In the PDP, the resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers.\citep{Goldstein2013}
+On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. The resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers.\citep{Goldstein2013}
 
-In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation, which we will see in chapter 3.??. The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
+In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter 3.??. The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
 
 ```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations with $x_1$ and $x_2$ [0,1.5] have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
 knitr::include_graphics('images/VK_PDP_2_Data_ind_dep_gap.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -125,3 +125,143 @@ data_plot(uncorrelated, correlated)
 data_plot(uncorrelated_gap, correlated_gap)
 ```
 
+
+## Dependent Features: Bike Sharing Dataset
+In order to investigate the impact of dependent features, we are now looking at the Bike-Sharing dataset from the rental company 'Capital-Bikeshare', which is available for download via the UCI Machine Learning Repository. Besides the daily count of rental bikes between the year 2011 and 2012 in Washington D.C., the dataset contains the corresponding weather and seasonal information.\citep{Fanaee-T}  
+
+For our purposes, the dataset was restricted to the following variables:  
+
+* $y$: cnt (count of total rental bikes including both casual and registered)  
+* $x_1$: season: Season (1:springer, 2:summer, 3:fall, 4:winter)  
+* $x_2$: yr: Year (0: 2011, 1:2012)  
+* $x_3$: mnth: Month (1 to 12)  
+* $x_4$: holiday: weather day is holiday or not  
+* $x_5$: workingday: If day is neither weekend nor holiday is 1, otherwise is 0.  
+* $x_6$: weathersit:  
+    + 1: Clear, Few clouds, Partly cloudy, Partly cloudy  
+    + 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist  
+    + 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds  
+    + 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog  
+* $x_7$: temp: Normalized temperature in Celsius.  
+* $x_8$: atemp: Normalized feeling temperature in Celsius.   
+* $x_9$: hum: Normalized humidity.   
+* $x_{10}$: windspeed: Normalized wind speed.  
+
+For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), while the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
+
+1. Dependency between numerical features
+2. Dependency between categorical features
+3. Dependency between numerical and categorical features
+
+At the same time, for each of those scenarios, three different learning algorithms shall be compared: 
+
+* Linear Model (LM)
+* Random Forest (RF)
+* Support Vector Machines (SVM)
+
+### Dependency between Numerical Features
+The linear dependency between two numerical features can be measured by the Pearson correlation coefficient.\citep{fahrmeir2016statistik} Figure \@ref(fig:Figure03) shows the correlation matrix of all numerical features used in our analysis. It is striking, but certainly not surprising, that 'temp' and 'atemp' are strongly correlated, not to say almost perfectly collinear.  
+
+```{r Figure03, echo=FALSE, out.width='55%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_3_Num_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+Due to their strong correlation, 'temp' ($x_7$) and 'atemp' ($x_8$) perfectly qualify for our analysis of the impact of dependent features on PDPs. In order to compare the partial dependence curve with and without the influence of dependent features, we compute PDPs based on the following models [^1]: 
+
+\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}  + x_9 + x_{10} (\#eq:1) 
+\end{equation}
+
+\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_8}  + x_9 + x_{10} (\#eq:2)
+\end{equation}
+
+\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 \mathbf{+ x_7 + x_8} + x_9 + x_{10} (\#eq:3)
+\end{equation}
+
+[^1]: The representation of the different models with the feature variables connected via '+' shall, in this context, not be read as a (linear) regression model where all coefficients are equal to 1, but rather as a combination of applicable feature variables to explain $y$. The (non-)linear effect of each variable is modelled individually, depending on the observed values and the learner. 
+
+While model \@ref(eq:1) and \@ref(eq:2) only take one of the two substituting variables into account, \@ref(eq:3) considers both 'temp' and 'atemp' in one and the same model. Figures \@ref(fig:Figure04), \@ref(fig:Figure05) and \@ref(fig:Figure06) compare the associated PDPs for the different learning algorithms. Note that 'season' ($x_1$) and 'mnth' ($x_3$) are not taken into account in combination with $x_7$ and/or $x_8$, since there are meaningful associations between those variables, too, as we will show in chapter 3.??. The exclusion from the models at this stage in order to illustrate the isolated effect of the dependence between two numerical variables.  
+
+```{r Figure04, echo=FALSE, out.width='70%', fig.cap="PDPs based on Linear Regression learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_4_Correlated_numerical_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure05, echo=FALSE, out.width='70%', fig.cap="PDPs based on Support Vector Machines learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_5_Correlated_numerical_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure06, echo=FALSE, out.width='70%', fig.cap="PDPs based on Random Forest learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_6_Correlated_numerical_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+In all cases, we can see that the features' effect on the prediction is basically the same for $x_7$ and $x_8$, if only one of the dependent variables is used for modelling (see PDPs in top left and top right corners). If both 'temp' and 'atemp' are relevant for the prediction of $y$, each feature's impact is smoothened and neither the PDP for $x_7$ nor the one for $x_8$ seems to properly reflect the true effect of the temperature on the count of bike rentals. 
+
+### Dependency between Categorical Features
+In order to measure the association between two categorical features, we calculate the corrected contingency coefficient, which is based on the $\chi^2$-statistic. Other than the Pearson correlation coefficient, the corrected contingency coefficient is a measure of association $\in [0,1]$ which can only indicate the strength but not the direction of the variables' relationship.\citep{fahrmeir2016statistik} For the categorical features in the Bike-Sharing dataset, we observe the values stated in figure \@ref(fig:Figure07).
+
+```{r Figure07, echo=FALSE, out.width='55%', fig.cap="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_7_Cat_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+The only combination of categorical features with an exceptionally high corrected contingency coefficient, is 'season' ($x_1$) and 'mnth' ($x_3$). Also from a content-related point of view, this finding is no surprise, since both variables measure the time of the year. For the computation of the respective PDPs, we use the following models: 
+
+\begin{equation} 
+y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:4)
+\end{equation}
+\begin{equation}
+y \sim x_2 +\mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:5)
+\end{equation}
+\begin{equation}
+y \sim \mathbf{x_1} + x_2 + \mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:6)
+\end{equation}
+
+The approach is equivalent to the numeric case, with model \@ref(eq:4) containing only 'season' and \@ref(eq:5) only 'mnth', while both dependent features are part of model \@ref(eq:6). The impact on the PDPs for categorical features are shown in figures \@ref(fig:Figure08), \@ref(fig:Figure09) and \@ref(fig:Figure10).  
+
+```{r Figure08, echo=FALSE, out.width='70%', fig.cap="PDPs based on Linear Regression learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_8_Correlated_categorical_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure09, echo=FALSE, out.width='70%', fig.cap="PDPs based on Support Vector Machines learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_9_Correlated_categorical_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure10, echo=FALSE, out.width='70%', fig.cap="PDPs based on Random Forest learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_10_Correlated_categorical_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+Again, in all PDPs based on the different learning algorithms, the results between models with and without dependent features are diverging. The predicted number of bike rentals between the seasons/months shows a stronger variation when modelled without feature dependencies.
+
+### Dependency between Numerical and Categorical Features
+Our third dependency scenario seeks to provide an example for a strong correlation between a numerical and a categorical feature. For this constellation, neither the Pearson correlation nor the contingency coefficient are applicable as such, since both methods are limited to their respective classes of variables.  
+
+We can, however, fit a linear model to explain the numeric variable through the categorical feature. By doing so, we produce another numerical variable, the fitted values. In a next step, we can calculate the Pearson correlation coefficient between the observed and the fitted values of the numerical feature. The resulting measure of association lies within the interval $[0,1]$ and is equivalent to the square root of the linear model's variance explained ($R^2$).  QUELLE einfügen !!
+
+When applying this procedure to the categorical feature 'season' ($x_1$) and the numerical feature 'temp' ($x_7$), we find that with a value of 0.83, there seems to be a reasonable association between the two features. The PDPs are derived through the following models:  
+
+\begin{equation}
+y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:7)
+\end{equation}
+\begin{equation}
+y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}+ x_9 + x_{10} (\#eq:8)
+\end{equation}
+\begin{equation}
+y \sim \mathbf{x_1} + x_2  + x_4 + x_5 + x_6 +\mathbf{x_7}+ x_9 + x_{10} (\#eq:9)
+\end{equation}
+
+Figure \@ref(fig:Figure11), \@ref(fig:Figure12) and \@ref(fig:Figure13) present the Partial Dependence Plots for the three underlying machine learning algorithms (LM, SVM and RF) defined for the purpose of our analysis.  
+
+```{r Figure11, echo=FALSE, out.width='70%', fig.cap="PDPs based on Linear Regression learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_11_Correlated_cat_num_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure12, echo=FALSE, out.width='70%', fig.cap="PDPs based on Support Vector Machines learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_12_Correlated_cat_num_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+```{r Figure13, echo=FALSE, out.width='70%', fig.cap="PDPs based on Random Forest learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_13_Correlated_cat_num_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) with just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the Partial Dependence Plot.  
