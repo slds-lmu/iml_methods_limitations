@@ -4,39 +4,40 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}% 
 \contentsline {chapter}{\numberline {2}Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)}{3}{chapter.2}% 
 \contentsline {section}{\numberline {2.1}Partial Dependence Plots (PDP)}{3}{section.2.1}% 
-\contentsline {section}{\numberline {2.2}Individual Conditional Expectation Curves}{5}{section.2.2}% 
+\contentsline {subsection}{\numberline {2.1.1}Advantages and Limitations of Partial Dependence Plots}{4}{subsection.2.1.1}% 
+\contentsline {section}{\numberline {2.2}Individual Conditional Expectation Curves}{6}{section.2.2}% 
 \contentsline {subsection}{\numberline {2.2.1}Centered ICE Plot}{7}{subsection.2.2.1}% 
-\contentsline {subsection}{\numberline {2.2.2}Derivative ICE Plot}{7}{subsection.2.2.2}% 
+\contentsline {subsection}{\numberline {2.2.2}Derivative ICE Plot}{8}{subsection.2.2.2}% 
 \contentsline {subsection}{\numberline {2.2.3}Advantages and Limitations of ICE Plots}{8}{subsection.2.2.3}% 
-\contentsline {chapter}{\numberline {3}PDP and Correlated Features}{9}{chapter.3}% 
-\contentsline {section}{\numberline {3.1}Problem Description}{9}{section.3.1}% 
-\contentsline {subsection}{\numberline {3.1.1}Correlated Features}{9}{subsection.3.1.1}% 
-\contentsline {subsection}{\numberline {3.1.2}Extrapolation}{9}{subsection.3.1.2}% 
-\contentsline {section}{\numberline {3.2}Demonstration}{10}{section.3.2}% 
-\contentsline {subsection}{\numberline {3.2.1}Simulated Data}{10}{subsection.3.2.1}% 
-\contentsline {subsection}{\numberline {3.2.2}Real Data}{12}{subsection.3.2.2}% 
-\contentsline {section}{\numberline {3.3}Discussion of solutions}{13}{section.3.3}% 
-\contentsline {subsection}{\numberline {3.3.1}Correlated Features}{13}{subsection.3.3.1}% 
-\contentsline {subsection}{\numberline {3.3.2}Extrapolation}{13}{subsection.3.3.2}% 
-\contentsline {chapter}{\numberline {4}PDP and Feature Interactions}{15}{chapter.4}% 
-\contentsline {chapter}{\numberline {5}PDP and Causal Interpretation}{17}{chapter.5}% 
-\contentsline {chapter}{\numberline {6}Introduction to Accumulated Local Effects (ALE)}{19}{chapter.6}% 
-\contentsline {section}{\numberline {6.1}Motivation}{19}{section.6.1}% 
-\contentsline {section}{\numberline {6.2}The Theoretical Formula}{19}{section.6.2}% 
-\contentsline {subsection}{\numberline {6.2.1}Centering}{19}{subsection.6.2.1}% 
-\contentsline {section}{\numberline {6.3}Estimation Formula}{20}{section.6.3}% 
-\contentsline {subsection}{\numberline {6.3.1}Implementation Formula}{20}{subsection.6.3.1}% 
-\contentsline {section}{\numberline {6.4}Intuition and Interpretation}{21}{section.6.4}% 
-\contentsline {chapter}{\numberline {7}Comparison of ALE and PDP}{25}{chapter.7}% 
-\contentsline {chapter}{\numberline {8}ALE Intervals, Piece-Wise Constant Models and Categorical Features}{27}{chapter.8}% 
-\contentsline {chapter}{\numberline {9}Introduction to Feature Importance}{29}{chapter.9}% 
-\contentsline {section}{\numberline {9.1}Permutation Feature Importance (PFI)}{29}{section.9.1}% 
-\contentsline {section}{\numberline {9.2}Leave-One-Covariate-Out (LOCO)}{32}{section.9.2}% 
-\contentsline {section}{\numberline {9.3}Interpretability of Feature Importance and its Limitations}{33}{section.9.3}% 
-\contentsline {chapter}{\numberline {10}PFI, LOCO and Correlated Features}{35}{chapter.10}% 
-\contentsline {chapter}{\numberline {11}Partial and Individual Permutation Feature Importance}{37}{chapter.11}% 
-\contentsline {chapter}{\numberline {12}PFI: Training vs.\nobreakspace {}Test Data}{39}{chapter.12}% 
-\contentsline {chapter}{\numberline {13}Introduction to Local Interpretable Model-Agnostic Explanations (LIME)}{41}{chapter.13}% 
-\contentsline {chapter}{\numberline {14}LIME and Neighbourhood}{47}{chapter.14}% 
-\contentsline {chapter}{\numberline {15}LIME and Sampling}{49}{chapter.15}% 
-\contentsline {fm}{Bibliography}{51}{chapter*.20}% 
+\contentsline {chapter}{\numberline {3}PDP and Correlated Features}{11}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}Problem Description}{11}{section.3.1}% 
+\contentsline {subsection}{\numberline {3.1.1}Correlated Features}{11}{subsection.3.1.1}% 
+\contentsline {subsection}{\numberline {3.1.2}Extrapolation}{11}{subsection.3.1.2}% 
+\contentsline {section}{\numberline {3.2}Demonstration}{12}{section.3.2}% 
+\contentsline {subsection}{\numberline {3.2.1}Simulated Data}{12}{subsection.3.2.1}% 
+\contentsline {subsection}{\numberline {3.2.2}Real Data}{14}{subsection.3.2.2}% 
+\contentsline {section}{\numberline {3.3}Discussion of solutions}{15}{section.3.3}% 
+\contentsline {subsection}{\numberline {3.3.1}Correlated Features}{15}{subsection.3.3.1}% 
+\contentsline {subsection}{\numberline {3.3.2}Extrapolation}{15}{subsection.3.3.2}% 
+\contentsline {chapter}{\numberline {4}PDP and Feature Interactions}{17}{chapter.4}% 
+\contentsline {chapter}{\numberline {5}PDP and Causal Interpretation}{19}{chapter.5}% 
+\contentsline {chapter}{\numberline {6}Introduction to Accumulated Local Effects (ALE)}{21}{chapter.6}% 
+\contentsline {section}{\numberline {6.1}Motivation}{21}{section.6.1}% 
+\contentsline {section}{\numberline {6.2}The Theoretical Formula}{21}{section.6.2}% 
+\contentsline {subsection}{\numberline {6.2.1}Centering}{21}{subsection.6.2.1}% 
+\contentsline {section}{\numberline {6.3}Estimation Formula}{22}{section.6.3}% 
+\contentsline {subsection}{\numberline {6.3.1}Implementation Formula}{22}{subsection.6.3.1}% 
+\contentsline {section}{\numberline {6.4}Intuition and Interpretation}{23}{section.6.4}% 
+\contentsline {chapter}{\numberline {7}Comparison of ALE and PDP}{27}{chapter.7}% 
+\contentsline {chapter}{\numberline {8}ALE Intervals, Piece-Wise Constant Models and Categorical Features}{29}{chapter.8}% 
+\contentsline {chapter}{\numberline {9}Introduction to Feature Importance}{31}{chapter.9}% 
+\contentsline {section}{\numberline {9.1}Permutation Feature Importance (PFI)}{31}{section.9.1}% 
+\contentsline {section}{\numberline {9.2}Leave-One-Covariate-Out (LOCO)}{34}{section.9.2}% 
+\contentsline {section}{\numberline {9.3}Interpretability of Feature Importance and its Limitations}{35}{section.9.3}% 
+\contentsline {chapter}{\numberline {10}PFI, LOCO and Correlated Features}{37}{chapter.10}% 
+\contentsline {chapter}{\numberline {11}Partial and Individual Permutation Feature Importance}{39}{chapter.11}% 
+\contentsline {chapter}{\numberline {12}PFI: Training vs.\nobreakspace {}Test Data}{41}{chapter.12}% 
+\contentsline {chapter}{\numberline {13}Introduction to Local Interpretable Model-Agnostic Explanations (LIME)}{43}{chapter.13}% 
+\contentsline {chapter}{\numberline {14}LIME and Neighbourhood}{49}{chapter.14}% 
+\contentsline {chapter}{\numberline {15}LIME and Sampling}{51}{chapter.15}% 
+\contentsline {fm}{Bibliography}{53}{chapter*.20}% 
