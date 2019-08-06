@@ -372,7 +372,7 @@ knitr::include_graphics("images/ALE_2_example2_zoom_.PNG")
 
 Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the x_2 values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole ALE curve from that point on.
 
-To get a deeper insight in this dynamic,for the given context ALE-curves for 50 sampled datasets were estimated with grid.sizes 10, 25, and 50. For each grid.size at each point of the x_1 value the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Grafic XX shows this range exemplarilly for gride size 10.
+To get a deeper insight in this dynamic,for the given context ALE-curves for 50 sampled datasets were estimated with grid.sizes 10, 25, and 50. For each grid.size at each point of the $x_1$ value the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Grafic XX shows this range exemplarilly for gride size 10.
 
 ```{r exampleALErange_10,  out.width='100%', echo=FALSE}
 
@@ -385,7 +385,7 @@ The vertical lines indicate the absolut delta of the maximal and minimal ALE est
 
 knitr::include_graphics("images/ALE_2_example2.1_delta_.PNG")
 ```
-It is clearly recognizable that on the one hand for higher x the variance in the ALE estimation increases for all grid sizes. The expected higher variance of the estimations with higher grid sizes is in particular revealed in the region from $x_1 = 7$ to $x_1 = 10$, because the estimation is quite sensible to the absolute value of x_2, which also increases with x_1.  
+It is clearly recognizable that on the one hand for higher x the variance in the ALE estimation increases for all grid sizes. The expected higher variance of the estimations with higher grid sizes is in particular revealed in the region from $x_1 = 7$ to $x_1 = 10$, because the estimation is quite sensible to the absolute value of $x_2$, which also increases with $x_1$.  
 
 
 
