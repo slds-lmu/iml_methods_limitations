@@ -430,14 +430,26 @@ The folowing grafic shows the estimated ALE and the theoretical one for three di
 
 ```{r example3_3gs,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_example3_3gs.png")
+knitr::include_graphics("images/ALE_2_example3_3gs.PNG")
 ```
-For grid size 20 the local effects of the theoretical ALE are absolutley not recognizable. Only one peak left of the mean was estimated resonable this is due to the high data intensity in this region, which leads in this case to some sufficient small intervals that dont smoth out the effects by linear approximation. For the rest of the Plot exactly this happens. The intervals contain two or more peaks and estimate the local effect as linear.  
+For grid size 20 the local behaviour of the theoretical ALE is absolutley not recognizable. Only one peak left of the mean was estimated resonable, which is due to the high data intensity in this region, which leads in this case to some sufficient small intervals that dont smoth out the effects by linear approximation. For the rest of the plot exactly this happens. The intervals contain two or more peaks and within each of them the ALE is estimated linear. 
+Increasing the grid size to 100 one nicley sees how the approximation becomes quite reasonable in the inner region, i.e. between 6 and 14, while in the outer region where the intervalls still are too long the LE continues to be estimated wrong. 
+The more one increases the grid size the wider the inner region of good estimation becomes. Anyway still at grid size 1000 which implies only one data point per interval,  the estimates in the boundaries stay bad, as there are simply not sufficient observations to show the fine structure of the prediction function. As this was a constructed example, the latter shouldnt be overrated, as in real data situations it is quite improbable that a learner reslults in a that granular prediciton function within regions with such few data points. 
+While in picture XX apereantlly both, grid size 100 and 1000 result in equally good ALE estimations in the inner region, zooming in reveals that this isn't the case.
+```{r example3_zoom,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_example3_zoom.PNG")
+```
+The graffic shows a very small part around the mean. 
+As expected the estimations for grid size 100 are a little closer to the theoretical ALE as again the true effect of the second feature, which still affects the prediction, is better estimated within each interval (10 observations vs 1 observation).
+
+At the end of this section we have seen a good example for the natural trade off of small intervals on the one hand and sufficient datapoints to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals hereby higly depends on the given prediction function and the data. Taking this as main message of this section, the next one shall provide the reader with the understanding of in how far additional problems can occur with piece - wise constant models.       
+
 
 
 ## Problems with piece-wise constant models
 
-Piece-wise constant models such as for example decision trees and random forests dont have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical Ale doenst make any sense in this context as the partial derivative doesnt exist. Still it is possible to estimate the ALE as the "jump" will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
+Piece-wise constant models such as for example decision trees and random forests dont have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical ALE doenst make any sense in this context as the partial derivative doesnt exist. Still it is possible to estimate the ALE as the "jump" will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
 As the following examples will show problems can occur due to unlucky data in the region of the steps.
 
 ###Example 4
@@ -486,7 +498,7 @@ p + ggplot2::geom_point() +
 
 ```{r pwc_example4_dataset_predf,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example4_dataset_predf.png")
+knitr::include_graphics("images/ALE_2_pwc_example4_dataset_predf.PNG")
 ```
 
 ``` {r eval = FALSE, include = FALSE}
@@ -560,7 +572,7 @@ ggpubr::ggarrange(plot_20, plot_30,plot_50, plot_100, ncol=2, nrow=2, common.leg
 
 ```{r pwc_example4_4plots,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example4_4plots.png")
+knitr::include_graphics("images/ALE_2_pwc_example4_4plots.PNG")
 ```
 
 
@@ -620,7 +632,7 @@ p + ggplot2::geom_point() +
 
 ```{r pwc_example5_predf_1,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_predf_1.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_predf_1.PNG")
 ```
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
@@ -673,7 +685,7 @@ p + ggplot2::geom_point() +
 
 ```{r pwc_example5_predf_2,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_predf_2.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_predf_2.PNG")
 ```
 ``` {r eval = FALSE, include = FALSE}
 
@@ -892,13 +904,13 @@ gs_all2
 
 ```{r pwc_example5_gs5_10,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_gs5_10.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_gs5_10.PNG")
 ```
 
 
 ```{r pwc_example5_gs20_50,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_gs20_50.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_gs20_50.PNG")
 
 ```
 ``` {r eval = FALSE, include = FALSE}
@@ -963,7 +975,7 @@ p + ggplot2::geom_point() +
 
 ```{r ALE_2_pwc_example5_critical_points 2,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_critical_points 2.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_critical_points 2.PNG")
 ```
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
@@ -1018,7 +1030,7 @@ p + ggplot2::geom_point() +
 ```
 ```{r ALE_2_pwc_example5_critical_points,  out.width='100%', echo=FALSE}
 
-knitr::include_graphics("images/ALE_2_pwc_example5_critical_points.png")
+knitr::include_graphics("images/ALE_2_pwc_example5_critical_points.PNG")
 ```
 ###Example 6
 
