@@ -3,6 +3,7 @@
 *Author: Nikolas Fritz*
 
 
+
 As mentioned in the former section the choice of intervals an starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
 
 ## How to choose the number and/or length of the intervals
