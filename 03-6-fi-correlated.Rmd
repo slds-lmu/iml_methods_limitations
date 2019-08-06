@@ -35,7 +35,7 @@ Quelle: Archer and Kimes, Strobl 2008
   
 **Simulation of uncorrelated feature 1 and 2 (r = 0):**
 
-```{r Simulation01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Simulation of uncorrelated features 1 and 2 (r=0)"}
+```{r Simulation01, message = FALSE, eval=FALSE, fig.height=6, fig.width=12, fig.cap= "Simulation of uncorrelated features 1 and 2 (r=0)"}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -59,7 +59,7 @@ data_u <- as.data.frame(data_u)
 data_u['random'] <- runif(nrow(data_u))
 ```
 
-```{r Simulation02, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
+```{r Simulation02, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of correlated features 1 and 2 (r=0.25) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -85,7 +85,7 @@ data_c25 <- as.data.frame(data_c25)
 data_c25['random'] <- runif(nrow(data_c25))
 ```
 
-```{r Simulation03, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of medium correlated features 1 and 2 (r=0.5) "}
+```{r Simulation03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of medium correlated features 1 and 2 (r=0.5) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -111,7 +111,7 @@ data_c5 <- as.data.frame(data_c5)
 data_c5['random'] <- runif(nrow(data_c5))
 ```
 
-```{r Simulation04, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of high correlated features 1 and 2 (r=0.75) "}
+```{r Simulation04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of high correlated features 1 and 2 (r=0.75) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -137,7 +137,7 @@ data_c75 <- as.data.frame(data_c75)
 data_c75['random'] <- runif(nrow(data_c75))
 ```
 
-```{r Simulation05, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
+```{r Simulation05, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of complete correlated features 1 and 2 (r=0.99) "}
 
 library(mvtnorm)
 library(matrixcalc)
@@ -181,7 +181,7 @@ In the first scenario setting the dependence of the features $X_i$ on the target
 The choice of noise variance $sd_i^2$ should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation. In this case we assume that there is only a standard deviation of ten percent of the mean of the [...].
 
 
-```{r szenariolm, message = FALSE, fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence with differrent correlation of feature 1 and 2"}
+```{r szenariolm, message = FALSE, eval = FALSE , fig.height=6, fig.width=12, fig.cap="Szenario Linear Dependence with differrent correlation of feature 1 and 2"}
 
 sd_u <- mean(data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4)*0.1
 
@@ -213,7 +213,7 @@ data_c75["y1c75"] <- y1c75
 data_c["y1c"] <- y1c
 ```
 
-```{r PFIAlgo, message = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI Algo"}
+```{r PFIAlgo, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "PFI Algo"}
 
 library(mlr)
 library(iml)
@@ -248,7 +248,7 @@ return(imp.dat)
 
 
 
-```{r PFI01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
+```{r PFI01, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
 
 library(mlr)
 library(iml)
@@ -284,7 +284,7 @@ prf
 
 ```
 
-```{r PFI02, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+```{r PFI02, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
 
 library(mlr)
 library(iml)
@@ -321,7 +321,7 @@ plm <- ggplot(lmPFIu, aes(x=features, y= importance, colour = "0")) +
 plm
 ```
 
-```{r LOCOAlgo, message = FALSE, fig.height=6, fig.width=12, fig.cap= "LOCO Algo"}
+```{r LOCOAlgo, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "LOCO Algo"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -358,7 +358,7 @@ return(FIP)
 
 
 
-```{r LOCO01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+```{r LOCO01, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -389,7 +389,7 @@ ploco
 ```
 
 
-```{r LOCO02, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+```{r LOCO02, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -419,7 +419,7 @@ plocolm
 ```
 
 
-```{r arrange01, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange01, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
 ``` 
@@ -434,7 +434,7 @@ $$
 
 In the second scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. Here $X_{1}$ has a non linear dependence in form of the sine function. 
 
-```{r scenariononnld, message = FALSE, fig.height=6, fig.width=12, fig.cap=" Simulation of Nonlinear Dependence"}
+```{r scenariononnld, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap=" Simulation of Nonlinear Dependence"}
 
 
 sd2_u <- mean(sin(data_u$X1) + data_u$X2 + sin(data_u$X3) + data_u$X4)*0.1
@@ -471,7 +471,7 @@ data_c["y2c"] <- y2c
 ```  
 
 
-```{r PFI03, message = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest"}
+```{r PFI03, message = FALSE, fig.height=6, eval = FALSE , fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -506,7 +506,7 @@ prf
 ```
 
 
-```{r PFI04, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+```{r PFI04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
 
 library(mlr)
 library(iml)
@@ -544,7 +544,7 @@ plm
 
 ```
 
-```{r LOCO03, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+```{r LOCO03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 rfLOCOu <- LOCO(data_u, "regr.randomForest", "y2u")
 rfLOCOc25 <- LOCO(data_c25, "regr.randomForest", "y2c25")
 rfLOCOc5 <- LOCO(data_c5, "regr.randomForest", "y2c5")
@@ -569,7 +569,7 @@ ploco
 ```
 
 
-```{r LOCO04, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+```{r LOCO04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -597,7 +597,7 @@ plocolm <- ggplot(data = lmLOCOu ,aes(x=featureu,y = importance_u, colour = "0")
 ```
 
 
-```{r arrange02, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange02, message = FALSE, eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
 ``` 
@@ -606,7 +606,7 @@ ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common
 **3) Uninformative Feature:**
 Uninformative which means that one feature (in this case X4) is considered for the dependence on Y, but not considered for the model. So here it is the same case as in 1)
 
-```{r szenariouif, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Scenario Linear Dependence with uninformative feature 4"}
+```{r szenariouif, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Scenario Linear Dependence with uninformative feature 4"}
 
 sd3_u <- mean(data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4)*0.1
 
@@ -644,7 +644,7 @@ data_c["y3c"] <- y3c
 
 ```
 
-```{r PFI05, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a random forest model"}
+```{r PFI05, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a random forest model"}
 
 library(mlr)
 library(iml)
@@ -679,7 +679,7 @@ prf <- ggplot(rf3PFIu, aes(x=features, y= importance, colour = "0")) +
 prf
 ```
 
-```{r PFI06, message = FALSE, fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+```{r PFI06, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
 
 library(mlr)
 library(iml)
@@ -719,7 +719,7 @@ plm
 
 
 
-```{r LOCO05, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+```{r LOCO05, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -751,7 +751,7 @@ ploco
 
 
 
-```{r LOCO06, message = FALSE, fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+```{r LOCO06, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -780,7 +780,7 @@ plocolm <- ggplot(data = lmLOCOu ,aes(x=featureu,y = importance_u, colour = "0")
 plocolm
 ```
 
-```{r arrange03, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
 ``` 
@@ -789,7 +789,7 @@ ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common
 
 **4) Simulation with high amount of correlated data**
 
-```{r scenariohac, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
+```{r scenariohac, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
 
 library(mvtnorm)
 
@@ -845,7 +845,7 @@ y1sim10 <- data_sim10$X1 + data_sim10$X2 + data_sim10$X3 + data_sim10$X4+ data_s
 
 
 
-```{r PFI07, message = FALSE, fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
+```{r PFI07, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
 
 library(mlr)
 library(iml)
@@ -889,13 +889,13 @@ mean(imp.datrfsim5$importance[1:5])
 mean(imp.datrfsim10$importance[1:10])
 ```
 
-```{r arrange04, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange04, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(prfsim5, prfsim10 , ncol=2, legend = "bottom", common.legend = TRUE)
 ``` 
 
 
-```{r LOCO07, message = FALSE, fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+```{r LOCO07, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -940,7 +940,7 @@ locosim5 <- ggplot(data = FIPcsim5 ,aes(reorder(x=featurec,importance_c), y= imp
 locosim5
 ```
 
-```{r LOCO08, message = FALSE, fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+```{r LOCO08, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 library(mlr)
 library(iml)
 library(ggplot2)
@@ -985,7 +985,7 @@ locosim10 <- ggplot(data = FIPcsim10 ,aes(reorder(x=featurec,importance_c), y= i
 locosim10
 ```
 
-```{r arrange05, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange05, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(locosim5, locosim10 , ncol=2, legend = "bottom", common.legend = TRUE)
 ``` 
@@ -998,7 +998,7 @@ ggarrange(locosim5, locosim10 , ncol=2, legend = "bottom", common.legend = TRUE)
 * Just showing the problem on a real data set to show the complex effects of correlated, real data
 * But this chapter should be rather small
 
-```{r PFIreal1, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r PFIreal1, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 library(corrplot)
 library(randomForest)
@@ -1047,7 +1047,7 @@ pb1 <- ggplot(data = bostonimp, aes(x=reorder(features, importance),y = importan
 pb1
 ``` 
 
-```{r PFIreal2, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r PFIreal2, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 library(corrplot)
 
@@ -1092,7 +1092,7 @@ pb2
 
 ``` 
 
-```{r arrange06, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange06, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(pb1, pb2, ncol=2, legend = "bottom", common.legend = TRUE)
 ``` 
@@ -1119,7 +1119,7 @@ plocob1
 
 ``` 
 
-```{r LOCOreal2, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r LOCOreal2, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 
 data("Boston", package = "MASS")
 Boston["dup_lstat"] <- Boston$lstat
@@ -1138,7 +1138,7 @@ plocob2
 
 ``` 
 
-```{r arrange07, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r arrange07, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(plocob1, plocob2, ncol=2, legend = "bottom", common.legend = TRUE)
 ``` 
