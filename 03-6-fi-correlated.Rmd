@@ -1100,7 +1100,7 @@ ggarrange(pb1, pb2, ncol=2, legend = "bottom", common.legend = TRUE)
 
 
 
-```{r LOCOreal1, message = FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r LOCOreal1, message = FALSE, eval=FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
 
 data("Boston", package = "MASS")
 
