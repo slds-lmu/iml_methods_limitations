@@ -1398,20 +1398,160 @@ The corrected contingency coefficient of 0.94 comfirms a strong dependence betwe
 
 With a value of 0.986, the variance-explained measure indicates a substantial degree of dependence between $x_1$ and $x_3$. 
 
-#### PDPs for Linear Model
-FIGURE 22  
-FIGURE 22 shows the PDPs for all feature variables and all simulation settings based on the Linear Model. Apparently, the Linear Model is robust against our simulated dependencies, since the PDPs for the individual settings do not differ significantly. 
+#### PDPs based on Linear Model
+Figure \@ref(fig:Figure22) shows the PDPs for all feature variables and all simulation settings based on the Linear Model. 
 
-#### PDPs for Random Forest
+```{r Figure22, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and LM as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_22_Set4_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+Apparently, the Linear Model is robust against our simulated dependencies, since the PDPs of the correlated and dependent features do not differ significantly from those of independent features. 
+
+#### PDPs based on Random Forest
 FIGURE 23  
-FIGURE 23 shows the PDPs for all feature variables and all simulation settings based on Random Forest. Here, the learner seems to be impacted much stronger by our simulated dependencies, since the PDPs for dependent features indicate feature effects which differ from those in the independent case.
+Figure \@ref(fig:Figure23) shows the PDPs for all feature variables and all simulation settings based on Random Forest. 
 
-#### PDPs for Support Vector Machines
-FIGURE 24  
-FIGURE 24 shows the PDPs for all feature variables and all simulation settings based on Support Vector Machines. Apparently, the Model is robust against our simulated dependencies, since the PDPs for the individual settings do not differ significantly, just like in the LM. 
+```{r Figure23, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_23_Set4_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+Based on Random Forest, the partial dependence function seems to be impacted much stronger by our simulated dependencies, since the PDPs for dependent variables indicate feature effects which differ from those in the independent case. This is particularly true for a strong association between a categorical an a numerical variable (bottom row of figure \@ref(fig:Figure23)).
+
+#### PDPs based on Support Vector Machines
+Figure \@ref(fig:Figure24) shows the PDPs for all feature variables and all simulation settings based on Support Vector Machines. 
+
+```{r Figure24, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_24_Set4_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+In accordancy with our findings based on the Linear Model, the predicted effects based on SVM seem to be robust against our simulated dependencies, since the PDPs for the individual settings do not differ significantly from the independent case. 
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(ggpubr)
 
+## Association between two Categorical Features: Corrected Contingency Coefficient ##
+cont_coeff <- function(data, feature1, feature2){
+  a <- as.factor(feature1)
+  b <- as.factor(feature2)
+  
+  chisq <- chisq.test(a, b, correct = F)
+  K <- sqrt(chisq$statistic/(chisq$statistic+nrow(data)))
+  M <- min(length(levels(a)), length(levels(b)))
+  K_korr <- K/sqrt((M-1)/M)
+  K_korr
+}
+
+#### Independent Case ####
+set.seed(123)
+n <- 1000
+ind <- data.frame(X1 = rep(0,n))
+
+# Categorical Feature X1
+ind$X1 <- sample(x = c(0,1), size = n, prob = c(0.5, 0.5), replace = TRUE)
+ind$X1 <- as.factor(ind$X1)
+
+# Categorical Feature X2 (Wahrscheinlichkeiten als Mittel der bed. Wkt. von oben):
+ind$X2 <- sample(x=c("A", "B", "C"), size = n, prob = c(0.475, 0.175, 0.35), replace = TRUE)
+ind$X2 <- as.factor(ind$X2)
+cont_coeff(ind, ind$X1, ind$X2)
+
+# Numerical Feature X3
+for (i in 1:n){
+  ind$X3[i] <- sample(x = c(rnorm(n = 1, mean = 20, sd = 2), rnorm(n = 1, mean = 1, sd = 1)), size=1, prob = c(0.5, 0.5), replace = TRUE)
+}
+limo <- lm(X3~X1, data=ind)
+cor(ind$X3, limo$fitted.values)
+
+#### X1 and X2 Correlated ####
+set.seed(123)
+n <- 1000
+df <- data.frame(X1 = rep(0,n))
+
+# Categorical Feature X1
+df$X1 <- sample(x = c(0,1), size = n, prob = c(0.5, 0.5), replace = TRUE)
+df$X1 <- as.factor(df$X1)
+
+# Categorical Feature X2 (dependent)
+for (i in 1:n){
+  df$X2[i] <- ifelse(df$X1[i] == 0, 
+                     sample(x=c("A", "B", "C"), size = n, prob = c(0.9, 0.1, 0), replace = TRUE), 
+                     sample(x=c("A", "B", "C"), size = n, prob = c(0.05, 0.25, 0.7), replace = TRUE))
+}
+df$X2 <- as.factor(df$X2)
+cont_coeff(df, df$X1, df$X2)
+
+# Numerical Feature X3 (independent)
+for (i in 1:n){
+  df$X3[i] <- sample(x = c(rnorm(n = 1, mean = 20, sd = 2), rnorm(n = 1, mean = 1, sd = 1)), size=1, prob = c(0.5, 0.5), replace = TRUE)
+}
+limo <- lm(X3~X1, data=df)
+cor(df$X3, limo$fitted.values)
+
+#### X1 and X3 Correlated ####
+set.seed(123)
+n <- 1000
+df2 <- data.frame(X1 = rep(0,n))
+
+# Categorical Feature X1
+df2$X1 <- sample(x = c(0,1), size = n, prob = c(0.5, 0.5), replace = TRUE)
+df2$X1 <- as.factor(df2$X1)
+
+# Categorical Feature X2 (independent):
+df2$X2 <- sample(x=c("A", "B", "C"), size = n, prob = c(0.475, 0.175, 0.35), replace = TRUE)
+df2$X2 <- as.factor(df2$X2)
+cont_coeff(df2, df2$X1, df2$X2)
+
+# Numerical Feature X3 (dependent)
+for (i in 1:n){
+  df2$X3[i] <- ifelse(df2$X1[i] == 0, 
+                     rnorm(n = n, mean = 20, sd = 2), 
+                     rnorm(n = n, mean = 1, sd = 1))
+}
+limo <- lm(X3~X1, data=df2)
+cor(df2$X3, limo$fitted.values)
+
+#### PDPs ####
+pdp <- function(data, learner = makeLearner("regr.randomForest"), title = "PDPs for ?"){
+  
+  # Target Variable Y
+  for (i in 1:n){data$X1_1[i] <- ifelse(data$X1[i] == "1", 1, 0)}
+  for (i in 1:n){data$X2_A[i] <- ifelse(data$X2[i] == "A", 1, 0)}
+  for (i in 1:n){data$X2_B[i] <- ifelse(data$X2[i] == "B", 1, 0)}
+  std <- abs(mean(data$X1_1 + data$X2_A + data$X2_B + data$X3))*0.1
+  data$Y <- data$X1_1 + data$X2_A + data$X2_B + data$X3 + rnorm(n = n, mean = 0, sd = std)
+  
+  task <- makeRegrTask(data = data[, c(1,2,3,7)], target = "Y")
+  train <- train(learner = learner, task = task)
+  mod <- Predictor$new(train, data = data[, c(1,2,3,7)])
+  eff1 <- FeatureEffect$new(mod, feature = "X1", method = "pdp", grid.size = 50)
+  eff2 <- FeatureEffect$new(mod, feature = "X2", method = "pdp", grid.size = 50)
+  eff3 <- FeatureEffect$new(mod, feature = "X3", method = "pdp", grid.size = 50)
+  
+  p1 <- plot(eff1)+theme_bw()+ylim(c(0,17))+labs(title = title)
+  p2 <- plot(eff2)+theme_bw()+ylim(c(0,17))+labs(title = "")
+  p3 <- plot(eff3)+theme_bw()+ylim(c(5,20))+labs(title = "")
+  
+  ggarrange(p1, p2, p3, nrow=1, ncol=3)
+}
+
+set.seed(123)
+a <- pdp(data=ind, learner = makeLearner("regr.lm"), title = "PDPs for independent features")
+b <- pdp(data=df, learner = makeLearner("regr.lm"), title = "PDPs for X1 and X2 dependent")
+c <- pdp(data=df2, learner = makeLearner("regr.lm"), title = "PDPs for X1 and X3 dependent")
+ggarrange(a,b,c, nrow = 3)
+
+a <- pdp(data=ind, learner = makeLearner("regr.randomForest"), title = "PDPs for independent features")
+b <- pdp(data=df, learner = makeLearner("regr.randomForest"), title = "PDPs for X1 and X2 dependent")
+c <- pdp(data=df2, learner = makeLearner("regr.randomForest"), title = "PDPs for X1 and X3 dependent")
+ggarrange(a,b,c, nrow = 3)
+
+a <- pdp(data=ind, learner = makeLearner("regr.svm"), title = "PDPs for independent features")
+b <- pdp(data=df, learner = makeLearner("regr.svm"), title = "PDPs for X1 and X2 dependent")
+c <- pdp(data=df2, learner = makeLearner("regr.svm"), title = "PDPs for X1 and X3 dependent")
+ggarrange(a,b,c, nrow = 3)
 ```
 
 ## Extrapolation Problem: Simulation
