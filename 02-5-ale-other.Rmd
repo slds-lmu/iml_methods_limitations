@@ -1068,14 +1068,18 @@ We have seen that ALE estimations in the context of piece-wise constant models a
 
 ## Categorical Features
 
-Problem with categorical features: ALE accumulates the effects. That implies the feature needs to be ordered. Categorical features dont have a natural order as continuos features. So it is neccesary to first order them before being able to calculate an ALE. 
+So far we were only interested in ALE estimation for a numerical feature of interest. In real data situations categorical features often play an important rule, so that it would be nice to expand the concept of ALE so that it can also be applied to categorical features. In the original paper by [@Apley2016] this concept was not described but still a first method implemented. [@molnar2019] adapted the method for the iml-package. The following section describes the method, the interpretation of ALE-plots with categorical feature and shows some specific problems. 
+
+
 
 ### Ordering the features
 
-How to order the feature Space?
-What is implemented in the iml Package: order categories based on their similarity with respect to the other features. 
-1. Komogorov-Smirnoff distance or frequency tables for categorical features
-2. multidimensional scaling
+One of the biggest and crucial differences of categorical and numerical features in the context of ALE is that categorical features usually dont have a natural order. As the concept of ALE is based on accumulating the local effects in a certain direction, an order of the feature is indispensable. Sometimes the categorical feature is an ordinal feature which comes with an natural order. In this case the natural order should be used. If there is no natural order, the first essential step to calculate the ALE is to order the feature. Herefore different methods are conceivable. The iml-package implementation tries to order the feature with respect to the similarity of the other features. As we'll see in the next subsection for the estimation of the ALE the datapoints of a category will be shifted to the neighbour categories (neighbour categories only exist if the feature is ordered). To stay with the original idea of ALE and try to avoid extrapolation, ordering the feature with respect to the similarity of the other features seems reasonable. Within the iml-package in a first step the distance of each pair of categories (feature of interest) is calculated with respect to every other feature. this results in $\frac{c~(c-1)~(f-1)}{2}$ distances, where f is the total number of features while c is the number of categories of the feature of interest. To calculate these distances for numerical features the Kolmogorov-Smirnov distance is used, which is defined as the maximal absolut difference of two distribution functions, which are estimated from the data within the two compared categories. For categorical features one simply sums up the absolute differences of the relative frequencys of the categories.
+Finally the distance between two categories is calculated of the sum of their distances with respect to all features. 
+Once the distance between all categories is calculated, multidimensional scaling is used to reduce the distance matrix to a one dimensional distance messure [@molnar2019].
+
+
+### Estimation of the ALE
 
 ### Example of ALE with categorical feature
 
