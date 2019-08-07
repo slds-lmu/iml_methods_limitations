@@ -450,11 +450,14 @@ At the end of this section we have seen a good example for the natural trade off
 
 ## Problems with piece-wise constant models
 
-Piece-wise constant models such as for example decision trees and random forests dont have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical ALE doenst make any sense in this context as the partial derivative doesnt exist. Still it is possible to estimate the ALE as the "jump" will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
-As the following examples will show problems can occur due to unlucky data in the region of the steps.
+Piece-wise constant models such as for example decision trees and random forests don't have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical ALE doenst make any sense in this context as the partial derivative doesnt exist. Still it is possible to estimate the ALE as the "jump" will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
+As the following examples will show, problems can occur due to "wrong" interval sizes or unluckily distributed data in the region of the steps.
 
-###Example 4
 
+###Example 4: Simple step function
+
+Througout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as the $X_2$ given $X_1$ uniformily on the interval $[x_1 - 3, x_1 + 3 ]$ but all the data within the 10 times 10 square, i.e. $X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),min( x_1 + 3, 10) )$.
+In the the first example we take a look on an easy prediction function to get a good understanding of the basic problem with piece-wise constant model. We assume an prediction function that independently of $x_2$ predicts 0 except if $x_1$ falls into a certain small interval arround 5, then it predicts 10. Concretly $f(x_1, x_2) =    1_{[4.9,~5.1]}(x) * 10$.   
 
 
 ``` {r eval = FALSE, include = FALSE}
@@ -496,11 +499,14 @@ p + ggplot2::geom_point() +
 
 ```
 
+The following grafic shows a sampled data set of 100 datapoints and a sketch of the prediction function. 
 
 ```{r pwc_example4_dataset_predf,  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_pwc_example4_dataset_predf_.PNG")
 ```
+As mentioned above a good estimation of the ALE would result in to quite steep linear parts, one around 4.9 and a second inverse one around 5.1. The problem now is that the ALE estimation wont catch those jumps as long as both jumps lay within the same interval. The reason is that all the points within this interval would be moved to the interval boundaries which lay outside the area where the prediction function predicts 10. THis results in a estimation of the local effect as zero.
+Grafic XX shows the estimates for different grid sizes 20, 30, 50 and 100. 
 
 ``` {r eval = FALSE, include = FALSE}
 
@@ -576,7 +582,7 @@ ggpubr::ggarrange(plot_20, plot_30,plot_50, plot_100, ncol=2, nrow=2, common.leg
 knitr::include_graphics("images/ALE_2_pwc_example4_4plots_.PNG")
 ```
 
-
+As expected the ALE estimations with grid size 20 and 30 are not sensitive to the effect, as only 2 datapoints fall to the interval $[4.9, ~5.1]$. Increasing the grid size ensures that some interval boundaries fall into the interval $[4.9, ~5.1]$ which exposes the step of the prediction function.
 
 
 ###Example 5 
@@ -1037,9 +1043,7 @@ p + ggplot2::geom_point() +
 
 knitr::include_graphics("images/ALE_2_pwc_example5_critical_points_.PNG")
 ```
-###Example 6
 
-WiP
 
 ### Outlook 
 
