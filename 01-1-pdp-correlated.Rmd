@@ -1556,29 +1556,184 @@ ggarrange(a,b,c, nrow = 3)
 
 ## Extrapolation Problem: Simulation
 ### Simulation based on established learners
-As announced in chapter ??, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of Partial Dependence Plots. For this purpose, the dataset introduced in chapter ?? was simulated, once with $X_1$ and $X_2$ being independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $X_1, X_2 \in [0,1.5]$, and thus artificially producing an area with no observations. \\
-In this chapter, we are looking at the PDPs resulting from these modifications. FIGURE 41 compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values. Apparently, with the more complex, nonlinear effect of $X_1$, there is already a deviation from the partial dependence curves to the true feature effect due to the extrapolation problem.  
+In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of Partial Dependence Plots. For this purpose, we use the dataset introduced in chapter 3.1, which was simulated once with $x_1$ and $x_2$ independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $x_1, x_2 \in [0,1.5]$, and thus artificially producing an area with no observations.  
 
-FIGURE 25 (PDP Extrapolation Problem uncorrelated): The figure shows PDPs for feature $X_1$ and $X_2$, based on the complete, uncorrelated datasset in the upper part and based on same data with missing observations in the lower part of the plot. The red curve represents the true effect of the respective feature, while the PDPs derived from the Machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).  
+Now we are looking at the PDPs resulting from these modifications. Figure \@ref(fig:Figure25) compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values.   
 
-In FIGURE 26 we do the same comparison, but this time based on the dataset with strongly correlated features. It is easy to recognize that in this constellation, the PDPs come up with estimated effects which are far from the true effects on the prediction, irrespective of the learning algorithm.  
+```{r Figure25, echo=FALSE, out.width='80%', fig.cap="PDPs for uncorrelated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_25_Extrapol_uncor.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
 
-FIGURE 26 (PDP Extrapolation Problem correlated): The figure shows PDPs for feature $X_1$ and $X_2$, based on the complete, correlated datasset in the upper part and based on same data with missing observations in the lower part of the plot. The red curve represents the true effect of the respective feature, while the PDPs derived from the Machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).  
+The first row of PDPs in figure \@ref(fig:Figure25), computed on basis of the complete dataset of uncorrelated features, adequately reflects the true effects of $x_1$ and $x_2$ (red curve). In the presence of an extrapolation problem, the adequacy of the predicted effects decreases. Especially with the more complex, nonlinear effect of $x_1$, extrapolation causes a clearly visible deviation between the partial dependence curves and the true feature effect, irrespective of the learner.
+
+In figure \@ref(fig:Figure26) we do the same comparison, but this time based on the dataset with strongly correlated features.  
+
+```{r Figure26, echo=FALSE, out.width='80%', fig.cap="PDPs for correlated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_26_Extrapol_cor.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+From the first row of PDPs in figure \@ref(fig:Figure26), we again discover the difficulty to obtain reliable PDPs when features are dependent. The results in the bottom row of figure \@ref(fig:Figure26) are even more striking: with a combination of dependent features and extrapolation, the PDPs come up with estimated effects which are far from the true effects on the prediction. Those deviations seem to occur irrespective of the learning algorithm. 
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
+library(mvtnorm)
+library(ggplot2) 
+library(ggpubr) 
+library(cowplot) 
+library(mlr)
+library(iml)
 
+################################# CORRELATION & EXTRAPOLATION PROBLEM ################################# 
+simulate_data <- function(obs, correlation){
+  sigma <- diag(1, nrow = 2)
+  sigma[1,2] <- sigma[2,1] <- correlation
+  data <- as.data.frame(rmvnorm(n = obs, 
+                                mean = rep(0, times = 2), 
+                                sigma = sigma))
+  colnames(data) <- c("X1", "X2")
+  std <- abs(mean(sin(data$X1) + data$X2))*0.1
+  data$Y <- sin(data$X1) + data$X2 + rnorm(n = obs, mean = 0, sd = std)
+  invisible(data)
+}
+
+set.seed(123)
+uncorrelated <- simulate_data(obs=1000, correlation = 0)
+correlated <- simulate_data(obs=1000, correlation = 0.99)
+
+# Data Manipulation: Produce area with no observations
+uncorrelated_gap <- uncorrelated
+for (i in 1:nrow(uncorrelated_gap)){
+  uncorrelated_gap$X1[i] <- ifelse(uncorrelated_gap$X2[i] > 0 & uncorrelated_gap$X2[i] <= 1.5 & uncorrelated_gap$X1[i] > 0 & uncorrelated_gap$X1[i] <= 1.5, NA, uncorrelated_gap$X1[i])
+}
+for (i in 1:nrow(uncorrelated_gap)){uncorrelated_gap$X2[i] <- ifelse(is.na(uncorrelated_gap$X1[i]), NA, uncorrelated_gap$X2[i])}
+for (i in 1:nrow(uncorrelated_gap)){uncorrelated_gap$Y[i] <- ifelse(is.na(uncorrelated_gap$X1[i]), NA, uncorrelated_gap$Y[i])} 
+
+correlated_gap <- correlated
+for (i in 1:nrow(correlated_gap)){
+  correlated_gap$X1[i] <- ifelse(correlated_gap$X2[i] > 0 & correlated_gap$X2[i] <= 1.5 & correlated_gap$X1[i] > 0 & correlated_gap$X1[i] <= 1.5, NA, correlated_gap$X1[i])
+}
+for (i in 1:nrow(correlated_gap)){correlated_gap$X2[i] <- ifelse(is.na(correlated_gap$X1[i]), NA, correlated_gap$X2[i])}
+for (i in 1:nrow(correlated_gap)){correlated_gap$Y[i] <- ifelse(is.na(correlated_gap$X1[i]), NA, correlated_gap$Y[i])} 
+
+
+# Visualization of extrapolation problem in machine learning models / PDPs
+extr_prob <- function(data, title){
+  learner1 <- makeLearner("regr.randomForest")
+  learner2 <- makeLearner("regr.svm")
+  task <- makeRegrTask(data = na.omit(data), target = "Y")
+  train1 <- train(learner = learner1, task = task)
+  train2 <- train(learner = learner2, task = task)
+  
+  mod1 <- Predictor$new(train1, data = na.omit(data))
+  eff11 <- FeatureEffect$new(mod1, feature = "X1", method = "pdp", grid.size = 30)
+  eff12 <- FeatureEffect$new(mod1, feature = "X2", method = "pdp", grid.size = 30)
+  
+  mod2 <- Predictor$new(train2, data = na.omit(data))
+  eff21 <- FeatureEffect$new(mod2, feature = "X1", method = "pdp", grid.size = 30)
+  eff22 <- FeatureEffect$new(mod2, feature = "X2", method = "pdp", grid.size = 30)
+  
+  ggarrange(ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
+              geom_line(data= eff11$results, aes(x=eff11$results[,1], y=eff11$results[,2]), col="black")+
+              geom_line(data= eff21$results, aes(x=eff21$results[,1], y=eff21$results[,2]), col="blue")+
+              stat_function(fun = function(x) sin(x), geom = "line", col="red")+
+              labs(title = title)+
+              xlab(names(eff11$results[1]))+
+              ylab("Predicted Y")+
+              theme(plot.title = element_text(hjust = 0)), 
+            ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
+              geom_line(data= eff12$results, aes(x=eff12$results[,1], y=eff12$results[,2]), col="black")+
+              geom_line(data= eff22$results, aes(x=eff22$results[,1], y=eff22$results[,2]), col="blue")+
+              geom_abline(slope=1, col="red")+
+              labs(title = "")+
+              xlab(names(eff12$results[1]))+
+              ylab("")+
+              theme(plot.title = element_text(hjust = 0)))
+}
+
+ggarrange(extr_prob(data = uncorrelated, title = "PDPs for X1 and X2 uncorrelated"),
+          extr_prob(data = uncorrelated_gap, title = "PDPs for X1 and X2 uncorrelated with extrapolation problem"), nrow=2)
+
+ggarrange(extr_prob(data = correlated, title = "PDPs for X1 and X2 correlated"), extr_prob(data = correlated_gap, title = "PDPs for X1 and X2 correlated with extrapolation problem"), nrow=2)
 ```
 
 ### Simulation based on own prediction function
-Another example where PDPs are prone to fail is in the event of the prediction function doing 'weird' stuff in areas outside the feature distribution. In order to illustrate this extreme case, a dataset of two dependent features has been simulated and an individual prediction function was defined.  
+So far, all our analyses were based on the established learning algorithms LM, RF and SVM. We have seen that the choice of the learner does have an impact on the suitability of PDP curves. Obviously there is a countless number of other possibilities to come up with prediction functions other than the ones we have seen. PDPs are prone to fail when this prediction function is doing 'weird' stuff in areas outside the feature distribution. This can happen due to the fact that the learner minimizes the loss based on training data while there is no penalization for extrapolation.\citep{molnar2019} 
 
-As an illustrative example we want to assume that it is our intention to predict the size of a potato ($\hat{y}$) by means of the share of maximum amount of soil ($x_1$) and the share of maximum amount of water ($x_2$) available during the process of growing the plant. The feature variables are dependent in the sense that when using a larger amount of soil, the farmer would also use a larger amount of water, i.e. $x_1$ and $x_2$ are positively correlated. Typically, the more ressources the farmer invests, the larger the crops. The corresponding model is basically a simple linear regression which adds up the two components. However, in the event of improper planting, meaning the usage of a too large amount of water in proportion to the soil (and vice versa), the plant would die and the result would be a potato of size 0. Luckily, all farmers in our dataset know how to grow potatoes, therefore there are no such zero cases in the underlying observations. FIGURE 42 illustrates the distribution of our observations and the prediction function.  
-FIGURE 42  
-Based on the linear regression model, the prediction function and particularly in view of the observed data, one would expect to uncover the linear effect of both feature variables when looking at the corresponding PDPs. As we can see in figure 43, this is not necessarily the case. Particularly the PDP for feature $X_1$ fails due in the areas where the prediction function does 'weird' stuff compared to what has been observed.  
-FIGURE 43  
+Let's illustrate the issue with an example. Assume that we want to predict the size of a potato ($\hat{y}$) by means of the share of maximum amount of soil ($x_1$) and the share of maximum amount of water ($x_2$) available during the process of growing the plant. The feature variables are dependent in the sense that when using a larger amount of soil, the farmer would also use a larger amount of water, i.e. $x_1$ and $x_2$ are positively correlated. Typically, the more ressources the farmer invests, the larger the crops. The corresponding model is basically a simple linear regression which adds up the two components.  
+
+In the event of improper planting, meaning the usage of a too large amount of water in proportion to the soil (and vice versa), the plant would die and the result would be a potato of size 0. This is exactly what our self-constructed prediction function predicts. Luckily, all farmers in our dataset know how to grow potatoes, therefore there are no such zero cases in the underlying observations. Figure \@ref(fig:Figure27) illustrates our observations as points and the prediction function as shaded background colour.  
+
+```{r Figure27, echo=FALSE, out.width='80%', fig.cap="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.", fig.align='center'}
+knitr::include_graphics('images/VK_PDP_27_Prediction_Fct.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+In view of the observed data, one would expect to uncover a linear effect of both feature variables when looking at the corresponding PDPs. As we can see in figure \@ref(fig:Figure28), this is not necessarily the case. While the two-dimensional PDP perfectly depicts the prediction function, the individual PDPs for feature $x_1$ and $x_2$ fail in the areas where the prediction function does 'weird' stuff compared to what has been observed. 
+
+```{r Figure28, echo=FALSE, out.width='100%', fig.cap="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ resepctively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values.", fig.align='left'}
+knitr::include_graphics('images/VK_PDP_28_Prediction_Fct_Fail.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
+library(mlr)
+library(iml)
+library(ggplot2)
+library(viridis)
+library(ggpubr)
 
+set.seed(123)
+n <- 100
+X1 <- runif(n, min = 0, max = 1)
+X2 <- X1 + rnorm(n, sd = 0.1)
+df <- data.frame(X1, X2)
+df$y = df$X1 + df$X2
+
+pred.fun = function(model, newdata) {
+  pred = predict(model, newdata)
+  pred[newdata$X1 > 0.5 & newdata$X2 < (newdata$X1-0.5)] = 0
+  pred[newdata$X2 > 0.5 & newdata$X1 < (newdata$X2-0.5)] = 0
+  pred
+}
+
+mod <- lm(y ~ X1 + X2, data = df)
+
+grid.dat = expand.grid(X1 = seq(from = 0, to = 1, length.out = 100), X2 = seq(from = 0, to = 1, length.out = 100))
+grid.dat$predicted = pred.fun(mod, grid.dat)
+
+ggplot(df) + 
+  geom_tile(data = grid.dat, aes(x = X1, y = X2, fill = predicted)) + 
+  geom_point(aes(x = X1, y = X2), size = 3) + 
+  scale_fill_viridis(option = "E")+
+  labs(title = "Visualization of Prediction Function and Features X1, X2")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0, size = 18))+
+  xlim(c(0,1))+ylim(c(0,1))
+
+pred <- Predictor$new(mod, data = df, predict.fun = pred.fun)
+
+pdp <- FeatureEffect$new(pred, feature = c("X1","X2"), method = "pdp", grid.size = 50)
+p1 <- plot(pdp)+
+      ggtitle("2D-PDP for X1, X2")+
+      theme_bw()+
+      theme(plot.title = element_text(hjust = 0, size = 18))+
+      xlim(c(0,1))+
+      ylim(c(0,1))
+
+pdp <- FeatureEffect$new(pred, feature = "X1", method = "pdp", grid.size = 50)
+p2 <- plot(pdp)+
+      ggtitle("PDP for X1")+
+      theme_bw()+
+      theme(plot.title = element_text(hjust = 0, size = 18))+
+      xlim(c(0,1))+
+      ylim(c(0,1.1))
+
+pdp <- FeatureEffect$new(pred, feature = "X2", method = "pdp", grid.size = 50)
+p3 <- plot(pdp)+
+      ggtitle("PDP for X2")+
+      theme_bw()+
+      theme(plot.title = element_text(hjust = 0, size = 18))+
+      xlim(c(0,1))+
+      ylim(c(0,1.1))
+
+ggarrange(p1, p2, p3, ncol=3)
 ```
 
 ## Summary
