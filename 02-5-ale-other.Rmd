@@ -457,7 +457,7 @@ As the following examples will show, problems can occur due to "wrong" interval 
 ###Example 4: Simple step function
 
 Througout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as the $X_2$ given $X_1$ uniformily on the interval $[x_1 - 3, x_1 + 3 ]$ but all the data within the 10 times 10 square, i.e. $X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),min( x_1 + 3, 10) )$.
-In the the first example we take a look on an easy prediction function to get a good understanding of the basic problem with piece-wise constant model. We assume an prediction function that independently of $x_2$ predicts 0 except if $x_1$ falls into a certain small interval arround 5, then it predicts 10. Concretly $f(x_1, x_2) =    1_{[4.9,~5.1]}(x) * 10$.   
+In the the first example we take a look on an easy prediction function to get a good understanding of the basic problem with piece-wise constant model. We assume an prediction function that independently of $x_2$ predicts 0 except if $x_1$ falls into a certain small interval arround 5, then it predicts 10. Concretly $f(x_1, x_2) =    1_{[4.9,~5.1]}(x_1) * 10$.   
 
 
 ``` {r eval = FALSE, include = FALSE}
@@ -582,10 +582,15 @@ ggpubr::ggarrange(plot_20, plot_30,plot_50, plot_100, ncol=2, nrow=2, common.leg
 knitr::include_graphics("images/ALE_2_pwc_example4_4plots_.PNG")
 ```
 
-As expected the ALE estimations with grid size 20 and 30 are not sensitive to the effect, as only 2 datapoints fall to the interval $[4.9, ~5.1]$. Increasing the grid size ensures that some interval boundaries fall into the interval $[4.9, ~5.1]$ which exposes the step of the prediction function.
+As expected the ALE estimations with grid size 20 and 30 are not sensitive to the effect. Increasing the grid size ensures that some interval boundaries fall into the interval $[4.9, ~5.1]$ which exposes the step of the prediction function.
+Having a second look on the data situation in this example, one notes that only 2 datapoints fall to the interval $[4.9, ~5.1]$. Grid size 50 implies for 100 datapoints 2 datapoints per interval. That means that we even got lucky in this example that the 2 data points didnt fall into the same grid interval. Otherwise the effect would have remained hidden even at grid size 50. The following example shows how unluckily distributed datapoints can lead to bad ALE estimations.  
 
 
-###Example 5 
+###Example 5: Two dimensional step functions and unluckily distributed data 
+
+We assume the same data distribution as in the former example. Furthermore well take a look on two prediciton functions, one independent of $x_2$ defined as $f(x_1, x_2) =  1 +  1_{[0,~\frac{10}{3}]}(x_1)+ 1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)$. The second also depends on $x_2$ and is defined as 
+$f(x_1, x_2) =   3~(1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)~*~1_{[\frac{10}{3},~\frac{20}{3}]}(x_2)) + 2~(1_{[0,~\frac{10}{3}]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2))+ ~(1_{[\frac{20}{3},~10]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2))$ .
+Both on the first sigth a little unhandy become quite easy to understand lookung at the sketches below. 
 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
@@ -636,11 +641,14 @@ p + ggplot2::geom_point() +
 
 
 
+```
 
 ```{r pwc_example5_predf_1,  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_pwc_example5_predf_1_.PNG")
+
 ```
+
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
   if(x_1 < 10/3){
@@ -909,17 +917,23 @@ gs_all2
 
 ```
 
+In the following the ALE was estimated for increasing grid sizes. Starting with grid size 5 on the left side we see the behaviour of the first prediction function on the right side for the second one.
+
 ```{r pwc_example5_gs5_10,  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_pwc_example5_gs5_10_.PNG")
 ```
 
+ For grid size 5 both recognize the step but estimate it relativley flat, which is not very suprising as the interval length should be around 2. For the first prediction function we see a total increase within the second grid interval of 1 and a total decrease in the fourth one of 2. This reflects the behaviour of the prediction function, so the only problem is the low grid size. For the second prediction functions the total changes are estimated to be much lower. This is due to the areas of 0 prediction which clearly influence the mean change in prediction, as some data points change from 0 to 3, but others from 2 to 0 within the second grid interval, as well as from 3 to 0 and from 0 to 1 within the fourth grid interval. So the absolut effect of $x_1$ is relativized by the influence of $x_2$, which is intended by the concept of ALE.
+At grid size 10 the estimations for both prediction function look quite similar. The steps become steeper as the grid intervals shrink to half their length. The estimated change in prediction for the second prediction function now is even bigger than for the first one. Due to the correlation now more (relatively more) data datapoints are shifted from prediction 0 to 3 and 3 to 0 respectivly, which leads to the sligthly higher estimation of the effect. 
 
 ```{r pwc_example5_gs20_50,  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_pwc_example5_gs20_50_.PNG")
 
 ```
+Increasing the grid size first to 20 and then to 50 reveals the whole danger of this situation. While prediction function 1 seems to be estimated quite stabel (the absolute changes stay to be 1 and -2, while the steps become steeper and steeper), the estiation for prediction function one changes its behaviour. At grid size 20 the left step grows to be 3 at grid size 50 the second step to be -3. Centering leads to quite radical upwards and downwards shifts of the whole plot. 
+To understand this well have a look on the data points that are used two estimate the steps. 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
   if(x_1 < 10/3){
@@ -985,17 +999,17 @@ p + ggplot2::geom_point() +
 knitr::include_graphics("images/ALE_2_pwc_example5_critical_points2_.PNG")
 
 ```
-
+For grid size 20, 5 data points are used two estimate the total change in prediction. As the grafic above shows, coincidencially 5 data points with $x_2-values$ between $\frac{10}{3}$ and $\frac{20}{3}$ fall into the step interval. this is why the mean difference of the prediction is estimated to be 3. 
 
 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
   if(x_1 < 10/3){
     y = 2
-  }else if(x_1> 20/3){
+  }else if(x_1 > 20/3){
     y = 1
   } else {
-    y =3
+    y = 3
   }
   return(y)
 }
@@ -1043,11 +1057,13 @@ p + ggplot2::geom_point() +
 
 knitr::include_graphics("images/ALE_2_pwc_example5_critical_points_.PNG")
 ```
-
+Analogiuously for grid size 50 only two datapoints are used. As again both fall into the same "x_2 - range", the estimation of the mean change of prediction in this grid interval is -3 now. Looking at the graffic it comes clear that only a little higher x_2 value of the upper data point would have lead to an estimation of -1 instead. This shows how sensitve the ALE estimation is in the context of piece-wise constant models. While there could be arguments for the heigth of the steps in the first 3 estimatations, the last estimation clearly displays a false image. Here the interpretation would be that there is no main effect of feature one changing from less than $\frac{10}{3}$ to higher than $\frac{20}{3}$, which is obviously wrong. 
 
 ### Outlook 
 
-Ideas how to reslove this problem. Diffrent methods to select the intervals. Adaptive method?
+We have seen that ALE estimations in the context of piece-wise constant models are even more critical due to sharp changes of the prediction at the steps. On the one hand one needs the intervals to be within the steps to recognize them and at the same time quite narrow arround them to catch the steepness of the step. Notice that in real world examples one cannot know if there is a step or if the flat linear aprroximation is true. On the otherhand the data distribution of around the steps has a strong influence on the ALE which leads to highly instable estimations. In this context different methods of interval selection, maybe even adaptive, data driven methods should be investigated.   
+
+
 
 
 ## Categorical Features
