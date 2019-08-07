@@ -275,7 +275,7 @@ library(iml)
 library(e1071) #svm
 library(mgcv) #gam
 
-bike_day <- read.csv("day.csv")
+bike_day <- read.csv("data/day.csv")
 bike_day$season <- as.factor(bike_day$season)
 bike_day$yr <- as.factor(bike_day$yr)
 bike_day$mnth <- as.factor(bike_day$mnth)
@@ -419,7 +419,7 @@ categorical <- function(learner){
   ggarrange(p2, p3, p11, p12, ncol=2, nrow=2)
 }
 
-set.sed(123)
+set.seed(123)
 categorical(learner = makeLearner("regr.lm"))
 categorical(learner = makeLearner("regr.svm"))
 categorical(learner = makeLearner("regr.randomForest"))
@@ -1361,6 +1361,7 @@ ggarrange(out[[1]], # Plot Independent
           out[[3]], # Plot Dependent
           nrow=3)
 ```
+
 
 ### Simulation Settings: Categorical Features
 In this chapter we want to investigate the impact of dependencies between two categorical and between a categorical and a numerical feature. For this purpose, we simulate data with a number of 1000 randomly drawn observations and three feature variables, where:  
