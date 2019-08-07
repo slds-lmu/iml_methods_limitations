@@ -502,7 +502,7 @@ Since in the dependent case, $x_2$ is simply a duplicate of $x_1$, the DGP could
 #### PDPs based on Linear Model
 The results of our simulations based on the Linear Model are shown in figure \@ref(fig:Figure14):  
 
-```{r Figure14, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Linear Model as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure14, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Linear Model as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_14_Set1_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -511,7 +511,7 @@ Across all simulations, there is hardly any variation between the PDPs based on 
 #### PDPs based on Random Forest
 The results of our simulations based on Random Forest are shown in figure \@ref(fig:Figure15):  
 
-```{r Figure15, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure15, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_15_Set1_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -521,7 +521,7 @@ When comparing the PDPs subject to perfect multicollinearity with those in the c
 #### PDPs based on Support Vector Machines
 The results of our simulations based on Support Vector Machines are shown in figure \@ref(fig:Figure16):  
 
-```{r Figure16, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Support Vector Machines as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure16, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Support Vector Machines as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_16_Set1_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -798,7 +798,7 @@ In simulation setting 2 we are looking at a DGP with a nonlinear relationship of
 #### PDPs based on Random Forest
 The results of our simulations based on Random Forest are shown in figure \@ref(fig:Figure17):  
 
-```{r Figure17, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure17, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_17_Set2_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -809,7 +809,7 @@ In the event of perfect multicollinearity, the PDPs for the involved feature var
 #### PDPs based on Support Vector Machines
 The results of our simulations based on SVM are shown in figure \@ref(fig:Figure18):  
 
-```{r Figure18, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure18, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_18_Set2_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1089,7 +1089,7 @@ ggarrange(out[[1]], # Plot Independent
 In simulation setting 3, we assume that there are three variables with an impact on the data generating process of $y$. In the training process of the machine learning model, only two of those are considered. Consequently, when looking at the PDPs, we only compare the independent, the correlated and the dependent case for $x_1$ and $x_2$ respectively.  
 
 #### PDPs based on Linear Model
-```{r Figure19, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure19, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_19_Set3_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1098,7 +1098,7 @@ The increase in variablility between the individual PDPs is even more evident in
 The PDPs drawn on basis of the Linear Model and dependent features indicate that for both individual features, the PDP consistently provides false effects on the predicted outcome. While both effects are actually linear with a slope of 1, the PDP for $x_1$ shows a steeper increase and $x_2$ fails completely. Nonetheless, the PDP for $x_1$ does reflect the common effect of both variables together.
 
 #### PDPs based on Random Forest
-```{r Figure20, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+```{r Figure20, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_20_Set3_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1106,8 +1106,8 @@ Compared to setting \@ref(eq:10), where all relevant feature variables were take
 Other than an increased variability between the individual PDP curves and a slightly tighter prediction interval, with correlated features and Random Forest as learner, there is no apparent deviation to the PDPs of independent features.  
 In accordance with the observations made in setting \@ref(eq:10), the interval of predicted values for dependent features become even smaller while the PDP curves further deviate from the true effect. Neither the individual effect of each feature, nor their common effect are illustrated adequately.  
 
-#### PDPs for Support Vector Machines
-```{r Figure21, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='center'}
+#### PDPs based on Support Vector Machines
+```{r Figure21, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_21_Set3_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1401,7 +1401,7 @@ With a value of 0.986, the variance-explained measure indicates a substantial de
 #### PDPs based on Linear Model
 Figure \@ref(fig:Figure22) shows the PDPs for all feature variables and all simulation settings based on the Linear Model. 
 
-```{r Figure22, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and LM as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+```{r Figure22, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and LM as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_22_Set4_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1411,7 +1411,7 @@ Apparently, the Linear Model is robust against our simulated dependencies, since
 FIGURE 23  
 Figure \@ref(fig:Figure23) shows the PDPs for all feature variables and all simulation settings based on Random Forest. 
 
-```{r Figure23, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+```{r Figure23, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_23_Set4_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1420,7 +1420,7 @@ Based on Random Forest, the partial dependence function seems to be impacted muc
 #### PDPs based on Support Vector Machines
 Figure \@ref(fig:Figure24) shows the PDPs for all feature variables and all simulation settings based on Support Vector Machines. 
 
-```{r Figure24, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='center'}
+```{r Figure24, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_24_Set4_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1560,7 +1560,7 @@ In the problem description of this chapter we announced that, in addition to the
 
 Now we are looking at the PDPs resulting from these modifications. Figure \@ref(fig:Figure25) compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values.   
 
-```{r Figure25, echo=FALSE, out.width='80%', fig.cap="PDPs for uncorrelated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='center'}
+```{r Figure25, echo=FALSE, out.width='90%', fig.cap="PDPs for uncorrelated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_25_Extrapol_uncor.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1568,7 +1568,7 @@ The first row of PDPs in figure \@ref(fig:Figure25), computed on basis of the co
 
 In figure \@ref(fig:Figure26) we do the same comparison, but this time based on the dataset with strongly correlated features.  
 
-```{r Figure26, echo=FALSE, out.width='80%', fig.cap="PDPs for correlated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='center'}
+```{r Figure26, echo=FALSE, out.width='90%', fig.cap="PDPs for correlated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_26_Extrapol_cor.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1638,7 +1638,8 @@ extr_prob <- function(data, title){
               labs(title = title)+
               xlab(names(eff11$results[1]))+
               ylab("Predicted Y")+
-              theme(plot.title = element_text(hjust = 0)), 
+              theme_bw()+
+              theme(plot.title = element_text(hjust = 0, size = 16)), 
             ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
               geom_line(data= eff12$results, aes(x=eff12$results[,1], y=eff12$results[,2]), col="black")+
               geom_line(data= eff22$results, aes(x=eff22$results[,1], y=eff22$results[,2]), col="blue")+
@@ -1646,9 +1647,9 @@ extr_prob <- function(data, title){
               labs(title = "")+
               xlab(names(eff12$results[1]))+
               ylab("")+
-              theme(plot.title = element_text(hjust = 0)))
+              theme_bw()+
+              theme(plot.title = element_text(hjust = 0, size=16)))
 }
-
 ggarrange(extr_prob(data = uncorrelated, title = "PDPs for X1 and X2 uncorrelated"),
           extr_prob(data = uncorrelated_gap, title = "PDPs for X1 and X2 uncorrelated with extrapolation problem"), nrow=2)
 
@@ -1662,13 +1663,13 @@ Let's illustrate the issue with an example. Assume that we want to predict the s
 
 In the event of improper planting, meaning the usage of a too large amount of water in proportion to the soil (and vice versa), the plant would die and the result would be a potato of size 0. This is exactly what our self-constructed prediction function predicts. Luckily, all farmers in our dataset know how to grow potatoes, therefore there are no such zero cases in the underlying observations. Figure \@ref(fig:Figure27) illustrates our observations as points and the prediction function as shaded background colour.  
 
-```{r Figure27, echo=FALSE, out.width='80%', fig.cap="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.", fig.align='center'}
+```{r Figure27, echo=FALSE, out.width='50%', fig.cap="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_27_Prediction_Fct.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 In view of the observed data, one would expect to uncover a linear effect of both feature variables when looking at the corresponding PDPs. As we can see in figure \@ref(fig:Figure28), this is not necessarily the case. While the two-dimensional PDP perfectly depicts the prediction function, the individual PDPs for feature $x_1$ and $x_2$ fail in the areas where the prediction function does 'weird' stuff compared to what has been observed. 
 
-```{r Figure28, echo=FALSE, out.width='100%', fig.cap="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ resepctively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values.", fig.align='left'}
+```{r Figure28, echo=FALSE, out.width='110%', fig.cap="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ resepctively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_28_Prediction_Fct_Fail.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1713,7 +1714,7 @@ pdp <- FeatureEffect$new(pred, feature = c("X1","X2"), method = "pdp", grid.size
 p1 <- plot(pdp)+
       ggtitle("2D-PDP for X1, X2")+
       theme_bw()+
-      theme(plot.title = element_text(hjust = 0, size = 18))+
+      theme(plot.title = element_text(hjust = 0, size = 18), legend.position = "none")+
       xlim(c(0,1))+
       ylim(c(0,1))
 
@@ -1739,4 +1740,3 @@ ggarrange(p1, p2, p3, ncol=3)
 ## Summary
 Our analysis of Partial Dependence Plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. However, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependence of features. Besides the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
 In practical applications it is recommended to analyse the variables used in the model, both by means of correlation and/or association measures and from a content-based perspective. Furthermore, data scientists can apply further methods, such as ALE plots, which will be discussed in chapter ??. 
-
