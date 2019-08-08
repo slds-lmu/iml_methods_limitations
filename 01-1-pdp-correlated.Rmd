@@ -8,11 +8,11 @@ output:
 
 *Author: Veronika Kronseder*
 
-## Problem Description
+## Problem Description {#ProblemDescription}
 
-As outlined in chapter 2, PDPs and ICE plots are meaningful graphical tools to visualize the impact of individual feature variables. This is particularly true for black box algorithms, where the mechanism of each feature and its influence on the generated predictions may be difficult to retrace.\citep{Goldstein2013}  
+As outlined in chapter 2, PDPs and ICE plots are meaningful graphical tools to visualize the impact of individual feature variables. This is particularly true for black box algorithms, where the mechanism of each feature and its influence on the generated predictions may be difficult to retrace.\citep{Goldstein2013}
 
-The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of depencencies between different types of variables, missing values and the associated implications on marginalized feature effects with a particular focus on PDPs.  
+The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of depencencies between different types of variables, missing values and the associated implications on PDPs.  
 
 ### What is the issue with dependent features?
 
@@ -26,28 +26,28 @@ Figure \@ref(fig:Figure01) illustrates the problem by contrasting simulated data
 knitr::include_graphics('images/VK_PDP_1_Data_ind_dep.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating its mean (here: $\overline{x}_2 \approx 0$) and keeping the value in $\hat{f}_{x_S}(x_1)$ constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average of $x_2$ is not a realistic value in combination with $x_1$-values in the very left and the very right part of the feature distribution.  
+When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating its mean (here: $\overline{x}_2 \approx 0$) and keeping the value in $\hat{f}_{x_S}(x_1)$ constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average of $x_2$ is not a realistic value in combination with values of  $x_1$ in the very left and the very right part of the feature distribution.  
 
-### What is the issue with extrapolation?
-Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter ?? we will see an example where this instant leads to a failure of the Partial Dependence Plots.\citep{molnar2019}  
+### What is the issue with extrapolation? 
+Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter \@ref(ExtrapolationProblem) we will see an example where this instant leads to a failure of the Partial Dependence Plot.\citep{molnar2019}  
 
 On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. The resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers.\citep{Goldstein2013}
 
-In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter 3.??. The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
+In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter \@ref(ExtrapolationProblemEstablished). The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
 
-```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations with $x_1$ and $x_2$ [0,1.5] have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
+```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations both the value of $x_1$ and $x_2$ lies between 0 and 1.5 have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
 knitr::include_graphics('images/VK_PDP_2_Data_ind_dep_gap.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-The extrapolation problem in PDPs is strongly linked to the aforementioned independence assumption. Independent features are a prerequisite for the computation of meaningful extrapolation results, therefore one could say that both problems go hand in hand. In the following chapters, the failure of PDPs in case of a violation of the independence assumption shall be discussed by means of real data examples (chapter 3.2) and based on simulated cases (chapter 3.4). 
+The extrapolation problem in PDPs is strongly linked to the aforementioned independence assumption. Independent features are a prerequisite for the computation of meaningful extrapolation results, therefore one could say that both problems go hand in hand. In the following chapters, the failure of PDPs in case of a violation of the independence assumption shall be discussed by means of real data examples (chapter \@ref(RealData)) and based on simulated cases (chapter \@ref(SimulatedData)). 
 
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
 library(mvtnorm)
 library(matrixcalc)
-library(ggplot2) #is.positive.semi.definite
-library(ggpubr) #ggdensity
-library(cowplot) #plot_grid
+library(ggplot2)
+library(ggpubr)
+library(cowplot)
 library(mlr)
 library(iml)
 
@@ -126,7 +126,7 @@ data_plot(uncorrelated_gap, correlated_gap)
 ```
 
 
-## Dependent Features: Bike Sharing Dataset
+## Dependent Features: Bike Sharing Dataset {#RealData}
 In order to investigate the impact of dependent features, we are now looking at the Bike-Sharing dataset from the rental company 'Capital-Bikeshare', which is available for download via the UCI Machine Learning Repository. Besides the daily count of rental bikes between the year 2011 and 2012 in Washington D.C., the dataset contains the corresponding weather and seasonal information.\citep{Fanaee-T}  
 
 For our purposes, the dataset was restricted to the following variables:  
@@ -147,7 +147,7 @@ For our purposes, the dataset was restricted to the following variables:
 * $x_9$: hum: Normalized humidity.   
 * $x_{10}$: windspeed: Normalized wind speed.  
 
-For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), while the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
+For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
 
 1. Dependency between numerical features
 2. Dependency between categorical features
@@ -159,14 +159,14 @@ At the same time, for each of those scenarios, three different learning algorith
 * Random Forest (RF)
 * Support Vector Machines (SVM)
 
-### Dependency between Numerical Features
+### Dependency between Numerical Features 
 The linear dependency between two numerical features can be measured by the Pearson correlation coefficient.\citep{fahrmeir2016statistik} Figure \@ref(fig:Figure03) shows the correlation matrix of all numerical features used in our analysis. It is striking, but certainly not surprising, that 'temp' and 'atemp' are strongly correlated, not to say almost perfectly collinear.  
 
-```{r Figure03, echo=FALSE, out.width='75%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
+```{r Figure03, echo=FALSE, out.width='50%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_3_Num_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Due to their strong correlation, 'temp' ($x_7$) and 'atemp' ($x_8$) perfectly qualify for our analysis of the impact of dependent features on PDPs. In order to compare the partial dependence curve with and without the influence of dependent features, we compute PDPs based on the following models [^1]: 
+Due to their strong correlation, 'temp' ($x_7$) and 'atemp' ($x_8$) perfectly qualify for our analysis of the impact of dependent features on PDPs. In order to compare the partial dependence curve with and without the influence of dependent features, we compute PDPs based on the following models: 
 
 \begin{equation}
  y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}  + x_9 + x_{10} (\#eq:1) 
@@ -180,9 +180,9 @@ Due to their strong correlation, 'temp' ($x_7$) and 'atemp' ($x_8$) perfectly qu
  y \sim x_1 + x_2 + x_4 + x_5 + x_6 \mathbf{+ x_7 + x_8} + x_9 + x_{10} (\#eq:3)
 \end{equation}
 
-[^1]: The representation of the different models with the feature variables connected via '+' shall, in this context, not be read as a (linear) regression model where all coefficients are equal to 1, but rather as a combination of applicable feature variables to explain $y$. The (non-)linear effect of each variable is modelled individually, depending on the observed values and the learner. 
+Please note that the representation of the different models with the feature variables connected via '+' shall, in this context, not be read as a (linear) regression model where all coefficients are equal to 1, but rather as a combination of applicable feature variables to explain $y$. The (non-)linear effect of each variable is modelled individually, depending on the observed values and the learner.  
 
-While model \@ref(eq:1) and \@ref(eq:2) only take one of the two substituting variables into account, \@ref(eq:3) considers both 'temp' and 'atemp' in one and the same model. Figures \@ref(fig:Figure04), \@ref(fig:Figure05) and \@ref(fig:Figure06) compare the associated PDPs for the different learning algorithms. Note that 'season' ($x_1$) and 'mnth' ($x_3$) are not taken into account in combination with $x_7$ and/or $x_8$, since there are meaningful associations between those variables, too, as we will show in chapter 3.??. The exclusion from the models at this stage in order to illustrate the isolated effect of the dependence between two numerical variables.  
+While model \@ref(eq:1) and \@ref(eq:2) only take one of the two substituting variables into account, \@ref(eq:3) considers both 'temp' and 'atemp' in one and the same model. Figures \@ref(fig:Figure04), \@ref(fig:Figure05) and \@ref(fig:Figure06) compare the associated PDPs for the different learning algorithms. Note that 'season' ($x_1$) and 'mnth' ($x_3$) are not taken into account in combination with $x_7$ and/or $x_8$, since there are meaningful associations between those variables, too, as we will show in chapter \@ref(NumCat). At this stage  we want to illustrate the isolated effect of the dependence between the two numerical variables.  
 
 ```{r Figure04, echo=FALSE, out.width='80%', fig.cap="PDPs based on Linear Regression learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right).", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_4_Correlated_numerical_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -201,7 +201,7 @@ In all cases, we can see that the features' effect on the prediction is basicall
 ### Dependency between Categorical Features
 In order to measure the association between two categorical features, we calculate the corrected contingency coefficient, which is based on the $\chi^2$-statistic. Other than the Pearson correlation coefficient, the corrected contingency coefficient is a measure of association $\in [0,1]$ which can only indicate the strength but not the direction of the variables' relationship.\citep{fahrmeir2016statistik} For the categorical features in the Bike-Sharing dataset, we observe the values stated in figure \@ref(fig:Figure07).
 
-```{r Figure07, echo=FALSE, out.width='75%', fig.cap="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.", fig.align='center'}
+```{r Figure07, echo=FALSE, out.width='60%', fig.cap="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_7_Cat_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -233,12 +233,12 @@ knitr::include_graphics('images/VK_PDP_10_Correlated_categorical_RF.png', auto_p
 
 Again, in all PDPs based on the different learning algorithms, the results between models with and without dependent features are diverging. The predicted number of bike rentals between the seasons/months shows a stronger variation when modelled without feature dependencies.
 
-### Dependency between Numerical and Categorical Features
+### Dependency between Numerical and Categorical Features {#NumCat}
 Our third dependency scenario seeks to provide an example for a strong correlation between a numerical and a categorical feature. For this constellation, neither the Pearson correlation nor the contingency coefficient are applicable as such, since both methods are limited to their respective classes of variables.  
 
-We can, however, fit a linear model to explain the numeric variable through the categorical feature. By doing so, we produce another numerical variable, the fitted values. In a next step, we can calculate the Pearson correlation coefficient between the observed and the fitted values of the numerical feature. The resulting measure of association lies within the interval $[0,1]$ and is equivalent to the square root of the linear model's variance explained ($R^2$).  QUELLE einfügen !!
+We can, however, fit a linear model to explain the numeric variable through the categorical feature. By doing so, we produce another numerical variable, the fitted values. In a next step, we can calculate the Pearson correlation coefficient between the observed and the fitted values of the numerical feature. The resulting measure of association lies within the interval $[0,1]$ and is equivalent to the square root of the linear model's variance explained ($R^2$).\citep{fahrmeir2013regression} For this reason, we refer to the measure as 'variance-explained measure'. 
 
-When applying this procedure to the categorical feature 'season' ($x_1$) and the numerical feature 'temp' ($x_7$), we find that with a value of 0.83, there seems to be a reasonable association between the two features. The PDPs are derived through the following models:  
+When applying this procedure to the categorical feature 'season' ($x_1$) and the numerical feature 'temp' ($x_7$), we find that with a variance-explained value of 0.83, there seems to be a reasonable association between the two features. The PDPs are derived through the following models:  
 
 \begin{equation}
 y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:7)
@@ -264,7 +264,7 @@ knitr::include_graphics('images/VK_PDP_12_Correlated_cat_num_SVM.png', auto_pdf 
 knitr::include_graphics('images/VK_PDP_13_Correlated_cat_num_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) with just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the Partial Dependence Plot.  
+Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) containing just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the Partial Dependence Plot.  
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
@@ -272,8 +272,8 @@ library(ggpubr)
 library(ggcorrplot)
 library(mlr)
 library(iml)
-library(e1071) #svm
-library(mgcv) #gam
+library(e1071)
+library(mgcv)
 
 bike_day <- read.csv("data/day.csv")
 bike_day$season <- as.factor(bike_day$season)
@@ -289,7 +289,7 @@ bike2 <- bike_day[, c(3,4,5,6,8,9,12,13,16)]    # w/o temp & atemp
 bike3 <- bike_day[, c(3,4,6,8,9,10,12,13,16)]   # w/o mnth & atemp
 
 
-#### CORRELATED NUMERICAL FEATURES ####
+#### CORRELATED NUMERICAL FEATURES
 # Correlation Matrix
 cor_data <- cor(bike[, 5:9])
 cor_mat <- 
@@ -350,7 +350,7 @@ numerical(learner = makeLearner("regr.lm"))
 numerical(learner = makeLearner("regr.svm"))
 numerical(learner = makeLearner("regr.randomForest"))
 
-#### CORRELATED CATEGORICAL FEATURES ####
+#### CORRELATED CATEGORICAL FEATURES
 # Corrected Contingency Coefficient
 cont_coeff <- function(data, feature1, feature2){
   a <- as.factor(feature1)
@@ -424,7 +424,7 @@ categorical(learner = makeLearner("regr.lm"))
 categorical(learner = makeLearner("regr.svm"))
 categorical(learner = makeLearner("regr.randomForest"))
 
-#### CORRELATED CATEGORICAL & NUMERICAL FEATURES ####
+#### CORRELATED CATEGORICAL & NUMERICAL FEATURES
 mod <- lm(temp~season, data=bike3)
 cor(bike3$temp, mod$fitted.values)
 
@@ -467,7 +467,7 @@ catnum(learner = makeLearner("regr.randomForest"))
 ```
 
 
-## Dependent Features: Simulated Data
+## Dependent Features: Simulated Data {#SimulatedData}
 A major disadvantage of the analysis of PDPs on the basis of real data examples is, that we cannot exclude other factors to play a role. As an example, underlying interactions could have an impact on the PDP and hide the true effect of a feature on the predicted target variable.\citep{molnar2019} In order to illustrate the isolated impact of dependent variables in the feature space, we have simulated data in different settings, which we will discuss in this chapter.  
 
 ### Simulation Settings: Numerical Features
@@ -496,30 +496,30 @@ The target variable $y$ results from the respective DGP with an error term $\var
 
 One source of variation in the PDPs is the simulation of the data itself. For this reason, the process has been repeated 20 times for each analysis and the resulting PDP curves are shown as gray lines in the plots below. The thicker, black line represents the average partial dependence curve over these 20 simulations and the error bars indicate their variation. Additionally, a red line represents the true effect of the feature for which the PDP is computed. In all cases, the simulations are based on a number of 500 observations and grid size 50.  
 
-Since in the dependent case, $x_2$ is simply a duplicate of $x_1$, the DGP could also be written as $y = 2*x_1 + x_3 + \varepsilon$ in setting \@ref(eq:10) and \@ref(eq:12) and $y = \sin{( \, 3*x_1 ) \,} + x_1 + x_3 + \varepsilon$ in setting \@ref(eq:11). For the purpose of this analysis, we are looking at each of the three features' PDPs separately. However, in order to illustrate the aforementioned, the common effect of $x_1$ and $x_2$ on the prediction is added to the plots as dashed blue line.  
+Since in the dependent case, $x_2$ is simply a duplicate of $x_1$, the DGP could also be written as $y = 2*x_1 + x_3 + \varepsilon$ in setting \@ref(eq:10) and \@ref(eq:12) and $y = \sin{( \, 3*x_1 ) \,} + x_1 + x_3 + \varepsilon$ in setting \@ref(eq:11). For the purpose of this analysis, we are looking at each of the three features' PDP separately. However, in order to illustrate the aforementioned, the common effect of $x_1$ and $x_2$ on the prediction is added to the plots as dashed blue line.  
 
 ### Simulation of Setting 1: Linear Dependence
 #### PDPs based on Linear Model
-The results of our simulations based on the Linear Model are shown in figure \@ref(fig:Figure14):  
+The results of our simulations in setting 1 based on the Linear Model are shown in figure \@ref(fig:Figure14):  
 
 ```{r Figure14, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Linear Model as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_14_Set1_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Across all simulations, there is hardly any variation between the PDPs based on the Linear Model. In the independent case, the PDPs for each feature adequately reflect the linear dependency structure. The effect is equivalent in each PDP, since all features have the same impact and are independent from each other. From the PDPs in the second row of figure \@ref(fig:Figure14) we see that even with a relatively strong correlation of features $x_1$ and $x_2$, the PDPs adequately reflect the linear dependency structure when predictions are computed from the Linear Model. In the event of perfect multicollinearity, the PDP for one of the dependent features ($x_2$) fails, while the corresponding PDP for the other feature ($x_1$) reflects the common effect of both. The PDP for feature $x_3$ adequately reveals the linear dependency structure.  
+Across all simulations, there is hardly any variation between the PDPs based on the Linear Model. In the independent case, the PDPs for each feature adequately reflect the linear dependency structure. The effect is equivalent in each PDP, since all features have the same impact and are independent from each other. From the PDPs in the second row of figure \@ref(fig:Figure14) we see that even with a relatively strong correlation of features $x_1$ and $x_2$, the PDPs adequately reflect the linear dependency structure when predictions are computed from the Linear Model. In the event of perfect multicollinearity, the PDP for one of the dependent features ($x_2$) fails, while the corresponding PDP for the other feature ($x_1$) reflects the common effect of both. The PDP for feature $x_3$ adequately reveals its linear effect on $y$.  
 
 #### PDPs based on Random Forest
-The results of our simulations based on Random Forest are shown in figure \@ref(fig:Figure15):  
+The results of our simulations in setting 1 based on Random Forest are shown in figure \@ref(fig:Figure15):  
 
 ```{r Figure15, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_15_Set1_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 Compared to the LM, there is a little more variance between the individual PDP curves produced from RF as learner. Furthermore, the Partial Dependence Plots cannot adequately reflect the linear dependency structure, particularly at the margins of the feature's distribution. Again, there is no visual differentiation between the different features in the first row of figure \@ref(fig:Figure15) due to their independence. Besides, the computation of PDPs based on Random Forest does not produce significantly worse results when two features are correlated and the relationship between all variables and $y$ is linear.  
-When comparing the PDPs subject to perfect multicollinearity with those in the correlated case, a slightly increased variation in the individual PDP curves is observed. Other than in the Linear Model, the learner is not able to reveal the true common effect of $x_1$ and $x_2$.  
+When comparing the PDPs subject to perfect multicollinearity to those in the correlated case, a slightly increased variation in the individual PDP curves is observed. Other than in the Linear Model, the learner is not able to reveal the true common effect of $x_1$ and $x_2$.  
 
 #### PDPs based on Support Vector Machines
-The results of our simulations based on Support Vector Machines are shown in figure \@ref(fig:Figure16):  
+The results of our simulations in setting 1 based on Support Vector Machines are shown in figure \@ref(fig:Figure16):  
 
 ```{r Figure16, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Support Vector Machines as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_16_Set1_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -538,12 +538,12 @@ library(ggplot2)
 library(ggpubr)
 
 ## Setting 1: Linear Dependence of all Variables ## 
-#### PDP - 1 Feature #### 
+#### PDP - 1 Feature
 pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), grid_size=30){
   
   simulate_once <- function(obs){
     
-    #### Simulate data once from normal distribution: ####
+    #### Simulate data once from normal distribution:
     data_once <- as.data.frame(rmvnorm(n = obs, 
                                        mean = rep(0, times = 3), 
                                        sigma = diag(1, nrow = 3))) # variance=1 -> cov(X,Y)=corr(X,Y)
@@ -613,7 +613,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dependent <- simulate_repeated(no_sim, obs)[[2]]
   correlated <- simulate_repeated(no_sim, obs)[[3]] 
   
-  #### Function to produce predictions based on repeated simulations ####
+  #### Function to produce predictions based on repeated simulations
   prediction <- function(dataset){
     
     # Convert simulated datasets to long-format
@@ -676,7 +676,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dep <- prediction(dependent)
   cor <- prediction(correlated)
 
-  #### Function to add an "overall grid" to produce mean PDP and error bars #### 
+  #### Function to add an "overall grid" to produce mean PDP and error bars
   add_avg_grid <- function(input, element){
     pdp <- as.data.frame(input[[element]])
     pdp$Grid <- rep(0, nrow(pdp))
@@ -704,7 +704,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   pdp_dep_X2 <- add_avg_grid(input=dep, element=2)
   pdp_dep_X3 <- add_avg_grid(input=dep, element=3)
   
-  #### Function to derive mean and error bars per grid interval ####
+  #### Function to derive mean and error bars per grid interval
   add_mean_sd <- function(data){
     average <- data %>% 
       group_by(Grid) %>% 
@@ -726,7 +726,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   avg_dep_X3 <- add_mean_sd(pdp_dep_X3)
   
   
-  #### Function to produce PDP ####
+  #### Function to produce PDP
   pdp_plot <- function(pdp_data, avg_data, feature){
     ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
     geom_line(data = pdp_data, aes(x = pdp_data[,1], y = Y_hat, group = Simulation), alpha = 0.3)+
@@ -796,7 +796,7 @@ ggarrange(out[[1]], # Plot Independent
 In simulation setting 2 we are looking at a DGP with a nonlinear relationship of $x_1$ and $y$ and a linear impact of $x_2$ and $x_3$. Due to the nonlinearity in one of the features, it is clear that the LM would not deliver accurate results. For this reason, in this chapter we will restrict our analysis to RF and SVM.
 
 #### PDPs based on Random Forest
-The results of our simulations based on Random Forest are shown in figure \@ref(fig:Figure17):  
+The results of our simulations in setting 2 based on Random Forest are shown in figure \@ref(fig:Figure17):  
 
 ```{r Figure17, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_17_Set2_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -807,7 +807,7 @@ With a simulated correlation between features $x_1$ and $x_2$ and a nonlinear re
 In the event of perfect multicollinearity, the PDPs for the involved feature variables fail even more. In contrast to the correlated case, we can observe that both curves take on a similar shape, which very roughly approximates the common effect.  
 
 #### PDPs based on Support Vector Machines
-The results of our simulations based on SVM are shown in figure \@ref(fig:Figure18):  
+The results of our simulations in setting 2 based on SVM are shown in figure \@ref(fig:Figure18):  
 
 ```{r Figure18, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_18_Set2_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -828,12 +828,12 @@ library(ggpubr)
 
 ## Setting 2: Nonlinear Dependence of X1 ## 
 
-#### PDP - 1 Feature #### 
+#### PDP - 1 Feature
 pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), grid_size=30){
   
   simulate_once <- function(obs){
     
-    #### Simulate data once from normal distribution: ####
+    #### Simulate data once from normal distribution
     data_once <- as.data.frame(rmvnorm(n = obs, 
                                        mean = rep(0, times = 3), 
                                        sigma = diag(1, nrow = 3))) # variance=1 -> cov(X,Y)=corr(X,Y)
@@ -903,7 +903,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dependent <- simulate_repeated(no_sim, obs)[[2]]
   correlated <- simulate_repeated(no_sim, obs)[[3]] 
   
-  #### Function to produce predictions based on repeated simulations ####
+  #### Function to produce predictions based on repeated simulations
   prediction <- function(dataset){
     
     # Convert simulated datasets to long-format
@@ -966,7 +966,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dep <- prediction(dependent)
   cor <- prediction(correlated)
 
-  #### Function to add an "overall grid" to produce mean PDP and error bars #### 
+  #### Function to add an "overall grid" to produce mean PDP and error bars
   add_avg_grid <- function(input, element){
     pdp <- as.data.frame(input[[element]])
     pdp$Grid <- rep(0, nrow(pdp))
@@ -994,7 +994,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   pdp_dep_X2 <- add_avg_grid(input=dep, element=2)
   pdp_dep_X3 <- add_avg_grid(input=dep, element=3)
   
-  #### Function to derive mean and error bars per grid interval ####
+  #### Function to derive mean and error bars per grid interval
   add_mean_sd <- function(data){
     average <- data %>% 
       group_by(Grid) %>% 
@@ -1016,7 +1016,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   avg_dep_X3 <- add_mean_sd(pdp_dep_X3)
   
   
-  #### Function to produce PDP ####
+  #### Function to produce PDP
   pdp_plot <- function(pdp_data, avg_data, feature){
     ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
     geom_line(data = pdp_data, aes(x = pdp_data[,1], y = Y_hat, group = Simulation), alpha = 0.3)+
@@ -1089,29 +1089,32 @@ ggarrange(out[[1]], # Plot Independent
 In simulation setting 3, we assume that there are three variables with an impact on the data generating process of $y$. In the training process of the machine learning model, only two of those are considered. Consequently, when looking at the PDPs, we only compare the independent, the correlated and the dependent case for $x_1$ and $x_2$ respectively.  
 
 #### PDPs based on Linear Model
-```{r Figure19, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
+The results of our simulations in setting 3 based on the Linear Model are shown in figure \@ref(fig:Figure19): 
+```{r Figure19, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_19_Set3_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-Compared the PDPs of independent features the Linear Model produced in setting \@ref(eq:10), the variation in individual PDPs is slightly higher with missing information from $x_3$. Overall, the learner can adequately reflect the linear feature effects of $x_1$ and $x_2$.  
+Compared to the PDPs of independent features the Linear Model produced in setting \@ref(eq:10), the variation in individual PDPs is slightly higher with missing information from $x_3$. Overall, the learner can adequately reflect the linear feature effects of $x_1$ and $x_2$.  
 The increase in variablility between the individual PDPs is even more evident in the correlated case. On average, we still obtain the true linear effect of the correlated features, but there are some individual curves which do indicate a steeper or more moderate slope.  
 The PDPs drawn on basis of the Linear Model and dependent features indicate that for both individual features, the PDP consistently provides false effects on the predicted outcome. While both effects are actually linear with a slope of 1, the PDP for $x_1$ shows a steeper increase and $x_2$ fails completely. Nonetheless, the PDP for $x_1$ does reflect the common effect of both variables together.
 
 #### PDPs based on Random Forest
-```{r Figure20, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
+The results of our simulations in setting 3 based on Random Forest are shown in figure \@ref(fig:Figure20): 
+```{r Figure20, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_20_Set3_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-Compared to setting \@ref(eq:10), where all relevant feature variables were taken into account for the trainig of the model, the variation in PDP curves in setting \@ref(eq:12) is larger. Between features $x_1$ and $x_2$, which are independent, there is no systematic difference traceable from the PDPs.  
+Compared to setting \@ref(eq:10), where all relevant feature variables were taken into account for the training of the model, the variation in PDP curves in setting \@ref(eq:12) is larger. Between features $x_1$ and $x_2$, which are independent, there is no systematic difference traceable from the PDPs.  
 Other than an increased variability between the individual PDP curves and a slightly tighter prediction interval, with correlated features and Random Forest as learner, there is no apparent deviation to the PDPs of independent features.  
 In accordance with the observations made in setting \@ref(eq:10), the interval of predicted values for dependent features become even smaller while the PDP curves further deviate from the true effect. Neither the individual effect of each feature, nor their common effect are illustrated adequately.  
 
 #### PDPs based on Support Vector Machines
-```{r Figure21, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ and $x_2$ (left to right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
+The results of our simulations in setting 3 based on Support Vector Machines are shown in figure \@ref(fig:Figure21): 
+```{r Figure21, echo=FALSE, out.width='100%', fig.cap="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_21_Set3_SVM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-Similar to learning based on Random Forest, SVM with missing feature variable $x_3$ produces a higher variability between the simulated PDP curves. The margin areas, where the PDPs cannot adequately reflect the linear dependence, are broader than in setting \@ref(eq:10).  
+Similar to learning based on Random Forest, the SVM learner with missing feature variable $x_3$ produces a higher variability between the simulated PDP curves. The margin areas, where the PDPs cannot adequately reflect the linear dependence, are broader than in setting \@ref(eq:10).  
 In the event of the two remaining features $x_1$ and $x_2$ being strongly correlated, the issue of larger variability between the individual simulations aggravates and the ability to reveal the linear effect ceases.  
 With a perfect multicollinearity of $x_1$ and $x_2$, the variablity of the individual PDP curves becomes smaller, but at the same time the models' ability to uncover the true linear effect vanishes. The interval of predicted values is remarkably smaller than in the independent case.  
 
@@ -1127,12 +1130,12 @@ library(ggpubr)
 
 ## Setting 3: ML model with missing informative variable X3 ##
 
-#### PDP - 1 Feature #### 
+#### PDP - 1 Feature
 pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), grid_size=30){
   
   simulate_once <- function(obs){
     
-    #### Simulate data once from normal distribution: ####
+    #### Simulate data once from normal distribution:
     data_once <- as.data.frame(rmvnorm(n = obs, 
                                        mean = rep(0, times = 3), 
                                        sigma = diag(1, nrow = 3)))
@@ -1202,7 +1205,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dependent <- simulate_repeated(no_sim, obs)[[2]]
   correlated <- simulate_repeated(no_sim, obs)[[3]] 
   
-  #### Function to produce predictions based on repeated simulations ####
+  #### Function to produce predictions based on repeated simulations
   prediction <- function(dataset){
     
     # Convert simulated datasets to long-format
@@ -1259,7 +1262,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   dep <- prediction(dependent)
   cor <- prediction(correlated)
 
-  #### Function to add an "overall grid" to produce mean PDP and error bars #### 
+  #### Function to add an "overall grid" to produce mean PDP and error bars
   add_avg_grid <- function(input, element){
     pdp <- as.data.frame(input[[element]])
     pdp$Grid <- rep(0, nrow(pdp))
@@ -1284,7 +1287,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   pdp_dep_X1 <- add_avg_grid(input=dep, element=1)
   pdp_dep_X2 <- add_avg_grid(input=dep, element=2)
 
-  #### Function to derive mean and error bars per grid interval ####
+  #### Function to derive mean and error bars per grid interval
   add_mean_sd <- function(data){
     average <- data %>% 
       group_by(Grid) %>% 
@@ -1302,7 +1305,7 @@ pdp_function <- function(no_sim, obs, lrn = makeLearner("regr.randomForest"), gr
   avg_dep_X1 <- add_mean_sd(pdp_dep_X1)
   avg_dep_X2 <- add_mean_sd(pdp_dep_X2)
 
-  #### Function to produce PDP ####
+  #### Function to produce PDP
   pdp_plot <- function(pdp_data, avg_data, feature){
     ggplot(data.frame(x = c(-3, 3)), aes(x = x))+
     geom_line(data = pdp_data, aes(x = pdp_data[,1], y = Y_hat, group = Simulation), alpha = 0.3)+
@@ -1374,29 +1377,29 @@ All features are characterized by their linear relationship with the target vari
 
 Again, in order to isolate the individual effects of two dependent features on their respective PDPs, we define three different simulation settings:
 
-1. Independent Case: In this setting, the feature variables are drawn independently from each other, i.e. the observations are randomly sampled with the following parameters:
+**1. Independent Case:** In this setting, the feature variables are drawn independently from each other, i.e. the observations are randomly sampled with the following parameters:
 
 * $x_1: P(x_1=1)=P(x_1=0)=0.5$
-* $x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35)$
-* $x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5$
+* $x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35$
+* $x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5$  
+    
+The association between $x_1$ and $x_2$ can be measured by the corrected contingency coefficient, which is rather low with a value of 0.10. In accordance with the approach in chapter \@ref(NumCat), we calculate the association between $x_1$ and $x_3$ by means of the variance-explained measure. With a value of 0.01 we take the independence assumption as confirmed.
 
-The association between $x_1$ and $x_2$ can be measured by the corrected contingency coefficient, which is rather low with a value of 0.10. In accordance with the approach in chapter 2.?, we calculate the association between $x_1$ and $x_3$ by means of the variance-explained measure. With a value of 0.01 we take the independence assumption as confirmed.
-
-2. Dependence between two categorical features: In this setting, $x_1$ and $x_2$ are depending on each each other, i.e. the observations are randomly sampled with the following parameters:
+**2. Dependency between two categorical features:** In this setting, $x_1$ and $x_2$ are depending on each each other, i.e. the observations are randomly sampled with the following parameters:
 
 * $x_1: P(x_1=1)=P(x_1=0)=0.5$
 * $x_2: \begin{cases} P(x_2=A)=0.90, P(x_2=B)=0.10, P(x_2=C)=0), \text{if } x_1=0, \\ P(x_2=A)=0.05, P(x_2=B)=0.25, P(x_2=C)=0.70), \text{if } x_1=1 \end{cases}$
-* $x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5$
+* $x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5$  
 
-The corrected contingency coefficient of 0.94 comfirms a strong dependence between features $x_1$ and $x_2$. 
+The corrected contingency coefficient of 0.94 comfirms a strong association between features $x_1$ and $x_2$.
 
-3. Dependence between categorical and numerical features: In this setting, $x_1$ and $x_3$ are depending on each each other, i.e. the observations are randomly sampled with the following parameters:
+**3. Dependency between categorical and numerical features:** In this setting, $x_1$ and $x_3$ are depending on each each other, i.e. the observations are randomly sampled with the following parameters:
 
 * $x_1: P(x_1=1)=P(x_1=0)=0.5$
-* $x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35)$
-* $x_3: \begin{cases} x_3 \sim N(1,1), \text{if }  x_1=0 \\ x_3 \sim N(20,2), \text{if } x_1=1 \end{cases}$
-
-With a value of 0.986, the variance-explained measure indicates a substantial degree of dependence between $x_1$ and $x_3$. 
+* $x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35$
+* $x_3: \begin{cases} x_3 \sim N(1,1), \text{if }  x_1=0 \\ x_3 \sim N(20,2), \text{if } x_1=1 \end{cases}$  
+    
+With a value of 0.986, the variance-explained measure indicates a substantial degree of dependency between $x_1$ and $x_3$. 
 
 #### PDPs based on Linear Model
 Figure \@ref(fig:Figure22) shows the PDPs for all feature variables and all simulation settings based on the Linear Model. 
@@ -1408,7 +1411,6 @@ knitr::include_graphics('images/VK_PDP_22_Set4_LM.png', auto_pdf = getOption("kn
 Apparently, the Linear Model is robust against our simulated dependencies, since the PDPs of the correlated and dependent features do not differ significantly from those of independent features. 
 
 #### PDPs based on Random Forest
-FIGURE 23  
 Figure \@ref(fig:Figure23) shows the PDPs for all feature variables and all simulation settings based on Random Forest. 
 
 ```{r Figure23, echo=FALSE, out.width='100%', fig.cap="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.", fig.align='left'}
@@ -1444,7 +1446,7 @@ cont_coeff <- function(data, feature1, feature2){
   K_korr
 }
 
-#### Independent Case ####
+#### Independent Case
 set.seed(123)
 n <- 1000
 ind <- data.frame(X1 = rep(0,n))
@@ -1465,7 +1467,7 @@ for (i in 1:n){
 limo <- lm(X3~X1, data=ind)
 cor(ind$X3, limo$fitted.values)
 
-#### X1 and X2 Correlated ####
+#### X1 and X2 Correlated
 set.seed(123)
 n <- 1000
 df <- data.frame(X1 = rep(0,n))
@@ -1490,7 +1492,7 @@ for (i in 1:n){
 limo <- lm(X3~X1, data=df)
 cor(df$X3, limo$fitted.values)
 
-#### X1 and X3 Correlated ####
+#### X1 and X3 Correlated
 set.seed(123)
 n <- 1000
 df2 <- data.frame(X1 = rep(0,n))
@@ -1513,7 +1515,7 @@ for (i in 1:n){
 limo <- lm(X3~X1, data=df2)
 cor(df2$X3, limo$fitted.values)
 
-#### PDPs ####
+#### PDPs
 pdp <- function(data, learner = makeLearner("regr.randomForest"), title = "PDPs for ?"){
   
   # Target Variable Y
@@ -1554,9 +1556,9 @@ c <- pdp(data=df2, learner = makeLearner("regr.svm"), title = "PDPs for X1 and X
 ggarrange(a,b,c, nrow = 3)
 ```
 
-## Extrapolation Problem: Simulation
-### Simulation based on established learners
-In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of Partial Dependence Plots. For this purpose, we use the dataset introduced in chapter 3.1, which was simulated once with $x_1$ and $x_2$ independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $x_1, x_2 \in [0,1.5]$, and thus artificially producing an area with no observations.  
+## Extrapolation Problem: Simulation {#ExtrapolationProblem}
+### Simulation based on established learners {#ExtrapolationProblemEstablished}
+In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of Partial Dependence Plots. For this purpose, we use the dataset introduced in chapter \@ref(ProblemDescription), which was simulated once with $x_1$ and $x_2$ independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $x_1 \in [0, 1.5] \wedge x_2 \in [0, 1.5]$, and thus artificially producing an area with no observations (see figure \@ref(fig:Figure02)).  
 
 Now we are looking at the PDPs resulting from these modifications. Figure \@ref(fig:Figure25) compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values.   
 
@@ -1564,7 +1566,7 @@ Now we are looking at the PDPs resulting from these modifications. Figure \@ref(
 knitr::include_graphics('images/VK_PDP_25_Extrapol_uncor.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-The first row of PDPs in figure \@ref(fig:Figure25), computed on basis of the complete dataset of uncorrelated features, adequately reflects the true effects of $x_1$ and $x_2$ (red curve). In the presence of an extrapolation problem, the adequacy of the predicted effects decreases. Especially with the more complex, nonlinear effect of $x_1$, extrapolation causes a clearly visible deviation between the partial dependence curves and the true feature effect, irrespective of the learner.
+The first row of PDPs in figure \@ref(fig:Figure25), computed on basis of the complete dataset of uncorrelated features, adequately reflects the true effects of $x_1$ and $x_2$ (red curves). In the presence of an extrapolation problem, the adequacy of the predicted effects decreases. Especially with the more complex, nonlinear effect of $x_1$, extrapolation causes a clearly visible deviation between the partial dependence curves and the true feature effect, irrespective of the learner.
 
 In figure \@ref(fig:Figure26) we do the same comparison, but this time based on the dataset with strongly correlated features.  
 
@@ -1582,7 +1584,7 @@ library(cowplot)
 library(mlr)
 library(iml)
 
-################################# CORRELATION & EXTRAPOLATION PROBLEM ################################# 
+## CORRELATION & EXTRAPOLATION PROBLEM ##
 simulate_data <- function(obs, correlation){
   sigma <- diag(1, nrow = 2)
   sigma[1,2] <- sigma[2,1] <- correlation
@@ -1656,20 +1658,20 @@ ggarrange(extr_prob(data = uncorrelated, title = "PDPs for X1 and X2 uncorrelate
 ggarrange(extr_prob(data = correlated, title = "PDPs for X1 and X2 correlated"), extr_prob(data = correlated_gap, title = "PDPs for X1 and X2 correlated with extrapolation problem"), nrow=2)
 ```
 
-### Simulation based on own prediction function
+### Simulation based on own prediction function {#ExtrapolationProblemPrediction}
 So far, all our analyses were based on the established learning algorithms LM, RF and SVM. We have seen that the choice of the learner does have an impact on the suitability of PDP curves. Obviously there is a countless number of other possibilities to come up with prediction functions other than the ones we have seen. PDPs are prone to fail when this prediction function is doing 'weird' stuff in areas outside the feature distribution. This can happen due to the fact that the learner minimizes the loss based on training data while there is no penalization for extrapolation.\citep{molnar2019} 
 
-Let's illustrate the issue with an example. Assume that we want to predict the size of a potato ($\hat{y}$) by means of the share of maximum amount of soil ($x_1$) and the share of maximum amount of water ($x_2$) available during the process of growing the plant. The feature variables are dependent in the sense that when using a larger amount of soil, the farmer would also use a larger amount of water, i.e. $x_1$ and $x_2$ are positively correlated. Typically, the more ressources the farmer invests, the larger the crops. The corresponding model is basically a simple linear regression which adds up the two components.  
+Let's illustrate the issue with an example. Assume we want to predict the size of a potato ($\hat{y}$) by means of the share of maximum amount of soil ($x_1$) and the share of maximum amount of water ($x_2$) available during the process of growing the plant. The feature variables are dependent in the sense that when using a larger amount of soil, the farmer would also use a larger amount of water, i.e. $x_1$ and $x_2$ are positively correlated. Typically, the more ressources the farmer invests, the larger the crops. The corresponding model is basically a simple linear regression which adds up the two components.  
 
 In the event of improper planting, meaning the usage of a too large amount of water in proportion to the soil (and vice versa), the plant would die and the result would be a potato of size 0. This is exactly what our self-constructed prediction function predicts. Luckily, all farmers in our dataset know how to grow potatoes, therefore there are no such zero cases in the underlying observations. Figure \@ref(fig:Figure27) illustrates our observations as points and the prediction function as shaded background colour.  
 
-```{r Figure27, echo=FALSE, out.width='50%', fig.cap="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.", fig.align='center'}
+```{r Figure27, echo=FALSE, out.width='60%', fig.cap="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_27_Prediction_Fct.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 In view of the observed data, one would expect to uncover a linear effect of both feature variables when looking at the corresponding PDPs. As we can see in figure \@ref(fig:Figure28), this is not necessarily the case. While the two-dimensional PDP perfectly depicts the prediction function, the individual PDPs for feature $x_1$ and $x_2$ fail in the areas where the prediction function does 'weird' stuff compared to what has been observed. 
 
-```{r Figure28, echo=FALSE, out.width='110%', fig.cap="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ resepctively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values.", fig.align='left'}
+```{r Figure28, echo=FALSE, out.width='110%', fig.cap="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ respectively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values.", fig.align='left'}
 knitr::include_graphics('images/VK_PDP_28_Prediction_Fct_Fail.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -1738,5 +1740,8 @@ ggarrange(p1, p2, p3, ncol=3)
 ```
 
 ## Summary
-Our analysis of Partial Dependence Plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. However, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependence of features. Besides the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
-In practical applications it is recommended to analyse the variables used in the model, both by means of correlation and/or association measures and from a content-based perspective. Furthermore, data scientists can apply further methods, such as ALE plots, which will be discussed in chapter ??. 
+Our analysis of Partial Dependence Plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. Hooker and Mentch (2019) propose to make use of local explanation methods in order to avoid extrapolation. ICE plots, as an example, can be restricted to values in line with the distribution of observed data. However, the authors also point out that this approach cannot serve as a global representation of the learned model.\citep{2019arXiv190503151H}  
+
+In our simulations, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependence of features. Further to the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
+
+In practical applications it is recommended to analyse the variables used in the model, both by means of correlation and/or association measures and content-wise in liason with experts having domain knowledge. Furthermore, data scientists can apply methods based on the conditional expectation, such as M-plots or ALE plots. The concept and limitations of the latter will be discussed in chapters 6-8 of this book. 

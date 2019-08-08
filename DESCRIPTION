@@ -8,10 +8,16 @@ Depends:
   ggplot2,
   svglite,
   iml,
+  mlr,
   randomForest, 
   mvtnorm,
   ggcorrplot,
   ggpubr,
-  cowplot
+  cowplot, 
+  matrixcalc,
+  e1071,
+  mgcv,
+  tidyverse,
+  stringr,
+  viridis
 
-  
