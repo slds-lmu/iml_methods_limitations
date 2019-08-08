@@ -1081,21 +1081,48 @@ Once the distance between all categories is calculated, multidimensional scaling
 
 ### Estimation of the ALE
 
-### Example of ALE with categorical feature
+Once the features are ordered (no matter if as proposed by [@Apley2016] and [@molnar2019] or in a different order) its still not clear how to estimate the ALE. The partioning of the axis into interval doesnt make sense anymore as the categories themselve kind of partion the range of the feature in a natural manner. But there are no "values" in between  of them and at the same time the datapoints fall exactly on them. A continious ALE wouldnt make sense at all as there are no possibilities of changing the feature but not from category to category. Thats why the idea is to estimate exactly these expected changes in prediction if one category is changed to its neighbour category. Therefore for each pair of neighbour categories the expected change is estimated by shifting the data from the lower to the upper category and vice verse and calculating the mean difference of the prediction. This mean differnce is taken to be the expected effect between these two categories. How these changes are accumulated and how the ALE-plot looks, becomes clearer once looking on an example.    
 
-WIP: find a good real data example and compute the ALE
+### Example of ALE with categorical feature  
+
+For the following example the munich rent dataset, which consists of a sample of 2053 appartments from the data collected for the preparation of the Munich rent index 2003, was used. For our puroses we restricted the data to the variables rentm (Net rent per square meter in EUR (numeric)), size (Floor area in square meters (numeric)), rooms (Number of rooms (numeric)), year (Number of rooms (numeric)) and area (Urban district where the apartment is located (Factor with 25 levels)). In a first step a model (Support Vector Machine for Regression) was fitted to predict the variable rentm. Now the ALE for the feature area which is a categorical variable was estimated with the iml-package.    
+
+```{r ALE_2_cat_full_mod,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_example_cat_.PNG")
+
+```
+
+As described previously in a first step the categories (each number stands for one district) were ordered on basis of their similarity  w.r.t. the other features. Notice that the first bar at category one only reflects the centering. The uncentered ALE wouldnt show an effect for this category as it is kind of the starting point.
+Now the mean difference of prediction between category 1 and 8 was calculated. Therefore datapoints from category 1 were shifted to category 8, letting the rest of the features untouched and vice versa. The total effect was estimated as the mean difference in prediction for these datapoints, and is shown as the delta of the category 1 bar and the category 8 bar. Without centering it would be seen at the category 8 bar. Now the same difference is estimated for the change from category 8 to category 2 and is shown as the delta of their bars.
+This procedure continoues till finally the change from category 23 to category 22 results in the last delta between their bars.
+
 
 ### Interpretation
 
-WIP: interprete it as this was not done in the ALE _intro Chapter
-
+The interpretation of the ALE-plot for categorical features is unfortunatley quite difficult. The deltas between two adjacent bars surely can be interpreted as the change between the corresponding categories. Once looking on deltas of two categories with one or more other categories in between this changes. The delta is not anylonger the change of prediction between the two categories but the estimated change of prediction for shifting throug all the categories in between in exactly the given order. The reason is that the estimated delta is not path independent. For example the delta between categories 1 and 2 in the example above was calculated using datapoints of category 1, 8, and 2. If they were direct neigbhours, the datapoints of category 8 wouldnt be involved in the estimation at all. This problem clearly grows the further two categories are ordered. Having this in mind the absolut values of the bars shouldn't be interpreted at all. Furthermore this is an other argument for ordering the the categories in a reasonable manner, while it stays arguable what "reasonable"" in this context means. 
 
 ### Changes of the ALE due to diffrent orders
 
-Problem: Ordering the categories is somehow arbitrary. could weigh different features differentley and obtain different orders.
-Ale-Plot will change!
-Idea: Use artifical ordinal feature to simulate different orders 
+The last two graffics show how much the ALE for categorical features depends on the underlying order of the features. For the first one the same learner was fitted on a restricted feature space containing the variables year and area.  
 
-### Example
-Example of differnet ALE plots with respect to the same categorical feature but different orders 
+```{r ALE_2_cat_restr_mod,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_cat_different_features_.PNG")
+
+```
+The similarity based order changes as it is only calculated on basis of the variable year (instead of size, room, year). As the underlying model is now different changes of the ALE are not suprising. Still the comparison is quite difficult due to the new order. 
+
+The second graffic is again based on the full model. This time the area was taken as ordered factor, such that the similarity based order wasnt calculated. The Resulting ALE takes the district enumeration as order and proceeds accordingly.  
+```{r ALE_2_cat_diff_ord,  out.width='100%', echo=FALSE}
+
+knitr::include_graphics("images/ALE_2_cat_different_orders_.PNG")
+
+``` 
+ 
+ Although the underlaying model is exactly the same, the ALE changes totally. Not only the order of features changed but also the delta between some not adjacent categories. For example we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity based order. This underlines how carefull one should be when interpreting ALE-plots for categorical features.
+ 
+### Conclusion
+
+We have seen how sensitve the ALE (for categorical features) is to different orders of the category. Due to the lack of theoretical foundations concerning the implemented order method, further investigations are highly recomended. The interpretation of the ALE should be done quite carefully.  
 

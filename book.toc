@@ -35,17 +35,17 @@
 \contentsline {subsection}{\numberline {8.3.1}Ordering the features}{44}{subsection.8.3.1}% 
 \contentsline {subsection}{\numberline {8.3.2}Estimation of the ALE}{45}{subsection.8.3.2}% 
 \contentsline {subsection}{\numberline {8.3.3}Example of ALE with categorical feature}{45}{subsection.8.3.3}% 
-\contentsline {subsection}{\numberline {8.3.4}Interpretation}{45}{subsection.8.3.4}% 
-\contentsline {subsection}{\numberline {8.3.5}Changes of the ALE due to diffrent orders}{45}{subsection.8.3.5}% 
-\contentsline {subsection}{\numberline {8.3.6}Example}{45}{subsection.8.3.6}% 
-\contentsline {chapter}{\numberline {9}Introduction to Feature Importance}{47}{chapter.9}% 
-\contentsline {section}{\numberline {9.1}Permutation Feature Importance (PFI)}{47}{section.9.1}% 
-\contentsline {section}{\numberline {9.2}Leave-One-Covariate-Out (LOCO)}{50}{section.9.2}% 
-\contentsline {section}{\numberline {9.3}Interpretability of Feature Importance and its Limitations}{51}{section.9.3}% 
-\contentsline {chapter}{\numberline {10}PFI, LOCO and Correlated Features}{53}{chapter.10}% 
-\contentsline {chapter}{\numberline {11}Partial and Individual Permutation Feature Importance}{55}{chapter.11}% 
-\contentsline {chapter}{\numberline {12}PFI: Training vs.\nobreakspace {}Test Data}{57}{chapter.12}% 
-\contentsline {chapter}{\numberline {13}Introduction to Local Interpretable Model-Agnostic Explanations (LIME)}{59}{chapter.13}% 
-\contentsline {chapter}{\numberline {14}LIME and Neighbourhood}{65}{chapter.14}% 
-\contentsline {chapter}{\numberline {15}LIME and Sampling}{67}{chapter.15}% 
-\contentsline {fm}{Bibliography}{69}{chapter*.18}% 
+\contentsline {subsection}{\numberline {8.3.4}Interpretation}{46}{subsection.8.3.4}% 
+\contentsline {subsection}{\numberline {8.3.5}Changes of the ALE due to diffrent orders}{47}{subsection.8.3.5}% 
+\contentsline {subsection}{\numberline {8.3.6}Conclusion}{48}{subsection.8.3.6}% 
+\contentsline {chapter}{\numberline {9}Introduction to Feature Importance}{49}{chapter.9}% 
+\contentsline {section}{\numberline {9.1}Permutation Feature Importance (PFI)}{49}{section.9.1}% 
+\contentsline {section}{\numberline {9.2}Leave-One-Covariate-Out (LOCO)}{52}{section.9.2}% 
+\contentsline {section}{\numberline {9.3}Interpretability of Feature Importance and its Limitations}{53}{section.9.3}% 
+\contentsline {chapter}{\numberline {10}PFI, LOCO and Correlated Features}{55}{chapter.10}% 
+\contentsline {chapter}{\numberline {11}Partial and Individual Permutation Feature Importance}{57}{chapter.11}% 
+\contentsline {chapter}{\numberline {12}PFI: Training vs.\nobreakspace {}Test Data}{59}{chapter.12}% 
+\contentsline {chapter}{\numberline {13}Introduction to Local Interpretable Model-Agnostic Explanations (LIME)}{61}{chapter.13}% 
+\contentsline {chapter}{\numberline {14}LIME and Neighbourhood}{67}{chapter.14}% 
+\contentsline {chapter}{\numberline {15}LIME and Sampling}{69}{chapter.15}% 
+\contentsline {fm}{Bibliography}{71}{chapter*.18}% 
