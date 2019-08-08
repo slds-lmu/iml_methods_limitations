@@ -63,6 +63,31 @@ The choice of noise variance $sd_i^2$ should be hold small in order to make the 
 
 
 
+
+```{r bmr01, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "Benchmark"}
+library(ggplot2)
+library(mlr)
+library(ggpubr)
+load("data/bmr01.RData")
+
+pbmr01 <- plotBMRBoxplots(bmr01, measure = mse, pretty.names = FALSE, order.lrn = getBMRLearnerIds(bmr01)) +
+  aes(color = learner.id) +
+  theme(strip.text.x = element_text(size = 8),axis.text.x=element_blank(),
+        legend.position = c(0.82, 0.3))+
+  labs(y = "MSE", x= "", colour = "Learners")
+
+pbmr02 <- plotBMRBoxplots(bmr01, measure = rsq, pretty.names = FALSE, order.lrn = getBMRLearnerIds(bmr01)) +
+  aes(color = learner.id) +
+  theme(strip.text.x = element_text(size = 8),axis.text.x=element_blank(),
+        legend.position = c(0.82, 0.3))+
+  labs(y = "MSE", x= "", colour = "Learners")
+
+ggarrange(pbmr01, pbmr02, ncol=2, legend = "bottom", common.legend = TRUE)
+```
+
+
+
+
 ```{r PFI01, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
 library(ggplot2)
 load("data/drfPFI.RData")
@@ -134,74 +159,97 @@ plmerr
 
 
 
-```{r LOCO01, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
-library(mlr)
-library(iml)
+```{r LOCO01, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
 library(ggplot2)
-library(randomForest)
-
-rfLOCOua <- LOCO(data_u, "regr.randomForest", "y1u")
-rfLOCOc25a <- LOCO(data_c25, "regr.randomForest", "y1c25")
-rfLOCOc5a <- LOCO(data_c5, "regr.randomForest", "y1c5")
-rfLOCOc7a <- LOCO(data_c75, "regr.randomForest", "y1c75")
-rfLOCOca <- LOCO(data_c, "regr.randomForest", "y1c")
-
+load("data/drfLOCO.RData")
 #Plot:
-ploco <- ggplot(data = rfLOCOua ,aes(x=feature,y = importance, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=rfLOCOc25a$feature, y=rfLOCOc25a$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc5a$feature, y=rfLOCOc5a$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc75a$feature, y=rfLOCOc75a$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOca$feature, y=rfLOCOca$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+plocoerr <- ggplot(data = drfLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
   coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Random Forest")
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  theme(text = element_text(size = 16))
 
-ploco
-
+plocoerr
 ```
 
 
-```{r LOCO02, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
-library(mlr)
-library(iml)
+```{r LOCOsvm, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on SVM"}
 library(ggplot2)
-library(randomForest)
-
-lmLOCOua <- LOCO(data_u, "regr.lm", "y1u")
-lmLOCOc25a <- LOCO(data_c25, "regr.lm", "y1c25")
-lmLOCOc5a <- LOCO(data_c5, "regr.lm", "y1c5")
-lmLOCOc75a <- LOCO(data_c75, "regr.lm", "y1c75")
-lmLOCOca <- LOCO(data_c, "regr.lm", "y1c")
-
+load("data/dsvmLOCO.RData")
 #Plot:
-plocolm <- ggplot(data = lmLOCOua ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=lmLOCOc25a$feature, y=lmLOCOc25a$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc5a$feature, y=lmLOCOc5a$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc75a$feature, y=lmLOCOc75a$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOca$feature, y=lmLOCOca$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
+plocoerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
   coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Linear Model")
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  theme(text = element_text(size = 16))
 
-plocolm
+plocoerr
 ```
 
 
-```{r arrange01, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
+
+```{r LOCO02, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+library(ggplot2)
+load("data/dlmLOCO.RData")
+
+#Plot:
+plocosvmlmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  theme(text = element_text(size = 16))
+
+plocosvmlmerr
+```
+
+
+```{r arrange01, message = FALSE, echo=FALSE, eval=FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
 library(ggpubr)
 ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
 ``` 
 
+**3) Linear Dependence with bigger influence factors:**
 
-**2) Nonlinear Dependence:**
+In the first scenario setting the dependence of the features $X_i$ on the target value $y$ is a linear one: 
+
+
+$$
+y_{i} = x_{i1}+x_{i2}+x_{i3}+1.2x_{i4}+\epsilon_{i}
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+**3) Nonlinear Dependence:**
 
 $$
 y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
