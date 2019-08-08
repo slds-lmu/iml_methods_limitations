@@ -131,21 +131,21 @@ In order to investigate the impact of dependent features, we are now looking at 
 
 For our purposes, the dataset was restricted to the following variables:  
 
-* $y$: cnt (count of total rental bikes including both casual and registered)  
-* $x_1$: season: Season (1:springer, 2:summer, 3:fall, 4:winter)  
-* $x_2$: yr: Year (0: 2011, 1:2012)  
-* $x_3$: mnth: Month (1 to 12)  
-* $x_4$: holiday: weather day is holiday or not  
-* $x_5$: workingday: If day is neither weekend nor holiday is 1, otherwise is 0.  
-* $x_6$: weathersit:  
-    + 1: Clear, Few clouds, Partly cloudy, Partly cloudy  
-    + 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist  
-    + 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds  
-    + 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog  
-* $x_7$: temp: Normalized temperature in Celsius.  
-* $x_8$: atemp: Normalized feeling temperature in Celsius.   
-* $x_9$: hum: Normalized humidity.   
-* $x_{10}$: windspeed: Normalized wind speed.  
+* $y$: cnt (count of total rental bikes including both casual and registered)
+* $x_1$: season: Season (1:springer, 2:summer, 3:fall, 4:winter)
+* $x_2$: yr: Year (0: 2011, 1:2012)
+* $x_3$: mnth: Month (1 to 12)
+* $x_4$: holiday: weather day is holiday or not
+* $x_5$: workingday: If day is neither weekend nor holiday is 1, otherwise is 0.
+* $x_6$: weathersit:
+    + 1: Clear, Few clouds, Partly cloudy, Partly cloudy
+    + 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
+    + 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
+    + 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
+* $x_7$: temp: Normalized temperature in Celsius.
+* $x_8$: atemp: Normalized feeling temperature in Celsius.
+* $x_9$: hum: Normalized humidity.
+* $x_{10}$: windspeed: Normalized wind speed.
 
 For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
 
@@ -162,7 +162,7 @@ At the same time, for each of those scenarios, three different learning algorith
 ### Dependency between Numerical Features 
 The linear dependency between two numerical features can be measured by the Pearson correlation coefficient.\citep{fahrmeir2016statistik} Figure \@ref(fig:Figure03) shows the correlation matrix of all numerical features used in our analysis. It is striking, but certainly not surprising, that 'temp' and 'atemp' are strongly correlated, not to say almost perfectly collinear.  
 
-```{r Figure03, echo=FALSE, out.width='50%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
+```{r Figure03, echo=FALSE, out.width='60%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_3_Num_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
