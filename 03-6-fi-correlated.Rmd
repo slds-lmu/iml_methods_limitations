@@ -72,7 +72,7 @@ In order to get meaningful results one has to check whether the underlying model
 
 
 ```{r bmr01, echo=FALSE, out.width='100%', fig.cap="Benchmark of Scenario 1", fig.align='center'}
-knitr::include_graphics('images/bmr01.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/bmr01b.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 
@@ -289,16 +289,15 @@ load("data/drfLOCO.RData")
 #Plot:
 plocoerr <- ggplot(data = drfLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "LOCO (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
 ```
 
 
@@ -307,21 +306,21 @@ library(ggplot2)
 load("data/drfLOCO.RData")
 
 plocorank01 <- ggplot(drfLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
-  geom_point()+
-  geom_path(aes(group=features))+
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
   coord_flip() +
   scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
-                               "X3"="#33CC00", "X4" = "#33CC33"))+
+                               "X3"="#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
-  theme(legend.position="bottom")
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 ```
 
 
 
 ```{r arrange04, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggpubr)
-ggarrange(plocoerr, plocorank01 , ncol=2, legend = "bottom")
+ggarrange(plocoerr, plocorank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
@@ -336,18 +335,16 @@ ggarrange(plocoerr, plocorank01 , ncol=2, legend = "bottom")
 library(ggplot2)
 load("data/dsvmLOCO.RData")
 #Plot:
-plocosvmerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
-  geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+plocosvmerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +   geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "LOCO (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
 ```
 
 ```{r LOCOrank02, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
@@ -355,21 +352,21 @@ plocosvmerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = C
 load("data/dsvmLOCO.RData")
 
 plocorank02 <- ggplot(dsvmLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
-  geom_point()+
-  geom_path(aes(group=features))+
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
   coord_flip() +
   scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
-                               "X3"="#33CC00", "X4" = "#33CC33"))+
+                               "X3"="#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
-  theme(legend.position="bottom")
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 ```
 
 
 
 ```{r arrange05, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggpubr)
-ggarrange(plocosvmerr, plocorank02 , ncol=2, legend = "bottom")
+ggarrange(plocosvmerr, plocorank02 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
@@ -384,16 +381,15 @@ load("data/dlmLOCO.RData")
 #Plot:
 plocolmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
   geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "LOCO (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
 ```
 
 
@@ -402,31 +398,23 @@ plocolmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Cor
 load("data/dlmLOCO.RData")
 
 plocorank03 <- ggplot(dlmLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
-  geom_point()+
-  geom_path(aes(group=features))+
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
   coord_flip() +
   scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
-                               "X3"="#33CC00", "X4" = "#33CC33"))+
+                               "X3"="#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
-  theme(legend.position="bottom")
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 ```
 
 
 
 ```{r arrange06, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggpubr)
-ggarrange(plocolmerr, plocorank03 , ncol=2, legend = "bottom")
+ggarrange(plocolmerr, plocorank03 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
-
-
-
-
-
-
-
-
 
 
 
@@ -998,6 +986,11 @@ ggarrange(plocolm3err, plocorank09 , ncol=2, legend = "bottom", widths = c(2, 1)
 
 
 ### Real Data
+
+
+
+
+
 
 
 
