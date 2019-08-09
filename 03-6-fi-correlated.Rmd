@@ -78,7 +78,7 @@ knitr::include_graphics('images/bmr01.png', auto_pdf = getOption("knitr.graphics
 
 
 
-Figure \@ref(fig:arrange01) shows the result of applying the PFI on the random forest model. 
+ 
 
 
 
@@ -127,18 +127,50 @@ ggarrange(prferr, prfrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
+Figure \@ref(fig:arrange01) shows the result of applying the PFI on the random forest model. The plot on the left hand side shows the average value (the point) as well as it presents the 0.05- and 0.95 qauntiles over the 10 subsampling iterations, respectively. In addition, the plot on the right hand side shows the average importance rank based on the 10 subsampling iteration. It is important to mention that typically the Feature Importance can only be interpreted in a rank order than really based on the values. One can see that in case of independence the PFI of all features are round about the same except for the uninformative one. Since the uninofrmative indicated a complete random effect, one can suggest that all features $X_{i}$ have an influence on the performance of the model. Overall the PFI of the correlated features $X1$ and $X2$ tend to increase more in comparison to the uncorrelated features as $\rho$ increases. Moreover, the span of the qunatile bands increases with higher $\rho$. This effect can also be seen in the other plot. For independence, all points are near the average of 2.5 rank. The fluctuations can be explained by the underlying stochastic. However, from a correlation higher than 0.5  we see a gap between the correlated features in red colour and the uncorrelated in green colour. The correlated features settle down at an average rank of about 1.5 and the uncorrelated about 3.5. 
 
 
+  
+```{r exp, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggplot2)
+library(mlr)
+load("data/exp.RData")
+load("data/exptask.RData")
+
+exp <- plotLearnerPrediction(rf_learner, extrapolation_task)+
+        geom_segment(aes(x = -2, y = -2, xend = 2.3, yend = -2),color="white",size=1.2,
+                arrow = arrow(length = unit(0.5, "cm")))+
+          geom_point(aes(x = 2.5, y=-2), colour="blue")
+
+```
 
 
+```{r exp01, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggplot2)
+library(mlr)
+load("data/exp01.RData")
+load("data/exptask01.RData")
+
+exp01 <- plotLearnerPrediction(rf_learner01, extrapolation_task01)+
+  geom_segment(aes(x = -2, y = -2, xend = 2.3, yend = -2),color="white",size=1.2,
+               arrow = arrow(length = unit(0.5, "cm")))+
+  geom_point(aes(x = 2.5, y=-2), colour="blue")
+  
+
+```
 
 
+```{r arrangeexp, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(exp01, exp, ncol=2, legend = "bottom")
 
+```
 
+Altough all features have the same influence on the target value, one can see that PFI can be misleading as it shows a higher PFI rank the higher the correlation between two features. One possible explanation is given by .... 
+They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure \@ref(fig:arrangeexp) shows on the left the random forest applied on the simulated data set with independent features and on the rightapplied on the one with high correlated features. On the first sight you cannot see a structure in the data distribution in the independent case. Furthermore, the data points fill out much more space in comparison (uniformly distributed) to the correlated case. Here one can see a clear postive correaltion between $X1$ and $X2$. For instance, if you permute one observation of $X1$ represented by the white arrow, the permute observation points is still near the data distribution in the independent case. However, in the correlated case the is absolut no other data points nearby. The data distribution of the training data lies on the diagonal. The region outside was not learned well enough by the random forest shown by the less rectangle lines in this area. So the random forest will predict the average of this area, which are vertical lines tring to predict the red area and horizontal lines tring to predict the blue area. The larger span of the quantile bands can be explained by the randomly permuting the data points. If the observation is still close to the data distribution after permuting it. The error made is less strong as in the example in the plot. So the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up the extrapolation problem of the random forest is associated with the correlation intensity.
 
+Quelle: Stop Permuting
 
-
-The fluctuations can be explained by the underlying stochastic.
 
 ```{r PFI02, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggplot2)
@@ -146,37 +178,33 @@ load("data/dsvmPFI.RData")
 
 psvmerr <- ggplot(data = dsvmPFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
 
 ```
-
-
 
 ```{r PFIrank02, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggplot2)
 load("data/drfPFI.RData")
 
-psvmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
-  geom_point()+
-  geom_path(aes(group=features))+
+psvmrank01 <- ggplot(dsvmPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
   coord_flip() +
   scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
-                               "X3"="#33CC00", "X4" = "#33CC33"))+
+                               "X3"="#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
-  theme(legend.position="bottom")
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 
 ```
-
 
 
 
@@ -184,9 +212,16 @@ psvmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, grou
 
 ```{r arrange02, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggpubr)
-ggarrange(psvmerr, psvmrank01 , ncol=2, legend = "bottom")
+ggarrange(psvmerr, psvmrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
+
+The next Figure \@ref(fig:arrange02) demonstrates the application of the support vector maschines
+
+
+
+
+
 
 
 
@@ -410,6 +445,11 @@ The second scenario setting the dependence of the features $X_i$ on the target v
 $$
 y_{i} = x_{i1}+x_{i2}+x_{i3}+1.2x_{i4}+\epsilon_{i}
 $$
+
+
+
+
+
 
 
 
