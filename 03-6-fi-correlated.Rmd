@@ -6,6 +6,8 @@ There are two main problems when you are confronted with correlated features. Th
 
 The second does seem to play a role in case of PFI. If the features are correlated it can happen in the step of shuffling on of the features that there are unrealistic instances of data points. In this case it breaks not only the association to the outcome variable, but also the association with the correlated feature. So there are cases where the new data points are unlikely all the way up to completely impossible. The question is can we still trust the informative value of the PFI, if it is calculated with data instances that are not observed in reality and therefore biased? In Figure \@ref(fig:realPFI02) illustrared an example with a possible outcome of unrealistic data instances.
 
+Quelle: Molnar 2019
+
 
 ```{r realPFI01,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
 knitr::include_graphics("images/realPFI01.png")
@@ -171,6 +173,8 @@ They state that the main reason behind this effect is caused by extrapolation wh
 
 Quelle: Stop Permuting
 
+* point cloud
+
 
 ```{r PFI02, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggplot2)
@@ -216,7 +220,7 @@ ggarrange(psvmerr, psvmrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
-The next Figure \@ref(fig:arrange02) demonstrates the application of the support vector maschines
+The next Figure \@ref(fig:arrange02) demonstrates the application of the support vector maschines. 
 
 
 
@@ -231,33 +235,32 @@ load("data/dlmPFI.RData")
 
 plmerr <- ggplot(data = dlmPFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
 
 ```
 
 
 ```{r PFIrank03, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggplot2)
-load("data/drfPFI.RData")
+load("data/dlmPFI.RData")
 
-plmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
-  geom_point()+
-  geom_path(aes(group=features))+
+plmrank01 <- ggplot(dlmPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
   coord_flip() +
   scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
-                               "X3"="#33CC00", "X4" = "#33CC33"))+
+                               "X3"="#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
-  theme(legend.position="bottom")
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 
 ```
 
@@ -265,19 +268,11 @@ plmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group
 
 ```{r arrange03, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on a linear model"}
 library(ggpubr)
-ggarrange(plmerr, plmrank01 , ncol=2, legend = "bottom")
+ggarrange(plmerr, plmrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
-
-
-
-
-
-
-
-
-
+When applying PFI on the linear model the ranking of the features vary a lot, because the importance values for each correlation intensity are very close to each other. You can see that the ranking is very random. One intersting fact is the higher the correlation the lower get the Feature Importance values (is there a possible explantion for that?). As you can see are the values of PFI quite large. As mentioned before (\@ref(fig:bmr01)) the MSE values of the linear model are close to zero. The linear performs unsuprisingly very well. In the caculation progress we take the ratio of the estimated error based on the predictions of the permuted data divided by the estimation of the original model error. Here the value of numerator is very small and the value of denominator near zero which means we are getting a grate value for PFI. If we would increase the error term $\epsilon_{i}$ the PFI value would shrink, since the MSE would be higher. 
 
 
 
@@ -446,15 +441,52 @@ $$
 y_{i} = x_{i1}+x_{i2}+x_{i3}+1.2x_{i4}+\epsilon_{i}
 $$
 
+```{r PFI04, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
+library(ggplot2)
+load("data/drf2PFI.RData")
+
+prf2err <- ggplot(data = drf2PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  ylim(0,10)
+
+```
 
 
 
+```{r PFIrank04, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drfPFI.RData")
+
+prfrank04 <- ggplot(drf2PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
 
 
 
+```{r arrange07, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= ""}
+library(ggpubr)
+ggarrange(prf2err, prfrank04 , ncol=2, legend = "bottom", widths = c(2, 1))
 
+```
 
-
+Again, ...
 
 
 
