@@ -490,6 +490,227 @@ Again, ...
 
 
 
+```{r PFI05, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dsvm2PFI.RData")
+
+psvm2err <- ggplot(data = dsvm2PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+
+```
+
+```{r PFIrank05, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dsvmPFI.RData")
+
+psvmrank05 <- ggplot(dsvm2PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
+
+
+
+
+
+```{r arrange08, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(psvm2err, psvmrank05 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+```{r PFI06, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggplot2)
+load("data/dlm2PFI.RData")
+
+plm2err <- ggplot(data = dlm2PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+
+```
+
+
+```{r PFIrank06, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dlm2PFI.RData")
+
+plmrank06 <- ggplot(dlm2PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
+
+
+
+```{r arrange09, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggpubr)
+ggarrange(plm2err, plmrank06 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+```{r LOCO04, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+library(ggplot2)
+load("data/drf2LOCO.RData")
+#Plot:
+ploco2err <- ggplot(data = drf2LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+
+```{r LOCOrank04, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drf2LOCO.RData")
+
+plocorank04 <- ggplot(drf2LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange10, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(ploco2err, plocorank04 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+
+
+
+
+
+```{r LOCO05, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on SVM"}
+library(ggplot2)
+load("data/dsvm2LOCO.RData")
+#Plot:
+plocosvm2err <- ggplot(data = dsvm2LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp))+   geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+```{r LOCOrank05, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dsvm2LOCO.RData")
+
+plocorank05 <- ggplot(dsvm2LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange11, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocosvm2err, plocorank05 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+
+
+```{r LOCO06, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+library(ggplot2)
+load("data/dlm2LOCO.RData")
+
+#Plot:
+plocolm2err <- ggplot(data = dlm2LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+
+```{r LOCOrank06, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dlm2LOCO.RData")
+
+plocorank06 <- ggplot(dlm2LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange12, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocolm2err, plocorank06 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
 
 
 
@@ -505,7 +726,274 @@ $$
 y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
 $$
 
+```{r PFI07, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
+library(ggplot2)
+load("data/drf3PFI.RData")
 
+prf3err <- ggplot(data = drf3PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  ylim(0,10)
+
+```
+
+
+
+```{r PFIrank07, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drf3PFI.RData")
+
+prfrank07 <- ggplot(drf3PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
+
+
+
+```{r arrange13, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= ""}
+library(ggpubr)
+ggarrange(prf3err, prfrank07 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+```{r PFI08, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dsvm3PFI.RData")
+
+psvm3err <- ggplot(data = dsvm3PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+
+```
+
+```{r PFIrank08, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dsvm3PFI.RData")
+
+psvmrank08 <- ggplot(dsvm3PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
+
+
+
+
+
+```{r arrange14, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(psvm3err, psvmrank08 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+```{r PFI09, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggplot2)
+load("data/dlm3PFI.RData")
+
+plm3err <- ggplot(data = dlm3PFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+
+```
+
+
+```{r PFIrank09, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/dlm3PFI.RData")
+
+plmrank09 <- ggplot(dlm3PFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+
+```
+
+
+
+```{r arrange15, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggpubr)
+ggarrange(plm3err, plmrank09 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+```{r LOCO07, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
+library(ggplot2)
+load("data/drf3LOCO.RData")
+#Plot:
+ploco3err <- ggplot(data = drf3LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+
+```{r LOCOrank07, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drf3LOCO.RData")
+
+plocorank07 <- ggplot(drf3LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange16, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(ploco3err, plocorank07 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+
+
+
+
+
+```{r LOCO08, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on SVM"}
+library(ggplot2)
+load("data/dsvm3LOCO.RData")
+#Plot:
+plocosvm3err <- ggplot(data = dsvm3LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp))+   geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+```{r LOCOrank08, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dsvm3LOCO.RData")
+
+plocorank08 <- ggplot(dsvm3LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange17, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocosvm3err, plocorank08 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+
+
+```{r LOCO09, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+library(ggplot2)
+load("data/dlm3LOCO.RData")
+
+#Plot:
+plocolm3err <- ggplot(data = dlm3LOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
+  coord_flip() +
+  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                               "0.75"="navy", "0.99" = "black"))+
+  scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+                             "0.75"="navy", "0.99" = "black"))+
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
+  labs(y = "PFI (Loss: MSE)", x= "")
+```
+
+
+```{r LOCOrank09, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dlm3LOCO.RData")
+
+plocorank09 <- ggplot(dlm3LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
+```
+
+
+
+```{r arrange18, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocolm3err, plocorank09 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
 
 
 
