@@ -19,36 +19,42 @@ In this chapter we want to demonstrate some issue of correlated features and tri
 
 ## Effect on Feature Importance by Adding Correlated Features
 
-In this chapter we want to take a closer look at the problem of the interpretation of Feature Importance by adding or having correlated features in the given data set. Our focus lies on the behaviour of Permutation Feature Importance by Breiman as well as of the LOCO Feature Importance by Lei et. which have been already introduced. There will be a comparison of these measures apllied on the linear model, random forest  and support vector maschines with different correlation intesities using simulations. Later on there is an application on a real data set `Boston`. 
+In this chapter we want to take a closer look at the problem of the interpretation of Feature Importance by adding or having correlated features in the given data set. Our focus lies on the behaviour of Permutation Feature Importance by Breiman as well as of the LOCO Feature Importance by Lei et. which have been already introduced. There will be a comparison of these measures apllied on different basic learners the random forest, support vector maschine and linear model with different correlation intesities.  Later on there is an application on a real data set `Boston`. 
 
-### Simulation
+### Simulation 
 
-A good way to show the effects of correlated features on the feature importance measures is to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. 
+A good way to show the effects of correlated features on the feature importance measures is to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. For the complete R Code please refer to .... 
 
 
-This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with each other. To get a better understanding there will be a change in the intensity of the correlation of the features and in the learning algorithms. For the complete R Code please refer to ...
+This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with each other. To get a better understanding there will be a change in the intensity of the correlation of the features as well as in the complexity of the learning algorithms. The random forest is in this context a black box model (hard to interpret), the linear model a white boxx model (easy to interpret) and the sipport vector maschine something in between both. These algorithms should show a different behavior.
 
-In total there will be two different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline the scenarios: 
+In total there will be ... different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline for the scenarios: 
 
 $$
 y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
 $$
 
-Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $\rho$ betweeen each other. Otherwise, there is no correlation between any feature. 
-
 **The simulation design of different correlation intensities**
 
-In order to examine the effect we simulated a fictive data set with four features $x_{i1}...x_{i4}$ and a thousand observation $i = 1,...,1000$. The features were randomly drawn out of a multivariate gaussian distribution with a mean of 0 $X \sim MVN(0,\Sigma)$. The covariance $\Sigma$ depends on the variance of all features which were set equally to $\sigma_{j,j}=1$ and covariance $\sigma_{j,l}$. The covariance for feature 1 and 2 $\sigma_{1,2}$ were set to either $\rho = 0;0,25;0,5;0,75 or 0,99$ depending on our intesity of interest whereas the covariance of the rest were set to $\sigma_{j,l} = 0$ which means independence. Note: Here the correlaion and the covariance are the same, because we set the variance to 1 such that $\rho = \frac{Cov(X_{j},X_{l})}{\sqrt{Var(X_{j})}\sqrt{Var(X_{l})}} =Cov(X_{j},X_{l})$. The reason behind we setting $\rho = 0.99$ and not to $1$ is that to avoid problems to calculate matrices. If $\rho = 1$ we have perfect multicollinearity and the problem that the rank of the matrix is not full. So this simplifies later calculations especially regarding the application of the linear model.
+In order to examine the effect we simulated a fictive data set with four features $x_{i1}...x_{i4}$ and a thousand observation $i = 1,...,1000$. The features were randomly drawn out of a multivariate gaussian distribution with a mean of 0 $X \sim MVN(0,\Sigma)$. The covariance $\Sigma$ depends on the variance of all features which were set equally to $\sigma_{j,j}=1$ and covariance $\sigma_{j,l}$. 
+
+Here we want to investigate the effect on PFI and LOCO Feature Importance of the correlated features with different kind of dependencies on the target value y. There are four features of which two ($X1$ and $X2$) show different correlaion intensities $\rho$ betweeen each other. Otherwise, there is no correlation between any feature. 
+
+
+The covariance for feature $X1$ and $X2$ $\sigma_{1,2}$ were set to either $\rho = 0$;$0,25$;$0,5$;$0,75$ or $0,99$ depending on our intesity of interest whereas the covariance of the rest were set to $\sigma_{j,l} = 0$ which means independence. Note: Here the correlaion and the covariance are the same, because we set the variance to 1 such that $\rho = \frac{Cov(X_{j},X_{l})}{\sqrt{Var(X_{j})}\sqrt{Var(X_{l})}} =Cov(X_{j},X_{l})$. The reason behind we setting $\rho = 0.99$ and not to $p=1$ is that to avoid problems to calculate matrices. If $\rho = 1$ we have perfect multicollinearity and the problem that the rank of the matrix is not full. So this simplifies later calculations especially regarding the application of the linear model.
+
+The choice of noise $\epsilon_{i}$ and its variance should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation. In this case we assume that there is only a standard deviation of ten percent of the mean of the [...].
+
+Also including an uninformative feature ”Uninf” randomly drawn out of a uniform distribution to compare whether the importance of the features are higher than this random effect.
 
 Quelle: Archer and Kimes, Strobl 2008
 
-* added a random variable to see if the importance is higher than a random effect
+* added a random variable $Uinf$ to see if the importance is higher than a random effect
 
-**How to compare PFI and LOCO**
+**How to compare PFI and LOCO?**
 
 As mentioned in the introduction to this chapter PFI do not need to refit the model whereas for LOCO it is necessary to refit. In the `iml` package (by Molnar) the implementation uses Hold-out for performance evaluation. Typically Hold-out is quiet bad to evaluate the performance of a model unless the data record is sufficiently large. Since, the variance of the performance value is quiet high which means that the out coming performance vale can fluctuated a lot. To lower the variance of PFI the values are calculated by repeatedly shuffling of the feature in the permutation step. However, Hold-out is definitely not suitable for LOCO, because there are no reshuffling possible as the interested feature is completely left out of consideration. So the danger of high variance is to great. In contrast to Hold-out there exist Resampling methods which use the data more efficiently by repeatedly dividing the data into train and test data and aggregating the results. So in order to make the two approaches better comparable we use Subsampling (repeated Hold-out) for measuring the performance for PFI which means that we use PFI on test data. In this case a Subsampling with a 20-80% split (as recommended in the literature) and 10 iterations were used. The following visualizations are based on Feature Importance which are aggregated by the average over the 10 iterations of Subsampling. Furthermore, instead of taking the difference of model error and the estimated prediction error after permuting or leaving the feature out to calculate the Feature Importance of a feature $j$, the ratio is used. 
 
-  
 
 **1) Linear Dependence:**
 
@@ -59,32 +65,29 @@ $$
 y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
 $$
 
-The choice of noise variance $sd_i^2$ should be hold small in order to make the behavior we observe clearer and there will be no misinterpretation. In this case we assume that there is only a standard deviation of ten percent of the mean of the [...].
+
+In order to get meaningful results one has to check whether the underlying model were proved to be accurate. In case your model does not generalize accurately the Feature Importance can vary greatly when rerunning the alogorithms and therefore the results are not significant. In ... there is a benchmark result over all learning algorithms used on the simulated data sets. As a performance measure we decided to show on the one hand the mean squared error (MSE), since is also used a Loss measure for evaluating the Feature Importance. The value should be a low a possible. On the other hand $R^2$ as it is a common measure for linear models and since we have a linear dependence of the features on the target value. A $R^2 = 1$ implies that all residuals are zero, so a perfect prediction. Whereas a $R^2 = 0$ means that we predict as bad as a constant. 
 
 
 
 
-```{r bmr01, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "Benchmark"}
-library(ggplot2)
-library(mlr)
-library(ggpubr)
-load("data/bmr01.RData")
 
-pbmr01 <- plotBMRBoxplots(bmr01, measure = mse, pretty.names = FALSE, order.lrn = getBMRLearnerIds(bmr01)) +
-  aes(color = learner.id) +
-  theme(strip.text.x = element_text(size = 8),axis.text.x=element_blank(),
-        legend.position = c(0.82, 0.3))+
-  labs(y = "MSE", x= "", colour = "Learners")
 
-pbmr02 <- plotBMRBoxplots(bmr01, measure = rsq, pretty.names = FALSE, order.lrn = getBMRLearnerIds(bmr01)) +
-  aes(color = learner.id) +
-  theme(strip.text.x = element_text(size = 8),axis.text.x=element_blank(),
-        legend.position = c(0.82, 0.3))+
-  labs(y = "MSE", x= "", colour = "Learners")
 
-ggarrange(pbmr01, pbmr02, ncol=2, legend = "bottom", common.legend = TRUE)
-```
 
+
+
+
+
+
+
+
+
+
+
+
+
+Figure \@ref(fig:arrange01) shows the result of applying the PFI on the random forest model. 
 
 
 
@@ -94,21 +97,54 @@ load("data/drfPFI.RData")
 
 prferr <- ggplot(data = drfPFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.6)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.6)) + 
   coord_flip() +
   scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
-  theme(plot.subtitle = element_text(size = 10)) +
+  theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
   labs(y = "PFI (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 16))+
   ylim(0,10)
 
-prferr
+```
+
+
+
+```{r PFIrank01, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drfPFI.RData")
+
+prfrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point(size=2)+
+  geom_path(aes(group=features), size=1)+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#006600", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom", plot.subtitle = element_text(size = 9), text = element_text(size = 14))
 
 ```
+
+
+
+```{r arrange01, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features $X1$ and $X2$. The underlying learning algorithm is the random forest. The left plot shows the PFI values for different correlation intesities. The right plot represetnts the average rank of the features at a certain correlation intesity. The red lines marking the two correlated features and the green ones the independent. The dashed line is the complete average rank over all features when all of them has the exact same value. The line is used as a indicator how far away certain features are away from their actual influence"}
+library(ggpubr)
+ggarrange(prferr, prfrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
+
+```
+
+
+
+
+
+
+
+
+
+
 
 
 The fluctuations can be explained by the underlying stochastic.
@@ -117,7 +153,7 @@ The fluctuations can be explained by the underlying stochastic.
 library(ggplot2)
 load("data/dsvmPFI.RData")
 
-prferr <- ggplot(data = dsvmPFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+psvmerr <- ggplot(data = dsvmPFI, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
   geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
@@ -130,10 +166,36 @@ prferr <- ggplot(data = dsvmPFI, aes(x=features, y= importance, colour = Corr, y
   labs(y = "PFI (Loss: MSE)", x= "") + 
   theme(text = element_text(size = 16))
 
-prferr
+```
+
+
+
+```{r PFIrank02, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drfPFI.RData")
+
+psvmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point()+
+  geom_path(aes(group=features))+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#33CC00", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom")
 
 ```
 
+
+
+
+
+
+```{r arrange02, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(psvmerr, psvmrank01 , ncol=2, legend = "bottom")
+
+```
 
 
 
@@ -154,8 +216,49 @@ plmerr <- ggplot(data = dlmPFI, aes(x=features, y= importance, colour = Corr, ym
   labs(y = "PFI (Loss: MSE)", x= "") + 
   theme(text = element_text(size = 16))
 
-plmerr
 ```
+
+
+```{r PFIrank03, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drfPFI.RData")
+
+plmrank01 <- ggplot(drfPFI, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point()+
+  geom_path(aes(group=features))+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#33CC00", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom")
+
+```
+
+
+
+```{r arrange03, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on a linear model"}
+library(ggpubr)
+ggarrange(plmerr, plmrank01 , ncol=2, legend = "bottom")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -173,18 +276,46 @@ plocoerr <- ggplot(data = drfLOCO, aes(x=features, y= importance, colour = Corr,
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
+  labs(y = "LOCO (Loss: MSE)", x= "") + 
   theme(text = element_text(size = 16))
-
-plocoerr
 ```
+
+
+```{r LOCOrank01, message = FALSE, echo = FALSE, fig.height=6, fig.width= 8, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggplot2)
+load("data/drfLOCO.RData")
+
+plocorank01 <- ggplot(drfLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point()+
+  geom_path(aes(group=features))+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#33CC00", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom")
+```
+
+
+
+```{r arrange04, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocoerr, plocorank01 , ncol=2, legend = "bottom")
+
+```
+
+
+
+
+
+
 
 
 ```{r LOCOsvm, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on SVM"}
 library(ggplot2)
 load("data/dsvmLOCO.RData")
 #Plot:
-plocoerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
+plocosvmerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
   geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
@@ -194,20 +325,43 @@ plocoerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = Corr
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
+  labs(y = "LOCO (Loss: MSE)", x= "") + 
   theme(text = element_text(size = 16))
+```
 
-plocoerr
+```{r LOCOrank02, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dsvmLOCO.RData")
+
+plocorank02 <- ggplot(dsvmLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point()+
+  geom_path(aes(group=features))+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#33CC00", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom")
 ```
 
 
 
-```{r LOCO02, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+```{r arrange05, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(plocosvmerr, plocorank02 , ncol=2, legend = "bottom")
+
+```
+
+
+
+
+
+```{r LOCOlm, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
 library(ggplot2)
 load("data/dlmLOCO.RData")
 
 #Plot:
-plocosvmlmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
+plocolmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Corr, ymin= minimp, ymax=maximp)) +
   geom_point(fill = "white",size=0, shape=21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
   geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
@@ -217,21 +371,49 @@ plocosvmlmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = 
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
+  labs(y = "LOCO (Loss: MSE)", x= "") + 
   theme(text = element_text(size = 16))
-
-plocosvmlmerr
 ```
 
 
-```{r arrange01, message = FALSE, echo=FALSE, eval=FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
+```{r LOCOrank03, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
+
+load("data/dlmLOCO.RData")
+
+plocorank03 <- ggplot(dlmLOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+  geom_point()+
+  geom_path(aes(group=features))+
+  coord_flip() +
+  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2"= "red",
+                               "X3"="#33CC00", "X4" = "#33CC33"))+
+  scale_x_reverse()+
+  geom_vline(xintercept = 2.5, linetype="dashed")+
+  theme(legend.position="bottom")
+```
+
+
+
+```{r arrange06, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
 library(ggpubr)
-ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
-``` 
+ggarrange(plocolmerr, plocorank03 , ncol=2, legend = "bottom")
 
-**3) Linear Dependence with bigger influence factors:**
+```
 
-In the first scenario setting the dependence of the features $X_i$ on the target value $y$ is a linear one: 
+
+
+
+
+
+
+
+
+
+
+
+
+**2) Linear Dependence with bigger influence factors:**
+
+The second scenario setting the dependence of the features $X_i$ on the target value $y$ is also a linear one, but with a small change in the coefficient of $X4$ from $1$ to $1.2$: 
 
 
 $$
@@ -249,731 +431,29 @@ $$
 
 
 
+
 **3) Nonlinear Dependence:**
+
+In the third scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. $X1$ and $X3$ are pluged into the sine function: 
+
+
 
 $$
 y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
 $$
 
 
-In the second scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. Here $X_{1}$ has a non linear dependence in form of the sine function. 
-
-```{r scenariononnld, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap=" Simulation of Nonlinear Dependence"}
-
-
-sd2_u <- mean(sin(data_u$X1) + data_u$X2 + sin(data_u$X3) + data_u$X4)*0.1
-sd2_c25 <- mean(sin(data_c25$X1) + data_c25$X2 + sin(data_c25$X3) + data_c25$X4)*0.1
-sd2_c5 <- mean(sin(data_c5$X1) + data_c5$X2 + sin(data_c5$X3) + data_c5$X4)*0.1
-sd2_c75 <- mean(sin(data_c75$X1) + data_c75$X2 + sin(data_c75$X3) + data_c75$X4)*0.1
-sd2_c <- mean(sin(data_c$X1) + data_c$X2 + sin(data_c$X3) + data_c$X4)*0.1
-
-
-y2u <- sin(data_u$X1) + data_u$X2 + sin(data_u$X3) + data_u$X4 + rnorm(n = 1000, mean = 0, sd = sd2_u) 
-y2c25 <- sin(data_c25$X1) + data_c25$X2 + sin(data_c25$X3) + data_c25$X4 + rnorm(n = 1000, mean = 0, sd = sd2_c25)
-y2c5 <- sin(data_c5$X1) + data_c5$X2 + sin(data_c5$X3) + data_c5$X4 + rnorm(n = 1000, mean = 0, sd = sd2_c5)
-y2c75 <- sin(data_c75$X1) + data_c75$X2 + sin(data_c75$X3) + data_c75$X4 + rnorm(n = 1000, mean = 0, sd = sd2_c75)
-y2c <- sin(data_c$X1) + data_c$X2 + sin(data_c$X3) + data_c$X4 + rnorm(n = 1000, mean = 0, sd = sd2_c)  
-
-data_u$y1u <- NULL
-data_u["y2u"] <- y2u
-data_c25$y1c25 <- NULL
-data_c25["y2c25"] <- y2c25
-data_c5$y1c5 <- NULL
-data_c5["y2c5"] <- y2c5
-data_c75$y1c75 <- NULL
-data_c75["y2c75"] <- y2c75
-data_c$y1c <- NULL
-data_c["y2c"] <- y2c
-```  
-
-
-```{r PFI03, message = FALSE, fig.height=6, eval = FALSE , fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-rfub <- randomForest(y2u~. , data = data_u)
-rfc25b <- randomForest(y2c25~. , data = data_c25)
-rfc5b <- randomForest(y2c5~. , data = data_c5)
-rfc75b <- randomForest(y2c75~. , data = data_c75)
-rfcb <- randomForest(y2c~. , data = data_c)
-
-rf2PFIu <- PFI(data_u, "regr.randomForest", "y2u" , rfub)
-rf2PFIc25 <- PFI(data_c25, "regr.randomForest", "y2c25" , rfc25b)
-rf2PFIc5 <- PFI(data_c5, "regr.randomForest", "y2c5" , rfc5b)
-rf2PFIc75 <- PFI(data_c75, "regr.randomForest", "y2c75" , rfc75b)
-rf2PFIc <- PFI(data_c, "regr.randomForest", "y2c" , rfcb)
-
-prf <- ggplot(rf2PFIu, aes(x=features, y= importance, colour = "0")) +
-    geom_point(mapping=aes(x=features, y=importance), size=0, stroke = 3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=rf2PFIc25$features, y=rf2PFIc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf2PFIc5$features, y=rf2PFIc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf2PFIc75$features, y=rf2PFIc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf2PFIc$features, y=rf2PFIc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-    ggtitle("PFI on Random Forest")
-
-prf
-```
-
-
-```{r PFI04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
-
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-lmub <- lm(y2u~., data=data_u)
-lmc25b <- lm(y2c25~., data = data_c25)
-lmc5b <- lm(y2c5~., data = data_c5)
-lmc75b <- lm(y2c75~., data = data_c75)
-lmcb <- lm(y2c~., data = data_c)
-
-lm2PFIu <- PFI(data_u, "regr.lm", "y2u" , lmub)
-lm2PFIc25 <- PFI(data_c25, "regr.lm", "y2c25" , lmc25b)
-lm2PFIc5 <- PFI(data_c5, "regr.lm", "y2c5" , lmc5b)
-lm2PFIc75 <- PFI(data_c75, "regr.lm", "y2c75" , lmc75b)
-lm2PFIc <- PFI(data_c, "regr.lm", "y2c" , lmcb)
-
-
-#Plot:
-plm <- ggplot(lmPFIu, aes(x=features, y= importance, colour = "0")) +
-    geom_point(mapping=aes(x=features, y=importance), size=0, stroke = 3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=lmPFIc25$features, y=lmPFIc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lmPFIc5$features, y=lmPFIc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lmPFIc75$features, y=lmPFIc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lmPFIc$features, y=lmPFIc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-    ggtitle("PFI on Linear Model")
-
-plm
-
-```
-
-```{r LOCO03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
-rfLOCOu <- LOCO(data_u, "regr.randomForest", "y2u")
-rfLOCOc25 <- LOCO(data_c25, "regr.randomForest", "y2c25")
-rfLOCOc5 <- LOCO(data_c5, "regr.randomForest", "y2c5")
-rfLOCOc75 <- LOCO(data_c75, "regr.randomForest", "y2c75")
-rfLOCOc <- LOCO(data_c, "regr.randomForest", "y2c")
-
-#Plot:
-ploco <- ggplot(data = rfLOCOu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=rfLOCOc25$feature, y=rfLOCOc25$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc5$feature, y=rfLOCOc5$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc75$feature, y=rfLOCOc75$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc$feature, y=rfLOCOc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Random Forest")
-
-ploco
-```
-
-
-```{r LOCO04, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-lmLOCOu <- LOCO(data_u, "regr.lm", "y2u")
-lmLOCOc25 <- LOCO(data_c25, "regr.lm", "y2c25")
-lmLOCOc5 <- LOCO(data_c5, "regr.lm", "y2c5")
-lmLOCOc75 <- LOCO(data_c75, "regr.lm", "y2c75")
-lmLOCOc <- LOCO(data_c, "regr.lm", "y2c")
-
-#Plot:
-plocolm <- ggplot(data = lmLOCOu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=lmLOCOc25$feature, y=lmLOCOc25$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc5$feature, y=lmLOCOc5$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc75$feature, y=lmLOCOc75$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc$feature, y=lmLOCOc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Linear Model")
-```
-
-
-```{r arrange02, message = FALSE, eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
-``` 
-
-
-**3) Uninformative Feature:**
-Uninformative which means that one feature (in this case X4) is considered for the dependence on Y, but not considered for the model. So here it is the same case as in 1)
-
-```{r szenariouif, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Scenario Linear Dependence with uninformative feature 4"}
-
-sd3_u <- mean(data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4)*0.1
-
-sd3_c25 <- mean(data_c25$X1 + data_c25$X2 + data_c25$X3 + data_c25$X4)*0.1
-
-sd3_c5 <- mean(data_c5$X1 + data_c5$X2 + data_c5$X3 + data_c5$X4)*0.1
-
-sd3_c75 <- mean(data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4)*0.1
-
-sd3_c <- mean(data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4)*0.1
-
-
-
-y3u <- data_u$X1 + data_u$X2 + data_u$X3 + data_u$X4 + rnorm(n = 1000, mean = 0, sd = sd3_u) 
-
-y3c25 <- data_c25$X1 + data_c25$X2 + data_c25$X3 + data_c25$X4 + rnorm(n = 1000, mean = 0, sd = sd3_c25)
-
-y3c5 <- data_c5$X1 + data_c5$X2 + data_c5$X3 + data_c5$X4 + rnorm(n = 1000, mean = 0, sd = sd3_c5)
-
-y3c75 <- data_c75$X1 + data_c75$X2 + data_c75$X3 + data_c75$X4 + rnorm(n = 1000, mean = 0, sd = sd3_c75)
-
-y3c <- data_c$X1 + data_c$X2 + data_c$X3 + data_c$X4 + rnorm(n = 1000, mean = 0, sd = sd3_c)
-
-
-data_u$y2u <- NULL
-data_u["y3u"] <- y3u
-data_c25$y2c25 <- NULL
-data_c25["y3c25"] <- y3c25
-data_c5$y2c5 <- NULL
-data_c5["y3c5"] <- y3c5
-data_c75$y2c75 <- NULL
-data_c75["y3c75"] <- y3c75
-data_c$y2c <- NULL
-data_c["y3c"] <- y3c
-
-```
-
-```{r PFI05, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a random forest model"}
-
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-rfuc <- randomForest(y3u~. , data = data_u)
-rfc25c <- randomForest(y3c25~. , data = data_c25)
-rfc5c <- randomForest(y3c5~. , data = data_c5)
-rfc75c <- randomForest(y3c75~. , data = data_c75)
-rfcc <- randomForest(y3c~. , data = data_c)
-
-rf3PFIu <- PFI(data_u, "regr.randomForest", "y3u" , rfuc)
-rf3PFIc25 <- PFI(data_c25, "regr.randomForest", "y3c25" , rfc25c)
-rf3PFIc5 <- PFI(data_c5, "regr.randomForest", "y3c5" , rfc5c)
-rf3PFIc75 <- PFI(data_c75, "regr.randomForest", "y3c75" , rfc75c)
-rf3PFIc <- PFI(data_c, "regr.randomForest", "y3c" , rfcc)
-
-prf <- ggplot(rf3PFIu, aes(x=features, y= importance, colour = "0")) +
-    geom_point(mapping=aes(x=features, y=importance), size=0, stroke = 3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=rf3PFIc25$features, y=rf3PFIc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf3PFIc5$features, y=rf3PFIc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf3PFIc75$features, y=rf3PFIc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=rf3PFIc$features, y=rf3PFIc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-    ggtitle("PFI on Random Forest")
-
-prf
-```
-
-```{r PFI06, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
-
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-lmuc <- lm(y3u~., data=data_u)
-lmc25c <- lm(y3c25~., data = data_c25)
-lmc5c <- lm(y3c5~., data = data_c5)
-lmc75c <- lm(y3c75~., data = data_c75)
-lmcc <- lm(y3c~., data = data_c)
-
-lm3PFIu <- PFI(data_u, "regr.lm", "y3u" , lmuc)
-lm3PFIc25 <- PFI(data_c25, "regr.lm", "y3c25" , lmc25c)
-lm3PFIc5 <- PFI(data_c5, "regr.lm", "y3c5" , lmc5c)
-lm3PFIc75 <- PFI(data_c75, "regr.lm", "y3c75" , lmc75c)
-lm3PFIc <- PFI(data_c, "regr.lm", "y3c" , lmcc)
-
-
-#Plot:
-plm <- ggplot(lm3PFIu, aes(x=features, y= importance, colour = "0")) +
-    geom_point(mapping=aes(x=features, y=importance), size=0, stroke = 3, shape=21, fill="white") +
-    geom_point(mapping=aes(x=lm3PFIc25$features, y=lm3PFIc25$importance, colour = "0.25"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lm3PFIc5$features, y=lm3PFIc5$importance, colour = "0.5"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lm3PFIc75$features, y=lm3PFIc75$importance, colour = "0.75"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    geom_point(mapping=aes(x=lm3PFIc$features, y=lm3PFIc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-    ggtitle("PFI on Linear Model")
-
-plm
-
-```
-
-
-
-```{r LOCO05, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-rfLOCOu <- LOCO(data_u, "regr.randomForest", "y3u")
-rfLOCOc25 <- LOCO(data_c25, "regr.randomForest", "y3c25")
-rfLOCOc5 <- LOCO(data_c5, "regr.randomForest", "y3c5")
-rfLOCOc75 <- LOCO(data_c75, "regr.randomForest", "y3c75")
-rfLOCOc <- LOCO(data_c, "regr.randomForest", "y3c")
-
-#Plot:
-ploco <- ggplot(data = rfLOCOu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=rfLOCOc25$feature, y=rfLOCOc25$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc5$feature, y=rfLOCOc5$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc75$feature, y=rfLOCOc75$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=rfLOCOc$feature, y=rfLOCOc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Random Forest")
-
-ploco
-```
-
-
-
-
-```{r LOCO06, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-lmLOCOu <- LOCO(data_u, "regr.lm", "y3u")
-lmLOCOc25 <- LOCO(data_c25, "regr.lm", "y3c25")
-lmLOCOc5 <- LOCO(data_c5, "regr.lm", "y3c5")
-lmLOCOc75 <- LOCO(data_c75, "regr.lm", "y3c75")
-lmLOCOc <- LOCO(data_c, "regr.lm", "y3c")
-
-#Plot:
-plocolm <- ggplot(data = lmLOCOu ,aes(x=featureu,y = importance_u, colour = "0")) + #### hier fehler 
-  geom_point(mapping=aes(x=feature, y=importance), size=0, shape=21,stroke = 3, fill="white") +
-  geom_point(mapping=aes(x=lmLOCOc25$feature, y=lmLOCOc25$importance, colour = "0.25"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc5$feature, y=lmLOCOc5$importance, colour = "0.5"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc75$feature, y=lmLOCOc75$importance, colour = "0.75"), size=0,stroke = 3, shape=21, fill="white", show.legend = TRUE)+
-  geom_point(mapping=aes(x=lmLOCOc$feature, y=lmLOCOc$importance, colour = "0.99"), size=0, shape=21,stroke = 3, fill="white", show.legend = TRUE)+
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  scale_color_manual(labels = c("0","0.25","0.5","0.75","0.99"), values=c("0" = "white", "0.25" = "lightblue", "0.5"= "blue", "0.75"="darkblue", "0.99" = "black"), name = "Correlation Intensity",breaks=c("0", "0.25", "0.5", "0.75", "0.99"))+
-  ggtitle("LOCO on Linear Model")
-
-plocolm
-```
-
-```{r arrange03, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(prf, plm, ploco, plocolm , ncol=2, nrow = 2, legend = "bottom", common.legend = TRUE)
-``` 
-
-
-
-**4) Simulation with high amount of correlated data**
-
-```{r scenariohac, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
-
-library(mvtnorm)
-
-set.seed(456)
-
-sigma_sim10 <- diag(1, nrow = 12)
-sigma_sim10[which(sigma_sim10 != "1")] = 0.99 
-sigma_sim10[11,] <- 0
-sigma_sim10[,11] <- 0
-sigma_sim10[12,] <- 0
-sigma_sim10[,12] <- 0
-sigma_sim10[11,11] <- 1
-sigma_sim10[12,12] <- 1
-
-data_sim10 <- as.data.frame(rmvnorm(n = 1000, 
-                              mean = rep(0, times = 12), 
-                              sigma = sigma_sim10))
-
-data_sim10 <- as.data.frame(data_sim10)
-data_sim10['random'] <- runif(nrow(data_sim10))
-
-sigma_sim5 <- diag(1, nrow = 7)
-sigma_sim5[which(sigma_sim5 != "1")] = 0.99 
-sigma_sim5[6,] <- 0
-sigma_sim5[,6] <- 0
-sigma_sim5[7,] <- 0
-sigma_sim5[,7] <- 0
-sigma_sim5[6,6] <- 1
-sigma_sim5[7,7] <- 1
-sigma_sim5
-
-data_sim5 <- as.data.frame(rmvnorm(n = 1000, 
-                              mean = rep(0, times = 7), 
-                              sigma = sigma_sim5))
-head(data_sim5)
-
-
-data_sim5 <- as.data.frame(data_sim5)
-data_sim5['random'] <- runif(nrow(data_sim5))
-
-
-colnames(data_sim5) <- c("X1", "X2", "X3", "X4","X5", "X6", "X7", "random")
-colnames(data_sim10) <- c("X1", "X2", "X3", "X4","X5", "X6", "X7", "X8","X9", "X10", "X11", "X12", "random")
-
-sd_sim5 <- mean(data_sim5$X1 + data_sim5$X2 + data_sim5$X3 + data_sim5$X4+ data_sim5$X5+ data_sim5$X6+ data_sim5$X7)*0.1
-
-sd_sim10 <- mean(data_sim10$X1 + data_sim10$X2 + data_sim10$X3 + data_sim10$X4+ data_sim10$X5+ data_sim10$X6+ data_sim10$X7+ data_sim10$X8+ data_sim10$X9+ data_sim10$X10+ data_sim10$X11+ data_sim10$X12)*0.1
-
-y1sim5 <- data_sim5$X1 + data_sim5$X2 + data_sim5$X3 + data_sim5$X4+ data_sim5$X5+ data_sim5$X6+ data_sim5$X7 + rnorm(n = 1000, mean = 0, sd = sd_sim5) 
-
-y1sim10 <- data_sim10$X1 + data_sim10$X2 + data_sim10$X3 + data_sim10$X4+ data_sim10$X5+ data_sim10$X6+ data_sim10$X7+ data_sim10$X8+ data_sim10$X9+ data_sim10$X10+ data_sim10$X11+ data_sim10$X12 + rnorm(n = 1000, mean = 0, sd = sd_sim10)
-```
-
-
-
-```{r PFI07, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap="Simulation of 10 correlated features (r=0.99) "}
-
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-rfsim5 <- randomForest(y1sim5~. , data = data_sim5)
-rfsim10 <- randomForest(y1sim10~. , data = data_sim10)
-
-
-modrfsim5 <- Predictor$new(rfsim5, data=data_sim5, y = y1sim5)
-modrfsim10 <- Predictor$new(rfsim10, data=data_sim10, y = y1sim10)
-
-imprfsim5 <- FeatureImp$new(modrfsim5, loss = "mse" , compare = "ratio")
-imprfsim10 <- FeatureImp$new(modrfsim10, loss = "mse" , compare = "ratio")
-
-
-imp.datrfsim5 <- imprfsim5$results
-imp.datrfsim10 <- imprfsim10$results
-
-prfsim5 <- ggplot(imp.datrfsim5, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-  geom_errorbar(width=0.3, size=1, color="darkgreen") + 
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="green") +
-   coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 16))
-prfsim5
-
-prfsim10 <- ggplot(imp.datrfsim10, aes(x=reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
-  geom_errorbar(width=0.3, size=1, color="darkred") +
-    geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="red")+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 16)) 
-prfsim10
-
-
-mean(imp.datrfsim5$importance[1:5])
-mean(imp.datrfsim10$importance[1:10])
-```
-
-```{r arrange04, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(prfsim5, prfsim10 , ncol=2, legend = "bottom", common.legend = TRUE)
-``` 
-
-
-```{r LOCO07, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-
-res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
-data_sim5 ["y1sim5"] <- y1sim5
-taskc = makeRegrTask(data = data_sim5  , target= "y1sim5")
-learnerc = makeLearner("regr.randomForest")
-featc = getTaskFeatureNames(taskc)
-featc
-mod.fullc = train(learnerc, taskc)
-resc = resample(learner = learnerc, task = taskc, 
-               resampling = res_desc,show.info = FALSE)
-
-resultc <- data.frame(matrix(nrow=1,ncol=length(featc))) 
-
-for(i in 1:length(featc)){
-  taskfeatc = dropFeatures(taskc, featc[i])
-  mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
-  resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr/resc$aggr)
-  featurec = c(getTaskFeatureNames(taskc))
-  resultc[i] <- importance_c
-  #print(importance)
-}
-resultc
-colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c"
-FIPcsim5 <- data.frame(
-  importancec= round((t(resultc)),3),
-  featurec= getTaskFeatureNames(taskc))
-
-locosim5 <- ggplot(data = FIPcsim5 ,aes(reorder(x=featurec,importance_c), y= importance_c)) + #### hier fehler 
-  geom_point(size=3, shape=21, fill="green") +
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
-
-locosim5
-```
-
-```{r LOCO08, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, echo = FALSE, eval=FALSE, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
-library(mlr)
-library(iml)
-library(ggplot2)
-library(randomForest)
-
-
-res_desc <- makeResampleDesc("Subsample", iters = 5, split = 4/5)
-data_sim10 ["y1sim10"] <- y1sim10
-taskc = makeRegrTask(data = data_sim10  , target= "y1sim10")
-learnerc = makeLearner("regr.randomForest")
-featc = getTaskFeatureNames(taskc)
-featc
-mod.fullc = train(learnerc, taskc)
-resc = resample(learner = learnerc, task = taskc, 
-               resampling = res_desc,show.info = FALSE)
-
-resultc <- data.frame(matrix(nrow=1,ncol=length(featc))) 
-
-for(i in 1:length(featc)){
-  taskfeatc = dropFeatures(taskc, featc[i])
-  mod.featc = train(learnerc, dropFeatures(taskc, featc[i]))
-  resfeatc = resample(learner = learnerc, task = taskfeatc, resampling = res_desc ,show.info = FALSE);
-  importance_c = data.frame(resfeatc$aggr/resc$aggr)
-  featurec = c(getTaskFeatureNames(taskc))
-  resultc[i] <- importance_c
-  #print(importance)
-}
-resultc
-colnames(resultc) <- getTaskFeatureNames(taskc)
-rownames(resultc) <- "importance_c"
-FIPcsim10 <- data.frame(
-  importancec= round((t(resultc)),3),
-  featurec= getTaskFeatureNames(taskc))
-
-locosim10 <- ggplot(data = FIPcsim10 ,aes(reorder(x=featurec,importance_c), y= importance_c)) + 
-  geom_point(size=3, shape=21, fill="red") +
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance", x= "") + 
-  theme(text = element_text(size = 16))
-
-locosim10
-```
-
-```{r arrange05, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(locosim5, locosim10 , ncol=2, legend = "bottom", common.legend = TRUE)
-``` 
 
 
 
 ### Real Data
 
-* Probably dataset "mtcars", because the features are highly correlated, but should be 
-* Just showing the problem on a real data set to show the complex effects of correlated, real data
-* But this chapter should be rather small
 
-```{r PFIreal1, message = FALSE, eval = FALSE ,fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-library(corrplot)
-library(randomForest)
-library(mlr)
-
-data("Boston", package = "MASS")
-corrplot.mixed(cor(Boston),lower="circle",upper="number")
-head(Boston)
-
-
-rfboston <- randomForest(medv~. , data = Boston)
-
-
-PFIb <- function(data,learner,target,model){
-  d <- data
-  task = makeRegrTask(data = data , target= target)
-  learnerPFI = makeLearner(learner)
-  res = resample(learner = learnerPFI, task = task, 
-               resampling = res_desc,show.info = FALSE)
-  resultPFI <- data.frame(matrix(nrow=13,ncol=1))
-    for(i in 1:10){
-    mod <- Predictor$new(model,
-                          data=d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),1:13], 
-                          y = d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),14])
-    imp <- FeatureImp$new(mod, loss = "mse" , compare = "ratio")
-    impo <- imp$results
-    impo <- impo[order(impo$feature),]
-    resultPFI[i] <- data.frame(impo$importance)
-    }
-imp.dat <- data.frame(rowSums(resultPFI)/10)
-imp.dat["features"]<- impo$feature
-colnames(imp.dat) <- c("importance","features")
-return(imp.dat)
-}
-
-bostonimp <- PFIb(Boston,"regr.randomForest","medv", rfboston)
-
-pb1 <- ggplot(data = bostonimp, aes(x=reorder(features, importance),y = importance)) +
-    geom_point(size=0, stroke = 3, shape=21, fill="blue")+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    ggtitle("mtcars PFI on Random Forest")
-
-pb1
-``` 
-
-```{r PFIreal2, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-library(corrplot)
-
-Boston["dup_lstat"] <- Boston$lstat
-
-rfBoston2 <- randomForest(medv~. , data = Boston)
-
-PFIb2 <- function(data,learner,target,model){
-  d <- data
-  task = makeRegrTask(data = data , target= target)
-  learnerPFI = makeLearner(learner)
-  res = resample(learner = learnerPFI, task = task, 
-               resampling = res_desc,show.info = FALSE)
-  resultPFI <- data.frame(matrix(nrow=14,ncol=1))
-    for(i in 1:10){
-    mod <- Predictor$new(model,
-                          data=d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),c(1:13,15)], 
-                          y = d[c(unlist(getResamplingIndices(res)$test.inds[i], use.names=FALSE)),14])
-    imp <- FeatureImp$new(mod, loss = "mse" , compare = "ratio")
-    impo <- imp$results
-    impo <- impo[order(impo$feature),]
-    resultPFI[i] <- data.frame(impo$importance)
-    }
-imp.dat <- data.frame(rowSums(resultPFI)/10)
-imp.dat["features"]<- impo$feature
-colnames(imp.dat) <- c("importance","features")
-return(imp.dat)
-}
-
-rfBostonimp <- PFIb2(Boston,"regr.randomForest","medv", rfBoston2)
-head(Boston)
-
-pb2 <- ggplot(data = rfBostonimp, aes(x= reorder(features, importance), y = importance)) +
-    geom_point( size=0, stroke = 3, shape=21, fill="blue")+
-    coord_flip() +
-    theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance MSE", x= "") + 
-    theme(text = element_text(size = 14))+
-    ggtitle("mtcars PFI on Random Forest")
-
-pb2
-
-``` 
-
-```{r arrange06, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(pb1, pb2, ncol=2, legend = "bottom", common.legend = TRUE)
-``` 
-
-
-
-
-```{r LOCOreal1, message = FALSE, eval=FALSE, fig.height=6, fig.width=12, fig.cap= "Comparison"}
-
-data("Boston", package = "MASS")
-
-rfLOCOb <- LOCO(Boston, "regr.randomForest", "medv")
-
-
-plocob1 <- ggplot(data = rfLOCOb ,aes(x=reorder(feature,importance),y = importance)) + #### hier fehler 
-  geom_point(size=0, shape=21,stroke = 3, fill="black") +
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  ggtitle("LOCO on Random Forest")
-
-plocob1
-
-``` 
-
-```{r LOCOreal2, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-
-data("Boston", package = "MASS")
-Boston["dup_lstat"] <- Boston$lstat
-rfLOCOb2 <- LOCO(Boston, "regr.randomForest", "medv")
-
-
-plocob2 <- ggplot(data = rfLOCOb2 ,aes(x=reorder(feature,importance),y = importance)) + #### hier fehler 
-  geom_point(size=0, shape=21,stroke = 3, fill="black") +
-  coord_flip() +
-  theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "Feature Importance MSE", x= "") + 
-  theme(text = element_text(size = 14))+
-  ggtitle("LOCO on Random Forest")
-
-plocob2
-
-``` 
-
-```{r arrange07, message = FALSE,eval = FALSE , fig.height=6, fig.width=12, fig.cap= "Comparison"}
-library(ggpubr)
-ggarrange(plocob1, plocob2, ncol=2, legend = "bottom", common.legend = TRUE)
-``` 
-
-
-
-## Unrealistic data instances
-
-
-
-
-
-
-
-### Real Data
 
 ## Prevention of Correlation Problems
 
 In summary, when features of a given data set are correlated, feature importance measures like LOCO or PFI can be strongly misleading. Thus, a check for correlated features before a usage of these two methods is recommended or in other words even necessary to have a credible interpretation. 
 
 * Conditional variable importance (Strobl 2008)
+* Stop Permuting features 2019
 
