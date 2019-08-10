@@ -1,8 +1,10 @@
 # PFI, LOCO and Correlated Features
 
-The method of Feature Importance is a powerful tool to gain insights of black box models assuming that the features of the given dataset are uncorrelated with each other. However, this assumption can be most of the time neglected in reality. As mentioned in chapter 1 some model agnostic tools like the interpretability of PDPs suffer from correlated features. As well as for PDPs the interpretability of Feature Importance can depend on the correlations between the input variables. If all features of  a data set are independent and not correlated, you can can calculate the the feature importance of every feature and there is no problem in the interpretability due to correlation effects. Whereas if there are some correlated feature in the data which is highly possible in reality, then the results of the feature importance do not reflect the individually feature importance. This can lead to misleading ranking of the features and thus to wrong interpretations about the relevance of a feature in a model. 
+The method of Feature Importance is a powerful tool to gain insights of black box models assuming that the features of the given dataset are uncorrelated with each other. However, this assumption can be most of the time neglected in reality. As mentioned in chapter ... some model agnostic tools like the interpretability of PDPs suffer from correlated features. As well as for PDPs the interpretability of Feature Importance can depend on the correlations between the input features. If all features of  a data set are independent and not correlated, you can can calculate the the feature importance of every feature and there is no problem in the interpretability due to correlation effects. Whereas if there are some correlated feature in the data which is highly possible in reality, then the results of the feature importance do not reflect the individually feature importance. This can lead to misleading ranking of the features and thus to wrong interpretations about the relevance of a feature in a model. 
 
 There are two main problems when you are confronted with correlated features. The following two examples illustrate these issues. The first and most crucial one is the problem of misleading ranking of correlated features. By adding a correlated feature to the data set it can lead to a decrease in Feature Importance of the feature with which it is correlated. Imagine you want to predict the risk of a heart attack by looking at the weight of a person had yesterday and other uncorrelated features. For instances, you choose a random forest model and calculate the corresponding PFI. It is well know that overweight can be a deciding influence factor for heart attacks and your model as well indicating that weight is the most important feature. What happens if you now also add the weight of the person of today which is highly correlated to the weight of a person yesterday. A big advantage of a random forest model is the application and predictive accuracy of high dimensional data sets. Even in the case of correlated features or interaction effects. So adding a new component should be no problem. However, there can be some effects on the Feature Importance that can make an interpretation more difficult. Since, now the importance kind of splits between both features. During the training of the random forest, some of the decision trees will choose the weight of today, the the weight of yesterday, both or another none of these two as a split criteria.  
+
+* high cost of getting the importance rank (maybe then only top three will be looked at)
 
 The second does seem to play a role in case of PFI. If the features are correlated it can happen in the step of shuffling on of the features that there are unrealistic instances of data points. In this case it breaks not only the association to the outcome variable, but also the association with the correlated feature. So there are cases where the new data points are unlikely all the way up to completely impossible. The question is can we still trust the informative value of the PFI, if it is calculated with data instances that are not observed in reality and therefore biased? In Figure \@ref(fig:realPFI02) illustrared an example with a possible outcome of unrealistic data instances.
 
@@ -728,16 +730,6 @@ knitr::include_graphics('images/bmr04.png', auto_pdf = getOption("knitr.graphics
 
 
 
-
-
-
-
-
-
-
-
-
-
 ```{r PFI07, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
 library(ggplot2)
 load("data/drf3PFI.RData")
@@ -783,9 +775,9 @@ ggarrange(prf3err, prfrank07 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
+On first sight comparing $X_3$ with $X_4$ you can see that the features inside the the sine function are ranked not as important as the linear ones. However, in case of high correlation feature $X1$ gains drastically in importance. It goes that far as the $X1$ has the almost the same importance rank as the features wih a linear dependence. It makes the impression as if the importance value of $X1$ adapt to the value of $X2$. Once more the importance the PFI evaluates the importance rank wrong. 
 
-
-The features inside the sine function are ranked not as important as the linear one (see $X_3$ vs. $X_4$), but with high correlation the feature with sine function gets ranked higher (see $X_1$)
+reference to the figure is missing
 
 
 
@@ -833,6 +825,14 @@ library(ggpubr)
 ggarrange(psvm3err, psvmrank08 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
+
+only x1 in high correlatin changes in comarison to the one seen before
+
+
+
+
+
+
 
 
 ```{r PFI09, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
@@ -883,6 +883,8 @@ ggarrange(plm3err, plmrank09 , ncol=2, legend = "bottom", widths = c(2, 1))
 Same observation as in case of the linear dependence
 Only the features inside the sine function are ranked lower than normal linear dependence to $y$
 
+lm showing no reaction
+
 
 
 ```{r LOCO07, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
@@ -926,7 +928,8 @@ ggarrange(ploco3err, plocorank07 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
-
+sine does not increase much
+whereas x4 increases much
 
 
 
@@ -1025,8 +1028,103 @@ ggarrange(plocolm3err, plocorank09 , ncol=2, legend = "bottom", widths = c(2, 1)
 
 
 
+In order to show the problems rasising from correlated features on Feature Importance on a real data set, we will look at the “Boston” data set, which available in R via the MASS package. To make the results a little bit more feasible and clearer, we only look at a subset of the data. Of the original 13 features we pciked out 6. 
+
+*looked at it before in the introduction chaapter ...
+
+To predict the house price, seven variables are included, whereby as the results show, the PFIs vary substantially across the variables.
+
+The following variables are consiedered part of the subset:
+
+    DIS   - weighted distances to five Boston employment centres
+    AGE   - proportion of owner-occupied units built prior to 1940
+    NOX   - nitric oxides concentration (parts per 10 million)
+    CRIM  - per capita crime rate by town
+    RM    - average number of rooms per dwelling
+    LSTAT - % lower status of the population
+    
+    MEDV  - target: Median value of owner-occupied homes in $1000's
+
+Reference: The data was originally published by Harrison, D. and Rubinfeld, D.L. `Hedonic prices and the demand for clean air', J. Environ. Economics & Management, vol.5, 81-102, 1978. 
 
 
+First of all take a look at the benchmark results. They show the best result meaning the lowest MSE for the random forest. As the Features importance is made to interpret black box models like the random forest as well as it has shown multiple complications in our simulation, we focus here on the random forest. 
+
+```{r Boston01, message = FALSE, echo = FALSE, eval=FALSE,  fig.height=6, fig.width=10, fig.cap= "Correlation Plots of Boston data set"}
+library(corrplot)
+load("data/Boston.RData")
+corrplot.mixed(cor(Boston),lower="circle",upper="number", tl.cex = 1.7, number.font = 1, tl.pos="lt", number.cex=1.25)
+
+```
+
+
+```{r bmrBoston,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
+knitr::include_graphics("images/bmreal.png")
+```
+
+
+
+```{r PFIBoston01,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
+load("data/BostonPFI01.RData")
+
+pb1 <- ggplot(data = BostonPFI01, aes(x= reorder(features, importance), y = importance, ymin= minimp, ymax=maximp)) +
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  theme(text = element_text(size = 20))+
+  theme(
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                    colour = "white"), 
+    panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                    colour = "white"))+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+```
+
+
+```{r PFIBoston02,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
+load("data/BostonPFI02.RData")
+
+pb2 <- ggplot(data = BostonPFI02, aes(x= reorder(features, importance), y = importance, ymin= minimp, ymax=maximp)) +
+  geom_point(fill = "white",size=0, shape=21 , 
+             stroke= 2.5, show.legend = TRUE) +
+  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "PFI (Loss: MSE)", x= "") + 
+  theme(text = element_text(size = 20))+
+  theme(panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                    colour = "white"), 
+    panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                    colour = "white"))+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+```
+
+```{r arrange19, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+library(ggpubr)
+ggarrange(pb1, pb2 , ncol=2, widths = c(1, 1))
+
+```
+
+
+
+
+
+
+
+An easy way to get a perfectly multicollinear feature is by duplicating a feature. In this case the correlation is eqaul to 1. Adding the duplicate to the given data set can show us how it effects the Feature Importance. 
+
+
+FOR PFI:
+
+By duplicating the feature “lstat” and repeating PFI, one can see that ${dup\_lstat}$ and ${lstat}$ are equally important. They share as a rule of thumb the PFI of $\em{lstat}$ in the non-duplicating case (before: ${lstat}$ = 4.79 after: ${dup\_lstat}$ = 2.42 ${lstat}$ = 2.39)
+This makes sense as equally important features should be considered as a split with the same probability (here 50 percent)
 
 
 ## Prevention of Correlation Problems
@@ -1038,6 +1136,8 @@ In summary, when features of a given data set are correlated, feature importance
 
 ## Conclusion
 
+categorical features, classification task, number of observation, erro terms you can play with
+
 
 The results of the present simulation demonstrate that..
 
@@ -1048,5 +1148,7 @@ Think about correlation effects if you analyze data in conjunction with Feature 
 Do a correlation analysis before naively calculating Feature Importance
 
 As can be seen from the real data application,  as well support the thesis ...  
+
+* you can not say which Feature Importance is better. Both have downsides, upside like robustness ect.
 
 
