@@ -1106,7 +1106,7 @@ pb2 <- ggplot(data = BostonPFI02, aes(x= reorder(features, importance), y = impo
 
 ```
 
-```{r arrange19, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+```{r arrange19, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI on Boston Housing data set"}
 library(ggpubr)
 ggarrange(pb1, pb2 , ncol=2, widths = c(1, 1))
 
@@ -1123,7 +1123,7 @@ An easy way to get a perfectly multicollinear feature is by duplicating a featur
 
 FOR PFI:
 
-By duplicating the feature “lstat” and repeating PFI, one can see that ${dup\_lstat}$ and ${lstat}$ are equally important. They share as a rule of thumb the PFI of $\em{lstat}$ in the non-duplicating case (before: ${lstat}$ = 4.79 after: ${dup\_lstat}$ = 2.42 ${lstat}$ = 2.39)
+By duplicating the feature “lstat” and repeating PFI, one can see that $duplstat$ and $lstat$ are equally important. They share as a rule of thumb the PFI of ${lstat}$ in the non-duplicating case (before: $lstat$ = 4.79 after: $duplstat$ = 2.42 $lstat$ = 2.39)
 This makes sense as equally important features should be considered as a split with the same probability (here 50 percent)
 
 
