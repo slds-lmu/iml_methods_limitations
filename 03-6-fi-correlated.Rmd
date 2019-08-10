@@ -25,7 +25,7 @@ In this chapter we want to take a closer look at the problem of the interpretati
 
 ### Simulation 
 
-A good way to show the effects of correlated features on the feature importance measures is to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. For the complete R Code please refer to .... 
+A good way to show the effects of correlated features on the feature importance measures is to simulate some data with the desired dependence. This allows us to show the effects on the PFI and LOCO feature Importance more precise than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect it is neccessary to hold the influence of other features as small as possible, so there will be no misinterpretations. For the complete R Code please refer to .... There are even some more simulations than shown here. 
 
 
 This is done by looking at the behaviour of PFI and LOCO Feature Importance when the feature of the given data set are correlated with each other. To get a better understanding there will be a change in the intensity of the correlation of the features as well as in the complexity of the learning algorithms. The random forest is in this context a black box model (hard to interpret), the linear model a white boxx model (easy to interpret) and the sipport vector maschine something in between both. These algorithms should show a different behavior.
@@ -68,7 +68,7 @@ y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
 $$
 
 
-In order to get meaningful results one has to check whether the underlying model were proved to be accurate. In case your model does not generalize accurately the Feature Importance can vary greatly when rerunning the alogorithms and therefore the results are not significant. In Figure \@ref(fig:bmr01) there is a benchmark result over all learning algorithms used on the simulated data sets. As a performance measure we decided to show on the one hand the mean squared error (MSE), since is also used a Loss measure for evaluating the Feature Importance. The value should be a low a possible. On the other hand $R^2$ as it is a common measure for linear models and since we have a linear dependence of the features on the target value it makes sense to have a look at. A $R^2 = 1$ implies that all residuals are zero, so a perfect prediction. Whereas a $R^2 = 0$ means that we predict as bad as a constant. As you can see in Figure \@ref(fig:bmr01) all learning algorithms have very good up to perfect results in other words are accurate. The random forest is considered as the worst of the algorithms at hand. That is not suprising as the random forest is not the best learning algorithm if the true prediction function is linear, since it learns multiple decision trees which implies multiple step functions. The linear model is by far the best which makes absolut sense as we have a linear dependence.
+In order to get meaningful results one has to check whether the underlying model were proved to be accurate. In case your model does not generalize accurately the Feature Importance can vary greatly when rerunning the alogorithms and therefore the results are not significant. In Figure \@ref(fig:bmr01) there is a benchmark result over all learning algorithms used on the simulated data sets with independence, medium and high correlation. As a performance measure we decided to show on the one hand the mean squared error (MSE), since is also used a Loss measure for evaluating the Feature Importance. The value should be a low a possible. On the other hand $R^2$ as it is a common measure for linear models and since we have a linear dependence of the features on the target value it makes sense to have a look at. A $R^2 = 1$ implies that all residuals are zero, so a perfect prediction. Whereas a $R^2 = 0$ means that we predict as bad as a constant. As you can see in Figure \@ref(fig:bmr01) all learning algorithms have very good up to perfect results in other words are accurate. The random forest is considered as the worst of the algorithms at hand. That is not suprising as the random forest is not the best learning algorithm if the true prediction function is linear, since it learns multiple decision trees which implies multiple step functions. The linear model is by far the best which makes absolut sense as we have a linear dependence.
 
 
 ```{r bmr01, echo=FALSE, out.width='100%', fig.cap="Benchmark of Scenario 1", fig.align='center'}
@@ -169,11 +169,12 @@ ggarrange(exp01, exp, ncol=2, legend = "bottom")
 ```
 
 Altough all features have the same influence on the target value, one can see that PFI can be misleading as it shows a higher PFI rank the higher the correlation between two features. One possible explanation is given by .... 
-They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure \@ref(fig:arrangeexp) shows on the left the random forest applied on the simulated data set with independent features and on the rightapplied on the one with high correlated features. On the first sight you cannot see a structure in the data distribution in the independent case. Furthermore, the data points fill out much more space in comparison (uniformly distributed) to the correlated case. Here one can see a clear postive correaltion between $X1$ and $X2$. For instance, if you permute one observation of $X1$ represented by the white arrow, the permute observation points is still near the data distribution in the independent case. However, in the correlated case the is absolut no other data points nearby. The data distribution of the training data lies on the diagonal. The region outside was not learned well enough by the random forest shown by the less rectangle lines in this area. So the random forest will predict the average of this area, which are vertical lines tring to predict the red area and horizontal lines tring to predict the blue area. The larger span of the quantile bands can be explained by the randomly permuting the data points. If the observation is still close to the data distribution after permuting it. The error made is less strong as in the example in the plot. So the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up the extrapolation problem of the random forest is associated with the correlation intensity.
+They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure \@ref(fig:arrangeexp) shows on the left the random forest applied on the simulated data set with independent features and on the rightapplied on the one with high correlated features. On the first sight you cannot see a structure in the data distribution in the independent case. Furthermore, the data points fill out much more space in comparison (uniformly distributed) to the correlated case. Here one can see a clear postive correaltion between $X1$ and $X2$. For instance, if you permute one observation of $X1$ represented by the white arrow, the permute observation points is still near the data distribution in the independent case. However, in the correlated case the is absolut no other data points nearby. The data distribution of the training data lies on the diagonal (bisector). The region outside was not learned well enough by the random forest shown by the less rectangle lines in this area. So the random forest will predict the average of this area, which are vertical lines tring to predict the red area and horizontal lines tring to predict the blue area. The larger span of the quantile bands can be explained by the randomly permuting the data points. If the observation is still close to the data distribution after permuting it. The error made is less strong as in the example in the plot. So the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up the extrapolation problem of the random forest is associated with the correlation intensity.
 
 Quelle: Stop Permuting
 
 * point cloud
+* you see that the point is still in the blue shaded area
 
 
 ```{r PFI02, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
@@ -214,13 +215,16 @@ psvmrank01 <- ggplot(dsvmPFI, aes(x=averagerank , y=Corr, colour = features, gro
 
 
 
-```{r arrange02, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features 1 and 2 on SVM"}
+```{r arrange02, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI with different correlations of features $X1$ and $X2$ on SVM"}
 library(ggpubr)
 ggarrange(psvmerr, psvmrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
-The next Figure \@ref(fig:arrange02) demonstrates the application of the support vector maschines. 
+The next Figure \@ref(fig:arrange02) demonstrates the application of the support vector maschines. Again, we have the same results that across the independence case the importnace values and quantile bands are similar as well as the average rank fluctuates around the overall avergage rank. 
+
+
+The PFI of the low correlated data set drops in comparison to the independent data set
 
 
 
@@ -274,6 +278,7 @@ ggarrange(plmerr, plmrank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 When applying PFI on the linear model the ranking of the features vary a lot, because the importance values for each correlation intensity are very close to each other. You can see that the ranking is very random. One intersting fact is the higher the correlation the lower get the Feature Importance values (is there a possible explantion for that?). As you can see are the values of PFI quite large. As mentioned before (\@ref(fig:bmr01)) the MSE values of the linear model are close to zero. The linear performs unsuprisingly very well. In the caculation progress we take the ratio of the estimated error based on the predictions of the permuted data divided by the estimation of the original model error. Here the value of numerator is very small and the value of denominator near zero which means we are getting a grate value for PFI. If we would increase the error term $\epsilon_{i}$ the PFI value would shrink, since the MSE would be higher. 
 
+* Lm kind of robust against correlation with regard to importance rank
 
 
 
@@ -297,7 +302,7 @@ plocoerr <- ggplot(data = drfLOCO, aes(x=features, y= importance, colour = Corr,
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 
@@ -325,9 +330,7 @@ ggarrange(plocoerr, plocorank01 , ncol=2, legend = "bottom", widths = c(2, 1))
 ```
 
 
-
-
-
+In contrast to the PFI, there is a drop in LOCO Feature Importance of the two features $X1$ and $X2$ the higher the correlation gets. In the case of almost perfect multicollinearity, the value drops almost to 1. This indicates in terms of ratio comparison of the errors that there is no influence on the performance prediction on the model. Here we see the downside of correlation with respect to LOCO. Both features should generally be considered as influential. However, both are almost perfect multicollinear, so if you leave one of the features out of consideration to calculate the LOCO Feature Importance, the other feature can kind of "pick up" these effects on the target variable. So there will be no change in the error which implies we divide two values which are barely the same. Another noteworthy result is there is also kind of a compensation effect. The importance values for $X3$ and $X4$ increase as the correlation of $X1$ and $X2$ goes up. According to the righlt plot of Figure \@ref(fig:arrange04), the average rank till $\rho = 0.5$ of all features fluctuates a lot, for larger values you can recognize a tendency of higher average rank for the uncorrelated features and a lower avergae rank for the correlated features. Bascically, it is exactly the opposite what we observe for PFI on the random forest.
 
 
 
@@ -344,7 +347,7 @@ plocosvmerr <- ggplot(data = dsvmLOCO, aes(x=features, y= importance, colour = C
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 ```{r LOCOrank02, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
@@ -370,8 +373,7 @@ ggarrange(plocosvmerr, plocorank02 , ncol=2, legend = "bottom", widths = c(2, 1)
 
 ```
 
-
-
+One of the main similarities of the almost perfectly correlated on every learning algorithm is that the Feature Importance values are dropping to 1 or 0 depending on whether you take the ratio or the difference of the estimated errors. In comaprison to the random forest yoe can not regognize a compensation effect of the uncorrelated features. The Figure \@ref(fig:arrange05) reveals that under independence the quantile bands are very large whereas under high correlation they are getting smaller up to hardly discernible. 
 
 
 ```{r LOCOlm, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
@@ -389,7 +391,7 @@ plocolmerr <- ggplot(data = dlmLOCO, aes(x=features, y= importance, colour = Cor
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 
@@ -416,13 +418,14 @@ ggarrange(plocolmerr, plocorank03 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
+Given LOCO Feature Importance applied on the linear model (Figure\@ref(fig:arrange06)). Obviously, the LOCO value very high again, because the same instance applies as in the case of PFI on the linear model. 
 
-
+* one more sentence expressing that nothing new is happening here
 
 
 **2) Linear Dependence with bigger influence factors:**
 
-The second scenario setting the dependence of the features $X_i$ on the target value $y$ is also a linear one, but with a small change in the coefficient of $X4$ from $1$ to $1.2$: 
+The second scenario setting the dependence of the features $X_i$ on the target value $y$ is also a linear one, but with a small change in the coefficient of $X4$ from $1$ to $1.2$. As a result there is now a bigger influence of this feature on the target: 
 
 
 $$
@@ -474,7 +477,7 @@ ggarrange(prf2err, prfrank04 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
 
-Again, ...
+The Figure \@ref(fig:arrange07) represents exactly a common problem of PFI and random forest in case of high correlation. As noted $X4$ has a higher influence on the target value. Nevertheless, one can notice a possibility that the PFI of $X_1$ and $X_2$ are considered as more important than $X_4$. Consequently, there is a misleading importance rank which can lead to misinterpreations. This can also be confirmed by the right plot as the average rank decreases represented by the light green line and stays below the average rank of $X_1$ and $X_2$ represented by the two red curves. 
 
 
 
@@ -521,6 +524,9 @@ library(ggpubr)
 ggarrange(psvm2err, psvmrank05 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
+
+
+Figure \@ref(fig:arrange08) and Figure \@ref(fig:arrange09) depicts that there are no misleading importance ranking for the SVM as well as the linear model wih respect to $X4$. As expected $X4$ has a higher overall importance rank and the other feautures are more or less equally important. There is a clearly defined pattern in the average rank plots, the graphs show a plateau at the average rank level of $1$ for feature $X4$ and this can be taken to mean that both models consider the right importance for feature $X4$ as expeccted. The main difference between SVM and LM is that they show both thier typical appearance for PFI as decribed in scenario 1 before.
 
 
 ```{r PFI06, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="PFI with different correlations of features 1 and 2 on a linear model"}
@@ -581,7 +587,7 @@ ploco2err <- ggplot(data = drf2LOCO, aes(x=features, y= importance, colour = Cor
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 
@@ -609,10 +615,7 @@ ggarrange(ploco2err, plocorank04 , ncol=2, legend = "bottom", widths = c(2, 1))
 ```
 
 
-
-
-
-
+The LOCO Feature Importance remains indifferent by the matter of an increase of the $X4$ coefficient. As seen before the PFI and LOCO have opposite effects. Genrally speaking, the plots showing the same main problem of LOCO as before with a small change such that $X_4$ gets a higher importance ranking as expected. (formulation a bit off) This can be shown again by the plateau of the average importance rank for $X4$ represented by the light green line.
 
 
 ```{r LOCO05, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on SVM"}
@@ -628,7 +631,7 @@ plocosvm2err <- ggplot(data = dsvm2LOCO, aes(x=features, y= importance, colour =
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 ```{r LOCOrank05, message = FALSE, echo = FALSE ,fig.height=6, fig.width=12, fig.cap="LOCO Feature Importance with different kind of correlation intensity on a linear model"}
@@ -654,7 +657,8 @@ ggarrange(plocosvm2err, plocorank05 , ncol=2, legend = "bottom", widths = c(2, 1
 
 ```
 
-
+* nothing real special 
+* maybe throwing out this figure
 
 
 
@@ -673,7 +677,7 @@ plocolm2err <- ggplot(data = dlm2LOCO, aes(x=features, y= importance, colour = C
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75"="navy", "0.99" = "black"))+
   theme(plot.subtitle = element_text(size = 9), text = element_text(size = 14), legend.position="bottom") +
-  labs(y = "PFI (Loss: MSE)", x= "")
+  labs(y = "LOCO (Loss: MSE)", x= "")
 ```
 
 
@@ -701,7 +705,8 @@ ggarrange(plocolm2err, plocorank06 , ncol=2, legend = "bottom", widths = c(2, 1)
 ```
 
 
-
+* nothing real special 
+* maybe throwing out this figure
 
 
 **3) Nonlinear Dependence:**
@@ -709,10 +714,29 @@ ggarrange(plocolm2err, plocorank06 , ncol=2, legend = "bottom", widths = c(2, 1)
 In the third scenario there is no pure linear relationship between the target value $y$ and the features $X_{i}$. $X1$ and $X3$ are pluged into the sine function: 
 
 
-
 $$
 y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
 $$
+
+
+Within Figure \@ref(fig:bmr04) is contained that now the linear asssociation of the features on the target value is broken. One consequence of this break is that the linear model is no longer identified as the best model. The benchmark results indicating the SVM as the best performing learning algorithm. Still the randomforest is performing worse in comparison to the others. All in all we have accuarate model again, so we can investigate the effects on corerlation on the Feature Importance.
+
+
+```{r bmr04, echo=FALSE, out.width='100%', fig.cap="Benchmark of Scenario 3", fig.align='center'}
+knitr::include_graphics('images/bmr04.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r PFI07, message = FALSE, echo = FALSE, fig.height=6, fig.width=12, fig.cap= "PFI with different correlations of features 1 and 2 on a random forest model"}
 library(ggplot2)
@@ -758,6 +782,11 @@ library(ggpubr)
 ggarrange(prf3err, prfrank07 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
+
+
+
+The features inside the sine function are ranked not as important as the linear one (see $X_3$ vs. $X_4$), but with high correlation the feature with sine function gets ranked higher (see $X_1$)
+
 
 
 
@@ -848,6 +877,12 @@ library(ggpubr)
 ggarrange(plm3err, plmrank09 , ncol=2, legend = "bottom", widths = c(2, 1))
 
 ```
+
+
+
+Same observation as in case of the linear dependence
+Only the features inside the sine function are ranked lower than normal linear dependence to $y$
+
 
 
 ```{r LOCO07, message = FALSE,echo = FALSE , fig.height=6, fig.width=12, fig.cap= "LOCO Feature Importance with different kind of correlation intensity on a random forest model"}
@@ -1000,4 +1035,18 @@ In summary, when features of a given data set are correlated, feature importance
 
 * Conditional variable importance (Strobl 2008)
 * Stop Permuting features 2019
+
+## Conclusion
+
+
+The results of the present simulation demonstrate that..
+
+PFI and LOCO can be misleading, if you are unobservant
+Calculating Feature Importance for simple models like the Linear Model are not strongly effected by correlation 
+Especially calculating Feature Importance of black box models like random forest are susceptible to correlation effects
+Think about correlation effects if you analyze data in conjunction with Feature Importance
+Do a correlation analysis before naively calculating Feature Importance
+
+As can be seen from the real data application,  as well support the thesis ...  
+
 
