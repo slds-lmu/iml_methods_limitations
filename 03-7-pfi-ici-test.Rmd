@@ -6,7 +6,7 @@ output: html_document
 header-includes:
   - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 ---
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 

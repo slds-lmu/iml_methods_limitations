@@ -21,7 +21,7 @@ library(MASS)
 library(tidyverse)
 library(mlr)
 library(featureImportance)
-
+library(sfsmisc)
 source("dICE.R")
 
 ## Load Boston Housing Data
@@ -178,12 +178,12 @@ dICI_plot <- function(data, feature){
   
   ## ggplot per feature again with lapply ?
   pp1 <- ggplot(data, aes(feature.value, delta_f)) +
-    geom_line(group = row.id)
-  pp2 <- ggplot() +
-    geom_line()
+            geom_line(group = data$row.id) + 
+            ggtitle(paste("Approximated Numerical Derivative of", feature))
+  return(pp1)
   
   ## the amount of rows and columns should be specified based on the number of features
-  grid.arrange(pp1, pp2, nrow = 1) ## amount of rows to be specified!!
+  ##grid.arrange(pp1, pp2, nrow = 1) ## amount of rows to be specified!!
   
 }
 
@@ -206,33 +206,6 @@ pp_dataBoston_dICI_age
 
 
 
-
-######### Code snippets
-
-finite.differences_raw <- function(x, y) {
-  if (length(x) != length(y)) {
-    stop('x and y vectors must have equal length')
-  }
-  
-  n <- length(x)
-  
-  # Initialize a vector of length n to enter the derivative approximations
-  fdx <- vector(length = n)
-  
-  # Iterate through the values using the forward differencing method
-  for (i in 2:n) {
-    fdx[i-1] <- (y[i-1] - y[i]) / (x[i-1] - x[i])
-  }
-  
-  # For the last value, since we are unable to perform the forward differencing method 
-  # as only the first n values are known, we use the backward differencing approach
-  # instead. Note this will essentially give the same value as the last iteration 
-  # in the forward differencing method, but it is used as an approximation as we 
-  # don't have any more information
-  fdx[n] <- (y[n] - y[n - 1]) / (x[n] - x[n - 1])
-  
-  return(fdx)
-}
 
 
 

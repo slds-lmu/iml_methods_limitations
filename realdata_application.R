@@ -98,15 +98,54 @@ ici_BH_test.integral <- ici_BH_test[, lapply(.SD, mean, na.rm = TRUE), .SDcols =
 ## Interaction Detection 
 
 interaction_BH <- PFI_interaction_identifier(pfi = pfi_BH, data = test, mid = "mse", features = c("lstat", "rm", "age"), model = "Decision Tree", tree_depth = 1)
-interaction_BH_rf <- PFI_interaction_identifier(pfi = pfi_BH, data = test, mid = "mse", features = c("lstat", "rm", "age"), model = "RandomForest", n_tree = 50)
+interaction_BH_rf <- PFI_interaction_identifier(pfi = pfi_BH, data = test, mid = "mse", features = "lstat", model = "RandomForest", n_tree = 50)
 
-interaction
+
 
 ## plot 
 
-inter_BH_age_model <- interaction_BH$model_results["age"]
-plot(as.party(inter_BH_age_model))
+inter_BH_lstat_model <- interaction_BH$model_results.lstat
+plot(as.party(inter_BH_lstat_model))
 plot(as.party(interaction_BH$model_results["age"]))
+
+
+lstat_imp <- varImpPlot(interaction_BH_rf$mod.learner.model)
+
+# this part just creates the data.frame for the plot part
+
+lstat_imp <- as.data.frame(lstat_imp)
+lstat_imp$varnames <- rownames(lstat_imp) # row names to column
+rownames(lstat_imp) <- NULL  
+lstat_imp$var_categ <- rep(1, 12) # random var category
+
+# this is the plot part, be sure to use reorder with the correct measure name
+
+ggplot(lstat_imp, aes(x=reorder(varnames, IncNodePurity), weight=IncNodePurity, fill=as.factor(var_categ))) + 
+  geom_bar() +
+  scale_fill_discrete(name="Variable Group") +
+  ylab("IncNodePurity") +
+  xlab("Variable Name")
+
+
+importance_lstat    <- importance(interaction_BH_rf$mod.learner.model)
+varImportance_lstat <- data.frame(Variables = row.names(importance_lstat), 
+                            Importance = round(importance_lstat[ ,'IncNodePurity'],2))
+
+#Create a rank variable based on importance
+rankImportance_lstat <- varImportance_lstat %>%
+  mutate(Rank = paste0('#',dense_rank(desc(Importance))))
+
+#Use ggplot2 to visualize the relative importance of variables
+ggplot(rankImportance_lstat, aes(x = reorder(Variables, Importance), 
+                           y = Importance, fill = Importance)) +
+  geom_bar(stat='identity') + 
+  geom_text(aes(x = Variables, y = 0.5, label = Rank),
+            hjust=0, vjust=0.55, size = 4, colour = 'red') +
+  labs(x = 'Variables') +
+  coord_flip() #+ 
+  #theme_few()
+
+
 
 
 

@@ -132,15 +132,19 @@ grid.arrange(pi.curve_sim1, ici.curves_sim1, nrow = 1)
 ## Calculate derivative ICI
 dICI_sim1 <- dICI(data = pfi_sim1, feature = "X_2", measure = "mse")
 
-dICI_sim_dev2 <- dICI_2(data = pfi_sim1, feature = "X_2", measure = "mse")
+dICI_sim_dev2_test <- dICI_2(data = pfi_sim1, feature = "X_2", measure = "mse")
 
 
 ##plot dICI
-dICI_sim1_plot <- dICI_plot(dICI_sim1, feature = "X_2")
-dICI_sim1_dev2_plot <- dICI_plot(dICI_sim_dev2, feature = "X_2")
+dICI_sim1_plot_test <- dICI_plot(dICI_sim1, feature = "X_2")
+dICI_sim1_dev2_plot_test <- dICI_plot(dICI_sim_dev2_test, feature = "X_2")
 
 
 ## Identify/Explain Interactions
+
+Inter_sim1_rf <- PFI_interaction_identifier(pfi = pfi_sim1, data = test_sim1, mid = "mse", features = "X_2", model = "RandomForest", n_tree = 50)
+
+varimp_sim1_plot <- varImpPlot(Inter_sim1_rf$mod.learner.model)
 
 Inter_sim1 <- PFI_interaction_identifier(pfi_sim1, test_sim1, features = "X_2", mid = "mse", model = "Decision Tree", tree_depth = 1)
 
@@ -316,8 +320,8 @@ grid.arrange(pi.curve_sim4, ici.curves_sim4, nrow = 1)
 
 
 
-dICI_sim4_dev2 <- dICI_2(data = pfi_sim4, feature = "W_2", measure = "mse")
-dICI_sim4_dev2_plot <- dICI_plot(dICI_sim4_dev2, feature = "W_2")
+dICI_sim4_dev2_test <- dICI_2(data = pfi_sim4, feature = "W_2", measure = "mse")
+dICI_sim4_dev2_plot_test <- dICI_plot(dICI_sim4_dev2_test, feature = "W_2")
 
 
 ########## Simulation with non-linear relationship and interaction effect
@@ -409,6 +413,15 @@ ici.curves_sim6 <- plotImportance(pfi_sim6, feat ="T_2", mid = "mse", individual
   geom_line(data = ici.obs_sim6, aes(color = factor(row.id), group = row.id)) +
   theme(legend.position = "none")
 grid.arrange(pi.curve_sim6, ici.curves_sim6, nrow = 1)
+
+
+
+## plot d-ICI curves
+
+
+dICI_sim6_dev2 <- dICI_2(data = pfi_sim6, feature = "T_2", measure = "mse")
+dICI_sim6_dev2_plot <- dICI_plot(dICI_sim6_dev2, feature = "T_2")
+
 
 
 sin_test_list <- c(seq(-12, 12, 0.5))

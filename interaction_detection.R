@@ -190,7 +190,8 @@ PFI_interaction_identifier_2 <- function(pfi, data, features, mid = "mse", model
   
   if(model == "RandomForest"){
     
-  importance <- list(length(n_features))  
+  importance <- list(length(n_features))
+  importance_plot <- list(length(n_features))
     
     for(feat in features){
       var_imp <- paste0("imp", feat)
@@ -198,16 +199,18 @@ PFI_interaction_identifier_2 <- function(pfi, data, features, mid = "mse", model
       var_predict <- paste(unique(pfi$features)[-var_index_pfi], collapse = " + ")
       
       
-      formular[[feat]] <- paste(var_imp, " ~ ", var_predict)
-      model_results[[feat]] <- randomForest(formular[[feat]], data = data, n_tree = n_tree, importance = TRUE)
-      importance[[feat]] <- importance(model_results[[feat]])
+      formular[feat] <- paste(var_imp, " ~ ", var_predict)
+      model_results[feat] <- randomForest(formular[feat], data = data, n_tree = n_tree, keep.forest =  FALSE,  importance = TRUE)
+      importance[feat] <- importance(model_results[feat])
+      importance_plot[feat] <- varImpPlot(model_results[feat])
       
     }
   
-  print(var_predict)
-  print(model_results)
-  print(importance)
-  return(model_results)
+    print(formular)
+    print(model_results)
+    print(importance_plot)
+    return(importance)
+    #return(model_results)
   
   }
     
@@ -251,6 +254,15 @@ plot_interaction_detect <- function(data, feature, method){
 
 
 
+  
+  
+
+data(mtcars)
+mtcars.rf <- randomForest(mpg ~ ., data=mtcars, ntree=1000, keep.forest=FALSE, importance=TRUE)
+varImpPlot(mtcars.rf)  
+  
+  
+  
 
 
 ###############################################################################################################
