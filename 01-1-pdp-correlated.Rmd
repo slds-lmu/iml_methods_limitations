@@ -18,7 +18,7 @@ The reliability of the produced curves, however, strongly builds on the independ
 
 When looking at PDPs, one should bear in mind that by definition the partial dependence function does not reflect the isolated effect of $x_S$ while the features in $x_C$ are ignored. This approach would correspond to the conditional expectation $\tilde{f}_S(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)|x_S]$, which is only congruent to the partial dependence function $f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]$ in case of $x_S$ and $x_C$ being independent.\citep{hastie2013elements}  
 
-Although unlikely in many practical applications, the independence of feature variables is one of the major assumptions to produce meaningful PDPs. Its violation would mean that, when calculating averages of the features in $x_C$, the estimated partial dependence function $\hat{f}_{x_S}(x_S)$ takes unrealistic data points into consideration.\citep{molnar2019}  
+Although unlikely in many practical applications, the independence of feature variables is one of the major assumptions to produce meaningful PDPs. Its violation would mean that, by calculating averages of the features in $x_C$, the estimated partial dependence function $\hat{f}_{x_S}(x_S)$ takes unrealistic data points into consideration.\citep{molnar2019}  
 
 Figure \@ref(fig:Figure01) illustrates the problem by contrasting simulated data with independent features $x_1$ and $x_2$ on the left with an example where the two features have a strong linear dependency, and thus are highly correlated, on the right.  
 
@@ -35,7 +35,7 @@ On the other hand, PDPs are also directly exposed to extrapolation problems due 
 
 In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter \@ref(ExtrapolationProblemEstablished). The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
 
-```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations both the value of $x_1$ and $x_2$ lies between 0 and 1.5 have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
+```{r Figure02, echo=FALSE, out.width='100%', fig.cap="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations where both the value of $x_1$ and $x_2$ lies between 0 and 1.5 have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case."}
 knitr::include_graphics('images/VK_PDP_2_Data_ind_dep_gap.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -162,7 +162,7 @@ At the same time, for each of those scenarios, three different learning algorith
 ### Dependency between Numerical Features 
 The linear dependency between two numerical features can be measured by the Pearson correlation coefficient.\citep{fahrmeir2016statistik} Figure \@ref(fig:Figure03) shows the correlation matrix of all numerical features used in our analysis. It is striking, but certainly not surprising, that 'temp' and 'atemp' are strongly correlated, not to say almost perfectly collinear.  
 
-```{r Figure03, echo=FALSE, out.width='60%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
+```{r Figure03, echo=FALSE, out.width='80%', fig.cap="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_3_Num_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -201,7 +201,7 @@ In all cases, we can see that the features' effect on the prediction is basicall
 ### Dependency between Categorical Features
 In order to measure the association between two categorical features, we calculate the corrected contingency coefficient, which is based on the $\chi^2$-statistic. Other than the Pearson correlation coefficient, the corrected contingency coefficient is a measure of association $\in [0,1]$ which can only indicate the strength but not the direction of the variables' relationship.\citep{fahrmeir2016statistik} For the categorical features in the Bike-Sharing dataset, we observe the values stated in figure \@ref(fig:Figure07).
 
-```{r Figure07, echo=FALSE, out.width='60%', fig.cap="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.", fig.align='center'}
+```{r Figure07, echo=FALSE, out.width='80%', fig.cap="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_7_Cat_Correlation_Matrix.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
@@ -473,17 +473,17 @@ A major disadvantage of the analysis of PDPs on the basis of real data examples 
 ### Simulation Settings: Numerical Features
 For a start, the different settings of simulations used for our investigation shall be introduced. Just like in chapter 2, we are seperately looking at different classes of variables and different machine learning algorithms (LM, RF and SVM). PDPs for independent, correlated and dependent numerical features are computed for each of the following data generating processes (DGP), which describe the true impact of the features on $y$:  
 
-* Setting 1: Linear Dependence:
+* Setting 1: Linear Dependence:  
 \begin{equation}
 y = x_1 + x_2 + x_3 + \varepsilon (\#eq:10)
 \end{equation}
 
-* Setting 2: Nonlinear Dependence in $x_1$:
+* Setting 2: Nonlinear Dependence in $x_1$:  
 \begin{equation}
 y = \sin{( \, 3*x_1 ) \,} + x_2 + x_3 + \varepsilon (\#eq:11)
 \end{equation}
 
-* Setting 3: Missing informative feature $x_3$ 
+* Setting 3: Missing informative feature $x_3$  
 \begin{equation}
 y = x_1 + x_2 + x_3 + \varepsilon (\#eq:12)
 \end{equation} with $x_3$ relevant for the DGP but unconsidered in the machine learning model.  
@@ -1742,6 +1742,6 @@ ggarrange(p1, p2, p3, ncol=3)
 ## Summary
 Our analysis of Partial Dependence Plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. Hooker and Mentch (2019) propose to make use of local explanation methods in order to avoid extrapolation. ICE plots, as an example, can be restricted to values in line with the distribution of observed data. However, the authors also point out that this approach cannot serve as a global representation of the learned model.\citep{2019arXiv190503151H}  
 
-In our simulations, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependence of features. Further to the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
+In our simulations, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependency of features. Further to the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
 
 In practical applications it is recommended to analyse the variables used in the model, both by means of correlation and/or association measures and content-wise in liason with experts having domain knowledge. Furthermore, data scientists can apply methods based on the conditional expectation, such as M-plots or ALE plots. The concept and limitations of the latter will be discussed in chapters 6-8 of this book. 
