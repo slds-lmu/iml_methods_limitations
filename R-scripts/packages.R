@@ -7,7 +7,8 @@ required_packages <- c("devtools",
                        "readr",
                        "randomForest",
                        "earth", 
-                       "MASS")
+                       "MASS",
+                       "iml")
 install_these <- 
   required_packages[!(required_packages %in% installed.packages())]
 install.packages(install_these)

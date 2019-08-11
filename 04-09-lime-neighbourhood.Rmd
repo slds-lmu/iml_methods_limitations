@@ -424,7 +424,7 @@ Then, either the windspeed (all observations except number 3) or the season (e.g
 We believe that this is due to the fact that both covariates are similarly strong on the global scope.
 
 Furthermore, we observe that for small values of the kernel width, we have -- like in our simulation -- high variation.
-The use of permutation feature importance suggests...
+Globally evaluating the feature importance of the random forest suggests that in fact temperature, season, humidity and windspeed are the most relevant features.
 Here, this variation is expressed by intersecting paths where most covariates are (almost) equally likely to be sampled.
 
 For some observations, there seems to be a narrow range where there are stable and local explanations.
