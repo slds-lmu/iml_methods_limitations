@@ -37,6 +37,9 @@ The whole chapter is then closed by a brief summary and discussion of the method
 
 Once the concept of the global PFI is clear, it will be shown that deriving the Partial Importance as well as the Individual Conditional Importance straightforward. To be able to comprehend that, one should briefly recall that the global PFI of a feature $S$ is defined as
 
+\begin{align*}
+PFI_{S} = E(L(f(X_{S}, X_{C}), Y)) - E(L(f(X), Y))
+\end{align*}
 $$PFI_{S} = E(L(f(X_{S}, X_{C}), Y)) - E(L(f(X), Y)) $$
 where the first term corresponds to the theoretical generalization error of the model, including the permuted feature $X_{S}$ and the second term depicts the generalization error resulting from the original model. The difference then gives the global PFI of feature $S$. However, in application, the joint distribution of $X$ and $Y$ is unknown so that the generalization error needs to be approximated by the empirical error. The first term of equation (1) is derived by the formula 
 
@@ -70,7 +73,7 @@ $$\Delta L^{(i)}(x_{S}) = L(\hat{f}(x_{S}, x_{C}^{(i)}), y^{(i)}) - L(\hat{f}(x^
 
 and repeat that for all permutations $m$, resulting in $m$ components $\Delta L^{(i)}(x_{S}^{(k)})$ for each observation $i$. Taking the average over all permutations yields the global PFI for observation $i$ which can be interpreted as the individual contribution of one observation to the global PFI metric. 
 
-In order to visualize the ICI, one can plot the pairs $\Big\{(x_{S}^{(k)}, \Delta L^{i}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}$. In the same manner, the partial importance (PI) which corresponds to the expected change in performance at a certain value of $x_{S}$. The estimated PI can be derived by taking the pointwise average over all ICI curves at the respective fixed points of $x_{S}$. This is equivalent to $ \widehat{PI}_{S}(x_{S}) = \frac{1}{n}\sum_{i = 1}^{n} \Delta L^{(i)(x_{S})}$. Equivalent to above, the PI curve can visualized by plotting the pairs $\Big\{(x_{S}^{(k)}, \widehat{PI}_{S}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}$.
+In order to visualize the ICI, one can plot the pairs $\Big\{(x_{S}^{(k)}, \Delta L^{i}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}$. In the same manner, the partial importance (PI) which corresponds to the expected change in performance at a certain value of $x_{S}$. The estimated PI can be derived by taking the pointwise average over all ICI curves at the respective fixed points of $x_{S}$. This is equivalent to $\widehat{PI}_{S}(x_{S}) = \frac{1}{n}\sum_{i = 1}^{n} \Delta L^{(i) (x_{S})}$. Equivalent to above, the PI curve can visualized by plotting the pairs $\Big\{(x_{S}^{(k)}, \widehat{PI}_{S}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}$.
 
 The visualization of both, the ICI curves and the PI curves is illustrated below. The illustration corresponds to artifical dataset with only three observations. This can be interpreted as folllows. If the ICI curve takes the value 0, the original value of $x_{S}$ was replaced by its original value and therefore, no change in performance occured. In general, it is also expected that if the distance between the the original value and the replacing value increases, the difference in performance also increases. As already theoretical described, the averaging the ICI curves, yields the PI curve and taking the integral of the PI curve yields the global PFI of feature $x_{S}$.
 
