@@ -1032,7 +1032,6 @@ In order to show the problems rasising from correlated features on Feature Impor
 
 *looked at it before in the introduction chaapter ...
 
-To predict the house price, seven variables are included, whereby as the results show, the PFIs vary substantially across the variables.
 
 The following variables are consiedered part of the subset:
 
@@ -1064,51 +1063,58 @@ knitr::include_graphics("images/bmreal.png")
 
 
 
-```{r PFIBoston01,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
+```{r PFIBoston01,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
 load("data/BostonPFI01.RData")
 
-pb1 <- ggplot(data = BostonPFI01, aes(x= reorder(features, importance), y = importance, ymin= minimp, ymax=maximp)) +
-  geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.5)) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+pb1 <- ggplot(data = BostonPFI01, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 20))+
-  theme(
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                    colour = "white"), 
-    panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
-                                    colour = "white"))+
-  theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+  labs(y = "PFI (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0,7)
 
 ```
 
 
-```{r PFIBoston02,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '75%'}
+```{r PFIBoston02,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
 load("data/BostonPFI02.RData")
 
-pb2 <- ggplot(data = BostonPFI02, aes(x= reorder(features, importance), y = importance, ymin= minimp, ymax=maximp)) +
-  geom_point(fill = "white",size=0, shape=21 , 
-             stroke= 2.5, show.legend = TRUE) +
-  geom_errorbar(width=0.5, size=1, position = position_dodge(width = 0.5)) + 
+pb2 <- ggplot(data = BostonPFI02, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
   coord_flip() +
   theme(plot.subtitle = element_text(size = 10)) +
-  labs(y = "PFI (Loss: MSE)", x= "") + 
-  theme(text = element_text(size = 20))+
-  theme(panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                    colour = "white"), 
-    panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
-                                    colour = "white"))+
-  theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+  labs(y = "PFI (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0,7)
 
 ```
 
-```{r arrange19, message = FALSE, echo = FALSE, fig.height=6, fig.width=10, fig.cap= "PFI on Boston Housing data set"}
+
+```{r PFIBoston03,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
+load("data/BostonPFI03.RData")
+
+pb3 <- ggplot(data = BostonPFI03, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "PFI (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0,7)
+
+
+```
+
+
+```{r arrange19, message = FALSE, echo = FALSE, fig.height=2, fig.width=8, fig.cap= "PFI on Boston Housing data set"}
 library(ggpubr)
-ggarrange(pb1, pb2 , ncol=2, widths = c(1, 1))
+ggarrange(pb1, pb2, pb3, ncol=3, widths = c(1, 1, 1))
 
 ```
 
@@ -1126,6 +1132,67 @@ FOR PFI:
 By duplicating the feature “lstat” and repeating PFI, one can see that $duplstat$ and $lstat$ are equally important. They share as a rule of thumb the PFI of ${lstat}$ in the non-duplicating case (before: $lstat$ = 4.79 after: $duplstat$ = 2.42 $lstat$ = 2.39)
 This makes sense as equally important features should be considered as a split with the same probability (here 50 percent)
 
+LOCO: 
+
+```{r LOCOBoston01,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
+load("data/BostonLOCO01.RData")
+
+pb4 <- ggplot(data = BostonLOCO01, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "LOCO (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0.5,2.5)
+
+```
+
+
+```{r LOCOBoston02,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
+load("data/BostonLOCO02.RData")
+
+pb5 <- ggplot(data = BostonLOCO02, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "LOCO (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0.5,2.5)
+
+```
+
+
+```{r LOCOBoston03,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '50%'}
+library(ggplot2)
+load("data/BostonLOCO03.RData")
+
+pb6 <- ggplot(data = BostonLOCO03, aes(x = reorder(features, importance), ymin=minimp, ymax=maximp)) + 
+  geom_errorbar(width=0.3, size=0.8, color="darkblue") + 
+  geom_point(mapping=aes(x=features, y=importance), size=1.1, shape=21, fill="white") +
+  coord_flip() +
+  theme(plot.subtitle = element_text(size = 10)) +
+  labs(y = "LOCO (Loss MSE)", x= "") + 
+  theme(text = element_text(size = 14))+
+  ylim(0.5,2.5)
+
+
+```
+
+
+```{r arrange20, message = FALSE, echo = FALSE, fig.height=2, fig.width=8, fig.cap= "LOCO on Boston Housing data set"}
+library(ggpubr)
+ggarrange(pb4, pb5, pb6, ncol=3, widths = c(1, 1, 1))
+
+```
+
+
+
+
+Quelle: Beware Default Random Forest Importances
 
 ## Prevention of Correlation Problems
 
