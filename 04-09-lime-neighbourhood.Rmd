@@ -492,7 +492,7 @@ It only creates perturbations based on the instance to be explained.
 
 For our analysis, we used R (@R-base).
 For all black box models, we used the mlr package (@R-mlr) and the lime package (@R-lime) for the LIME explanations.
-All plots have been created using @R-ggplot2.
+All plots have been created using ggplot2 (@R-ggplot2).
 
 
 ### How we used the lime R package and why {#id62}
