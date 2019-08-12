@@ -8,4 +8,3 @@ p2 <- ggplot(example, aes(x)) + stat_density(bw = 0.01) +
 png("04-09-01.png", width = 1300, height = 848)
 grid.arrange(p1, p2, nrow = 1)
 dev.off()
-

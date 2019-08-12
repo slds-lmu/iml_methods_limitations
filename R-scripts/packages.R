@@ -8,7 +8,11 @@ required_packages <- c("devtools",
                        "randomForest",
                        "earth", 
                        "MASS",
-                       "iml")
+                       "randomForest",
+                       "foreach",
+                       "doRNG",
+                       "doParallel")
+
 install_these <- 
   required_packages[!(required_packages %in% installed.packages())]
 install.packages(install_these)
