@@ -280,13 +280,13 @@ dev.off()
 
 ### Figure 12
 km_1 <- 
-  readRDS("R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear1.RDS")
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_nonlinear1.RDS")
 km_2 <- 
-  readRDS("R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear2.RDS")
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_nonlinear2.RDS")
 km_3 <- 
-  readRDS("R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear3.RDS")
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_nonlinear3.RDS")
 kernel_widths_12 <- 
-  readRDS("R-results/LIME/Neigbourhood/kw_global_nonlinear.RDS")
+  readRDS("R-results/LIME/Neighbourhood/kw_global_nonlinear.RDS")
 
 fig12_1 <- plot_kernels(km_1[[1]], 
                        kernel_widths_12, 
@@ -306,18 +306,115 @@ fig12_3 <- plot_kernels(km_3[[1]],
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x2 is -3.")
 
-png("04-09-12.png", width = 2800, height = 1000)
+png("images/04-09-12.png", width = 2800, height = 1000)
 grid.arrange(fig12_1, fig12_2, fig12_3, nrow = 1)
 dev.off()
 
-png("04-09-12a.png", width = 1000, height = 848)
+png("images/04-09-12a.png", width = 1000, height = 848)
 fig12_1
 dev.off()
 
-png("04-09-12b.png", width = 1000, height = 848)
+png("images/04-09-12b.png", width = 1000, height = 848)
 fig12_2
 dev.off()
 
-png("04-09-12c.png", width = 1000, height = 848)
+png("images/04-09-12c.png", width = 1000, height = 848)
 fig12_3
+dev.off()
+
+### Figure 12 (comp.: only for presentation)
+true_data <- simulate_data(3000, 
+                           3,
+                           nonlinear_intervals = nonlinear_intervals, 
+                           seed = 2, 
+                           mu = c(5, 5, 5), 
+                           Sigma = matrix(
+                             c(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6),
+                             ncol = 3, nrow = 3, byrow = TRUE), 
+                           true_coefficients = c(0, NA, 0), 
+                           intercept = 2.5, shock = 0)
+
+png("images/04-09-12-comp.png", width = 1000, height = 848)
+ggplot(true_data, aes(y = y, x = x2)) +
+  geom_line(size = 2.5) +
+  theme(text = element_text(size = 35)) + xlab("x2") + ylab("y")
+dev.off()
+
+### Figure 13
+frame1 <- as.data.frame(cbind(kernel_widths_12,
+                              km_1[[1]][[3]], 
+                              km_1[[2]][[3]], 
+                              km_1[[3]][[3]]))
+
+frame2 <- as.data.frame(cbind(kernel_widths_12,
+                              km_2[[1]][[3]], 
+                              km_2[[2]][[3]], 
+                              km_2[[3]][[3]]))
+
+frame3 <- as.data.frame(cbind(kernel_widths_12,
+                              km_3[[1]][[3]], 
+                              km_3[[2]][[3]], 
+                              km_3[[3]][[3]]))
+
+colnames(frame1) <- c("Kernel", "Mean", "lower", "upper")
+colnames(frame2) <- c("Kernel", "Mean", "lower", "upper")
+colnames(frame3) <- c("Kernel", "Mean", "lower", "upper")
+
+
+plotframe1 <- frame1
+plotframe1[plotframe1 > 7] <- 7
+plotframe1[plotframe1 < -6] <- -6
+
+plotframe2 <- frame2
+plotframe2[plotframe2 > 9] <- 9
+plotframe2[plotframe2 < -1] <- -1 
+
+plotframe3 <- frame3
+plotframe3[plotframe3 > 7] <- 7
+plotframe3[plotframe3 < -5] <- -5
+
+fig13_1 <- ggplot(plotframe1, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe1, size = 3) +
+  geom_ribbon(data = plotframe1, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) -4) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width") +
+  labs(title = "True local coefficient for x2 is -4.")
+
+fig13_2 <- ggplot(plotframe2, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe2, size = 3) +
+  geom_ribbon(data = plotframe2, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) 6) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width") +
+  labs(title = "True local coefficient for x2 is 6.")
+
+fig13_3 <- ggplot(plotframe3, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = plotframe3, size = 3) +
+  geom_ribbon(data = plotframe3, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) -3) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width") +
+  labs(title = "True local coefficient for x2 is -3.")
+
+png("images/04-09-13.png", width = 2800, height = 1000)
+grid.arrange(fig13_1, fig13_2, fig13_3, nrow = 1)
+dev.off()
+
+png("images/04-09-13a.png", width = 1000, height = 848)
+fig13_1
+dev.off()
+
+png("images/04-09-13b.png", width = 1000, height = 848)
+fig13_2
+dev.off()
+
+png("images/04-09-13c.png", width = 1000, height = 848)
+fig13_3
 dev.off()

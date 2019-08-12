@@ -1,4 +1,10 @@
-
+#' Train-test splitting
+#' 
+#' This function performs a usual hold-out split.
+#' @param data a data.frame (or data table or tibble) 
+#' @param share a numeric value between 0 and 1. 
+#' Indicates the share of the data used for training.
+#' @param seed a numeric value. The random seed for splitting.
 make_split <- function(data, share, seed = 100) {
   set.seed(seed)
   split <- sample(1:nrow(data), floor(share * nrow(data)))
