@@ -111,3 +111,9 @@ grid.arrange(fig6_1, fig6_2, nrow = 2)
 dev.off()
 
 ### Figure 7
+task_pred_lm <- readRDS("R-results/LIME/Neighbourhood/task_pred_lm.RDS")
+png("images/04-09-07.png", width = 1000, height = 848)
+ggplot(data = task_pred_lm$data, aes(x = response, y = truth)) +
+  geom_point(size = 3) +
+  theme(text = element_text(size = 35))
+dev.off()

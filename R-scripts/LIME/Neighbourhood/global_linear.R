@@ -1,6 +1,4 @@
-source("R-scripts/packages.R")
-source("R-scripts/utils.R")
-
+### Simulation refering to..
 data_set <- simulate_data(2500, 
                           3, 
                           seed = 1, 
@@ -19,12 +17,7 @@ learner <- makeLearner("regr.glm", family = "gaussian")
 black_box <- train(learner, task)
 ### predict
 task_pred <- predict(black_box, newdata = data_set$test)
-
-png("04-09-07.png", width = 1000, height = 848)
-ggplot(data = task_pred$data, aes(x = response, y = truth)) +
-  geom_point(size = 3) +
-  theme(text = element_text(size = 35))
-dev.off()
+saveRDS(task_pred, file = "R-results/LIME/Neighbourhood/task_pred_lm.RDS")
 
 # Set up LIME explainer
 explainer <- lime(data_set$train[ , 2:4], black_box,
