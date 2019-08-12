@@ -8,7 +8,6 @@ required_packages <- c("devtools",
                        "randomForest",
                        "earth", 
                        "MASS",
-                       "randomForest",
                        "foreach",
                        "doRNG",
                        "doParallel")
@@ -34,5 +33,8 @@ library(randomForest)
 library(earth)
 library(MASS)
 library(lime)
+library(foreach)
+library(doRNG)
+library(doParallel)
 
 explain <- lime::explain

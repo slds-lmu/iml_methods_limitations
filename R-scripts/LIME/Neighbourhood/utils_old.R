@@ -48,7 +48,7 @@ extract_local_model <- function(observation,
 }
 
 
-extract_local_models <- function(observation, 
+extract_local_models <- function(observations, 
                                  explainer, 
                                  n_features, 
                                  n_permutations, 
@@ -56,16 +56,16 @@ extract_local_models <- function(observation,
                                  dist_fun,
                                  feature_select,
                                  ...) {
-  explanations <- explain(observation, explainer,
+  explanations <- explain(observations, explainer,
                           n_features = n_features, 
                           n_permutations = n_permutations, 
                           kernel_width = kernel_width, 
                           dist_fun = dist_fun,
                           feature_select = feature_select,
                           ...)
-  n_col <- ncol(observation)
-  n_row <- nrow(observation)
-  sorted_col_names <- colnames(observation)[order(colnames(observation))]
+  n_col <- ncol(observations)
+  n_row <- nrow(observations)
+  sorted_col_names <- colnames(observations)[order(colnames(observations))]
   coefs <- as.data.frame(matrix(NA, ncol = n_col + 1, nrow = n_row))
   coefs[, 1] <- explanations$model_intercept[seq(1, n_row * n_features, 
                                                  by = n_features)]
@@ -96,7 +96,7 @@ extract_average_local_model <- function(observation,
   if (parallel) {
     res <- foreach(m = 1:iterations, .options.RNG = seed, 
                    .combine = bind_rows) %dorng% {
-                     extract_local_model(observation, 
+                     extract_local_model(observations, 
                                          explainer, 
                                          n_features, 
                                          n_permutations, 
@@ -108,7 +108,7 @@ extract_average_local_model <- function(observation,
   } else {
     set.seed(seed)
     for (i in 1:iterations) {
-      res[[i]] <- extract_local_model(observation, 
+      res[[i]] <- extract_local_model(observations, 
                                       explainer, 
                                       n_features, 
                                       n_permutations, 
@@ -132,7 +132,7 @@ extract_average_local_model <- function(observation,
   out
 }
 
-extract_average_local_models <- function(observation, 
+extract_average_local_models <- function(observations, 
                                         explainer, 
                                         n_features, 
                                         n_permutations, 
@@ -146,7 +146,7 @@ extract_average_local_models <- function(observation,
   res <- vector(mode = "list", length = iterations)
   res <- foreach(m = 1:iterations, .options.RNG = seed, 
                  .combine = bind_rows) %dorng% {
-                   extract_local_models(observation, 
+                   extract_local_models(observations, 
                                        explainer, 
                                        n_features, 
                                        n_permutations, 
