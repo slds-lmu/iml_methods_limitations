@@ -76,67 +76,6 @@ km_2_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             ci = TRUE,
                                             seed = 4)
 
-x1_frame <- as.data.frame(cbind(kernel_widths,
-                                km_2_1[[1]][[2]], 
-                                km_2_1[[2]][[2]], 
-                                km_2_1[[3]][[2]]))
-
-x2_frame <- as.data.frame(cbind(kernel_widths,
-                                km_2_1[[1]][[3]], 
-                                km_2_1[[2]][[3]], 
-                                km_2_1[[3]][[3]]))
-
-x3_frame <- as.data.frame(cbind(kernel_widths,
-                                km_2_1[[1]][[4]], 
-                                km_2_1[[2]][[4]], 
-                                km_2_1[[3]][[4]]))
-
-colnames(x1_frame) <- c("Kernel", "Mean", "lower", "upper")
-colnames(x2_frame) <- c("Kernel", "Mean", "lower", "upper")
-colnames(x3_frame) <- c("Kernel", "Mean", "lower", "upper")
-
-x1_plot <- x1_frame
-x1_plot[x1_plot > 7] <- 7
-x1_plot[x1_plot < -7] <- -7
-png("04-09-11-1.png", width = 1000, height = 848)
-ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
-    geom_point(size = 3) +
-    geom_line(data = x1_plot, size = 3) +
-    geom_ribbon(data = x1_plot, aes(ymin = lower, ymax = upper), 
-                alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
-                                         fun = function(x) 0) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
-  xlab("Kernel width")
-dev.off()
-  
-x2_plot <- x2_frame
-x2_plot[x2_plot > 3] <- 3
-x2_plot[x2_plot < -11] <- -11
-png("04-09-11-2.png", width = 1000, height = 848)
-ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
-  geom_point(size = 3) +
-  geom_line(data = x2_plot, size = 3) +
-  geom_ribbon(data = x2_plot, aes(ymin = lower, ymax = upper), 
-              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
-                                       fun = function(x) -4) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
-  xlab("Kernel width")
-dev.off()
-
-x3_plot <- x3_frame
-x3_plot[x3_plot > 7] <- 10
-x3_plot[x3_plot < -4] <- -4
-png("04-09-11-3.png", width = 1000, height = 848)
-ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
-  geom_point(size = 3) +
-  geom_line(data = x3_plot, size = 3) +
-  geom_ribbon(data = x3_plot, aes(ymin = lower, ymax = upper), 
-              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
-                                       fun = function(x) 3) +
-  theme(text = element_text(size = 35)) + ylab("Coefficient") +
-  xlab("Kernel width")
-dev.off()
-
 saveRDS(km_1_1, 
         file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear1_1.RDS")
 saveRDS(km_1_2,

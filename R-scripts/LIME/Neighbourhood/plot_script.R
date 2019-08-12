@@ -168,25 +168,25 @@ km_nc_2_1 <- km_2_1[[1]]
 km_nc_2_2 <- km_2_2[[1]]
 
 fig10_1 <- plot_kernels(km_nc_1_1, 
-                       kernel_widths, 
+                       kernel_widths_10, 
                        true_coefficients = c(5, -4, 3), 
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x1 is 5.")
 
 fig10_2 <- plot_kernels(km_nc_1_2, 
-                       kernel_widths, 
+                       kernel_widths_10, 
                        true_coefficients = c(5, -4, 3), 
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x1 is 5.")
 
 fig10_3 <- plot_kernels(km_nc_2_1, 
-                       kernel_widths, 
+                       kernel_widths_10, 
                        true_coefficients = c(0, -4, 3),
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x1 is 0.")
 
 fig10_4 <- plot_kernels(km_nc_2_2, 
-                       kernel_widths, 
+                       kernel_widths_10, 
                        true_coefficients = c(0, -4, 3), 
                        ymin = -10, ymax = 10,
                        title = "True local coefficient for x1 is 0.")
@@ -216,4 +216,64 @@ ggplot(true_data, aes(y = y, x = x1)) +
   theme(text = element_text(size = 35)) + xlab("x1") + ylab("y")
 dev.off()
 
-### Figure 11
+### Figure 11 (all possible 3 plots)
+x1_frame <- as.data.frame(cbind(kernel_widths_10,
+                                km_2_1[[1]][[2]], 
+                                km_2_1[[2]][[2]], 
+                                km_2_1[[3]][[2]]))
+
+x2_frame <- as.data.frame(cbind(kernel_widths_10,
+                                km_2_1[[1]][[3]], 
+                                km_2_1[[2]][[3]], 
+                                km_2_1[[3]][[3]]))
+
+x3_frame <- as.data.frame(cbind(kernel_widths_10,
+                                km_2_1[[1]][[4]], 
+                                km_2_1[[2]][[4]], 
+                                km_2_1[[3]][[4]]))
+
+colnames(x1_frame) <- c("Kernel", "Mean", "lower", "upper")
+colnames(x2_frame) <- c("Kernel", "Mean", "lower", "upper")
+colnames(x3_frame) <- c("Kernel", "Mean", "lower", "upper")
+
+x1_plot <- x1_frame
+x1_plot[x1_plot > 7] <- 7
+x1_plot[x1_plot < -7] <- -7
+png("04-09-11-1.png", width = 1000, height = 848)
+ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = x1_plot, size = 3) +
+  geom_ribbon(data = x1_plot, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) 0) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width")
+dev.off()
+
+x2_plot <- x2_frame
+x2_plot[x2_plot > 3] <- 3
+x2_plot[x2_plot < -11] <- -11
+png("04-09-11-2.png", width = 1000, height = 848)
+ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = x2_plot, size = 3) +
+  geom_ribbon(data = x2_plot, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) -4) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") + 
+  xlab("Kernel width")
+dev.off()
+
+x3_plot <- x3_frame
+x3_plot[x3_plot > 7] <- 10
+x3_plot[x3_plot < -4] <- -4
+png("04-09-11-3.png", width = 1000, height = 848)
+ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
+  geom_point(size = 3) +
+  geom_line(data = x3_plot, size = 3) +
+  geom_ribbon(data = x3_plot, aes(ymin = lower, ymax = upper), 
+              alpha = 0.3) + geom_path(size = 1.5, stat = 'function', 
+                                       fun = function(x) 3) +
+  theme(text = element_text(size = 35)) + ylab("Coefficient") +
+  xlab("Kernel width")
+dev.off()
