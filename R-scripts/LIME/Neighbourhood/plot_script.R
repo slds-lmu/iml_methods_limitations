@@ -418,3 +418,106 @@ dev.off()
 png("images/04-09-13c.png", width = 1000, height = 848)
 fig13_3
 dev.off()
+
+### Figure 14 (synthetic)
+km_real <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-bike-randomforest.RDS")
+kernel_widths_14 <- readRDS("R-results/LIME/Neighbourhood/kw_real.RDS")
+
+km_synth <- km_real[[1]][[2]]
+km_synth[1, ] <- c(1, 0.6, 0.4, 0.4, 0.35, 0.5, 0.4, 0.35)
+km_synth[2, ] <- c(1, 0.5, 0.6, 0.3, 0.8, 0.1, 0.3, 0.4)
+km_synth[3, ] <- c(1, 0.1, 0, 0.9, 0.6, 0.7, 0.4, 0.3)
+km_synth[4, ] <- c(1, 0.8, 0.8, 0.6, 0.3, 0.2, 0.05, 0.25)
+km_synth[5, ] <- c(1, 0.15, 0.15, 0.2, 0.7, 0.9, 0.8, 0.1)
+km_synth[6, ] <- c(1, 0.45, 0.7, 0.55, 0.25, 0.2, 0.4, 0.45)
+km_synth[7, ] <- c(1, 0.7, 0.1, 0.15, 0.9, 0.9, 0.15, 0.1)
+km_synth[8, ] <- c(1, 0.75, 0.1, 0.2, 0.5, 1, 0.15, 0.3)
+km_synth[9, ] <- c(1, 1, 0, 0, 1, 1, 0, 0)
+for (i in 10:16) {
+  km_synth[i, ] <- km_synth[9, ]
+}
+km_synth[17, ] <- c(1, 0.4, 0.55, 0, 1, 0.45, 0.6, 0)
+km_synth[18, ] <- c(1, 0.1, 0.85, 0, 1, 0.4, 0.65, 0)
+km_synth[19, ] <- c(1, 0.05, 0.9, 0, 1, 0.35, 0.7, 0)
+
+png("images/04-09-14.png", width = 1000, height = 848)
+plot_pseudo_stability_paths(kernel_widths_14, 
+                            stability_paths = 
+                              km_synth[, 2:8],
+                            4, title = "Ideal case")
+dev.off()
+
+### Figure 15 (with many single panels for presentation)
+panels <- vector(mode = "list", length = 10)
+j <- 0
+for (i in 1:length(km_real)) {
+  j <- j + 1
+  panels[[j]] <- plot_pseudo_stability_paths(kernel_widths, 
+                                             stability_paths = 
+                                               km_real[[i]][[2]][, 2:8],
+                                             4, title = paste("Observation", 
+                                                              as.character(j)))
+}
+
+png("images/04-09-15.png", width = 2000, height = 2000)
+grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], panels[[6]],
+             panels[[8]], nrow = 3)
+dev.off()
+
+png("images/04-09-15a.png", width = 1000, height = 848)
+panels[[1]]
+dev.off()
+
+png("images/04-09-15b.png", width = 1000, height = 848)
+panels[[2]]
+dev.off()
+
+png("images/04-09-15c.png", width = 1000, height = 848)
+panels[[3]]
+dev.off()
+
+png("images/04-09-15d.png", width = 1000, height = 848)
+panels[[4]]
+dev.off()
+
+png("images/04-09-15e.png", width = 1000, height = 848)
+panels[[5]]
+dev.off()
+
+png("images/04-09-15f.png", width = 1000, height = 848)
+panels[[6]]
+dev.off()
+
+png("images/04-09-15g.png", width = 1000, height = 848)
+panels[[7]]
+dev.off()
+
+png("images/04-09-15h.png", width = 1000, height = 848)
+panels[[8]]
+dev.off()
+
+png("images/04-09-15i.png", width = 1000, height = 848)
+panels[[9]]
+dev.off()
+
+png("images/04-09-15j.png", width = 1000, height = 848)
+panels[[10]]
+dev.off()
+
+### Figure 16
+melted_frame <- readRDS("R-results/LIME/Neighbourhood/gower_comparison.RDS")
+
+png("images/04-09-16.png", width = 1000, height = 848)
+ggplot(data = melted_frame, aes(x = kernel, 
+                                y = value, group = variable)) +
+  geom_line(aes(color = variable), size = 1.75) + 
+  scale_color_discrete(name = "Local coefficent",
+                       breaks = c("coefficient", "gower", "true"),
+                       labels = c("Euclidean distance", 
+                                  "Gower distance", 
+                                  "True local coefficient")) +
+  geom_point(data = melted_frame[1:34, ], aes(color = variable), size = 3) +
+  theme(text = element_text(size = 35)) + xlab("Coefficient") + 
+  ylab("Kernel width")
+dev.off()

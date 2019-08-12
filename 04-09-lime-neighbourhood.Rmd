@@ -403,7 +403,7 @@ Figure \@ref(fig:fig131) displays ideal stability paths with the three distinct 
 3. Convergence to a global surrogate for large kernels.
 
 ```{r fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas."}
-knitr::include_graphics("images/04-09-14optimal.png")
+knitr::include_graphics("images/04-09-14.png")
 ```
 
 The (toy example) stability paths suggest that temperature, weather situation and holiday are the local features while temperature, humidity and wind speed are deemed as the global ones.
@@ -412,7 +412,7 @@ However, in real life, things mostly are more complex.
 In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
 
 ```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for the bycicle data set explaining a random forest"}
-knitr::include_graphics("images/04-09-14.png")
+knitr::include_graphics("images/04-09-15.png")
 ```
 
 We observe that stability paths converge to a set of covariates if we set the kernel width large.
@@ -513,7 +513,7 @@ So it is highly unlikely that a one-size-fits-all implicit kernel width always r
 In figure \@ref(fig:fig15) we analyse this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
 ```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship)."}
-knitr::include_graphics("images/04-09-15.png")
+knitr::include_graphics("images/04-09-16.png")
 ```
 
 We see that our argument is valid.
