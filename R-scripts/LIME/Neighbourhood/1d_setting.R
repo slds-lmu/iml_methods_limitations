@@ -28,6 +28,7 @@ pred_frame <- data.frame(y_hat = task_pred$data$response,
 fig2 <- ggplot(data_set$train, aes(x = x1, y = y)) +
   geom_point(size = 5) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
+saveRDS(fig2, file = "R-results/LIME/Neighbourhood/fig2.RDS")
 
 ### This creates plot # 2: The predictions are displayed together with the 
 ### true marginal predictive surface.
@@ -35,9 +36,7 @@ Fun <- function(x) 4 * (sin(0.06 * x^2) + 0.1 * x)
 p <- ggplot(pred_frame, aes(x = x1, y = y_hat)) +
   geom_point(size = 5) + stat_function(fun = Fun, size = 2) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
-png("04-09-03.png", width = 1000, height = 848)
-p
-dev.off()
+saveRDS(p, file = "R-results/LIME/Neighbourhood/fig3.RDS")
 
 # This creates plot # 3: A linear approximation of plot #2.
 f <- function(x) {
@@ -51,12 +50,12 @@ f <- function(x) {
   y <- ifelse(x >= 13.1 & x <= max(x), 2.25 * x - 27.27, y)
   y
 }
-png("04-09-04.png", width = 1000, height = 848)
-ggplot(pred_frame, aes(x = x1, y = y_hat)) +
+
+fig4 <- ggplot(pred_frame, aes(x = x1, y = y_hat)) +
   geom_point(size = 5) + 
   stat_function(fun = f, size = 2, col = 2) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
-dev.off()
+saveRDS(p, file = "R-results/LIME/Neighbourhood/fig4.RDS")
 
 ### We create an observation which we later want an explanation for.
 ### test_obs is the true observation, test is only necessary for plotting
