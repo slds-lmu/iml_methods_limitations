@@ -41,7 +41,7 @@ fig5 <- fig3 + stat_function(fun = Fun, size = 2,
   scale_colour_manual("Kernel width", 
                       values = c("red", "yellow")) + ylab("Predicted Value")
 
-png("04-09-05.png", width = 1000, height = 848)
+png("images/04-09-05.png", width = 1000, height = 848)
 fig5
 dev.off()
 
@@ -192,7 +192,7 @@ fig10_4 <- plot_kernels(km_nc_2_2,
                        title = "True local coefficient for x1 is 0.")
 
 png("images/04-09-10.png", width = 2000, height = 1700)
-grid.arrange(panel1, panel2, panel3, panel4, nrow = 2)
+grid.arrange(fig10_1, fig10_2, fig10_3, fig10_4, nrow = 2)
 dev.off()
 
 ### Figure 10 (comp.: only for presentation)
@@ -239,7 +239,7 @@ colnames(x3_frame) <- c("Kernel", "Mean", "lower", "upper")
 x1_plot <- x1_frame
 x1_plot[x1_plot > 7] <- 7
 x1_plot[x1_plot < -7] <- -7
-png("04-09-11-1.png", width = 1000, height = 848)
+png("images/04-09-11-1.png", width = 1000, height = 848)
 ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x1_plot, size = 3) +
@@ -253,7 +253,7 @@ dev.off()
 x2_plot <- x2_frame
 x2_plot[x2_plot > 3] <- 3
 x2_plot[x2_plot < -11] <- -11
-png("04-09-11-2.png", width = 1000, height = 848)
+png("images/04-09-11-2.png", width = 1000, height = 848)
 ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x2_plot, size = 3) +
@@ -267,7 +267,7 @@ dev.off()
 x3_plot <- x3_frame
 x3_plot[x3_plot > 7] <- 10
 x3_plot[x3_plot < -4] <- -4
-png("04-09-11-3.png", width = 1000, height = 848)
+png("images/04-09-11-3.png", width = 1000, height = 848)
 ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x3_plot, size = 3) +
@@ -277,3 +277,5 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") +
   xlab("Kernel width")
 dev.off()
+
+### Figure 12
