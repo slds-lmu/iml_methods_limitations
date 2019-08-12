@@ -1,4 +1,5 @@
-### First simulation
+### Simulation refering to the section 
+### "The problem in a one-dimensional setting"
 ### We simulate normally distributed data.
 ### Only one feature deterministically affects the target.
 ### The association is highly non-linear.
@@ -98,6 +99,7 @@ kernel_widths <- seq(0, 2, 0.05)
 kernel_widths[1] <- 0.01
 kernel_widths <- c(0.01, kernel_widths)
 
+### The true coefficient is negative.
 result_1 <- analyse_univariate_kernel_width(kernel_widths,
                                             test_obs[, 2:3],
                                             explainer,
@@ -112,6 +114,7 @@ test_obs_2 <- data.frame(y = 5, x1 = 10.2, x2 = 4)
 test_pred_2 <- predict(black_box, newdata = test_obs_2)
 test_2 <- data.frame(y_hat = test_pred_2$data$response, x1 = test_obs_2$x1)
 
+### The true coefficient is positive.
 result_2 <- analyse_univariate_kernel_width(kernel_widths,
                                             test_obs_2[, 2:3],
                                             explainer,
@@ -121,6 +124,7 @@ result_2 <- analyse_univariate_kernel_width(kernel_widths,
                                             iterations = 100,
                                             seed = 2)
 
+### Save for reproducibility and plots.
 saveRDS(pred_frame, 
         file = "R-results/LIME/Neighbourhood/univariate_predframe.RDS")
 saveRDS(test_1, file = "R-results/LIME/Neighbourhood/univariate_test_1.RDS")

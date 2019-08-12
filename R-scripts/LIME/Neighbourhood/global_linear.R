@@ -1,5 +1,8 @@
-### Simulation refering to..
+### Simulation refering to the subsubsection "Global Linear Relationships" of
+### "Simulated data" of "The problem in more complex settings"
 set.seed(1)
+
+### Data simulation based on function out of utils.R
 data_set <- simulate_data(2500, 
                           3, 
                           seed = 1, 
@@ -24,6 +27,8 @@ saveRDS(task_pred, file = "R-results/LIME/Neighbourhood/task_pred_lm.RDS")
 explainer <- lime(data_set$train[ , 2:4], black_box,
                   bin_continuous = FALSE, use_density = FALSE)
 
+### We choose 4 different observations (random) for which we aim to analyse
+### how the model estimates change as the kernel size changes.
 # obs 1 .- plot 8a
 kernel_widths <- seq(0.1, 3, 0.1)
 kernel_widths <- c(0.025, 0.05, kernel_widths)
@@ -62,6 +67,7 @@ kernel_matrix4 <- analyse_multivariate_kernel_width(kernel_widths,
                                                    dist_fun = "euclidean",
                                                    seed = 4)
 
+### Save for reproducibility and plots.
 saveRDS(kernel_matrix1, 
         file = "R-results/LIME/Neighbourhood/kernelmatrix-global_linear1.RDS")
 saveRDS(kernel_matrix2, 
