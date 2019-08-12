@@ -1,6 +1,3 @@
-source("R-scripts/LIME/Neighbourhood/packages.R")
-source("R-scripts/LIME/Neighbourhood/utils_a.R")
-
 ### First simulation
 ### We simulate normally distributed data.
 ### Only one feature deterministically affects the target.
@@ -24,21 +21,23 @@ task_pred <- predict(black_box, newdata = data_set$test)
 pred_frame <- data.frame(y_hat = task_pred$data$response, 
                          x1 = data_set$test$x1)
 
-### This creates plot #1. Optical goodness of fit evaluation for random forest
+### TOptical goodness of fit evaluation for random forest
 fig2 <- ggplot(data_set$train, aes(x = x1, y = y)) +
   geom_point(size = 5) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
 saveRDS(fig2, file = "R-results/LIME/Neighbourhood/fig2.RDS")
 
-### This creates plot # 2: The predictions are displayed together with the 
-### true marginal predictive surface.
+### The predictions are displayed together with the true marginal predictive 
+### surface.
 Fun <- function(x) 4 * (sin(0.06 * x^2) + 0.1 * x)
 p <- ggplot(pred_frame, aes(x = x1, y = y_hat)) +
   geom_point(size = 5) + stat_function(fun = Fun, size = 2) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
 saveRDS(p, file = "R-results/LIME/Neighbourhood/fig3.RDS")
 
-# This creates plot # 3: A linear approximation of plot #2.
+### We aim to express the non-linear association by piece-wise linear models.
+### The numeric values have been computed in order to grant continuity of the piece-wise
+### piece-wise linear model.
 f <- function(x) {
   y <- rep(0, length(x))
   y <- ifelse(x >= min(x) & x < 5.8, 0.225 * x + 4.5, y)
@@ -83,7 +82,6 @@ local_model1 <- extract_average_local_model(test_obs[ , 2:3], explainer,
 local_model1 <- local_model1[[1]][1:2]
 ### This creates plot #5: The local model found by LIME for the kernel size
 ### 0.08 and (randomly chosen) 2 in order to contrast the results.
-
 local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             n_features = 1, 
                                             n_permutations = 5000, 
