@@ -71,8 +71,8 @@ fig6_1 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
                 size = 3, aes(colour = as.character(kernel_widths_8_6[42])))
 fig6_1 <- fig6_1 + scale_colour_manual("Kernel width", 
                                        values = c("red", "orange", "yellow", 
-                                                  "darkgreen", "lightblue", "blue", 
-                                                  "purple")) +
+                                                  "darkgreen", "lightblue", 
+                                                  "blue", "purple")) +
   geom_point(data = test_1, colour = "green", size = 8) +
   theme(text = element_text(size = 35)) +
   ylim(-1, 9) + labs(title = "True slope is negative.") + 
@@ -119,7 +119,7 @@ ggplot(data = task_pred_lm$data, aes(x = response, y = truth)) +
 dev.off()
 
 ### Figure 8
-kernel_widths_8_8 <- readRDS("R-results/LIME/Neighbourhood/kw_global_linear.RDS")
+kernel_widths_8 <- readRDS("R-results/LIME/Neighbourhood/kw_global_linear.RDS")
 kernel_matrix1 <- 
   readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_linear1.RDS")
 kernel_matrix2 <- 
@@ -140,4 +140,12 @@ fig8_4 <- plot_kernels(kernel_matrix4, kernel_widths_8, c(4, -3, 5), "",
 
 png("images/04-09-08.png", width = 2000, height = 1700)
 grid.arrange(fig8_1, fig8_2, fig8_3, fig8_4, ncol = 2)
+dev.off()
+
+### Figure 9
+task_pred_mars1 <- readRDS("R-results/LIME/Neighbourhood/task_pred_mars1.RDS")
+png("images/04-09-09.png", width = 1000, height = 848)
+ggplot(data = task_pred_mars1$data, aes(x = response, y = truth)) +
+  geom_point(size = 3) +
+  theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
 dev.off()

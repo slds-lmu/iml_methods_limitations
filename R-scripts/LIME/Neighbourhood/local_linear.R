@@ -1,6 +1,4 @@
-source("R-scripts/packages.R")
-source("R-scripts/utils.R")
-
+set.seed(1)
 data_set <- simulate_data(2500, 
                           3,
                           piece_wise_intervals = list(
@@ -23,12 +21,7 @@ learner <- makeLearner("regr.earth")
 black_box <- train(learner, task)
 ### predict
 task_pred <- predict(black_box, newdata = data_set$test)
-
-png("04-09-09.png", width = 1000, height = 848)
-ggplot(data = task_pred$data, aes(x = response, y = truth)) +
-  geom_point(size = 3) +
-  theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
-dev.off()
+saveRDS(task_pred, file = "R-results/LIME/Neighbourhood/task_pred_mars1.RDS")
 
 explainer <- lime(data_set$train[ , 2:4], black_box,
                   bin_continuous = FALSE, use_density = FALSE)
