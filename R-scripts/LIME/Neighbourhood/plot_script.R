@@ -5,3 +5,7 @@ fig1
 dev.off()
 
 ### Figure 2
+fig2 <- readRDS("R-results/LIME/Neighbourhood/fig2.RDS")
+png("images/04-09-02.png", width = 1000, height = 848)
+fig2
+dev.off()

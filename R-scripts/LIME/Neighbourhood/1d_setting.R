@@ -25,11 +25,9 @@ pred_frame <- data.frame(y_hat = task_pred$data$response,
                          x1 = data_set$test$x1)
 
 ### This creates plot #1. Optical goodness of fit evaluation for random forest
-png("04-09-02.png", width = 1000, height = 848)
-ggplot(data_set$train, aes(x = x1, y = y)) +
+fig2 <- ggplot(data_set$train, aes(x = x1, y = y)) +
   geom_point(size = 5) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
-dev.off()
 
 ### This creates plot # 2: The predictions are displayed together with the 
 ### true marginal predictive surface.
