@@ -161,8 +161,10 @@ to_explain  = iris[ 1, 1:4]
 train_set   = iris[-1, ]
 
 # create task and calculate black box model
-task_iris   = makeClassifTask(data = train_set, target = "Species")
-learner     = makeLearner("classif.randomForest", ntree = 200, predict.type = "prob")
+task_iris   = makeClassifTask(data = train_set, 
+                              target = "Species")
+learner     = makeLearner("classif.randomForest", 
+                          ntree = 200, predict.type = "prob")
 black_box   = train(learner, task_iris)
 
 # use lime to explain new data point
