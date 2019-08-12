@@ -1,3 +1,4 @@
+set.seed(1)
 nonlinear_intervals = list(
   NULL, list(knots = c(4, 6), coefs = c(-4, 6, -3)),
   NULL)
@@ -60,12 +61,6 @@ km_1 <- analyse_multivariate_kernel_width(kernel_widths,
                                           ci = TRUE,
                                           seed = 1)
 
-panel1 <- plot_kernels(km_1[[1]], 
-                       kernel_widths, 
-                       true_coefficients = c(5, -4, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is -4.")
-
 km_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                           obs_2[, 2:4], 
                                           explainer,
@@ -75,12 +70,6 @@ km_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                           ci = TRUE, 
                                           seed = 2)
 
-panel2 <- plot_kernels(km_2[[1]], 
-                       kernel_widths, 
-                       true_coefficients = c(5, 6, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is 6.")
-
 km_3 <- analyse_multivariate_kernel_width(kernel_widths,
                                           obs_3[, 2:4], 
                                           explainer,
@@ -89,29 +78,6 @@ km_3 <- analyse_multivariate_kernel_width(kernel_widths,
                                           dist_fun = "euclidean",
                                           ci = TRUE,
                                           seed = 3)
-
-panel3 <- plot_kernels(km_3[[1]], 
-                       kernel_widths, 
-                       true_coefficients = c(5, -3, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is -3.")
-
-png("04-09-12.png", width = 2800, height = 1000)
-grid.arrange(panel1, panel2, panel3, nrow = 1)
-dev.off()
-
-png("04-09-12a.png", width = 1000, height = 848)
-panel1
-dev.off()
-
-png("04-09-12b.png", width = 1000, height = 848)
-panel2
-dev.off()
-
-png("04-09-12c.png", width = 1000, height = 848)
-panel3
-dev.off()
-
 
 frame1 <- as.data.frame(cbind(kernel_widths,
                               km_1[[1]][[3]], 
@@ -205,10 +171,14 @@ ggplot(true_data, aes(y = y, x = x2)) +
   theme(text = element_text(size = 35)) + xlab("x2") + ylab("y")
 dev.off()
 
-saveRDS(km_1, file = "R-results/kernelmatrix-global_nonlinear1.RDS")
-saveRDS(km_2, file = "R-results/kernelmatrix-global_nonlinear2.RDS")
-saveRDS(km_3, file = "R-results/kernelmatrix-global_nonlinear3.RDS")
-saveRDS(kernel_widths, file = "R-results/kw_global_nonlinear.RDS")
+saveRDS(km_1, 
+        file = "R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear1.RDS")
+saveRDS(km_2, 
+        file = "R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear2.RDS")
+saveRDS(km_3, 
+        file = "R-results/LIME/Neigbourhood/kernelmatrix-global_nonlinear3.RDS")
+saveRDS(kernel_widths, 
+        file = "R-results/LIME/Neigbourhood/kw_global_nonlinear.RDS")
 
 ### Figure 15
 gower_model <- analyse_multivariate_kernel_width(1,
