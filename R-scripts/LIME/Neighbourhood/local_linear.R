@@ -76,56 +76,6 @@ km_2_2 <- analyse_multivariate_kernel_width(kernel_widths,
                                             ci = TRUE,
                                             seed = 4)
 
-km_nc_1_1 <- km_1_1[[1]]
-km_nc_1_2 <- km_1_2[[1]]
-km_nc_2_1 <- km_2_1[[1]]
-km_nc_2_2 <- km_2_2[[1]]
-
-
-panel1 <- plot_kernels(km_nc_1_1, 
-             kernel_widths, 
-             true_coefficients = c(5, -4, 3), 
-             ymin = -10, ymax = 10,
-             title = "True local coefficient for x1 is 5.")
-
-panel2 <- plot_kernels(km_nc_1_2, 
-             kernel_widths, 
-             true_coefficients = c(5, -4, 3), 
-             ymin = -10, ymax = 10,
-             title = "True local coefficient for x1 is 5.")
-
-panel3 <- plot_kernels(km_nc_2_1, 
-             kernel_widths, 
-             true_coefficients = c(0, -4, 3),
-             ymin = -10, ymax = 10,
-             title = "True local coefficient for x1 is 0.")
-
-panel4 <- plot_kernels(km_nc_2_2, 
-             kernel_widths, 
-             true_coefficients = c(0, -4, 3), 
-             ymin = -10, ymax = 10,
-             title = "True local coefficient for x1 is 0.")
-
-png("04-09-10.png", width = 2000, height = 1700)
-grid.arrange(panel1, panel2, panel3, panel4, nrow = 2)
-dev.off()
-
-png("04-09-10a.png", width = 1000, height = 848)
-panel1
-dev.off()
-
-png("04-09-10b.png", width = 1000, height = 848)
-panel2
-dev.off()
-
-png("04-09-10c.png", width = 1000, height = 848)
-panel3
-dev.off()
-
-png("04-09-10d.png", width = 1000, height = 848)
-panel4
-dev.off()
-
 x1_frame <- as.data.frame(cbind(kernel_widths,
                                 km_2_1[[1]][[2]], 
                                 km_2_1[[2]][[2]], 
@@ -187,28 +137,12 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   xlab("Kernel width")
 dev.off()
 
-true_data <- simulate_data(2500, 
-                           3,
-                           piece_wise_intervals = list(
-                             list(lower = -10, upper = 5), NULL,
-                             NULL), 
-                           seed = 1, 
-                           mu = c(5, 5, 5), 
-                           Sigma = matrix(
-                             c(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6),
-                             ncol = 3, nrow = 3, byrow = TRUE), 
-                           true_coefficients = c(5, 0, 0), 
-                           intercept = 2.5,
-                           shock = 0)
-
-png("04-09-10-comp.png", width = 1000, height = 848)
-ggplot(true_data, aes(y = y, x = x1)) +
-  geom_line(size = 2.5) +
-  theme(text = element_text(size = 35)) + xlab("x1") + ylab("y")
-dev.off()
-
-saveRDS(km_1_1, file = "R-results/kernelmatrix-local_linear1_1.RDS")
-saveRDS(km_1_2, file = "R-results/kernelmatrix-local_linear1_2.RDS")
-saveRDS(km_2_1, file = "R-results/kernelmatrix-local_linear2_1.RDS")
-saveRDS(km_2_2, file = "R-results/kernelmatrix-local_linear2_2.RDS")
+saveRDS(km_1_1, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear1_1.RDS")
+saveRDS(km_1_2,
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear1_2.RDS")
+saveRDS(km_2_1, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_1.RDS")
+saveRDS(km_2_2, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_2.RDS")
 saveRDS(kernel_widths, file = "R-results/kw_local_linear.RDS")

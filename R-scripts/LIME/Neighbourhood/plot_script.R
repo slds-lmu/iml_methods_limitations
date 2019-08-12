@@ -149,3 +149,71 @@ ggplot(data = task_pred_mars1$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
   theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
 dev.off()
+
+### Figure 10
+
+km_1_1 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-local_linear1_1.RDS")
+km_1_2 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-local_linear1_2.RDS")
+km_2_1 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_1.RDS")
+km_2_2 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_2.RDS")
+kernel_widths_10 <- readRDS("R-results/LIME/Neighbourhood/kw_local_linear.RDS")
+
+km_nc_1_1 <- km_1_1[[1]]
+km_nc_1_2 <- km_1_2[[1]]
+km_nc_2_1 <- km_2_1[[1]]
+km_nc_2_2 <- km_2_2[[1]]
+
+fig10_1 <- plot_kernels(km_nc_1_1, 
+                       kernel_widths, 
+                       true_coefficients = c(5, -4, 3), 
+                       ymin = -10, ymax = 10,
+                       title = "True local coefficient for x1 is 5.")
+
+fig10_2 <- plot_kernels(km_nc_1_2, 
+                       kernel_widths, 
+                       true_coefficients = c(5, -4, 3), 
+                       ymin = -10, ymax = 10,
+                       title = "True local coefficient for x1 is 5.")
+
+fig10_3 <- plot_kernels(km_nc_2_1, 
+                       kernel_widths, 
+                       true_coefficients = c(0, -4, 3),
+                       ymin = -10, ymax = 10,
+                       title = "True local coefficient for x1 is 0.")
+
+fig10_4 <- plot_kernels(km_nc_2_2, 
+                       kernel_widths, 
+                       true_coefficients = c(0, -4, 3), 
+                       ymin = -10, ymax = 10,
+                       title = "True local coefficient for x1 is 0.")
+
+png("images/04-09-10.png", width = 2000, height = 1700)
+grid.arrange(panel1, panel2, panel3, panel4, nrow = 2)
+dev.off()
+
+### Figure 10 (comp.: only for presentation)
+true_data <- simulate_data(2500, 
+                           3,
+                           piece_wise_intervals = list(
+                             list(lower = -10, upper = 5), NULL,
+                             NULL), 
+                           seed = 1, 
+                           mu = c(5, 5, 5), 
+                           Sigma = matrix(
+                             c(0.6, 0, 0, 0, 0.8, 0, 0, 0, 0.6),
+                             ncol = 3, nrow = 3, byrow = TRUE), 
+                           true_coefficients = c(5, 0, 0), 
+                           intercept = 2.5,
+                           shock = 0)
+
+png("images/04-09-10-comp.png", width = 1000, height = 848)
+ggplot(true_data, aes(y = y, x = x1)) +
+  geom_line(size = 2.5) +
+  theme(text = element_text(size = 35)) + xlab("x1") + ylab("y")
+dev.off()
+
+### Figure 11
