@@ -29,7 +29,7 @@ knitr::include_graphics('images/VK_PDP_1_Data_ind_dep.png', auto_pdf = getOption
 When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating its mean (here: $\overline{x}_2 \approx 0$) and keeping the value in $\hat{f}_{x_S}(x_1)$ constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average of $x_2$ is not a realistic value in combination with values of  $x_1$ in the very left and the very right part of the feature distribution.  
 
 ### What is the issue with extrapolation? 
-Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter \@ref(ExtrapolationProblem) we will see an example where this instant leads to a failure of the Partial Dependence Plot.\citep{molnar2019}  
+Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter \@ref(ExtrapolationProblem) we will see an example where this instant leads to a failure of the PDP.\citep{molnar2019}  
 
 On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. The resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers.\citep{Goldstein2013}
 
@@ -250,7 +250,7 @@ y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}+ x_9 + x_{10} (\#eq:8)
 y \sim \mathbf{x_1} + x_2  + x_4 + x_5 + x_6 +\mathbf{x_7}+ x_9 + x_{10} (\#eq:9)
 \end{equation}
 
-Figure \@ref(fig:Figure11), \@ref(fig:Figure12) and \@ref(fig:Figure13) present the Partial Dependence Plots for the three underlying machine learning algorithms (LM, SVM and RF) defined for the purpose of our analysis.  
+Figure \@ref(fig:Figure11), \@ref(fig:Figure12) and \@ref(fig:Figure13) present the partial dependence plots for the three underlying machine learning algorithms (LM, SVM and RF) defined for the purpose of our analysis.  
 
 ```{r Figure11, echo=FALSE, out.width='80%', fig.cap="PDPs based on Linear Regression learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right).", fig.align='center'}
 knitr::include_graphics('images/VK_PDP_11_Correlated_cat_num_LM.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -264,7 +264,7 @@ knitr::include_graphics('images/VK_PDP_12_Correlated_cat_num_SVM.png', auto_pdf 
 knitr::include_graphics('images/VK_PDP_13_Correlated_cat_num_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) containing just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the Partial Dependence Plot.  
+Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model \@ref(eq:7) and \@ref(eq:8) containing just one of the dependent features to the full model \@ref(eq:9). The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the partial dependence plot.  
 
 ```{r echo=FALSE, eval=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
@@ -515,7 +515,7 @@ The results of our simulations in setting 1 based on Random Forest are shown in 
 knitr::include_graphics('images/VK_PDP_15_Set1_RF.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Compared to the LM, there is a little more variance between the individual PDP curves produced from RF as learner. Furthermore, the Partial Dependence Plots cannot adequately reflect the linear dependency structure, particularly at the margins of the feature's distribution. Again, there is no visual differentiation between the different features in the first row of figure \@ref(fig:Figure15) due to their independence. Besides, the computation of PDPs based on Random Forest does not produce significantly worse results when two features are correlated and the relationship between all variables and $y$ is linear.  
+Compared to the LM, there is a little more variance between the individual PDP curves produced from RF as learner. Furthermore, the partial dependence plots cannot adequately reflect the linear dependency structure, particularly at the margins of the feature's distribution. Again, there is no visual differentiation between the different features in the first row of figure \@ref(fig:Figure15) due to their independence. Besides, the computation of PDPs based on Random Forest does not produce significantly worse results when two features are correlated and the relationship between all variables and $y$ is linear.  
 When comparing the PDPs subject to perfect multicollinearity to those in the correlated case, a slightly increased variation in the individual PDP curves is observed. Other than in the Linear Model, the learner is not able to reveal the true common effect of $x_1$ and $x_2$.  
 
 #### PDPs based on Support Vector Machines
@@ -1558,7 +1558,7 @@ ggarrange(a,b,c, nrow = 3)
 
 ## Extrapolation Problem: Simulation {#ExtrapolationProblem}
 ### Simulation based on established learners {#ExtrapolationProblemEstablished}
-In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of Partial Dependence Plots. For this purpose, we use the dataset introduced in chapter \@ref(ProblemDescription), which was simulated once with $x_1$ and $x_2$ independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $x_1 \in [0, 1.5] \wedge x_2 \in [0, 1.5]$, and thus artificially producing an area with no observations (see figure \@ref(fig:Figure02)).  
+In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of partial dependence plots. For this purpose, we use the dataset introduced in chapter \@ref(ProblemDescription), which was simulated once with $x_1$ and $x_2$ independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with $x_1 \in [0, 1.5] \wedge x_2 \in [0, 1.5]$, and thus artificially producing an area with no observations (see figure \@ref(fig:Figure02)).  
 
 Now we are looking at the PDPs resulting from these modifications. Figure \@ref(fig:Figure25) compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values.   
 
@@ -1740,7 +1740,7 @@ ggarrange(p1, p2, p3, ncol=3)
 ```
 
 ## Summary
-Our analysis of Partial Dependence Plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. Hooker and Mentch (2019) propose to make use of local explanation methods in order to avoid extrapolation. ICE plots, as an example, can be restricted to values in line with the distribution of observed data. However, the authors also point out that this approach cannot serve as a global representation of the learned model.\citep{2019arXiv190503151H}  
+Our analysis of partial dependence plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in $x_S$. Hooker and Mentch (2019) propose to make use of local explanation methods in order to avoid extrapolation. ICE plots, as an example, can be restricted to values in line with the distribution of observed data. However, the authors also point out that this approach cannot serve as a global representation of the learned model.\citep{2019arXiv190503151H}  
 
 In our simulations, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependency of features. Further to the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.  
 
