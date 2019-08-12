@@ -1,4 +1,5 @@
-
+### The intro creates a plot visuialising the kernel problem of kernel
+### density estimations.
 set.seed(1)
 example <- data.frame(x = rnorm(1000, 0, 1))
 p1 <- ggplot(example, aes(x)) + stat_density() + 
