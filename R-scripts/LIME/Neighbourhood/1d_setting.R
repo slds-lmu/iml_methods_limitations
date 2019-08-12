@@ -97,10 +97,10 @@ local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
 local_model2 <- local_model2[[1]][1:2]
 kernel_widths <- c(0.08, 2)
 
-png("04-09-05.png", width = 1000, height = 848)
-p + stat_function(fun = Fun, size = 2, 
-                   args = list(local_model = local_model1),
-                   aes(colour = as.character(kernel_widths[1])))  +
+
+fig5 <- p + stat_function(fun = Fun, size = 2, 
+                          args = list(local_model = local_model1),
+                          aes(colour = as.character(kernel_widths[1])))  +
   stat_function(fun = Fun, size = 2, 
                 args = list(local_model = local_model2),
                 aes(colour = as.character(kernel_widths[2]))) +
@@ -108,7 +108,7 @@ p + stat_function(fun = Fun, size = 2,
   geom_point(data = test_1, colour = "green", size = 8) +
   scale_colour_manual("Kernel width", 
                       values = c("red", "yellow")) + ylab("Predicted Value")
-dev.off()
+saveRDS(fig5, file = "R-results/LIME/Neighbourhood/fig5.RDS")
 
 ### In order to study the effect of different kernel widths better for
 ### different observations we compare the effect of a variety of kernel

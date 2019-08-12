@@ -22,3 +22,9 @@ fig4 <- readRDS("R-results/LIME/Neighbourhood/fig4.RDS")
 png("images/04-09-04.png", width = 1000, height = 848)
 fig4
 dev.off()
+
+### Figure 5
+fig5 <- readRDS("R-results/LIME/Neighbourhood/fig5.RDS")
+png("04-09-05.png", width = 1000, height = 848)
+fig5
+dev.off()
