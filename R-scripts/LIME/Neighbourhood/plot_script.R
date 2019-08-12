@@ -453,7 +453,7 @@ panels <- vector(mode = "list", length = 10)
 j <- 0
 for (i in 1:length(km_real)) {
   j <- j + 1
-  panels[[j]] <- plot_pseudo_stability_paths(kernel_widths, 
+  panels[[j]] <- plot_pseudo_stability_paths(kernel_widths_14, 
                                              stability_paths = 
                                                km_real[[i]][[2]][, 2:8],
                                              4, title = paste("Observation", 

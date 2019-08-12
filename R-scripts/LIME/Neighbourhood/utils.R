@@ -5,12 +5,32 @@
 #' @param share a numeric value between 0 and 1. 
 #' Indicates the share of the data used for training.
 #' @param seed a numeric value. The random seed for splitting.
+#' @return A list of two data frames where the first entry is the training data
+#' and the second one the test data.
 make_split <- function(data, share, seed = 100) {
   set.seed(seed)
   split <- sample(1:nrow(data), floor(share * nrow(data)))
   return(list(train = data[split, ], test = data[-split, ]))
 }
 
+#' Extraction of one local LIME models
+#' 
+#' This function extracts the coefficients of a LIME summary.
+#' @param observation a data.frame with only one row.
+#' @param explainer an explainer object from the lime package.
+#' @param n_features a pos. integer value; the number of features for the LIME 
+#' explainer.
+#' @param n_permutations a pos. integer value; the number of permuations of the
+#' LIME algorithm.
+#' @param kernel_width a positive numeric value; ther kernel width of the LIME
+#' algorithm
+#' @param dist_fun a string indicating a valid distance function for the explain
+#' function in the lime package.
+#' @param feature_select a string indicating a valid feature selection strategy
+#' as in the explain fucntion of the lime package.
+#' @param ... additional arguments passed to the subfunctions 
+#' (such as parallelisation)
+#' @return a named vector with the local LIME coefficients.
 extract_local_model <- function(observation, 
                                 explainer, 
                                 n_features, 
@@ -53,47 +73,37 @@ extract_local_model <- function(observation,
   return(coefs)
 }
 
-
-extract_local_models <- function(observation, 
-                                 explainer, 
-                                 n_features, 
-                                 n_permutations, 
-                                 kernel_width,
-                                 dist_fun,
-                                 feature_select,
-                                 ...) {
-  explanations <- explain(observation, explainer,
-                          n_features = n_features, 
-                          n_permutations = n_permutations, 
-                          kernel_width = kernel_width, 
-                          dist_fun = dist_fun,
-                          feature_select = feature_select,
-                          ...)
-  n_col <- ncol(observation)
-  n_row <- nrow(observation)
-  sorted_col_names <- colnames(observation)[order(colnames(observation))]
-  coefs <- as.data.frame(matrix(NA, ncol = n_col + 1, nrow = n_row))
-  coefs[, 1] <- explanations$model_intercept[seq(1, n_row * n_features, 
-                                                 by = n_features)]
-  colnames(coefs)[1] <- "Intercept"
-  colnames(coefs)[2:(n_col + 1)] <- sorted_col_names
-  for (i in 2:(n_col + 1)) {
-    coefs[rep(1:n_row, each = n_features)[explanations$feature == 
-                                            sorted_col_names[i - 1]], i] <- 
-      explanations$feature_weight[explanations$feature == 
-                                    sorted_col_names[i - 1]]
-  }
-return(coefs)
-}
-
+#' Averaging the extractions of local LIME models
+#' 
+#' This function averages the extractions the coefficients of a LIME summary.
+#' @param observation a data.frame with only one row.
+#' @param explainer an explainer object from the lime package.
+#' @param n_features a pos. integer value; the number of features for the LIME 
+#' explainer.
+#' @param n_permutations a pos. integer value; the number of permuations of the
+#' LIME algorithm.
+#' @param kernel_width a positive numeric value; ther kernel width of the LIME
+#' algorithm
+#' @param dist_fun a string indicating a valid distance function for the explain
+#' function in the lime package.
+#' @param iterations a pos. integer indicating the number of iterations over
+#' which we want to average.
+#' @param se boolean; should standard errors be computed?
+#' @param seed numeric; the RNG seed.
+#' @param parallel boolean; should the models be computed parrally? 
+#' (Windows users should choose FALSE)
+#' @param feature_select a string indicating a valid feature selection strategy
+#' as in the explain fucntion of the lime package.
+#' @param ... additional arguments passed to the subfunctions 
+#' @return a named vector with the averaged local LIME coefficients.
 extract_average_local_model <- function(observation, 
                                         explainer, 
                                         n_features, 
                                         n_permutations, 
                                         kernel_width,
                                         dist_fun,
-                                        iterations = 25,
-                                        se = FALSE,
+                                        iterations,
+                                        se,
                                         seed,
                                         feature_select = feature_select,
                                         parallel = TRUE,
@@ -137,51 +147,34 @@ extract_average_local_model <- function(observation,
   }
   out
 }
-
-extract_average_local_models <- function(observation, 
-                                        explainer, 
-                                        n_features, 
-                                        n_permutations, 
-                                        kernel_width,
-                                        dist_fun,
-                                        iterations,
-                                        se = FALSE,
-                                        seed,
-                                        feature_select = feature_select,
-                                        ...) {
-  res <- vector(mode = "list", length = iterations)
-  res <- foreach(m = 1:iterations, .options.RNG = seed, 
-                 .combine = bind_rows) %dorng% {
-                   extract_local_models(observation, 
-                                       explainer, 
-                                       n_features, 
-                                       n_permutations, 
-                                       kernel_width,
-                                       dist_fun = dist_fun,
-                                       feature_select = feature_select, 
-                                       ...)
-                 }
-  means <- colMeans(res, na.rm = TRUE)
-  NA_count <- 1 - (apply(is.na(res), 2, sum) / iterations)
-  if (!se) {
-    out <- means
-  } else {
-    sds <- sapply(res, sd, na.rm = TRUE)
-    out <- list(means, sds)
-  }
-  if (n_features < ncol(observation)) {
-    out <- list(out, NA_count)
-  }
-  out
-}
-
+#' Univariate analysis of the kernel width
+#' 
+#' This function averages the extractions the coefficients of LIME summaries
+#' for a set od different kernel widths.
+#' This function only works if there is one covariate.
+#' @param kernel_widths a vector with positive numeric values; 
+#' the set of kernel width which we want LIME explanations for.
+#' @param observation a data.frame with only one row.
+#' @param explainer an explainer object from the lime package.
+#' @param n_features a pos. integer value; the number of features for the LIME 
+#' explainer.
+#' @param n_permutations a pos. integer value; the number of permuations of the
+#' LIME algorithm.
+#' @param dist_fun a string indicating a valid distance function for the explain
+#' function in the lime package.
+#' @param iterations a pos. integer indicating the number of iterations over
+#' which we want to average.
+#' @param se boolean; should standard errors be computed?
+#' @param seed numeric; the RNG seed.
+#' @return a data.frame: The columns represent the kernel widths and the rows
+#' the averaged local LIME coefficients.
 analyse_univariate_kernel_width <- function(kernel_widths, 
                                             observation, 
                                             explainer, 
                                             n_features, 
                                             n_permutations = 2500,
                                             dist_fun = "euclidean",
-                                            iterations,
+                                            iterations = 25,
                                             seed) {
   result <- rep(0, length(kernel_widths))
   result <- cbind(result, result)
@@ -202,6 +195,30 @@ analyse_univariate_kernel_width <- function(kernel_widths,
   result
 }
 
+#' Data simulation
+#' 
+#' This function simulates multivariate gaussian distributed features and a
+#' target that is (non-)linearly affected by these.
+#' @param n_obs a pos. integer; the number of observations to be sampled.
+#' @param n_vars a pos. integer; the number of covariates to be sampled.
+#' @param nonlinear_intervals a list that indicates the way non-linearity 
+#' should be incorparted.
+#' @param piece_wise_intervals a list that indicates the way non-linearity 
+#' should be incorparted (by local coefficients).
+#' @seed a pos. numeric value; the seed for RNG.
+#' @mu a numeric vector; the expected value of the MVG distribution of all 
+#' features.
+#' @Sigma a pd. matrix that represents the covariance matrix corresponding to
+#' mu.
+#' @param true_coefficients a vector of length n_vars indicating the true 
+#' (linear) of the coefficents.
+#' @param inctercept a numeric value representing the intercept of the true 
+#' model.
+#' @param shock either a string or a numeric value; This is to create noise on
+#' the target.
+#' If "internal" the shock (variance) is internally determined; if a number than
+#' this number serves as sd of a gaussian error
+#' @return a data.frame with n_obs rows and n_vars + 1 columns.
 simulate_data <- function(n_obs, n_vars, nonlinear_intervals = NULL, 
                           piece_wise_intervals = NULL,
                           seed, mu, Sigma, true_coefficients, intercept,
@@ -254,6 +271,7 @@ simulate_data <- function(n_obs, n_vars, nonlinear_intervals = NULL,
   data.frame(y, df)
 }
 
+#' Support fucntion to guarantee continuity of non-linear assocations.
 make_support_intercepts <- function(nonlinear_interval) {
   res <- rep(0, length(nonlinear_interval$coefs))
   for (i in 2:length(nonlinear_interval$coefs)) {
@@ -265,6 +283,31 @@ make_support_intercepts <- function(nonlinear_interval) {
   res
 }
 
+#' Multivariate analysis of the kernel width
+#' 
+#' This function averages the extractions the coefficients of LIME summaries
+#' for a set od different kernel widths.
+#' This function is for multivatriate problems.
+#' @param kernel_widths a vector with positive numeric values; 
+#' the set of kernel width which we want LIME explanations for.
+#' @param observation a data.frame with only one row.
+#' @param explainer an explainer object from the lime package.
+#' @param n_features a pos. integer value; the number of features for the LIME 
+#' explainer.
+#' @param n_permutations a pos. integer value; the number of permuations of the
+#' LIME algorithm.
+#' @param dist_fun a string indicating a valid distance function for the explain
+#' function in the lime package.
+#' @param iterations a pos. integer indicating the number of iterations over
+#' which we want to average.
+#' @param ci boolean; should CIs be computed?
+#' @param seed numeric; the RNG seed.
+#' @param feature_select a string indicating the valid feature selection 
+#' strategy of the explain function in the LIME package.
+#' @param ... further arguments passed to the sub functions.
+#' @return a list of data.frames: The columns represent the kernel widths and 
+#' the rows the averaged local LIME coefficients or the lower and upper 
+#' confidence intervals of the inclusion probabilites.
 analyse_multivariate_kernel_width <- function(kernel_widths, 
                                               observation, 
                                               explainer, 
@@ -357,6 +400,24 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
   }
 }
 
+#' Plotting the estimates of LIME explanations for different kernel sizes.
+#' 
+#' This function takes the estimated grid from 
+#' analyse_multivariate_kernel_width and visualises the results.
+#' This function only serves for simulated data.
+#' @param kernel_matrix a matrix resulting from 
+#' analyse_multivariate_kernel_width (without the SE) or 
+#' analyse_univariate_kernel_width
+#' @param kernel_width a vector with the same kernel width used to compute 
+#' kernel_matrix
+#' @param true_coefficients a vector indicating the true (local!!) coefficients 
+#' (which we know).
+#' @param title a string with an optional title.
+#' @param ymin a numeric value, a lower bound for the plot. (y-axis)
+#' @param ymax a numeric value, an upper bound for the plot. (y-axis)
+#' @return a ggplot object (hence a plotted object) where the estimated 
+#' coefficiencts of an explainer with a specific kernel width is plotted 
+#' along a grid of kernel widths as specified in kernel_widths.
 plot_kernels <- function(kernel_matrix, 
                          kernel_widths,
                          true_coefficients, 
@@ -425,6 +486,21 @@ plot_kernels_real <- function(kernel_matrix,
   eval(parse(text = call_text))
 }
 
+#' Plotting the the inclusion probabilites for different features of the LIME 
+#' explanations for different kernel sizes.
+#' 
+#' This function takes the estimated grid from 
+#' analyse_multivariate_kernel_width and visualises the results.
+#' @kernel_width a vector with the same kernel width used to compute 
+#' kernel_matrix
+#' @param stability_paths a matrix featuring inclusion probabilites  resulting 
+#' from analyse_multivariate_kernel_width
+#' @param max_kernel numeric value; what is the maximum kernel width to be 
+#' plotted.
+#' @param title a string with an optional title. (can be empty)
+#' @return a ggplot object (hence a plotted object) where the estimated 
+#' coefficiencts of an explainer with a specific kernel width is plotted 
+#' along a grid of kernel widths as specified in kernel_widths.
 plot_pseudo_stability_paths <- function(kernel_widths, stability_paths, 
                                         max_kernel = NULL, title = ""){
   stability_paths <- cbind(melt(stability_paths), kernel_widths)
@@ -441,20 +517,4 @@ plot_pseudo_stability_paths <- function(kernel_widths, stability_paths,
     labs(x = "Kernel Width", y = expression(pi)) + labs(title = title) + 
     theme(text = element_text(size = 35))
   return(p)
-}
-
-scale_data <- function(data_set) {
-  means <- colMeans(data_set$train)
-  sds <- apply(data_set$train, 2, sd)
-  for (i in 1:ncol(data_set$train)) {
-    data_set$train[ , i] <- (data_set$train[ , i] - means[i]) / sds[i]
-    data_set$test[ , i] <- (data_set$test[ , i] - means[i]) / sds[i]
-  }
-  return(list(data_set, c(means = means, sds = sds)))
-}
-
-rank_predictions <- function(task_pred) {
-  mse_cont <- (task_pred$data$response - task_pred$data$truth) ^ 2
-  names(mse_cont) <- rownames(task_pred$data)
-  mse_cont[order(mse_cont)]
 }
