@@ -1,5 +1,4 @@
-source("R-scripts/packages.R")
-source("R-scripts/utils.R")
+set.seed(1)
 day <- read_csv("datasets/day.csv")
 day$holiday <- as.factor(day$holiday)
 day$workingday <- as.factor(day$workingday)

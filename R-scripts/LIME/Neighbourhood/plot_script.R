@@ -46,7 +46,7 @@ fig5
 dev.off()
 
 ### Figure 6
-kernel_widths <- readRDS("R-results/LIME/Neighbourhood/kw_univariate.RDS")
+kernel_widths_8_6 <- readRDS("R-results/LIME/Neighbourhood/kw_univariate.RDS")
 pred_frame <- readRDS("R-results/LIME/Neighbourhood/univariate_predframe.RDS")
 test_1 <- readRDS("R-results/LIME/Neighbourhood/univariate_test_1.RDS")
 test_2 <- readRDS("R-results/LIME/Neighbourhood/univariate_test_2.RDS")
@@ -56,19 +56,19 @@ result_2 <- readRDS("R-results/LIME/Neighbourhood/univariate_2.RDS")
 fig6_1 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
   geom_point(size = 5) +
   stat_function(fun = function(x) result_1[3, 1] + result_1[3, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[3]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[3]))) + 
   stat_function(fun = function(x) result_1[4, 1] + result_1[4, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[4]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[4]))) + 
   stat_function(fun = function(x) result_1[7, 1] + result_1[7, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[7]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[7]))) + 
   stat_function(fun = function(x) result_1[8, 1] + result_1[8, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[8]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[8]))) + 
   stat_function(fun = function(x) result_1[12, 1] + result_1[12, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[12]))) +
+                size = 3, aes(colour = as.character(kernel_widths_8_6[12]))) +
   stat_function(fun = function(x) result_1[22, 1] + result_1[22, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[22]))) +
+                size = 3, aes(colour = as.character(kernel_widths_8_6[22]))) +
   stat_function(fun = function(x) result_1[42, 1] + result_1[42, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[42])))
+                size = 3, aes(colour = as.character(kernel_widths_8_6[42])))
 fig6_1 <- fig6_1 + scale_colour_manual("Kernel width", 
                                        values = c("red", "orange", "yellow", 
                                                   "darkgreen", "lightblue", "blue", 
@@ -84,19 +84,19 @@ fig6_1 <- fig6_1 + scale_colour_manual("Kernel width",
 fig6_2 <- ggplot(data = pred_frame, aes(x1, y_hat)) +
   geom_point(size = 5) +
   stat_function(fun = function(x) result_2[3, 1] + result_2[3, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[3]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[3]))) + 
   stat_function(fun = function(x) result_2[4, 1] + result_2[4, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[4]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[4]))) + 
   stat_function(fun = function(x) result_2[7, 1] + result_2[7, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[7]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[7]))) + 
   stat_function(fun = function(x) result_2[8, 1] + result_2[8, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[8]))) + 
+                size = 3, aes(colour = as.character(kernel_widths_8_6[8]))) + 
   stat_function(fun = function(x) result_2[12, 1] + result_2[12, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[12]))) +
+                size = 3, aes(colour = as.character(kernel_widths_8_6[12]))) +
   stat_function(fun = function(x) result_2[22, 1] + result_2[22, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[22]))) +
+                size = 3, aes(colour = as.character(kernel_widths_8_6[22]))) +
   stat_function(fun = function(x) result_2[42, 1] + result_2[42, 2] * x, 
-                size = 3, aes(colour = as.character(kernel_widths[42])))
+                size = 3, aes(colour = as.character(kernel_widths_8_6[42])))
 fig6_2 <- fig6_2 + scale_colour_manual("Kernel width", 
                                        values = c("red", "orange", "yellow",
                                                   "darkgreen", "lightblue", 
@@ -116,4 +116,28 @@ png("images/04-09-07.png", width = 1000, height = 848)
 ggplot(data = task_pred_lm$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
   theme(text = element_text(size = 35))
+dev.off()
+
+### Figure 8
+kernel_widths_8_8 <- readRDS("R-results/LIME/Neighbourhood/kw_global_linear.RDS")
+kernel_matrix1 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_linear1.RDS")
+kernel_matrix2 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_linear2.RDS")
+kernel_matrix3 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_linear3.RDS")
+kernel_matrix4 <- 
+  readRDS("R-results/LIME/Neighbourhood/kernelmatrix-global_linear4.RDS")
+
+fig8_1 <- plot_kernels(kernel_matrix1, kernel_widths_8, c(4, -3, 5), "",
+                       ymin = -7, ymax = 13)
+fig8_2 <- plot_kernels(kernel_matrix2, kernel_widths_8, c(4, -3, 5), "",
+                       ymin = -5, ymax = 8)
+fig8_3 <- plot_kernels(kernel_matrix3, kernel_widths_8, c(4, -3, 5), "",
+                       ymin = -5, ymax = 8)
+fig8_4 <- plot_kernels(kernel_matrix4, kernel_widths_8, c(4, -3, 5), "",
+                       ymin = -5, ymax = 8)
+
+png("images/04-09-08.png", width = 2000, height = 1700)
+grid.arrange(fig8_1, fig8_2, fig8_3, fig8_4, ncol = 2)
 dev.off()
