@@ -268,9 +268,7 @@ The whole formula would be very long, so it is split into 3 parts:
 
 Following is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE is aiming at.
 
-$$ \begin{equation} 
-\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l}             E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j 
-\end{equation}$$
+$$ \widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l}             E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j$$
 
 Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are substracted. In this way the main effects of $x_j$ and $x_l$ on the final ALE $ALE_{\hat{f},~j,~l}(x_j, x_l)$ are both zero (TODO: apley). But be carefull, this is not centering by a constant as in the one dimensional ALE. This is a correction for the also accumulated main effects which of course vary in the directions of the features.
 
