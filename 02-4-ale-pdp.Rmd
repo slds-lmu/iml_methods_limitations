@@ -349,8 +349,8 @@ while the $\Delta$ function is:
 &[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag \\ 
 &- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
 \end{split}
-  (\#eq:ale2DEstDelta)
 \end{align}
+<!-- (\#eq:ale2DEstDelta) -->
 
 Now the correction for the main effects (theoretical formula \@ref(eq:ale2DTheoreticalCorrection))is estimated:
 
@@ -383,7 +383,8 @@ knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 ```
 (ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect [@Apley2016, page 13].
 
-To calculate the delta \@ref(eq:ale2DEstDelta) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
+\@ref(eq:ale2DEstDelta)
+To calculate the delta TODO refdelta for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
 
 $$ \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})]~ - [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})]$$
 
