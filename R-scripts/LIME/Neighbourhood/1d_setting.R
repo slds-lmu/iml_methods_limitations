@@ -79,7 +79,9 @@ local_model1 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             kernel_width = 0.08, 
                                             dist_fun = "euclidean",
                                             seed = 1,
-                                            feature_select = "auto")
+                                            feature_select = "auto",
+                                            iterations = 5000,
+                                            se = FALSE)
 local_model1 <- local_model1[[1]][1:2]
 ### This creates plot #5: The local model found by LIME for the kernel size
 ### 0.08 and (randomly chosen) 2 in order to contrast the results.
@@ -89,7 +91,9 @@ local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             kernel_width = 2, 
                                             dist_fun = "euclidean", 
                                             seed = 1, 
-                                            feature_select = "auto")
+                                            feature_select = "auto",
+                                            iterations = 5000,
+                                            se = FALSE)
 local_model2 <- local_model2[[1]][1:2]
 
 ### In order to study the effect of different kernel widths better for
