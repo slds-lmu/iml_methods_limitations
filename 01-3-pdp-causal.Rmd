@@ -2,40 +2,26 @@
 
 *Author: Thommy Dassen*
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(iml) # for pdp and ice
-library(ggdag) # for structural causal graphs
-library(randomForest) # for modeling
-library(pdp) # for pdp and ice plots
-library(Ecdat) # datasets
-library(dplyr) # for group by
-# set the number of data points to be created
-N <- 1000
-set.seed(107)
-
-```
-
 ## Introduction
 
-In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) will be used to visualize various causal relationships. Judea Pearl's framework of do-calculus will be used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention. In order to do so, each scenario will consist of a simulation with and without an intervention. 
+```{r}
+library(dplyr) # for group by
+library(Ecdat) # icecream datasets
+library(ggpubr) # ggarrange
+library(iml)  # pdp
+library(randomForest)
+```
+
 
 [@zhaohastie] formulated 3 elements that are needed for a causal interpretation:
 1. A good predictive model which closely approximates the real relationship.
 2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.
 3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)
 
-The first point is an important one, because there is a big difference between being able to causally interpret an effect for the *model* and using it as a causal interpretation for the real world.
+** Backdoor Criterion **
 
-## Interventions
-
-When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. The values of this variable then no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. In a graphical sense an intervention means removing an edge that is directed towards the variable we fix. 
+When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. In a graphical sense an intervention means removing an edge that is directed towards the variable we fix. 
 The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
-
-## Partial Dependence Plots and Directed Acyclical Graphs
-
-A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs have to be acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter.
-
-A path is any consecutive connection of edges, regardless of the direction of the edges. A "back-door" path, on the other hand, is any path containing an arrow into a subset of variables $X_S$ [@zhaohastie]. These back-door paths can be seen as a common cause of both $X_S$ and $Y$ and would need to be adjusted for in order to compute the causal effect of $X_S$ on $Y$ in observational data. Since we will be working with simulated data we can directly access the probability $P_m$, which prevails in the manipulated model. Still, we will shortly explain the method for observational data.
 
 An important formula introduced by  [@pearl1993] is that of the back-door adjustment. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
 
@@ -58,10 +44,8 @@ These last two formulas thus seem to be the same, if $C$ is the complement of $S
 
 ## Reverse Causality
 
-Before we have a look at various scenarios and interventions, let's look at an example that shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
-Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic.
-
-```{r echo=TRUE, message=FALSE, warning=FALSE}
+Before we have a look at various scenarios and settings, let's look at an example that shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 data("Icecream")
  rf.icecream = randomForest(cons ~ temp
                          , data = Icecream, importance = T)
@@ -77,197 +61,388 @@ data("Icecream")
   grid.arrange(p1, p2, ncol = 2)
 ```
 
+Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. As discussed above, domain knowledge is also a necessity in order to determine whether the backdoor criterion is met.
 
-This domain knowledge can then be portrayed in a DAG in the following way:
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-dagify(cons ~ temp
-       ) %>% 
+
+## Scenarios
+
+In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests saw a large increase in computation time with a higher number, but with results that hardly differed from those obtained with one thousand observations.
+
+**Scenario 1: ladieda**
+
+```{r echo=FALSE}
+set.seed(18)
+dagify(Y ~ X,
+       X ~ Z
+) %>% 
   ggdag() 
 ```
 
-## Interventions on simulated data
+In the first scenario, we have a chain DAG. Our variable $X$ is impacted by $Z$ and has a direct effect on $Y$. $Z$, however, does not. $X_C$ consists of $Z$, which is not a descendant of $X$. There is also no backdoor path between $X$ and $Y$. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario is as follows:
 
-The complexity of scenarios will increase throughtout this chapter.
+$$ Y = X + \epsilon  $$
+$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \sim Z + \epsilon, \ \ \ \ \ N = 100 $$
 
-**Scenario 1: Direct Effect**
 
-The simplest scenario one can think of is that of a single direct effect between a feature $x_1$ and an outcome $Y$. This can be visualized by the DAG in the plot below.
-
-```{r echo=TRUE}
-###############################################
-# Scenario 1: Direct Effect
-###############################################
-# x1 causes y
-dagify(y ~ x1
-       ) %>% 
+```{r echo=FALSE}
+set.seed(18)
+dagify(Y ~ X,
+       X ~ Z
+) %>% 
   ggdag() 
 ```
 
-A very basic linear regression on simulated data with the relationship as seen in this DAG leads naturally to a linear relationship in the PDP. Since in this scenario we know there are no other variables, either known or unknown, impacting our outcome variable $Y$ a causal interpretation of this PDP seems reasonable. No additional intervention is needed. It is clear there is no back-door path and furthermore $X_C$ does not exist.
+As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ were varied across 3 levels leading to 9 settings.  
 
-```{r echo=TRUE}
-# simulate data 
-b1 <- 1
-x1 <- rnorm(N, 10, 5) 
-y <- b1 * x1 + rnorm(N, 1,1)
-#create a dataframe
-df <- data.frame(x1, y)
-
-#linear regression
-lm.direct <- lm(y~x1, data = df)
-partial(lm.direct, pred.var="x1", plot = TRUE, rug = TRUE, plot.engine = "ggplot2")
-```
-
-**Scenario 2: Collider**
-Would this not have the same result as a direct effect?
-
-```{r echo=TRUE}
-###############################################
-# Scenario 2: Collider
-###############################################
-collider_dag <- collider_triangle(x = "x1", 
-                               y = "x2", 
-                               m = "y") 
-
-ggdag_dseparated(collider_dag, text = FALSE, use_labels = "label")
-
-ggdag_dseparated(collider_dag, controlling_for = "m", 
-                 text = FALSE, use_labels = "label")
-```
+![Figure 1](./images/scenario1_all.jpeg)
 
 
-**Scenario 3: Confounding**
-
-In the case of a confounding variable, the outcome $Y$ is again impacted by the features $x_1$, $x_2$ and $x_3$, as in the collider example before. However, this time the value of $x_2$ is dependent on the value of $x_1$ as well. As such $x_1$ does not only impact $Y$ directly, but also throught its impact on $x_2$. The below plot shows such a relationship.
-```{r echo=TRUE}
-###############################################
-# Scenario 3: Confounding Variables
-###############################################
-# create structural graph of what the data set looks like
-dagify(y ~ x2,
-       x2 ~ x1,
-       y ~ x1,
-       y ~ x3) %>% 
-  ggdag() 
-```
-
-We are interested in the effect $x_2$ has on $y$. The causal effect $P(Y = y | do(X_2=x_2))$ is equal to $P_m(Y=y|X_2 = x_2)$, where $P_m$ is the manipulated model where we have fixed the value for $x_2$. Graphically this means removing the edge between $x_1$ and $x_2$ in the above plot.
 
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-  # confounding 
-  set.seed(18)
-  x1 <- rnorm(N, 0, .5) #confounding variable for x and y
-  x2 <- x1 + rnorm(N, 1, 2)
-  x3 <- sin(rnorm(N,3,1))
-  y <- x1 + x2^2 + x3 + rnorm(N, 2,1)
-  #create a dataframe
-  df <- data.frame(x1, x2, x3, y)
+
+```{r eval=FALSE, include=TRUE}
+# pdp
+pdp_simulation <- function(runs, N, error_std){ 
+  pdp_simulations <- setNames(data.frame(matrix(ncol = 2, nrow = 0)),  c("X1", "y_hat"))
   
-  
-  rf.test = randomForest(y ~ x1 + x2 + x3
-                         , data = df, importance = T)
+  for(i in 1:runs){
+    e <- rnorm(N,0, error_std)
+    Z <- runif(N, -1, 1)
+    X <- Z + e
+    Y <- X + e
+    df <- data.frame(X, Z, Y)
+    
+    rf.basic = randomForest(Y ~ . , data = df, importance = T)
+    mod = Predictor$new(rf.basic, data = df)
+    pdp.obj = FeatureEffect$new(mod, feature = c("X"), method = "pdp") 
+    p_pdp_mod <- plot(pdp.obj)
+    
+    simulation <- as.data.frame(pdp.obj$results[,1:2])
+    simulation$run <- i
+    colnames(simulation) <- c("X", "Y_hat", "run_number")
+    pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
+  }
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+}
+# standard deviation eq 0.1
+scen1_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
+scen1_plot_1 <- scen1_plot_1 + labs(x = "X", y = "Y_hat")
+scen1_plot_2 <- pdp_simulation(runs=20, N = 1000, error_std=0.1)
+scen1_plot_2 <- scen1_plot_2 + labs(x = "X", y = "Y_hat")
+scen1_plot_3 <- pdp_simulation(runs=20, N = 10000, error_std=0.1)
+scen1_plot_3 <- scen1_plot_3 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.3
+scen1_plot_4 <- pdp_simulation(runs=20, N = 100, error_std=0.3)
+scen1_plot_4 <- scen1_plot_4 + labs(x = "X", y = "Y_hat")
+scen1_plot_5 <- pdp_simulation(runs=20, N = 1000, error_std=0.3)
+scen1_plot_5 <- scen1_plot_5 + labs(x = "X", y = "Y_hat")
+scen1_plot_6 <- pdp_simulation(runs=20, N = 10000, error_std=0.3)
+scen1_plot_6 <- scen1_plot_6 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.5
+scen1_plot_7 <- pdp_simulation(runs=20, N = 100, error_std=0.5)
+scen1_plot_7 <- scen1_plot_7 + labs(x = "X", y = "Y_hat")
+scen1_plot_8 <- pdp_simulation(runs=20, N = 1000, error_std=0.5)
+scen1_plot_8 <- scen1_plot_8 + labs(x = "X", y = "Y_hat")
+scen1_plot_9 <- pdp_simulation(runs=20, N = 10000, error_std=0.5)
+scen1_plot_9 <- scen1_plot_9 + labs(x = "X", y = "Y_hat")
 
-  mod = Predictor$new(rf.test, data = df)
-  pdp.obj = Partial$new(mod, feature = c("x2"))  
-  p1 <- plot(pdp.obj) 
-  
-  df_intervention_all <- setNames(data.frame(matrix(ncol = 4, nrow = 0)), c("x1", "x2", "x3", "y"))
-  for(i in 1:length(unique(df$x2))){
-    x2 <- unique(df$x2)[i]
-    y <- x1 + x2^2 + x3 + rnorm(N, 2,1)
-    df_intervention <- data.frame( x1, x2, x3, y)
-    df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
-  } 
+# intervention
+
+intervention <- function(runs, N, error_std){ 
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("X", "Z", "Y"))
+  for(i in 1:runs){
+    
+    e <- rnorm(N,0, error_std)
+    Z <- runif(N, -1, 1)
+    X <- Z + e
+    Y <- X + e
+    df <- data.frame(X, Z, Y)
+    for(j in 1:length(unique(df$X))){
+      X <- unique(df$X)[j]
+      Y <- X + e
+      df_intervention <- data.frame(X, Z, Y)
+      df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+    }
+  }
   
   df_intervention_group <- df_intervention_all %>%
-    group_by(x2) %>%
-    summarise(y_mean = mean(y),
+    group_by(X) %>%
+    summarise(Y_intervention = mean(Y),
               n = n()) %>%
-    arrange(x2)
+    
+    arrange(X)
   
-  p2 <- ggplot(aes(x2, y_mean), data = df_intervention_group) + geom_line()
-grid.arrange(p1,p2,ncol=2)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+}
+# standard deviation eq 0.1
+scen1_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
+# standard deviation eq 0.3
+scen1_int_plot_5 <- intervention(runs=1, N = 1000, error_std=0.3)
+# standard deviation eq 0.5
+scen1_int_plot_8 <- intervention(runs=1, N = 1000, error_std=0.5)
 
+
+scenario_1_all <- ggarrange(scen1_plot_1, # N = 100,  std = 0.1
+                            scen1_plot_2, # N = 1000, std = 0.1
+                            scen1_plot_3, # N = 2000, std = 0.1
+                            scen1_int_plot_2,
+                            
+                            scen1_plot_4, # N = 100,  std = 0.3
+                            scen1_plot_5, # N = 1000, std = 0.3
+                            scen1_plot_6, # N = 2000, std = 0.3
+                            scen1_int_plot_5,
+                            
+                            scen1_plot_7, # N = 100,  std = 0.5
+                            scen1_plot_8, # N = 1000, std = 0.5
+                            scen1_plot_9, # N = 2000, std = 0.5
+                            scen1_int_plot_8,
+                            
+                            nrow= 3, ncol = 4)
+annotate_figure(scenario_1_all,
+                top = text_grob("Increasing number of observations to the right", color = "black"),
+                left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
+                 fig.lab.face = "bold")
 
 ```
 
-After simulating data and an intervention on $x_2$, we get the above results, where the PDP is on the left and the plot for $E[P(Y = y | do(X_2=x_2))]$ on the right. The PDP does not manage to accurately portray the relationship over the entire spectrum of $x_2$. In the area of $[-2.5, 2.5]$ the shape of the parabola is captured, but in the more extreme regions where less observations lie (notice the rug on the x-axis) the PDP is inaccurate.
-
-**Scenario 4: Latent Variable**
-
-Imagine an latent variable $L$ exists that affects both $x_1$ and $x_2$, but not $Y$ directly. Such a scenario can be seen in the plot below. Again, in order to see the 'pure' effect of $x_1$ on $Y$ we need to sever any edges coming into $x_1$ as seen in the second plot. In the case of observational data, we would have to find a variable in $X_C$ that adheres to the back-door criterion. $x_2$ meets this standard. It is not a descendant of $x_1$ and it can block the back-door path from $Y$ to $x_1$ ($Y \leftarrow x_2 \leftarrow L \rightarrow x_1$). Intervening on $x_2$ should thus give the causal effect of $x_1$ on $Y$.
 
 
-```{r echo=TRUE}
-###############################################
-# Scenario 4: Latent Variable
-###############################################
-# create structural graph of what the data set looks like
-dagify(y ~ x2,
-       y ~ x1,
-       x1 ~ L,
-       x2 ~ L
-       ) %>% 
+**Scenario 2: Chain DAG**
+
+```{r echo=FALSE}
+set.seed(18)
+dagify(Y ~ Z,
+       Z ~ X
+) %>% 
   ggdag() 
-
-# sever edge from L to x1
-dagify(y ~ x2,
-       y ~ x1,
-       x2 ~ L
-       ) %>% 
-  ggdag()
 ```
 
-Since we are using simulated data, we can again directly intervene on $x_1$.
+In this scenario the DAG again looks like a chain. $X$ has an effect on $Y$ through $Z$, but no direct relationship between $X$ and $Y$ exists. The initial simulation settings for this scenario were as follows: 
+$$ Y = Z + \epsilon  $$
+$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim X + \epsilon, \ \ \ \ \ N = 100 $$
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-  # latent 
-  set.seed(200)
-  L <- rnorm(N, 10, .5) #latent variable
-  x1 <- L + rnorm(N, 3, 2)
-  x2 <- L + rnorm(N, 7, 0.5)
-  y <- x1 + x2 + rnorm(N, 2,1)
-  #create a dataframe
-  df <- data.frame(L, x1, x2, y)
+
+![Figure 2](./images/scenario2_all.jpeg)
+
+```{r eval=FALSE, include=FALSE}
+# pdp
+pdp_simulation <- function(runs, N, error_std){ 
+  pdp_simulations <- setNames(data.frame(matrix(ncol = 2, nrow = 0)),  c("X1", "y_hat"))
+
+  for(i in 1:runs){
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- X + e
+    Y <- Z + e
+    df <- data.frame(X, Z, Y)
   
-  rf.latent = randomForest(y ~ x1 + x2 
-                         , data = df, importance = T)
-  mod = Predictor$new(rf.latent, data = df)
-  pdp.obj = Partial$new(mod, feature = c("x1"))  
-  p1 <- plot(pdp.obj) 
+    rf.basic = randomForest(Y ~ . , data = df, importance = T)
+    mod = Predictor$new(rf.basic, data = df)
+    pdp.obj = FeatureEffect$new(mod, feature = c("X"), method = "pdp") 
+    p_pdp_mod <- plot(pdp.obj)
   
-  df_intervention_all <- setNames(data.frame(matrix(ncol = 4, nrow = 0)), c("L", "x1", "x2", "y"))
-  for(i in 1:length(unique(df$x1))){
-    x1 <- unique(df$x1)[i]
-    y <- x1 + x2 + rnorm(N, 2,1)
-    df_intervention <- data.frame(L, x1, x2, y)
-    df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
-  } 
+    simulation <- as.data.frame(pdp.obj$results[,1:2])
+    simulation$run <- i
+    colnames(simulation) <- c("X", "Y_hat", "run_number")
+    pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
+    }
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+}
+# standard deviation eq 0.1
+scen2_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
+scen2_plot_1 <- scen2_plot_1 + labs(x = "X", y = "Y_hat")
+scen2_plot_2 <- pdp_simulation(runs=20, N = 1000, error_std=0.1)
+scen2_plot_2 <- scen2_plot_2 + labs(x = "X", y = "Y_hat")
+scen2_plot_3 <- pdp_simulation(runs=20, N = 10000, error_std=0.1)
+scen2_plot_3 <- scen2_plot_3 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.3
+scen2_plot_4 <- pdp_simulation(runs=20, N = 100, error_std=0.3)
+scen2_plot_4 <- scen2_plot_4 + labs(x = "X", y = "Y_hat")
+scen2_plot_5 <- pdp_simulation(runs=20, N = 1000, error_std=0.3)
+scen2_plot_5 <- scen2_plot_5 + labs(x = "X", y = "Y_hat")
+scen2_plot_6 <- pdp_simulation(runs=20, N = 10000, error_std=0.3)
+scen2_plot_6 <- scen2_plot_6 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.5
+scen2_plot_7 <- pdp_simulation(runs=20, N = 100, error_std=0.5)
+scen2_plot_7 <- scen2_plot_7 + labs(x = "X", y = "Y_hat")
+scen2_plot_8 <- pdp_simulation(runs=20, N = 1000, error_std=0.5)
+scen2_plot_8 <- scen2_plot_8 + labs(x = "X", y = "Y_hat")
+scen2_plot_9 <- pdp_simulation(runs=20, N = 10000, error_std=0.5)
+scen2_plot_9 <- scen2_plot_9 + labs(x = "X", y = "Y_hat")
+
+# intervention
+
+intervention <- function(runs, N, error_std){ 
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("X", "Z", "Y"))
+    for(i in 1:runs){
+  
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- X + e
+    Y <- Z + e
+    df <- data.frame(X, Z, Y)
+      for(j in 1:length(unique(df$X))){
+        X <- unique(df$X)[j]
+        Z <- X + e
+        Y <- Z + e
+        df_intervention <- data.frame(X, Z, Y)
+        df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+      }
+    }
+
+  df_intervention_group <- df_intervention_all %>%
+    group_by(X) %>%
+    summarise(Y_intervention = mean(Y),
+    n = n()) %>%
+    
+    arrange(X)
+
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+}
+# standard deviation eq 0.1
+scen2_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
+# standard deviation eq 0.3
+scen2_int_plot_5 <- intervention(runs=1, N = 1000, error_std=0.3)
+# standard deviation eq 0.5
+scen2_int_plot_8 <- intervention(runs=1, N = 1000, error_std=0.5)
+
+
+scenario_2_all <- ggarrange(scen2_plot_1, # N = 100,  std = 0.1
+                            scen2_plot_2, # N = 1000, std = 0.1
+                            scen2_plot_3, # N = 2000, std = 0.1
+                            scen2_int_plot_2,
+                            
+                            scen2_plot_4, # N = 100,  std = 0.3
+                            scen2_plot_5, # N = 1000, std = 0.3
+                            scen2_plot_6, # N = 2000, std = 0.3
+                            scen2_int_plot_5,
+                            
+                            scen2_plot_7, # N = 100,  std = 0.5
+                            scen2_plot_8, # N = 1000, std = 0.5
+                            scen2_plot_9, # N = 2000, std = 0.5
+                            scen2_int_plot_8,
+                            
+                        nrow= 3, ncol = 4)
+annotate_figure(scenario_2_all,
+                top = text_grob("Increasing number of observations to the right", color = "black"),
+                left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
+                 fig.lab.face = "bold")
+```
+
+** Scenario 3 **
+
+```{r echo=FALSE}
+dagify(Y ~ X,
+       Y ~ Z,
+       Z ~ X
+) %>% 
+  ggdag() 
+```
+
+
+
+```{r eval=FALSE, include=FALSE}
+# pdp
+pdp_simulation <- function(runs, N, error_std){ 
+  pdp_simulations <- setNames(data.frame(matrix(ncol = 2, nrow = 0)),  c("X1", "y_hat"))
+  
+  for(i in 1:runs){
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- X + e
+    Y <- X + Z + e
+    df <- data.frame(X, Z, Y)
+    
+    rf.basic = randomForest(Y ~ . , data = df, importance = T)
+    mod = Predictor$new(rf.basic, data = df)
+    pdp.obj = FeatureEffect$new(mod, feature = c("X"), method = "pdp") 
+    p_pdp_mod <- plot(pdp.obj)
+    
+    simulation <- as.data.frame(pdp.obj$results[,1:2])
+    simulation$run <- i
+    colnames(simulation) <- c("X", "Y_hat", "run_number")
+    pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
+  }
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+}
+# standard deviation eq 0.1
+scen3_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
+scen3_plot_1 <- scen3_plot_1 + labs(x = "X", y = "Y_hat")
+scen3_plot_2 <- pdp_simulation(runs=20, N = 1000, error_std=0.1)
+scen3_plot_2 <- scen3_plot_2 + labs(x = "X", y = "Y_hat")
+scen3_plot_3 <- pdp_simulation(runs=20, N = 10000, error_std=0.1)
+scen3_plot_3 <- scen3_plot_3 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.3
+scen3_plot_4 <- pdp_simulation(runs=20, N = 100, error_std=0.3)
+scen3_plot_4 <- scen3_plot_4 + labs(x = "X", y = "Y_hat")
+scen3_plot_5 <- pdp_simulation(runs=20, N = 1000, error_std=0.3)
+scen3_plot_5 <- scen3_plot_5 + labs(x = "X", y = "Y_hat")
+scen3_plot_6 <- pdp_simulation(runs=20, N = 10000, error_std=0.3)
+scen3_plot_6 <- scen3_plot_6 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.5
+scen3_plot_7 <- pdp_simulation(runs=20, N = 100, error_std=0.5)
+scen3_plot_7 <- scen3_plot_7 + labs(x = "X", y = "Y_hat")
+scen3_plot_8 <- pdp_simulation(runs=20, N = 1000, error_std=0.5)
+scen3_plot_8 <- scen3_plot_8 + labs(x = "X", y = "Y_hat")
+scen3_plot_9 <- pdp_simulation(runs=20, N = 10000, error_std=0.5)
+scen3_plot_9 <- scen3_plot_9 + labs(x = "X", y = "Y_hat")
+
+# intervention
+
+intervention <- function(runs, N, error_std){ 
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("X", "Z", "Y"))
+  for(i in 1:runs){
+    
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- X + e
+    Y <- X + Z + e
+    df <- data.frame(X, Z, Y)
+    for(j in 1:length(unique(df$X))){
+      X <- unique(df$X)[j]
+      Z <- X + e
+      Y <- X + Z + e
+      df_intervention <- data.frame(X, Z, Y)
+      df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+    }
+  }
   
   df_intervention_group <- df_intervention_all %>%
-    group_by(x1) %>%
-    summarise(y_mean = mean(y),
+    group_by(X) %>%
+    summarise(Y_intervention = mean(Y),
               n = n()) %>%
-    arrange(x1)
+    
+    arrange(X)
   
-  p2 <- ggplot(aes(x1, y_mean), data = df_intervention_group) + geom_line()
-  grid.arrange(p1, p2, ncol = 2)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+}
+# standard deviation eq 0.1
+scen3_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
+# standard deviation eq 0.3
+scen3_int_plot_5 <- intervention(runs=1, N = 1000, error_std=0.3)
+# standard deviation eq 0.5
+scen3_int_plot_8 <- intervention(runs=1, N = 1000, error_std=0.5)
 
+
+scenario_3_all <- ggarrange(scen3_plot_1, # N = 100,  std = 0.1
+                            scen3_plot_2, # N = 1000, std = 0.1
+                            scen3_plot_3, # N = 2000, std = 0.1
+                            scen3_int_plot_2,
+                            
+                            scen3_plot_4, # N = 100,  std = 0.3
+                            scen3_plot_5, # N = 1000, std = 0.3
+                            scen3_plot_6, # N = 2000, std = 0.3
+                            scen3_int_plot_5,
+                            
+                            scen3_plot_7, # N = 100,  std = 0.5
+                            scen3_plot_8, # N = 1000, std = 0.5
+                            scen3_plot_9, # N = 2000, std = 0.5
+                            scen3_int_plot_8,
+                            
+                            nrow= 3, ncol = 4)
+annotate_figure(scenario_3_all,
+                top = text_grob("Increasing number of observations to the right", color = "black"),
+                left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
+                fig.lab.face = "bold")
 
 ```
-
-Again we see the PDP performs more poorly in the areas where data is sparse. Even in the areas where data is not sparse, the PDP curve isn't perfectly straight like the line for $E[P(Y = y | do(X_1=x_1))]$ on the right.
-
-
-
-## Discussion
-
-## Conclusions
-
-
-## To Do
-
-Is it possible to evaluate the differences in PDP curves in a more formal way, rather than just a visual approach?
-
-

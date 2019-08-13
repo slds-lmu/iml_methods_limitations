@@ -12,6 +12,7 @@ Depends:
   ggdag,
   pdp,
   Ecdat,
-  dplyr
+  dplyr,
+  ggpubr
 
   
