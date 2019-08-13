@@ -63,13 +63,13 @@ In fact, @laugel2018defining claim that this way should be preferred over the wa
 In this chapter, however, we focus on the explicit implementation in LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model stability.
 
 When working with LIME, the weighting of instances is performed using a kernel function over the distances of all other observations to the observation of interest.
-This leaves us _arbitrary_ (in fact they may not be _that_ arbitrary) choices on two parameters:
+This leaves us _arbitrary_ (in fact, they may not be _that_ arbitrary) choices on two parameters:
 the distance and the kernel function.
 Typical distance functions applicable to statistical data analysis are based on the L0, L1 and L2 norms.
 For numerical features, one tends to use either manhattan distance (L1) or Euclidean distance (L2).
 For categorical features, one would classically apply hamming distance (L0).
 For mixed data (data with both categorical and numerical features), one usually combines distances for numerical and categorical features.
-So does Gower's distance @gower1971general or the distance proposed by @huang1998kproto:
+So does Gower's distance (@gower1971general) or the distance proposed by @huang1998kproto:
 
 $$ d_H(x_i, x_j) = d_{euc}(x_i, x_j) + \lambda d_{ham}(x_i, x_j) $$
 
@@ -412,7 +412,7 @@ The (toy example) stability paths suggest that temperature, weather situation an
 However, in real life, things mostly are more complex.
 In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
 
-```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for the bycicle data set explaining a random forest"}
+```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for different observations from the bycicle data set explaining a random forest."}
 knitr::include_graphics("images/04-09-15.png")
 ```
 
@@ -421,19 +421,19 @@ These are the global features.
 There is one interesting observation about this.
 Different observations sometimes converge to different global surrogate models.
 The covariates humidity and temperature are always selected.
-Then, either the windspeed (all observations except number 3) or the season (e.g. observation 3) is selected as global feature.
+Then, either the windspeed (e.g. only observation 1) or the season (the remainder) is selected as global feature.
 We believe that this is due to the fact that both covariates are similarly strong on the global scope.
+Globally evaluating the feature importance of the random forest suggests that in fact temperature, season, humidity and windspeed are the most relevant features.
 
 Furthermore, we observe that for small values of the kernel width, we have -- like in our simulation -- high variation.
-Globally evaluating the feature importance of the random forest suggests that in fact temperature, season, humidity and windspeed are the most relevant features.
 Here, this variation is expressed by intersecting paths where most covariates are (almost) equally likely to be sampled.
 
 For some observations, there seems to be a narrow range where there are stable and local explanations.
-For instance, consider observation 1 and 8.
+For instance, consider observation 1 and 3.
 Here, the local models seem quite clear.
-For observation 1 between kernel widths of $0.5$ and $1$, it seems as if the temperature, the humidity and the weather situation are most influential.
-For observation 8, the selected local features are temperature, humidity and season.
-For other observations, such as observations 3 and 4, we may argue that there are local and stable local explanations, too.
+For observation 1, between kernel widths of $0.5$ and $1$ it seems as if the temperature, the windspeed and the weather situation are most influential.
+For observation 3, the selected local features are temperature, windspeed and season.
+For other observations, such as observations 4 and 8, we may argue that there are local and stable local explanations, too.
 These are, however, by far less convincing than the previous ones.
 Additionally, we are struggling to identify stable local models for many observations, like observation 2 and 6.
 For those observations, there is only instability for small kernel widths which transforms immediately to the global surrogate once stabilised.
@@ -513,7 +513,7 @@ As we have seen, a proper kernel width may look very different depending on the 
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result.
 In figure \@ref(fig:fig15) we analyse this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
-```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship)."}
+```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
 knitr::include_graphics("images/04-09-16.png")
 ```
 
