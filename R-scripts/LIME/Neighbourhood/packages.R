@@ -10,7 +10,8 @@ required_packages <- c("devtools",
                        "MASS",
                        "foreach",
                        "doRNG",
-                       "doParallel")
+                       "doParallel",
+                       "grDevices")
 
 install_these <- 
   required_packages[!(required_packages %in% installed.packages())]
@@ -36,5 +37,6 @@ library(lime)
 library(foreach)
 library(doRNG)
 library(doParallel)
+library(grDevices)
 
 explain <- lime::explain

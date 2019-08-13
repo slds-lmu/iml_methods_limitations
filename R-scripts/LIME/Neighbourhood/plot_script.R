@@ -8,19 +8,19 @@ dev.off()
 ### Figure 2
 fig2 <- readRDS("R-results/LIME/Neighbourhood/fig2.RDS")
 png("images/04-09-02.png", width = 1000, height = 848)
-fig2
+print(fig2)
 dev.off()
 
 ### Figure 3
 fig3 <- readRDS("R-results/LIME/Neighbourhood/fig3.RDS")
 png("images/04-09-03.png", width = 1000, height = 848)
-fig3
+print(fig3)
 dev.off()
 
 ### Figure 4
 fig4 <- readRDS("R-results/LIME/Neighbourhood/fig4.RDS")
 png("images/04-09-04.png", width = 1000, height = 848)
-fig4
+print(fig4)
 dev.off()
 
 ### Figure 5
@@ -42,7 +42,7 @@ fig5 <- fig3 + stat_function(fun = Fun, size = 2,
                       values = c("red", "yellow")) + ylab("Predicted Value")
 
 png("images/04-09-05.png", width = 1000, height = 848)
-fig5
+print(fig5)
 dev.off()
 
 ### Figure 6
@@ -112,10 +112,11 @@ dev.off()
 
 ### Figure 7
 task_pred_lm <- readRDS("R-results/LIME/Neighbourhood/task_pred_lm.RDS")
-png("images/04-09-07.png", width = 1000, height = 848)
-ggplot(data = task_pred_lm$data, aes(x = response, y = truth)) +
+fig7 <- ggplot(data = task_pred_lm$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
   theme(text = element_text(size = 35))
+png("images/04-09-07.png", width = 1000, height = 848)
+print(fig7)
 dev.off()
 
 ### Figure 8
@@ -144,10 +145,11 @@ dev.off()
 
 ### Figure 9
 task_pred_mars1 <- readRDS("R-results/LIME/Neighbourhood/task_pred_mars1.RDS")
-png("images/04-09-09.png", width = 1000, height = 848)
-ggplot(data = task_pred_mars1$data, aes(x = response, y = truth)) +
+fig9 <- ggplot(data = task_pred_mars1$data, aes(x = response, y = truth)) +
   geom_point(size = 3) +
   theme(text = element_text(size = 35)) + stat_function(fun = function(x) x)
+png("images/04-09-09.png", width = 1000, height = 848)
+print(fig9)
 dev.off()
 
 ### Figure 10
@@ -168,28 +170,28 @@ km_nc_2_1 <- km_2_1[[1]]
 km_nc_2_2 <- km_2_2[[1]]
 
 fig10_1 <- plot_kernels(km_nc_1_1, 
-                       kernel_widths_10, 
-                       true_coefficients = c(5, -4, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x1 is 5.")
+                        kernel_widths_10, 
+                        true_coefficients = c(5, -4, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x1 is 5.")
 
 fig10_2 <- plot_kernels(km_nc_1_2, 
-                       kernel_widths_10, 
-                       true_coefficients = c(5, -4, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x1 is 5.")
+                        kernel_widths_10, 
+                        true_coefficients = c(5, -4, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x1 is 5.")
 
 fig10_3 <- plot_kernels(km_nc_2_1, 
-                       kernel_widths_10, 
-                       true_coefficients = c(0, -4, 3),
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x1 is 0.")
+                        kernel_widths_10, 
+                        true_coefficients = c(0, -4, 3),
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x1 is 0.")
 
 fig10_4 <- plot_kernels(km_nc_2_2, 
-                       kernel_widths_10, 
-                       true_coefficients = c(0, -4, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x1 is 0.")
+                        kernel_widths_10, 
+                        true_coefficients = c(0, -4, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x1 is 0.")
 
 png("images/04-09-10.png", width = 2000, height = 1700)
 grid.arrange(fig10_1, fig10_2, fig10_3, fig10_4, nrow = 2)
@@ -210,10 +212,11 @@ true_data <- simulate_data(2500,
                            intercept = 2.5,
                            shock = 0)
 
-png("images/04-09-10-comp.png", width = 1000, height = 848)
-ggplot(true_data, aes(y = y, x = x1)) +
+fig10_comp <- ggplot(true_data, aes(y = y, x = x1)) +
   geom_line(size = 2.5) +
   theme(text = element_text(size = 35)) + xlab("x1") + ylab("y")
+png("images/04-09-10-comp.png", width = 1000, height = 848)
+print(fig10_comp)
 dev.off()
 
 ### Figure 11 (all possible 3 plots)
@@ -239,8 +242,7 @@ colnames(x3_frame) <- c("Kernel", "Mean", "lower", "upper")
 x1_plot <- x1_frame
 x1_plot[x1_plot > 7] <- 7
 x1_plot[x1_plot < -7] <- -7
-png("images/04-09-11-1.png", width = 1000, height = 848)
-ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
+fig11_1 <- ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x1_plot, size = 3) +
   geom_ribbon(data = x1_plot, aes(ymin = lower, ymax = upper), 
@@ -248,13 +250,15 @@ ggplot(x1_plot, aes(y = Mean, x = Kernel)) +
                                        fun = function(x) 0) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") + 
   xlab("Kernel width")
+
+png("images/04-09-11-1.png", width = 1000, height = 848)
+print(fig11_1)
 dev.off()
 
 x2_plot <- x2_frame
 x2_plot[x2_plot > 3] <- 3
 x2_plot[x2_plot < -11] <- -11
-png("images/04-09-11-2.png", width = 1000, height = 848)
-ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
+fig11_2 <- ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x2_plot, size = 3) +
   geom_ribbon(data = x2_plot, aes(ymin = lower, ymax = upper), 
@@ -262,13 +266,14 @@ ggplot(x2_plot, aes(y = Mean, x = Kernel)) +
                                        fun = function(x) -4) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") + 
   xlab("Kernel width")
+png("images/04-09-11-2.png", width = 1000, height = 848)
+print(fig11_2)
 dev.off()
 
 x3_plot <- x3_frame
 x3_plot[x3_plot > 7] <- 10
 x3_plot[x3_plot < -4] <- -4
-png("images/04-09-11-3.png", width = 1000, height = 848)
-ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
+fig11_3 <- ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
   geom_point(size = 3) +
   geom_line(data = x3_plot, size = 3) +
   geom_ribbon(data = x3_plot, aes(ymin = lower, ymax = upper), 
@@ -276,6 +281,8 @@ ggplot(x3_plot, aes(y = Mean, x = Kernel)) +
                                        fun = function(x) 3) +
   theme(text = element_text(size = 35)) + ylab("Coefficient") +
   xlab("Kernel width")
+png("images/04-09-11-3.png", width = 1000, height = 848)
+print(fig11_3)
 dev.off()
 
 ### Figure 12
@@ -289,37 +296,37 @@ kernel_widths_12 <-
   readRDS("R-results/LIME/Neighbourhood/kw_global_nonlinear.RDS")
 
 fig12_1 <- plot_kernels(km_1[[1]], 
-                       kernel_widths_12, 
-                       true_coefficients = c(5, -4, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is -4.")
+                        kernel_widths_12, 
+                        true_coefficients = c(5, -4, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x2 is -4.")
 
 fig12_2 <- plot_kernels(km_2[[1]], 
-                       kernel_widths_12, 
-                       true_coefficients = c(5, 6, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is 6.")
+                        kernel_widths_12, 
+                        true_coefficients = c(5, 6, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x2 is 6.")
 
 fig12_3 <- plot_kernels(km_3[[1]], 
-                       kernel_widths_12, 
-                       true_coefficients = c(5, -3, 3), 
-                       ymin = -10, ymax = 10,
-                       title = "True local coefficient for x2 is -3.")
+                        kernel_widths_12, 
+                        true_coefficients = c(5, -3, 3), 
+                        ymin = -10, ymax = 10,
+                        title = "True local coefficient for x2 is -3.")
 
 png("images/04-09-12.png", width = 2800, height = 1000)
 grid.arrange(fig12_1, fig12_2, fig12_3, nrow = 1)
 dev.off()
 
 png("images/04-09-12a.png", width = 1000, height = 848)
-fig12_1
+print(fig12_1)
 dev.off()
 
 png("images/04-09-12b.png", width = 1000, height = 848)
-fig12_2
+print(fig12_2)
 dev.off()
 
 png("images/04-09-12c.png", width = 1000, height = 848)
-fig12_3
+print(fig12_3)
 dev.off()
 
 ### Figure 12 (comp.: only for presentation)
@@ -334,10 +341,11 @@ true_data <- simulate_data(3000,
                            true_coefficients = c(0, NA, 0), 
                            intercept = 2.5, shock = 0)
 
-png("images/04-09-12-comp.png", width = 1000, height = 848)
-ggplot(true_data, aes(y = y, x = x2)) +
+fig12_comp <- ggplot(true_data, aes(y = y, x = x2)) +
   geom_line(size = 2.5) +
   theme(text = element_text(size = 35)) + xlab("x2") + ylab("y")
+png("images/04-09-12-comp.png", width = 1000, height = 848)
+print(fig12_comp)
 dev.off()
 
 ### Figure 13
@@ -408,15 +416,15 @@ grid.arrange(fig13_1, fig13_2, fig13_3, nrow = 1)
 dev.off()
 
 png("images/04-09-13a.png", width = 1000, height = 848)
-fig13_1
+print(fig13_1)
 dev.off()
 
 png("images/04-09-13b.png", width = 1000, height = 848)
-fig13_2
+print(fig13_2)
 dev.off()
 
 png("images/04-09-13c.png", width = 1000, height = 848)
-fig13_3
+print(fig13_3)
 dev.off()
 
 ### Figure 14 (synthetic)
@@ -441,11 +449,12 @@ km_synth[17, ] <- c(1, 0.4, 0.55, 0, 1, 0.45, 0.6, 0)
 km_synth[18, ] <- c(1, 0.1, 0.85, 0, 1, 0.4, 0.65, 0)
 km_synth[19, ] <- c(1, 0.05, 0.9, 0, 1, 0.35, 0.7, 0)
 
+fig14 <- plot_pseudo_stability_paths(kernel_widths_14, 
+                                     stability_paths = 
+                                       km_synth[, 2:8],
+                                     4, title = "Ideal case")
 png("images/04-09-14.png", width = 1000, height = 848)
-plot_pseudo_stability_paths(kernel_widths_14, 
-                            stability_paths = 
-                              km_synth[, 2:8],
-                            4, title = "Ideal case")
+print(fig14)
 dev.off()
 
 ### Figure 15 (with many single panels for presentation)
@@ -466,51 +475,49 @@ grid.arrange(panels[[1]], panels[[2]], panels[[3]], panels[[4]], panels[[6]],
 dev.off()
 
 png("images/04-09-15a.png", width = 1000, height = 848)
-panels[[1]]
+print(panels[[1]])
 dev.off()
 
 png("images/04-09-15b.png", width = 1000, height = 848)
-panels[[2]]
+print(panels[[2]])
 dev.off()
 
 png("images/04-09-15c.png", width = 1000, height = 848)
-panels[[3]]
+print(panels[[3]])
 dev.off()
 
 png("images/04-09-15d.png", width = 1000, height = 848)
-panels[[4]]
+print(panels[[4]])
 dev.off()
 
 png("images/04-09-15e.png", width = 1000, height = 848)
-panels[[5]]
+print(panels[[5]])
 dev.off()
 
 png("images/04-09-15f.png", width = 1000, height = 848)
-panels[[6]]
+print(panels[[6]])
 dev.off()
 
 png("images/04-09-15g.png", width = 1000, height = 848)
-panels[[7]]
+print(panels[[7]])
 dev.off()
 
 png("images/04-09-15h.png", width = 1000, height = 848)
-panels[[8]]
+print(panels[[8]])
 dev.off()
 
 png("images/04-09-15i.png", width = 1000, height = 848)
-panels[[9]]
+print(panels[[9]])
 dev.off()
 
 png("images/04-09-15j.png", width = 1000, height = 848)
-panels[[10]]
+print(panels[[10]])
 dev.off()
 
 ### Figure 16
 melted_frame <- readRDS("R-results/LIME/Neighbourhood/gower_comparison.RDS")
-
-png("images/04-09-16.png", width = 1000, height = 848)
-ggplot(data = melted_frame, aes(x = kernel, 
-                                y = value, group = variable)) +
+fig16 <- ggplot(data = melted_frame, aes(x = kernel, 
+                                         y = value, group = variable)) +
   geom_line(aes(color = variable), size = 1.75) + 
   scale_color_discrete(name = "Local coefficent",
                        breaks = c("coefficient", "gower", "true"),
@@ -520,4 +527,7 @@ ggplot(data = melted_frame, aes(x = kernel,
   geom_point(data = melted_frame[1:34, ], aes(color = variable), size = 3) +
   theme(text = element_text(size = 35)) + xlab("Coefficient") + 
   ylab("Kernel width")
+
+png("images/04-09-16.png", width = 1000, height = 848)
+print(fig16)
 dev.off()

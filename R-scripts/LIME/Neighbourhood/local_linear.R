@@ -93,4 +93,5 @@ saveRDS(km_2_1,
         file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_1.RDS")
 saveRDS(km_2_2, 
         file = "R-results/LIME/Neighbourhood/kernelmatrix-local_linear2_2.RDS")
-saveRDS(kernel_widths, file = "R-results/kw_local_linear.RDS")
+saveRDS(kernel_widths, 
+        file = "R-results/LIME/Neighbourhood/kw_local_linear.RDS")
