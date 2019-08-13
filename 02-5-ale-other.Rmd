@@ -405,7 +405,8 @@ As the the theoretical ALE in this example was quite smooth, grid size 10 gave r
 
 ### Example 3: Unbalanced datasets and shaky prediction functions
 
-In the 3rd example we assume $X_1 \sim N(10,3)$ as well as $X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 )$. 
+In the 3rd example we assume $X_1 \sim N(10,3)$ as well as   
+$X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 )$. 
 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_3 <- function(x_1, x_2){
@@ -430,32 +431,38 @@ p + ggplot2::geom_point() +
 
 ```
 
-```{r datasetALE2,  out.width='100%', echo=FALSE}
+```{r datasetALE2,fig.cap='(ref:datasetALE2)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_dataset2_.PNG")
 ```
-For this example the sample size was 1000. As expected the correlation is clearly recognizeble, but this time only few data points lay in the outer regions, i.e. between 0 and 2.5 and 17.5 and 20, While there is a high concentration of data around the mean at 10.  
-Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)x_2$. Calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = xsin(x) + \frac{1}{10}cos(10x)~~~$. For centering the expectation of the uncentered ALE, i.e.$~~~~E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~$was estimated by Monte-Carlo integration to be almost zero. 
+(ref:datasetALE2) Mixture of normal and uniform distributed features
+
+For this example the sample size was 1000. As expected the correlation is clearly recognizable. This time only few data points lay in the outer regions, i.e. between 0 and 2.5 and 17.5 and 20, while there is a high concentration of data around the mean at 10.  
+Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)~x_2$. The calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = x~sin(x) + \frac{1}{10}cos(10x)$. For centering the expectation of the uncentered ALE, i.e. $E[\widetilde{ALE}_{\hat{f},1}(X_1)]$ was estimated by Monte-Carlo integration to be almost zero. 
 As well as the prediction function, the theoretical ALE has lots of extreme points. This leads to some troubles especially for low grid sizes.
-The folowing grafic shows the estimated ALE and the theoretical one for three different grid sizes. 
+Figure \@ref(fig:example33gs) shows the estimated and the theoretical ALE for three different grid sizes. 
 
 
-```{r example3_3gs,  out.width='100%', echo=FALSE}
+```{r example33gs, fig.cap='(ref:example33gs)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example3_3gs_.PNG")
 ```
-For grid size 20 the local behaviour of the theoretical ALE is absolutley not recognizable. Only one peak left of the mean was estimated resonable, which is due to the high data intensity in this region, which leads in this case to some sufficient small intervals that dont smoth out the effects by linear approximation. For the rest of the plot exactly this happens. The intervals contain two or more peaks and within each of them the ALE is estimated linear. 
-Increasing the grid size to 100 one nicley sees how the approximation becomes quite reasonable in the inner region, i.e. between 6 and 14, while in the outer region where the intervalls still are too long the LE continues to be estimated wrong. 
-The more one increases the grid size the wider the inner region of good estimation becomes. Anyway still at grid size 1000 which implies only one data point per interval,  the estimates in the boundaries stay bad, as there are simply not sufficient observations to show the fine structure of the prediction function. As this was a constructed example, the latter shouldnt be overrated, as in real data situations it is quite improbable that a learner reslults in a that granular prediciton function within regions with such few data points. 
-While in picture XX apereantlly both, grid size 100 and 1000 result in equally good ALE estimations in the inner region, zooming in reveals that this isn't the case.
-```{r example3_zoom,  out.width='100%', echo=FALSE}
+(ref:example33gs) Theoretical vs. estimated ALE
+
+For grid size 20 the local behaviour of the theoretical ALE is absolutley not recognizable. Only one peak left of the mean was estimated resonable, which is due to the high data intensity in this region. For the rest of the plot the grid intervals contain two or more peaks. Within each of them the ALE is estimated linear and therefore the true effect smoothed out.  
+Increasing the grid size to 100 one nicley sees how the approximation becomes quite reasonable in the inner region, i.e. between 6 and 14, while in the outer region, where the intervalls still are too long the ALE continues to be estimated wrong. 
+The more one increases the grid size the wider the inner region of good estimation becomes. Anyway still at grid size 1000 which implies only one data point per interval,  the estimations near the boundaries stay bad, as there are simply not sufficient observations to show the fine structure of the prediction function. As this was a constructed example, the latter shouldn't be overrated, as in real data situations it is quite improbable that a learner reslults in a that granular prediciton function within regions with such few data points. 
+While in figure \@ref(fig:example33gs) apearentlly both grid sizes (100 and 1000)  result in equally good ALE estimations in the inner region, zooming in reveals that this isn't the case.
+```{r example3zoom, fig.cap='(ref:example3zoom)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example3_zoom_.PNG")
 ```
-The graffic shows a very small part around the mean. 
+(ref:example3zoom) Zooming in reveals the bias for grid size 1000 
+
+Figure \@ref(fig:example3zoom)   shows a very small part around the mean. 
 As expected the estimations for grid size 100 are a little closer to the theoretical ALE as again the true effect of the second feature, which still affects the prediction, is better estimated within each interval (10 observations vs 1 observation).
 
-At the end of this section we have seen a good example for the natural trade off of small intervals on the one hand and sufficient datapoints to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals hereby higly depends on the given prediction function and the data. Taking this as main message of this section, the next one shall provide the reader with the understanding of in how far additional problems can occur with piece - wise constant models.       
+At the end of this section we have seen a good example for the natural trade off of small intervals on the one hand and sufficient data to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals thereby higly depends on the given prediction function and the data. This is the main message of the section. The next section shall provide the reader with the understanding of in how far additional problems can occur in the context of piece-wise constant models.       
 
 
 
