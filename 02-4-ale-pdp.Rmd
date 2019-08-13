@@ -8,7 +8,6 @@ output:
 *Author: Jakob Bodensteiner*
 
 <!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
-<!-- TODO:  analyze oder analyse ? -->
 
 
 This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two dimensional ALEs will be introduced and their difference to PDPs will be explained. Thereafter a runtime comparison will be discussed. To conclude this chapter a real world example will be analyzed with ALE, PDP and ICE. 
@@ -293,11 +292,11 @@ $$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta 
 
 The whole formula would be very long, so it is split into 3 parts (compare [@Apley2016, page 8]):
 
-1. The 2nd order effect ( TODO: set them formula xx)
+1. The 2nd order effect \@ref(eq:ale2DTheoretical1stLvl)
 
-2. 2nd order effect corrected for both main effects (formula xx)
+2. 2nd order effect corrected for both main effects \@ref(eq:ale2DTheoreticalCorrection)
 
-3. The 2D ALE; the corrected 2D ALE centered for its mean overall effect (formula xx)
+3. The 2D ALE; the corrected 2D ALE centered for its mean overall effect \@ref(eq:ale2DTheoretical)
 
 Following equation \@ref(eq:ale2DTheoretical1stLvl) is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE is aiming for.
 
@@ -375,10 +374,10 @@ This formulas are pretty long, so to get an intuition of the estimation figure \
 
 knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 ```
-(ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect [@Apley2016, page 13].
+(ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect [@Apley2016, page 13] and [@molnar2019].
 
-\@ref(eq:ale2DEstDelta)
-To calculate the delta TODO refdelta for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
+
+To calculate the delta \@ref(eq:ale2DEstDelta) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
 
 $$ \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})]~ - [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})]$$
 
@@ -496,9 +495,9 @@ knitr::include_graphics("images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1.
 Figure \@ref(fig:theo2Dale) shows the theoretical ALE compared to the estimated one. In this example it looks pretty similar. The interpretation is a bit hard. Since one can only see the 2nd order effects, corrected for the main effects. It is isolated from the 1st order effect, so it is not possible to state something about the prediction with just this plot. But this problem will be discussed in the coming up chapter.
 
 ### 2D ALE vs 2D PDP
-In this Chapter only 2D plots for artifcially constructed examples will be analysed. To show the statement, that there are no main effects in the 2D ALE example 2 will be discussed again.
+In this Chapter only 2D plots for artifcially constructed examples will be analyzed. To show the statement, that there are no main effects in the 2D ALE example 2 will be discussed again.
 
- <!-- TODO: check this example numeration  -->
+
 #### Example 2 - 2D comparison
 
 Just a short reminder of example 2: the prediction function here is $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$ and $x_2$ and $x_3$ are strongly poitive correlated.
@@ -1157,7 +1156,7 @@ In general one can state that ALE is by far faster. For a SVM that might not be 
 ## Comparison for unevenly distributed data - Example 4: Munich rents
 
 To conclude this chapter a real world problem with a fitted learner will be analyzed with ICE, PDP and ALE, to see them in action.
-This is an example with data for rents in Munich from 2003. The target variable 'nm' is the rent per month per flat. To predict the rent a random forest has been fitted. The features in this example are 'wfl' (size in square meters) and 'rooms' (number of rooms) of the flat. These two variables are clearly positively correlated, since there will not be an (TODO: tt ?) appartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \@ref(fig:correlationMatrixRents). For the fit only 'wfl' and 'rooms' were used to fit the random forest.
+This is an example with data for rents in Munich from 2003. The target variable 'nm' is the rent per month per flat. To predict the rent a random forest has been fitted. The features in this example are 'wfl' (size in square meters) and 'rooms' (number of rooms) of the flat. These two variables are clearly positively correlated, since there will not be an apartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \@ref(fig:correlationMatrixRents). For the fit only 'wfl' and 'rooms' were used to fit the random forest.
 
 ```{r eval = FALSE, echo=FALSE}
 library(ggcorrplot)
