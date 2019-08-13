@@ -80,7 +80,7 @@ local_model1 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             dist_fun = "euclidean",
                                             seed = 1,
                                             feature_select = "auto",
-                                            iterations = 5000,
+                                            iterations = 48,
                                             se = FALSE)
 local_model1 <- local_model1[[1]][1:2]
 ### This creates plot #5: The local model found by LIME for the kernel size
@@ -92,7 +92,7 @@ local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             dist_fun = "euclidean", 
                                             seed = 1, 
                                             feature_select = "auto",
-                                            iterations = 2000,
+                                            iterations = 48,
                                             se = FALSE)
 local_model2 <- local_model2[[1]][1:2]
 
@@ -110,7 +110,7 @@ result_1 <- analyse_univariate_kernel_width(kernel_widths,
                                             n_features = 1, 
                                             n_permutations = 3000,
                                             dist_fun = "euclidean", 
-                                            iterations = 100,
+                                            iterations = 48,
                                             seed = 2)
 
 
@@ -125,7 +125,7 @@ result_2 <- analyse_univariate_kernel_width(kernel_widths,
                                             n_features = 1, 
                                             n_permutations = 3000,
                                             dist_fun = "euclidean", 
-                                            iterations = 100,
+                                            iterations = 48,
                                             seed = 2)
 
 ### Save for reproducibility and plots.
