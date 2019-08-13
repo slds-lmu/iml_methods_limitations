@@ -1,7 +1,7 @@
 ---
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 # Comparison of ALE and PDP
 
@@ -9,6 +9,8 @@ output:
 
 <!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
 <!-- TODO:  analyze oder analyse ? -->
+<!-- TODO:  figures and references -->
+
 
 
 This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two dimensional ALEs will be introduced and their difference to PDPs will be explained. Thereafter a runtime comparison will be discussed. To conclude this chapter a real world example will be analyzed with ALE, PDP and ICE. 
@@ -36,7 +38,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -48,7 +49,6 @@ get_cor_df <- function(n, min_int, max_int, ew, sd) {
   y <- x1 * x2 * x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 n <- 150
 mi <- "0"
 ma <- "0p5"
@@ -56,15 +56,12 @@ ew <- "5"
 va <- "1"
 # create example df
 cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
-
 # fit splines on df just to make predictor run
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 * x2 * x3: #################
 prediction_function_123 <- function(x1, x2, x3) {
   return(x1 * x2 * x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -76,31 +73,25 @@ predictor = Predictor$new(model, data = X,
   }
   return(a)
 })
-
-
 # plot ale x1 
 ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
 p_ale_x1 <- plot(ale_x1) + theme_bw()
 # plot pdp on same situation x1
 pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
 p_pdp_x1 <- plot(pdp_x1) + theme_bw()
-
 # plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
-
 # plot ale x2
 ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
 p_ale_x2 <- plot(ale_x2) + theme_bw()
 # plot pdp on same situation x2
 pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
 p_pdp_x2 <- plot(pdp_x2) + theme_bw()
-
 # plot ale x3
 ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
 p_ale_x3 <- plot(ale_x3) + theme_bw()
 # plot pdp on same situation x3
 pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
 p_pdp_x3 <- plot(pdp_x3) + theme_bw()
-
 form <- "x1x2x3"
 # make a nice plot:
 title_text <- paste("ALEs for each feature", sep="")
@@ -113,7 +104,6 @@ save_text <- paste(paste(meth, form, n, mi, ma, ew, va, sep = "_"), ".png", sep 
 ggsave(save_text,
        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
        width = 14, height = 7, units = "cm")
-
 title_text <- paste("PDPs for each feature", sep="")
 title <- ggdraw() + draw_label(title_text, fontface='bold')
 plot_row <- plot_grid(p_pdp_x1, p_pdp_x2, p_pdp_x3, nrow = 1)
@@ -124,17 +114,14 @@ meth <- "PDPs"
 # ggsave(save_text,
 #        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
 #        width = 14, height = 7, units = "cm")
-
 ```
 
 ```{r pdpsx1x2x3, fig.cap='(ref:pdpsx1x2x3Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_PDPs_x1x2x3_150_0_0p5_2_2.png")
 ```
 (ref:pdpsx1x2x3Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
 
 ```{r alesx1x2x3, fig.cap='(ref:alesx1x2x3Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_ALEs_x1x2x3_150_0_0p5_2_2.png")
 ```
 (ref:alesx1x2x3Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
@@ -143,13 +130,11 @@ Plot \@ref(fig:pdpsx1x2x3) shows the 1D PDP for each of the three features. One 
 On the other hand the ALE (figure \@ref(fig:alesx1x2x3)) attests the linear influence to the feature $x_1$ only. This plot exposes a weakness of the ALE compared to the PDP. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature $x_1$. The two other features seem to rather have an exponential influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and the correlated features. Feature $x_3$ has (in expectation) the same value as $x_2$. Especially if feature $x_1$ has small values the variance of feature $x_2$ around $x_3$ becomes small as well. As consequence the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the exponential influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 \times x_2^2$ the following PDP and ALE plots are estimated.
 
 ```{r pdpsx1x22, fig.cap='(ref:pdpsx1x22Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_PDPs_x1x22_150_0_0p5_2_2.png")
 ```
 (ref:pdpsx1x22Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2^2$.
 
 ```{r alesx1x22, fig.cap='(ref:alesx1x22Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_ALEs_x1x22_150_0_0p5_2_2.png")
 ```
 (ref:alesx1x22Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2^2$.
@@ -169,7 +154,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -181,23 +165,18 @@ get_cor_df <- function(n, min_int, max_int, sd) {
   y <- x1 + x2 - x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 n <- 150
 mi <- "0"
 ma <- "2"
 va <- "0p5"
 # create example df
 cor_df <- get_cor_df(n, 0, 2, 0.5)
-
-
 # fit splines on df
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 + x2 - x3: #################
 prediction_function_1plus2minus3 <- function(x1, x2, x3) {
   return(x1 + x2 - x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -209,9 +188,7 @@ predictor = Predictor$new(model, data = X,
                             }
                             return(a)
                           })
-
 ################### 1D all linear ###############################################
-
 # plot ale x1 
 ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
 p_ale_x1 <- plot(ale_x1) + theme_bw()
@@ -220,22 +197,18 @@ pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
 p_pdp_x1 <- plot(pdp_x1) + theme_bw()
 #ggplotly(p_ale_x1)
 # plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
-
 # plot ale x2
 ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
 p_ale_x2 <- plot(ale_x2) + theme_bw()
 # plot pdp on same situation x2
 pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
 p_pdp_x2 <- plot(pdp_x2) + theme_bw()
-
 # plot ale x3
 ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
 p_ale_x3 <- plot(ale_x3) + theme_bw()
 # plot pdp on same situation x3
 pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
 p_pdp_x3 <- plot(pdp_x3) + theme_bw()
-
-
 form <- "x1_plus_x2_minus_x3"
 # make a nice plot:
 title_text <- paste("ALEs for each feature", sep="")
@@ -248,8 +221,6 @@ save_text <- paste(paste(meth, form, n, mi, ma, va, sep = "_"), ".png", sep = ""
 ggsave(save_text,
        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
        width = 14, height = 7, units = "cm")
-
-
 title_text <- paste("PDPs for each feature", sep="")
 title <- ggdraw() + draw_label(title_text, fontface='bold')
 plot_row <- plot_grid(p_pdp_x1, p_pdp_x2, p_pdp_x3, nrow = 1)
@@ -263,13 +234,11 @@ ggsave(save_text,
 ```
 
 ```{r pdpsx1px2mx3, fig.cap='(ref:pdpsx1px2mx3Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_PDPs_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
 (ref:pdpsx1px2mx3Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$.
 
 ```{r alesx1px2mx3, fig.cap='(ref:alesx1px2mx3Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_ALEs_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
 (ref:alesx1px2mx3Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$.
@@ -292,113 +261,77 @@ Similar to one variable of interest there is a theoretical formula for a 2-dimen
 $$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}$$
 
 <!-- TODO: somewhere mention appley -->
-The whole formula would be very long, so it is split into 3 parts ( compare [@Apley2016, page 8]):
-
+The whole formula would be very long, so it is split into 3 parts:
 1. The 2nd order effect ( TODO: set them formula xx)
-
 2. 2nd order effect corrected for both main effects (formula xx)
-
 3. The 2D ALE; the corrected 2D ALE centered for its mean overall effect (formula xx)
 
-Following equation \@ref(eq:ale2DTheoretical1stLvl) is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE is aiming for.
+\@ref(eq:ale2DTheoretical1stLvl)
+
+Following is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE is aiming at.
 
 $$ \begin{equation} 
 \widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l}             E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j 
   (\#eq:ale2DTheoretical1stLvl)
 \end{equation}$$
+Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are substracted. In this way the main effects of $x_j$ and $x_l$ on the final ALE $ALE_{\hat{f},~j,~l}(x_j, x_l)$ are both zero (TODO: apley). But be carefull, this is not centering by a constant as in the one dimensional ALE. This is a correction for the also accumulated main effects which of course vary in the directions of the features.
 
-Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are substracted. In this way the main effects of $x_j$ and $x_l$ on the final ALE $ALE_{\hat{f},~j,~l}(x_j, x_l)$ are both zero [@Apley2016, page 9]. But be carefull, this is not centering by a constant as in the one dimensional ALE as can be seen in equation \@ref(eq:ale2DTheoreticalCorrection). This is a correction for the also accumulated main effects which of course vary in the directions of the features.
+$$ \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) ~ -  \int_{z_{0,~j}}^{x_j}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_j}\mid X_j = z_j]~dz_j ~ - \int_{z_{0,~l}}^{x_l}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_l}\mid X_l = z_l]~dz_l$$
 
-$$ \begin{align} 
-\begin{split}
-\widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) 
-= &\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) \notag \\ 
-&-  \int_{z_{0,~j}}^{x_j}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_j}\mid X_j = z_j]~dz_j \notag \\
-&- \int_{z_{0,~l}}^{x_l}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_l}\mid X_l = z_l]~dz_l
-\end{split}
-(\#eq:ale2DTheoreticalCorrection)
-\end{align}$$
+This shows the final (centered) 2D ALE. The subtraction in the formula is now the real centering to shift the 2nd order effect (corrected for the main effects) to zero with respect to the marginal distribution of $(X_j, ~ X_l)$.
 
-Equation \@ref(eq:ale2DTheoretical) shows the final (centered) 2D ALE. The subtraction in the formula is now the real centering to shift the 2nd order effect (corrected for the main effects) to zero with respect to the marginal distribution of $(X_j, ~ X_l)$.
-
-$$ \begin{equation} 
-ALE_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) ~ -  E[\widetilde{ALE}_{\hat{f},~j,~l}(X_j, X_l)]
-  (\#eq:ale2DTheoretical)
-\end{equation}$$
+$$ ALE_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) ~ -  E[\widetilde{ALE}_{\hat{f},~j,~l}(X_j, X_l)]$$
 
 In the appindex (ref TODO) one can find the calculation of the theoretical ALE for Example 1.
 
 
 #### Estimation 2D ALE
-Analogously to the 1D ALE in most cases it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be a explenation including a visualization as well to clarify the estimation method.
+Analogously to the 1D ALE in most cases it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be a explenation with a visualization as well to clarify the estimation method.
 
 First all variables have to be defined. The two features of interest are $x_j$ and $x_l$. The prediction function is $\hat{f}(x_j, x_l, x_{\setminus\{j,~l\}})$, while $x_{\setminus\{j,~l\}}$ represents all the rest of the features, so it can be of higher dimension than 1. 
 The areas including data for feature $x_j$ and $x_l$ are divided into the same number of intervals, namely K. The intervals in $x_j$ direction are separated by $z_{k,j}$ for $k \in \{0,...,K\}$. $k_j(x_j)$ returns the intervalnumber in which $x_j$ lies. This holds for $z_{m,l}$ and $k_l(x_l)$ respectively in direction of $x_l$. $N_{\{j,~l\}}(k,m)$ is the crossproduct of the k-th and m-th interval (in $x_j$ and $x_l$ direction), so it is defined as $(z_{k-1,j}, z_{k,j}] \times z_{m-1,j}, z_{m,j}]$. $n_{\{j,~l\}}(k,m)$ is the number of those observations lying in this $N_{\{j,~l\}}(k,m)$ cell. The parameter i represents the i-th observation. With this variables in mind, the definition of the 2D ALE estimation can begin.
 
-The estimation equvalent to Formula \@ref(eq:ale2DTheoretical1stLvl) is:
+The estimation equvalent to Formula TODO is:
 
-$$ \begin{equation} 
-\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}),
-  (\#eq:ale2DEst1stLvl)
-\end{equation}$$
-
+$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}), $$
 while the $\Delta$ function is:
 
-$$ \begin{align} 
-\begin{split}
-\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = 
-&[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag \\ 
-&- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
-\end{split}
-  (\#eq:ale2DEstDelta)
-\end{align}$$
+$$ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = [\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]~ - [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] $$ 
 
-Now the correction for the main effects (theoretical formula \@ref(eq:ale2DTheoreticalCorrection))is estimated:
+Now the correction for the main effects is estimated (compare formula TODO):
 
-$$ \begin{align} 
-\begin{split}
-\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = 
-&\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) \notag \\
-&-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]\notag \\
-&- \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})]
-\end{split}
-  (\#eq:ale2DEstCorrection)
-\end{align}$$
+$$ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l)  $$
 
-This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of substracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the general shape. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula \@ref(eq:ale2DTheoreticalCorrection). 
+$$-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]$$
+$$ - \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})] $$
+This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of substracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the shpe. Again this expected value has to be estimated, to complete the 2D ALE. 
 
-$$\begin{equation}  
-\widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = 
+$$ \widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = 
 \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
-\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l})
- (\#eq:ale2DEst)
-\end{equation} $$
+\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) $$
 
 In difference to the ALE for one feature of interest, the 2D ALE is a two dimensional stepfunction, so there is no smoothing or something similar to make it a continuous function. 
 
 This formulas are pretty long, so to get an intuition of the estimation figure \@ref(fig:ale2DEstimation) will be helpfull.
 
 ```{r ale2DEstimation, fig.cap='(ref:ale2DEstimationCap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 ```
-(ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect [@Apley2016, page 13].
+(ref:ale2DEstimationCap) Visualisation of the absolut differences for the 2nd order effect TODO vgl apley.
 
-To calculate the delta \@ref(eq:ale2DEstDelta) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
+To calculate the delta (gleichung TODO) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
 
 $$ \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})]~ - [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})]$$
+The same would be done for point y and then the deltas would be averaged to get the mean delte for cell $N_{\{j,~l\}}(4,3)$. This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in $N_{\{j,~l\}}(4,3)$. 
 
-The same would be done for point y and then the deltas would be averaged to get the mean delta for cell $N_{\{j,~l\}}(4,3)$. This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in $N_{\{j,~l\}}(4,3)$. 
-
-The correction for the main effects extracts the effect of the single features on the ALE so far and substracts it from the raw formula (see \@ref(eq:ale2DEstCorrection)). To stick with this example the correction for the main effect of feature $x_j$ for values in $N_j(4)$ takes into account all cells in the first 4 columns and aggregates the first order effect. In cell $N_{\{j,~l\}}(4,3)$ this would look like this:
+The correction for the main effects extracts the effect of the single features on the ALE so far and substracts it from the raw formula. To stick with this example the correction for the main effect of feature $x_j$ for values in $N_j(4)$ takes into account all cells in the first 4 columns and aggregates the first order effect. In cell $N_{\{j,~l\}}(4,3)$ this would look like this (TODO: is a and b well defined?)
 
 $$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(a)$$
+Correction for $x_l$ looks pretty much the same just from the other direction. It takes into account the first 3 rows. So in cell $N_{\{j,~l\}}(4,3)$ the first order effect would be
 
-The correction for $x_l$ looks pretty much the same just from the other direction. It takes into account the first 3 rows. So in cell $N_{\{j,~l\}}(4,3)$ the first order effect would be
+$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(d) $$
 
-$$ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(d). $$
-
-Thereafter the corrected ALE is centered for its mean (defined in equation \@ref(eq:ale2DEst)), pretty much the same way as is done for one dimension. But this time the aggregation is not just over a line but over a grid.
+Thereafter the corrected ALE is centered for its mean, pretty much the same way as is done for one dimension. But this time the aggregation is not just over a line but over a grid.
 
 There are a few questions that might arise. First, how is the grid for the estimation defined? In the iml package the cells are the crossproducts of the intervals used for the 1D estimation. It would be very hard to make a grid of rectangles which all include roughly the same amount of data points. Another question could be: How does the estimation treat empty cells, including no datapoints? There are two options, they can either be ignored and greyed out or they recieve the value of their nearest neighbor rectangle, which is determined by the center of the cells. The last method is implemented in iml. This happens right after averaging over the $\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}})$s before the correction for the 1st order effects is done.
 
@@ -420,7 +353,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -432,7 +364,6 @@ get_cor_df <- function(n, min_int, max_int, ew, sd) {
   y <- x1 * x2 * x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 n <- 150
 mi <- "0"
 ma <- "0p5"
@@ -440,15 +371,12 @@ ew <- "5"
 va <- "1"
 # create example df
 cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
-
 # fit splines on df
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 * x2 * x3: #################
 prediction_function_123 <- function(x1, x2, x3) {
   return(x1 * x2 * x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -460,11 +388,9 @@ predictor = Predictor$new(model, data = X,
   }
   return(a)
 })
-
 ############# plot 2D ale (x1,x2) theo vs real  #######
 ale = FeatureEffect$new(predictor, feature = c('x1','x2'))
 ggplotly(plot(ale))
-
 theoretical_ale_x1x2x3 <- function(a, b, mu, si, z01, z02) {
   function(x1, x2) {
     uncentered <- 0.5 * (x2^2 * x1 - (x1 - z01) * (mu^2 + si^2) - ((a + b) / 2) * (x2^2 - z02^2))
@@ -472,18 +398,15 @@ theoretical_ale_x1x2x3 <- function(a, b, mu, si, z01, z02) {
     return(uncentered - centering)
   }
 }
-
 x1_col <- ale$results$x1
 x2_col <- ale$results$x2
 theo_results <- numeric(441)
 for (i in 1:length(x1_col)) {
   theo_results[i] <- theoretical_ale_x1x2x3(0, 0.5, 5, 1, 0, 2.4)(x1_col[i], x2_col[i])
 }
-
 estimated <- plot(ale) + theme_bw()
 ale$results$.ale <- theo_results
 theo <- plot(ale) + theme_bw()
-
 title_text <- paste("ALE 2D - Theoretic vs. Estimated", sep="")
 title <- ggdraw() + draw_label(title_text, fontface='bold')
 plot_row <- plot_grid(theo, estimated, nrow = 1)
@@ -494,7 +417,6 @@ meth <- "ALE_2D_theo_vs_estim"
 
 
 ```{r theo2Dale, fig.cap='(ref:theo2DaleCap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1.png")
 ```
 (ref:theo2DaleCap) Theoretical 2D ALE (left) and estimated ALE (right).
@@ -514,7 +436,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -526,23 +447,18 @@ get_cor_df <- function(n, min_int, max_int, sd) {
   y <- x1 + x2 - x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 n <- 150
 mi <- "0"
 ma <- "2"
 va <- "0p5"
 # create example df
 cor_df <- get_cor_df(n, 0, 2, 0.5)
-
-
 # fit splines on df
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 + x2 - x3: #################
 prediction_function_1plus2minus3 <- function(x1, x2, x3) {
   return(x1 + x2 - x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -554,15 +470,12 @@ predictor = Predictor$new(model, data = X,
                             }
                             return(a)
                           })
-
 ####################2D plots #######################
 ale_2d = FeatureEffect$new(predictor, feature = c('x2','x3'))
 ale_2d$results$.ale <- round(ale_2d$results$.ale, 15)
 ale <- plot(ale_2d) + theme_bw() + ggtitle("ALE")
-
 pdp_2d = FeatureEffect$new(predictor, feature = c('x2','x3'), method = "pdp")
 pdp <- plot(pdp_2d) + theme_bw() + ggtitle("PDP")
-
 meth <- "2d_comp"
 form <- "x1_plus_x2_minus_x3"
 title_text <- paste("2D PDP vs. ALE", sep="")
@@ -573,7 +486,6 @@ plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
 ```
 
 ```{r x1px2mx3ale2D, fig.cap='(ref:x1px2mx3ale2DCap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_2d_comp_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
 (ref:x1px2mx3ale2DCap) 2D PDP (left) vs. 2D ALE (right) for prediction function $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$.
@@ -587,7 +499,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -599,23 +510,18 @@ get_cor_df <- function(n, min_int, max_int, sd) {
   y <- x1 + x2 - x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 n <- 150
 mi <- "0"
 ma <- "2"
 va <- "0p5"
 # create example df
 cor_df <- get_cor_df(n, 0, 2, 0.5)
-
-
 # fit splines on df
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 + x2 - x3: #################
 prediction_function_1plus2minus3 <- function(x1, x2, x3) {
   return(x1 + x2 - x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -627,9 +533,7 @@ predictor = Predictor$new(model, data = X,
                             }
                             return(a)
                           })
-
 ################### 1D all linear ###############################################
-
 # plot ale x1 
 ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
 p_ale_x1 <- plot(ale_x1) + theme_bw()
@@ -638,27 +542,22 @@ pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
 p_pdp_x1 <- plot(pdp_x1) + theme_bw()
 #ggplotly(p_ale_x1)
 # plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
-
 # plot ale x2
 ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
 p_ale_x2 <- plot(ale_x2) + theme_bw()
 # plot pdp on same situation x2
 pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
 p_pdp_x2 <- plot(pdp_x2) + theme_bw()
-
 # plot ale x3
 ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
 p_ale_x3 <- plot(ale_x3) + theme_bw()
 # plot pdp on same situation x3
 pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
 p_pdp_x3 <- plot(pdp_x3) + theme_bw()
-
-
 ####################2D plots with added up first order effects #######################
 ale_2d = FeatureEffect$new(predictor, feature = c('x2','x3'))
 ale_2d$results$.ale <- round(ale_2d$results$.ale, 15)
 ale <- plot(ale_2d) + theme_bw() + ggtitle("ALE")
-
 for (i in 1:nrow(ale_2d$results)) {
   ale_2d$results$.ale[i] <- ale_2d$results$.ale[i] + 
     ale_x2$predict(ale_2d$results$x2[i]) +
@@ -666,7 +565,6 @@ for (i in 1:nrow(ale_2d$results)) {
 }
 ale_plus <- plot(ale_2d) + theme_bw() + ggtitle("ALE")  
 ale_plus_points <- plot(ale_2d) + theme_bw() + geom_point(data = cor_df) + ggtitle("ALE")
-
 meth <- "2d_ale_plus"
 form <- "x1_plus_x2_minus_x3"
 title_text <- paste("2D ALE added up with 1st order effects", sep="")
@@ -678,11 +576,9 @@ save_text <- paste(paste(meth, form, n, mi, ma, va, sep = "_"), ".png", sep = ""
 ggsave(save_text,
        plot = plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1)),
        width = 14, height = 7, units = "cm")
-
 ```
 
 ```{r ale2DaddedUp, fig.cap='(ref:ale2DaddedUpCap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_2d_ale_plus_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
 (ref:ale2DaddedUpCap) 2D ALE added up with 1st order effects of features $x_2$ and $x_3$ for prediction function $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$. In the right plot the underlying 2 dimensional data points are included.
@@ -700,7 +596,6 @@ library(crs)
 library(iml)
 library(plotly)
 library(cowplot)
-
 # create data frame with target variable y = x1 * x2 * x3
 # x1 uniformely between min_int and max_int
 # x2 normal with E(x2) = ew and sd = sd
@@ -712,17 +607,13 @@ get_cor_df <- function(n, min_int, max_int, ew, sd) {
   y <- x1 * x2 * x3
   return(as.data.frame(cbind(y, x1, x2, x3)))
 }
-
 cor_df <- get_cor_df(n, 0, 0.5, 5, 1)
-
 # fit splines on df
 model <- crs(y ~ x1, data = cor_df)
-
 ############# define function = x1 * x2 * x3: #################
 prediction_function_123 <- function(x1, x2, x3) {
   return(x1 * x2 * x3)
 }
-
 # generate predictor set
 X = cor_df[which(names(cor_df) != 'y')]
 #predictor = Predictor$new(spl, data = X, y = cor_df$y)
@@ -734,44 +625,35 @@ predictor = Predictor$new(model, data = X,
   }
   return(a)
 })
-
-
 # plot ale x1 
 ale_x1 <- FeatureEffect$new(predictor, feature = 'x1')
 p_ale_x1 <- plot(ale_x1) + theme_bw()
 # plot pdp on same situation x1
 pdp_x1 = FeatureEffect$new(predictor, feature = 'x1', method = 'pdp')
 p_pdp_x1 <- plot(pdp_x1) + theme_bw()
-
 # plot_grid(plot(ale) + theme_bw(), pdp$plot()) + ggtitle("peter")
-
 # plot ale x2
 ale_x2 <- FeatureEffect$new(predictor, feature = 'x2')
 p_ale_x2 <- plot(ale_x2) + theme_bw()
 # plot pdp on same situation x2
 pdp_x2 = FeatureEffect$new(predictor, feature = 'x2', method = 'pdp')
 p_pdp_x2 <- plot(pdp_x2) + theme_bw()
-
 # plot ale x3
 ale_x3 <- FeatureEffect$new(predictor, feature = 'x3')
 p_ale_x3 <- plot(ale_x3) + theme_bw()
 # plot pdp on same situation x3
 pdp_x3 = FeatureEffect$new(predictor, feature = 'x3', method = 'pdp')
 p_pdp_x3 <- plot(pdp_x3) + theme_bw()
-
 ###############################################################
-
 ############## adding up 1st order ########
 ale_2d = FeatureEffect$new(predictor, feature = c('x1','x2'))
 pdp_2d = FeatureEffect$new(predictor, feature = c('x1','x2'), method = "pdp")
-
 for (i in 1:nrow(ale_2d$results)) {
   ale_2d$results$.ale[i] <- ale_2d$results$.ale[i] + 
     ale_x1$predict(ale_2d$results$x1[i]) +
     ale_x2$predict(ale_2d$results$x2[i])
 }
 ale_plus <- plot(ale_2d) + theme_bw() + ggtitle("ALE + 1st order")
-
 title_text <- paste("2D PDP vs. ALE (1st order effects added up)", sep="")
 title <- ggdraw() + draw_label(title_text, fontface='bold')
 plot_row <- plot_grid(plot(pdp_2d) + theme_bw() + ggtitle("PDP"), ale_plus, nrow = 1)
@@ -785,7 +667,6 @@ ggsave(save_text,
 ```
 
 ```{r ale2DaddedUpx1x2x3, fig.cap='(ref:ale2DaddedUpx1x2x3Cap)', echo=FALSE}
-
 knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_x1x2x3_150_0_0p5_5_1.png")
 ```
 (ref:ale2DaddedUpx1x2x3Cap) 2D PDP vs 2D ALE with added up 1st order effects of features $x_1$ and $x_2$ for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
@@ -1281,71 +1162,38 @@ $X_1 \sim \mathcal{U}(a,~b)$, $X_2 \sim \mathcal{N}(\mu,~\sigma)$ and $X_3\mid X
 The theoretical 2D ALE for features $x_1$ and $x_2$ will be calculated.
 
 1. Calculation of uncorrected and uncentered 2nd order effect:
-$$ \begin{align} 
-\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) 
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[\hat{f}^{(1,~2)}(X_1,~X_2,~X_3)\mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[X_3 \mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} z_2 ~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \frac{1}{2} (x_2^2 - z_{0,~2}) ~dz_1 \notag \\
-&= \frac{1}{2} (x_2^2 - z_{0,~2})~(x_1 - z_{0,~1}) 
-\end{align}$$
+$$  \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) = \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[\hat{f}^{(1,~2)}(X_1,~X_2,~X_3)\mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 $$
+
+$$  = \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[X_3 \mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 = \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} z_2 ~dz_2~dz_1 
+$$
+
+$$  = \int_{z_{0,~1}}^{x_1}  \frac{1}{2} (x_2^2 - z_{0,~2}) ~dz_1 = \frac{1}{2} (x_2^2 - z_{0,~2})~(x_1 - z_{0,~1})
+$$
 
 2. Calculation of corrected pure 2nd order effect:
 
-$$ \begin{align}
-\begin{split}
-\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = 
-&\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 \notag \\
-&- \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
-\end{split}
-(\#eq:ale2DExampleCorrection)
-\end{align}$$
+$$ \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 ~ $$ 
 
-
+$$- \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2$$
 The two terms which are correcting for the main effect of the two features will be calculated seperately.
 
-$$ \begin{align} 
-\begin{split}
-\int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 
-&= \int_{z_{0,~1}}^{x_1}  E[\frac{1}{2}(X_2^2 - z_{0, ~2}^2)\mid X_1 = z_1]~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2) ~dz_1 \notag \\
-&= \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1})
-\end{split}
-  (\#eq:ale2DExampleCorrection1)
-\end{align}$$
+$$ \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 = \int_{z_{0,~1}}^{x_1}  E[\frac{1}{2}(X_2^2 - z_{0, ~2}^2)\mid X_1 = z_1]~dz_1$$
 
-$$ \begin{align} 
-\begin{split}
-\int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
-&= \int_{z_{0,~2}}^{x_2}  E[X_2 (X_1 - z_{0, ~1})\mid X_2 = z_2]~dz_2 \notag \\
-&= \int_{z_{0,~2}}^{x_2}  z_2(\frac{a+b}{2} - z_{0, ~1}) ~dz_2 \notag \\
-&= \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) 
-\end{split}
-  (\#eq:ale2DExampleCorrection2)
-\end{align}$$
+$$ = \int_{z_{0,~1}}^{x_1}  \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2) ~dz_1 = \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) $$
+$$ \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2 = \int_{z_{0,~2}}^{x_2}  E[X_2 (X_1 - z_{0, ~1})\mid X_2 = z_2]~dz_2$$
 
-Combining \@ref(eq:ale2DExampleCorrection1) and \@ref(eq:ale2DExampleCorrection2) with \@ref(eq:ale2DExampleCorrection) yields:
+$$ = \int_{z_{0,~2}}^{x_2}  z_2(\frac{a+b}{2} - z_{0, ~1}) ~dz_2 = \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) $$
+It follows:
 
-$$ \begin{align} 
-\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) &= \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) -~ \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) -~ \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) \notag \\
-&= x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2)
-\end{align}$$
+$$ \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) -~ \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) -~ \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2)$$
+$$ = x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) $$
 
-The last part is the centering for the mean:
+The last part is the centering:
 
-$$ \begin{align} 
-ALE_{\hat{f},~1,~2}(x_1, x_2) &= \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) ~ -  E[\widetilde{ALE}_{\hat{f},~1,~2}(X_1, X_2)] \notag \\
-&= \frac{1}{2} (x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
-& ~~~~~ - E[X_2^2~x_1 + (X_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(X_2^2-z_{0,~2}^2)] ) \notag \\
-&= \frac{1}{2} [x_2^2~x_1 - (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
-& ~~~~~ - (z_{0,1}(\mu^2+\sigma^2) + z_{0,~2}^2 \frac{a + b}{2} - (\mu^2+\sigma^2) \frac{a + b}{2}) ] \notag \\
-&= \frac{1}{2} [x_2^2~x_1 - x_1(\mu^2+\sigma^2) - x_2^2 \frac{a + b}{2} + (\mu^2+\sigma^2) \frac{a + b}{2} ]
-\end{align}$$
+$$ ALE_{\hat{f},~1,~2}(x_1, x_2) = \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) ~ -  E[\widetilde{ALE}_{\hat{f},~1,~2}(X_1, X_2)]$$
 
-This formula was used to calculate the theoretical plot in figure \@ref(fig:theo2Dale).
+$$ = \frac{1}{2} (x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) - E[X_2^2~x_1 + (X_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(X_2^2-z_{0,~2}^2)] ) $$
+$$ = \frac{1}{2} [x_2^2~x_1 - (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) - (z_{0,1}(\mu^2+\sigma^2) + z_{0,~2}^2 \frac{a + b}{2} - (\mu^2+\sigma^2) \frac{a + b}{2}) ] $$
+$$ = \frac{1}{2} [x_2^2~x_1 - x_1(\mu^2+\sigma^2) - x_2^2 \frac{a + b}{2} + (\mu^2+\sigma^2) \frac{a + b}{2} ]$$
 
-
-
-
-
-
+This formula was used to calculate the theoretical plot in figure TODO.
