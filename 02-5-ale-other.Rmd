@@ -4,31 +4,32 @@
 
 
 
-As mentioned in the former section the choice of intervals an starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
+As mentioned in the former section the choice of intervals and starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceld out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
 
 ## How to choose the number and/or length of the intervals
 
 Before investigating the choice of intervals one should be clear about in how far they influence the estimation. On the one hand for a given interval the ALE estimation will be linear due to the expected constant effect within this interval.
 Remember that within each interval the local effect within this interval was calculated by the mean total difference of the prediction when shifting the variable of interest from the lower interval boundary to the upper one. This leads by definition to a constant effect within this interval that results in a linear function when integrating over the interval.   
-It seems obvious that the ALE estimation (within a grid interval) can only be as good as a linear approximation for the "real" and usually unknown prediction function (TODO: check that!) can be. Therefore it is crucial for a good estimation to have small enough intervals especially in regions where the prediction function is shaky or far from linear (i.e high second derivatives) with respect to the feature of interest.
-On the other hand to get stable estimations for a grid interval its important to have a sufficient high number of datapoints within the interval. This means that the intervals shouldn't become too small so that they would contain only a few data points. (Note that this is only true if the other features have an influence on the local effect of the prediction function. If they dont, any data point within the grid interval would lead to the same predictions at the interval boundarys)
+It seems obvious that the ALE estimation (within a grid interval) can only be as good as a linear approximation for the "real" and usually unknown prediction function can be. Therefore it is crucial for a good estimation to have small enough intervals especially in regions where the prediction function is shaky or far from linear (i.e high second derivatives) with respect to the feature of interest.
+On the other hand to get stable estimations for a grid interval it is important to have a sufficient high number of datapoints within the interval. This means that the intervals shouldn't become too small so that they would contain only a few data points. Note that this is only true if the other features have an influence on the local effect of the prediction function. If they dont, any data point within the grid interval would lead to the same predictions at the interval boundarys.
 Thats why there is a natural trade of between a small interval width and the number of the contained data points. 
 
   
 ### State of the art
-So the question is how to optimally choose the grid intervals. Should they all be of the same width containing a different number of datapoints? Should they all contain the same or at least a similar number of datapoints, accepting different interval sizes. Or could there even be a better solution in between the two concepts?
-Within the iml-package which is one of two implementations of ALE-plots the choosen method is the second one. The quantiles of the distribution of the feature are used as the grid that defines the intervals. That means the length of the intervals depends on the choosen grid size and the given feature distribution.
 
-In the following section some examples with artificial data sets are provided, that should help to get a better feeling for the different deterministic factors that influnce the goodness of the ALE estimation. Within the whole chapter the ALE estimation is conducted via the iml-package implementation.
+So the question is how to optimally choose the grid intervals. Should they all be of the same width containing a different number of datapoints? Should they all contain the same or at least a similar number of datapoints, accepting different interval sizes. Or could there even be a better solution in between the two concepts?   
+Within the iml-package which is one of two implementations of ALE - plots the choosen method is the second one. The quantiles of the distribution of the feature are used as the grid that defines the intervals. That means the length of the intervals depends on the choosen grid size and the given feature distribution.
+
+In the following section some examples with artificial data sets are provided, that should help to get a better feeling for the different deterministic factors that influence the goodness of the ALE estimation. Within the whole chapter the ALE estimation is conducted via the iml-package implementation.
 
 ### ALE Approximations 
 
-In the following section, we only consider two dimensional data sets, of continious features $x_1$ and $x_2$ with a certain correlation. Furthermore we use some exemplary prediction functions which are differentiable such that we can calculate the theoratical ALE (see section XX formula XX) and use it to evaluate the goodness of the estimated ALE-curve. As we want to isolate some of the above mentioned influencial factors, we start with some easy examples adding step by step more complexity to the problem. 
+In the following section, we only consider two dimensional data sets, of continious features $x_1$ and $x_2$ with a certain correlation. Furthermore we use some exemplary prediction functions which are differentiable such that we can calculate the theoratical ???(see section XX formula XX) and use it to evaluate the goodness of the estimated ALE - curve. As we want to isolate some of the above mentioned influencial factors, we start with some easy examples adding step by step more complexity to the problem. 
 
 ### Example 1: additive feature effects
 
 In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e.
-$X_1 \sim U(0,10)$. Furthermore we assume the conditional distribution of the feature $x_2$ given $x_1$ to be also uniform on the interval $[x_1 - 3, x_1 + 3 ]$, i.e. $X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 )$. Sampling 100 data points from this distribution yields the first dataset.
+$X_1 \sim U(0,10)$. Furthermore we assume the conditional distribution of the feature $x_2$ given $x_1$ to be also uniform on the interval $[x_1 - 3,~x_1 + 3 ]$, i.e. $X_2 \vert X_1 = x_1 \sim U(x_1 - 3,~x_1 + 3 )$. Sampling 100 data points from this distribution yields the first dataset (see Figure \@ref(fig:DatasetALE1)) .
 
 ```{r eval = FALSE, include = FALSE}
 prediction_function_1 <- function(x_1, x_2){
@@ -52,13 +53,13 @@ p + ggplot2::geom_point() +
 
 ```
 
-```{r DatasetALE1,  out.width='100%', echo=FALSE}
+```{r DatasetALE1, fig.cap='(ref:aleDataset1)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_Dataset1_.PNG")
 ```
-(ref:DatasetALE1)The correlation is clearly recognizable.
+(ref:aleDataset1) The correlation is clearly recognizable.
 
-Why we only made assumptions about the conditional distributon of $X_2$ and not on the joint distribution of $(X_1,X_2)$ gets clearer once we take a look on the calculation of the theoratical ALE. Therefore we first asume the prediction function $\hat{f}_1 (x_1, x_2) =  (x_1-4)(x_1-5)(x_1-6) + x_2^3$. Due to the special structure of $f_1$ the partial derivative with respect to $x_1$ is a polynomial of degree 2 which doesn't depend on $x_2$, concretley $\hat{f}^1(x_1,x_2) = 3x_1^2 -30x_1 +74$.  
+Why we only made assumptions about the conditional distributon of $X_2$ and not on the joint distribution of $(X_1,X_2)$ gets clearer once we take a look on the calculation of the theoratical ALE. Therefore we first asume the prediction function $\hat{f}_1 (x_1, x_2) =  (x_1-4)(x_1-5)(x_1-6) + x_2^3$. Due to the special structure of $f_1$ the partial derivative with respect to $x_1$ is a polynomial of degree 2 which doesn't depend on $x_2$, concretley $\hat{f}^1(x_1,x_2) = 3x_1^2 -30x_1 +74$ (Remember the unusual notation for the j-th partial derivative as $f^{j}$). 
 Now we can calculate the theoratical (uncentered) ALE:
 
 $$(1)~~~~\widetilde{ALE}_{\hat{f},1}(x) = \int_{z_{0,1}}^x E_{X_2\vert X_1= Z_1}[\hat{f}^1(x_1,x_2)]~dz~~~=$$
@@ -70,13 +71,13 @@ $$(5)~~~~ \int_{z_{0,1}}^x  3z^2 -30z +74~dz~~~=$$
 $$(6)~~~~ [z^3 -15z^2 +74z + c]_{z_{0,1}}^x~~~=$$
 
 $$(7)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}~~~$$
-Herby $p_{X_2\vert X_1=z}(x_2)$ notates the conditional density of $X_2\vert X_1$ for $x_1 = z$.
+Herby $p_{X_2\vert X_1=z}(x_2)$ notates the conditional density of $X_2\vert X_1$ for $x_1 = z$.   
 Step (3) makes use of the fact that $\hat{f}^1(x_1,x_2)$ doesn't depend on $x_2$ and in step (4) the integral over the density gives 1.
 To get the centered ALE we have to calculate:
 
 $$(8)~~~~ALE_{\hat{f},1}(x) = \widetilde{ALE}_{\hat{f},1}(x) - E[\widetilde{ALE}_{\hat{f},1}(X_1)] ~~~=$$
 
-$$(9)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}  - $$
+$$(9)~~~~ x^3 - 15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}  ~- $$
 
 $$ E[X_1^3 -15X_1^2 +74X_1 - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}] ~~~=$$
 
@@ -89,8 +90,8 @@ $$(12)~~~~ x^3 -15x^2 +74x - 250 +15 * (100/3) -74* 5 ~~~=$$
 
 $$(13)~~~~ x^3 -15x^2 +74x - 120~~~.$$
 
-In Step (12) the formula for the moments of the uniform distribution which are given by $m_k = \frac{1}{k+1}\sum_{i=0}^k a^i b^{k-i}$ was used.
-Knowing the theoretical ALE-curve we can have a look on the behaviour of the estimated ALE for different grid sizes. Plot XX shows the theoretical ALE and the estimations for grid sizes 2, 3, 5, and 10. 
+In Step (12) the formula for the kth - moment of the uniform distribution which is given by $m_k = \frac{1}{k+1}\sum_{i=0}^k a^i b^{k-i}$ was used.
+Knowing the theoretical ALE-curve we can have a look on the behaviour of the estimated ALE for different grid sizes. Figure \@ref(fig:exampleALE1) shows the theoretical ALE and the estimations for grid sizes 2, 3, 5, and 10. 
 ```{r eval = FALSE, include = FALSE}
 
 expected_ALE_1 <- function(x){
@@ -169,12 +170,14 @@ ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2, common.legend = TRUE, lege
 
 
 
-```{r exampleALe1, out.width='100%', echo=FALSE}
+```{r exampleALE1, fig.cap='(ref:exampleALE1)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example1_.PNG")
 ```
-While the estimated ALE with grid size 2 only shows a linear effect over the whole data range, the estimated ALE with grid size 3 already gives a good approximation to the theoretical ALE in the second interval where the theoretical ALE has a low curvature. With grid size 5 only the outer intervals show clearly recognizable deviations to the theoretical ALE and with grid size 10 the approximation looks quite reasonable.
-As the partial derivative of the prediction function was independent of $x_2$ there was no risk of getting bad estimations due to too few datapoints within an interval. Thats why we take a look on a second example.
+(ref:exampleALE1) Theoretical vs estiamated ALE
+
+While the estimated ALE with grid size 2 only shows a linear effect over the whole data range, the estimated ALE with grid size 3 already gives a good approximation to the theoretical ALE in the second interval, where the theoretical ALE has a low curvature. With grid size 5 only the outer intervals show clearly recognizable deviations to the theoretical ALE and with grid size 10 the approximation looks quite reasonable.
+As the partial derivative of the prediction function was independent of $x_2$, there was no risk of getting bad estimations due to too few datapoints within an interval. Thats why we take a look on a second example.
 
 ### Example 2: multiplicative feature effects
 
@@ -204,7 +207,7 @@ $$(11)~~~~ALE_{\hat{f},1}(x) =  \frac{3}{6} x^6 - \frac{30}{5}x^5 + \frac{101}{4
 $$(\frac{3}{6}\frac{10^6}{7}-\frac{30}{5}\frac{10^5}{6} +\frac{101}{4}\frac{10^4}{5}-90\frac{10^3}{4}+333\frac{10^2}{3}) ~~~=$$
 
 $$(12)~~~~ALE_{\hat{f},1}(x) =  \frac{3}{6} x^6 - \frac{30}{5}x^5 + \frac{101}{4}x^4 - 90 x^3 + 333 x^2 - 10528.57~~~.$$
-Grafic XX shows the behaviour of the ALE with different grid sizes in this setting.
+Figure \@ref(fig:exampleALE2) shows the behaviour of the ALE with different grid sizes in this setting.
 
 
 ```{r eval = FALSE, include = FALSE}
@@ -335,11 +338,13 @@ ggarrange(plot1, plot2, plot3, plot4, plot5, plot6 , ncol=2, nrow=3, common.lege
 
 
 
-```{r exampleALe2_6,  out.width='100%', echo=FALSE}
+```{r exampleALE2, fig.cap='(ref:exampleALE2)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example2_6plots_.PNG")
 ```
-While for grid size 5 and bigger the approximations for the region 0 to 7.5 seem quite reasonable it seems that for the region 7.5 to 10 the approximation is best for grid size 10 and gets worse with higher grid sizes. Zooming in for grid sizes 10 and 25 reveals this effect more clearly.
+(ref:exampleALE2) Theoretical vs estimated ALE 
+
+While for grid size 5 and bigger the approximations for the region 0 to 7.5 seem quite reasonable it looks like for the region 7.5 to 10 the approximation is best for grid size 10 and gets worse with higher grid sizes. Zooming in for grid sizes 10 and 25 reveals this effect more clearly (Figure \@ref(fig:exampleALE2a)).
 
 
 ```{r eval = FALSE, include = FALSE}
@@ -366,31 +371,37 @@ ggarrange(plot3, plot4, plot7, plot8 , ncol=2, nrow=2, common.legend = TRUE, leg
 
 
 
-```{r exampleALe2_zoom,  out.width='100%', echo=FALSE}
+```{r exampleALE2a,fig.cap='(ref:exampleALE2a)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example2_zoom_.PNG")
 ```
+(ref:exampleALE2a) ???Zoom 
 
-Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the x_2 values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole ALE curve from that point on.
+Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the $x_2$ values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole ALE curve from that point on.
 
-To get a deeper insight in this dynamic,for the given context ALE-curves for 50 sampled datasets were estimated with grid.sizes 10, 25, and 50. For each grid.size at each point of the $x_1$ value the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Grafic XX shows this range exemplarilly for gride size 10.
+To get a deeper insight in this dynamic, for the given context ALE - curves for 50 sampled datasets were estimated with grid sizes 10, 25, and 50. For each grid size at each value of $x_1$ the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Figure \@ref(fig:exampleALE2b) shows this range exemplarily for gride size 10.
 
-```{r exampleALErange_10,  out.width='100%', echo=FALSE}
+```{r exampleALE2b, fig.cap='(ref:exampleALE2b)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_ALErange_10_.PNG")
 ```
-The vertical lines indicate the absolut delta of the maximal and minimal ALE estimation at x. Plotting these deltas for the gride sizes 10, 25, and 50 yields graffic XX. 
+(ref:exampleALE2b) Maximum range of estimation
+
+The vertical lines indicate the absolut delta of the maximal and minimal ALE estimation at x. Plotting these deltas for the gride sizes 10, 25, and 50 yields Figure \@ref(fig:exampleALE2c). 
 
 
-```{r exampleALE2.1_delta,  out.width='100%', echo=FALSE}
+```{r exampleALE2c, fig.cap='(ref:exampleALE2c)',  out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ALE_2_example2.1_delta_.PNG")
+
 ```
+(ref:exampleALE2c) ???Delta
+
 It is clearly recognizable that on the one hand for higher x the variance in the ALE estimation increases for all grid sizes. The expected higher variance of the estimations with higher grid sizes is in particular revealed in the region from $x_1 = 7$ to $x_1 = 10$, because the estimation is quite sensible to the absolute value of $x_2$, which also increases with $x_1$.  
 
 
 
-As the the theoretical ALE in this example was quite smooth grid.size 10 gave reasonable estimates. The following example shows problems that occur once the prediction function is quite shaky especially in regions with only few observations.
+As the the theoretical ALE in this example was quite smooth, grid size 10 gave reasonable estimations. The following example shows problems that occur once the prediction function is quite shaky especially in regions with only few observations.
 
 ### Example 3: Unbalanced datasets and shaky prediction functions
 
