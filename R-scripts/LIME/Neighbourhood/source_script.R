@@ -11,7 +11,6 @@ source("R-scripts/LIME/Neighbourhood/local_linear.R")
 source("R-scripts/LIME/Neighbourhood/global_nonlinear.R")
 source("R-scripts/LIME/Neighbourhood/fi.R")
 source("R-scripts/LIME/Neighbourhood/real.R")
-source("R-scripts/LIME/Neighbourhood/note.R")
 
 ### Last script to execute: Create plots from results.
 source("R-scripts/LIME/Neighbourhood/plot_script.R")

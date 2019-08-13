@@ -175,7 +175,11 @@ analyse_univariate_kernel_width <- function(kernel_widths,
                                             n_permutations = 2500,
                                             dist_fun = "euclidean",
                                             iterations = 25,
-                                            seed) {
+                                            seed,
+                                            ...) {
+  n_cores <- detectCores()
+  registerDoParallel(n_cores - 1)
+  
   result <- rep(0, length(kernel_widths))
   result <- cbind(result, result)
   result <- as.data.frame(result)
@@ -189,7 +193,10 @@ analyse_univariate_kernel_width <- function(kernel_widths,
                                                dist_fun, 
                                                kernel_width = k,
                                                seed = seed,
-                                               feature_select = "auto")
+                                               iterations = iterations,
+                                               se = FALSE,
+                                               feature_select = "auto",
+                                               ...)
     result[i, ] <- local_model[[1]][1:2]
   }
   result

@@ -149,7 +149,7 @@ knitr::include_graphics("images/04-09-06.png")
 This behaviour is not necessarily a problem but only a property of the LIME.
 However, it can be problematic that the appropriate kernel size is not a priori clear.
 Additionally, there is no straight forward way to determine a good kernel width for a given observation to be explained.
-The only generic goodness-of-fit criterion of LIME, model fidelity, is not necessatily representative.
+The only generic goodness-of-fit criterion of LIME, model fidelity, is not necessarily representative.
 If we set the kernel size extremely small there will be many models with an extremely good local fit as local refers only to a single observation.
 In our examples, it looks as if a very small kernel size should be preferred.
 A small kernel width indeed grants local fit.
@@ -188,7 +188,7 @@ _Good_ machine learning models should be able to approximate the hyperplane.
 This case is -- again -- somewhat trivial for LIME.
 The most suitable model for this data would be linear regression which is interpretable in the first place.
 Thus, LIME can be easily tested in this controlled environment.
-We know the true local coefficients as they equal to the global ones.
+We know the true local coefficients as they are equal to the global ones.
 We can evaluate the suitability of the kernel width appropriately.
 
 The simulated data looks as follows:
@@ -268,9 +268,9 @@ knitr::include_graphics("images/04-09-10.png")
 
 We can clearly see that in this case, we __cannot__ simply set an arbitrary kernel width.
 The true local coefficient for $x_1$ is only approximated well within a limited interval of the kernel width.
-In our scenario, good kernel widths are between $0.1$ and $0.75$ (while the upper bound depends on the observation).
-As before, we observe that a too-small kernel width produces non-meaningful coefficients.
-On the other hand for large kernel widhts, the true coefficient is not approximated, but rather the global (average) linear coefficient:
+In our scenario, good kernel widths are between $0.1$ and $0.7$ (while the upper bound depends on the observation).
+As before, we observe that a too-small kernel width ($ < 0.1$) produces non-meaningful coefficients.
+On the other hand for large kernel widths ($ > 0.7$), the true coefficient is not approximated, but rather the global (average) linear coefficient:
 For $x_1$ a large kernel width results in a linear model that averages the local slopes.
 More formally, one could describe this sort of explanation as a global surrogate model.
 Additionally, we observe that for lower kernel widths, the local models are rather volatile.
@@ -326,15 +326,15 @@ It seems as if the more complex the predictive surface, the harder it is for LIM
 
 For globally non-linear associations, we also find that we prefer a small kernel which also produces stable coefficients.
 
-```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for x2)."}
+```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for $x_2$)."}
 knitr::include_graphics("images/04-09-12.png")
 ```
 
-```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for x2)."}
+```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for $x_2$)."}
 knitr::include_graphics("images/04-09-13.png")
 ```
 
-Having investigated simulated data where we knew the ground truth, gave us a good feeling on how the kernel size affects the resulting explainer model.
+Having investigated simulated data where we knew the ground truth, gave us a good intuition on how the kernel size affects the resulting explainer model.
 The neighbourhood problem can be described briefly by the following.
 A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.

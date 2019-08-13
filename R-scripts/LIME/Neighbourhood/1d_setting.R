@@ -22,7 +22,7 @@ task_pred <- predict(black_box, newdata = data_set$test)
 pred_frame <- data.frame(y_hat = task_pred$data$response, 
                          x1 = data_set$test$x1)
 
-### TOptical goodness of fit evaluation for random forest
+### Optical goodness of fit evaluation for random forest
 fig2 <- ggplot(data_set$train, aes(x = x1, y = y)) +
   geom_point(size = 5) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
@@ -92,7 +92,7 @@ local_model2 <- extract_average_local_model(test_obs[ , 2:3], explainer,
                                             dist_fun = "euclidean", 
                                             seed = 1, 
                                             feature_select = "auto",
-                                            iterations = 5000,
+                                            iterations = 2000,
                                             se = FALSE)
 local_model2 <- local_model2[[1]][1:2]
 
