@@ -22,7 +22,7 @@ Such as kernel density estimations.
 Figure \@ref(fig:fig1) illustrates kernel densities from a standard normal distribution.
 We applied different kernel widths for the curve estimation.
 
-```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "In( appropriate) kernel widths for kernel density estimations."}
+```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "In(appropriate) kernel widths for kernel density estimations. The left panel illustrates an appropriate kernel width. The right one features an inappropriate one."}
 knitr::include_graphics("images/04-09-01.png")
 ```
 
@@ -96,14 +96,14 @@ We simulate data with one target and two features.
 One feature is pure noise and the other one has a non-linear sinus-like effect on the target.
 If we plot the influential feature on the x-axis and the target on the y-axis, we can observe this pattern in figure \@ref(fig:fig2).
 
-```{r, fig2, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship."}
+```{r, fig2, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: The non-linear relationship between the feature and the target."}
 knitr::include_graphics("images/04-09-02.png")
 ```
 
 Now we fit a random forest on this data situation which should be able to detect the non-linearity and incorporate it into its predictive surface.
 In fact, we observe that the predictions of the random forest look very accurate in figure \@ref(fig:fig3)
 
-```{r, fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for non-linear univariate relationship. The solid line resembles the predictive surface."}
+```{r, fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for non-linear univariate relationship. The solid line represents the true predictive surface."}
 knitr::include_graphics("images/04-09-03.png")
 ```
 

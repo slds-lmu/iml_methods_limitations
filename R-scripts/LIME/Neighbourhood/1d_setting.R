@@ -55,7 +55,7 @@ fig4 <- ggplot(pred_frame, aes(x = x1, y = y_hat)) +
   geom_point(size = 5) + 
   stat_function(fun = f, size = 2, col = 2) +
   theme(text = element_text(size = 35)) + ylab("Predicted Value")
-saveRDS(p, file = "R-results/LIME/Neighbourhood/fig4.RDS")
+saveRDS(fig4, file = "R-results/LIME/Neighbourhood/fig4.RDS")
 
 ### We create an observation which we later want an explanation for.
 ### test_obs is the true observation, test is only necessary for plotting
