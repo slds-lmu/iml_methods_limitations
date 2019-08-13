@@ -308,13 +308,11 @@ Following equation \@ref(eq:ale2DTheoretical1stLvl) is the 2nd order effect with
 
 Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are subtracted. In this way the main effects of $x_j$ and $x_l$ on the final ALE $ALE_{\hat{f},~j,~l}(x_j, x_l)$ are both zero [@Apley2016, page 9]. But be carefull, this is not centering by a constant as in the one dimensional ALE as can be seen in equation \@ref(eq:ale2DTheoreticalCorrection). This is a correction for the also accumulated main effects which of course vary in the directions of the features.
 
-\begin{align} 
-\begin{split}
+\begin{align}
 \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) 
 = &\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) \notag \\ 
 &-  \int_{z_{0,~j}}^{x_j}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_j}\mid X_j = z_j]~dz_j \notag \\
 &- \int_{z_{0,~l}}^{x_l}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_l}\mid X_l = z_l]~dz_l
-\end{split}
 (\#eq:ale2DTheoreticalCorrection)
 \end{align}
 
@@ -343,25 +341,21 @@ The estimation equvalent to Formula \@ref(eq:ale2DTheoretical1stLvl) is:
 
 while the $\Delta$ function is:
 
-\begin{align} 
-\begin{split}
+\begin{align}
 \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = 
 &[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag \\ 
 &- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
-\end{split}
+(\#eq:ale2DEstDelta) 
 \end{align}
-<!-- (\#eq:ale2DEstDelta) -->
 
 Now the correction for the main effects (theoretical formula \@ref(eq:ale2DTheoreticalCorrection))is estimated:
 
-\begin{align} 
-\begin{split}
+\begin{align}
 \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = 
 &\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) \notag \\
 &-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]\notag \\
 &- \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})]
-\end{split}
-  (\#eq:ale2DEstCorrection)
+(\#eq:ale2DEstCorrection)
 \end{align}
 
 This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of subtracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the general shape. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula \@ref(eq:ale2DTheoreticalCorrection). 
@@ -1293,34 +1287,28 @@ The theoretical 2D ALE for features $x_1$ and $x_2$ will be calculated.
 2. Calculation of corrected pure 2nd order effect:
 
 \begin{align}
-\begin{split}
 \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = 
 &\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 \notag \\
 &- \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
-\end{split}
 (\#eq:ale2DExampleCorrection)
 \end{align}
 
 
 The two terms which are correcting for the main effect of the two features will be calculated seperately.
 
-\begin{align} 
-\begin{split}
+\begin{align}
 \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 
 &= \int_{z_{0,~1}}^{x_1}  E[\frac{1}{2}(X_2^2 - z_{0, ~2}^2)\mid X_1 = z_1]~dz_1 \notag \\
 &= \int_{z_{0,~1}}^{x_1}  \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2) ~dz_1 \notag \\
 &= \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1})
-\end{split}
   (\#eq:ale2DExampleCorrection1)
 \end{align}
 
-\begin{align} 
-\begin{split}
+\begin{align}
 \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
 &= \int_{z_{0,~2}}^{x_2}  E[X_2 (X_1 - z_{0, ~1})\mid X_2 = z_2]~dz_2 \notag \\
 &= \int_{z_{0,~2}}^{x_2}  z_2(\frac{a+b}{2} - z_{0, ~1}) ~dz_2 \notag \\
-&= \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) 
-\end{split}
+&= \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2)
   (\#eq:ale2DExampleCorrection2)
 \end{align}
 
