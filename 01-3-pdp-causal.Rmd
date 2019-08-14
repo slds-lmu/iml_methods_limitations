@@ -4,47 +4,29 @@
 
 ## Introduction
 
-```{r}
+```{r include=FALSE}
 library(dplyr) # for group by
 library(Ecdat) # icecream datasets
+library(ggdag) # for structural causal graphs
 library(ggpubr) # ggarrange
+library(gridExtra)
 library(iml)  # pdp
 library(randomForest)
 ```
 
+## Introduction
+In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) will be used to visualize various causal relationships. Judea Pearl's framework of do-calculus will be used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention.  
 
-[@zhaohastie] formulated 3 elements that are needed for a causal interpretation:
-1. A good predictive model which closely approximates the real relationship.
-2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.
-3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)
+[@zhaohastie] formulated 3 elements that are needed for a causal interpretation:  
+1. A good predictive model which closely approximates the real relationship.  
+2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.  
+3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)  
 
-** Backdoor Criterion **
+The first point is an important one, because there is a big difference between being able to causally interpret an effect for the *model* and using it as a causal interpretation for the real world. The second point will make clear when PDPs are  the same, and when they are different from interventions on the data. In this chapter we will systematically go through scenarios in order to see when PDPs can be causally interpreted and when this would be unwise. 
 
-When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. In a graphical sense an intervention means removing an edge that is directed towards the variable we fix. 
-The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
+## A brief look at PDP problems  
 
-An important formula introduced by  [@pearl1993] is that of the back-door adjustment. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
-
-
-$$P(Y|do(X_S = x_S)) = \int P(Y |X_S = x_S, X_C = x_C) dP(x_C)$$
-As [@zhaohastie] pointed out, this formula is basically the same as the formula for the partial
-dependence of $g$ on a subset of variables $X_S$ given output $g(x)$:
-
-$$ g_S(x_S) = \mathbb E_{x_C}[g(x_S, X_C)] = \int g(x_S, x_C)dP(x_C)  $$
-If we take the expectation of Pearl's adjustment formula we get:
-$$ E[Y |do(X_S = x_S)] = \int E[Y |X_S = x_S, X_C = x_C] dP(x_C) $$
-These last two formulas thus seem to be the same, if $C$ is the complement of $S$. 
-
-[@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It holds that:
-
-1. No node in $X_C$ can be a descendant of $X_S$ in the DAG $G$.
-
-2. Every "back-door" path between $X_S$ and $Y$ has to be blocked by $X_C$.
-
-
-## Reverse Causality
-
-Before we have a look at various scenarios and settings, let's look at an example that shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
+Before we have a look at various scenarios and settings involving interventions, let's look at two examples of other problems that can occur when using a PDP. The first example shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 data("Icecream")
  rf.icecream = randomForest(cons ~ temp
@@ -63,12 +45,72 @@ data("Icecream")
 
 Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. As discussed above, domain knowledge is also a necessity in order to determine whether the backdoor criterion is met.
 
+Another problem with PDPs was shown by [include citation]. Assume we have data that is distributed as follows:
+
+$$ Y =  X_{1}^2 - 15X_{1}X_2 + \epsilon $$
+$$ X_1 \sim \mathcal{U}(-1, 1), \ \ \ \ \ X_2 \sim \mathcal{U}(-1, 1), \ \ \ \ \ \epsilon \sim \mathcal{N}(0,0.1), \ \ \ \ \ N = 1000    $$
+Training a Random Forest on this data leads to the PDP+ICE plot below. The problem should be immediately clear. Looking at the PDP, one would assume that $X_1$ has virtually no impact on $Y$. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally.
+
+```{r echo=FALSE}
+set.seed(13)
+N <- 1000
+e <- rnorm(N, 0, 0.1)
+x1 <- runif(N, -1, 1)
+x2 <- runif(N, -1, 1)
+y <- x1^2 - 15*x1*x2 + e
+
+df <- data.frame(x1, x2, y)
+rf.test = randomForest(y ~ . , data = df, importance = T, ntree = 500)
+mod = Predictor$new(rf.test, data = df)
+
+pdp.obj = FeatureEffect$new(mod, feature = c("x1"), method = "pdp+ice")  
+plot(pdp.obj)
+
+```
+
+
+## Causal Interpretability: Interventions and Directed Acyclical Graphs
+
+In the rest of this chapter, we will be using the concept of interventions and showing causal structures visually. When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. 
+The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
+
+Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs have to be acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing an edge that is directed towards the variable we fix. 
+
+In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by  [@pearl1993] adresses exatly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
+
+$$P(Y|do(X_S = x_S)) = \int P(Y |X_S = x_S, X_C = x_C) dP(x_C)$$
+As [@zhaohastie] pointed out, this formula is basically the same as the formula for the partial
+dependence of $g$ on a subset of variables $X_S$ given output $g(x)$:
+
+$$ g_S(x_S) = \mathbb E_{x_C}[g(x_S, X_C)] = \int g(x_S, x_C)dP(x_C)  $$
+If we take the expectation of Pearl's adjustment formula we get:
+$$ E[Y |do(X_S = x_S)] = \int E[Y |X_S = x_S, X_C = x_C] dP(x_C) $$
+These last two formulas thus seem to be the same, if $C$ is the complement of $S$. 
+
+[@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It holds that:
+
+1. No node in $X_C$ can be a descendant of $X_S$ in the DAG $G$.
+
+2. Every "back-door" path between $X_S$ and $Y$ has to be blocked by $X_C$.
+
+
 
 ## Scenarios
 
+After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of [@pearl1993]. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions.
+
 In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests saw a large increase in computation time with a higher number, but with results that hardly differed from those obtained with one thousand observations.
 
-**Scenario 1: ladieda**
+The process for obtaining the intervention curve was as follows:
+Let $X$ be the predictor variable of interest with possible values $x_{1}, x_{2}, x_{n}$ and $Y$ the response variable of interest.
+for each unique $i \in \{1,2,\dots,n\}$ do  
+(1) make a copy of the data set  
+(2) replace the original values of $X$ with the value $X_(i)$ of $X$ under intervention  
+(3) recompute all variables dependent on $X$ using the replacement values as input. This includes $Y$, but potentially also other features that rely on $X$ for their value.  
+(4) Compute the average $Y_i$ in dataset $i$ given $X_i$.  
+(5) ($X_i$, $Y_i$) are a single point on the intervention curve.  
+
+**Scenario 1:  **
 
 ```{r echo=FALSE}
 set.seed(18)
@@ -96,7 +138,7 @@ As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ 
 
 ![Figure 1](./images/scenario1_all.jpeg)
 
-
+Overall the PDPs match the intervention curves fairly well. Outside of the extreme regions of $X$, where some curvature is present, the linear quality of the intervention curve is evident in the PDPs. Furthermore, the scale of $\hat{Y}$ is comparable to the scale of $Y_{intervention}$ in most settings.
 
 
 
@@ -218,9 +260,10 @@ dagify(Y ~ Z,
 ```
 
 In this scenario the DAG again looks like a chain. $X$ has an effect on $Y$ through $Z$, but no direct relationship between $X$ and $Y$ exists. The initial simulation settings for this scenario were as follows: 
+
 $$ Y = Z + \epsilon  $$
 $$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim X + \epsilon, \ \ \ \ \ N = 100 $$
-
+As can be seen from the plot below, the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show an inverse relationship between $X$ and $Y$ in comparison to the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
 
 ![Figure 2](./images/scenario2_all.jpeg)
 
@@ -329,7 +372,9 @@ annotate_figure(scenario_2_all,
                  fig.lab.face = "bold")
 ```
 
-** Scenario 3 **
+**Scenario 3**
+
+After two chains, we now have a scenario where $X$ has an influence on both $Z$ and $Y$ directly, as well as $Z$ having an impact on $Y$. This scenario is similar to the previous one with only an edge between $X$ and $Y$ having been added. As can be seen from the DAG below, $Z$ is still a descendant of $X$. The expectation is that the PDPs and the true interventions will not be equal.
 
 ```{r echo=FALSE}
 dagify(Y ~ X,
@@ -339,7 +384,15 @@ dagify(Y ~ X,
   ggdag() 
 ```
 
+The similarity to the previous scenario can also be noted in the simulation settings, where the only difference is the addition of $X$ to the equation for $Y$.
 
+$$ Y = Z + X + \epsilon  $$
+$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim X + \epsilon, \ \ \ \ \ N = 100 $$
+
+![Figure 3](./images/scenario3_all.jpeg)
+
+The expectation was that the PDP would not show the same results as the true intervention. On first glance, the PDP does not seem to be as wrong as it was in scenario 2. An overall upward trend seen in the true intervention on the right is also captured by the PDPs in all settings. However, big differences do exist. First of all, the scale of $\hat{Y}$ is off in every setting. This issue gets worse both when the standard deviation of the error increases and when the number of observations is increased. The worst setting is the bottom right, where $N = 10.000$ and the standard deviation of the error is 0.5. The range of $\hat{Y}$ is very small compared to the true intervention next to it and the slope is not steep enough. In fact, the correct slope can only be seen in a very few points: In the top row plot 2 and 3 around $X=0$ and on the second row plot 3, also around $X=0$.
+Overall the result is not as poor as in scenario 2, but a causal interpretation of these plots would lead to a severe underestimation of the impact $X$ has on $Y$.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -446,3 +499,130 @@ annotate_figure(scenario_3_all,
                 fig.lab.face = "bold")
 
 ```
+
+**Scenario 4**
+
+Scenario 4 consists of a direct effect of $X$ on $Y$. $Z$ meanwhile is unrelated to both $X$ and $Y$. It is however included in the simulation and included in the model that is run to create the PDPs. In a non-simulated setting, $Z$ can be seen as a variable that we assume might be related to $Y$ and therefore include, but in actuality has nothing to do with the causal process and should not be included. We will see now how the PDP deals with this kind of variable in the mix.
+
+![Figure 4](./images/scenario4.jpeg) 
+
+For the simulation the initial settings look as follows, again increasing both the standard deviation of the error and the magnitude of observations from this starting point. 
+$$ Y = X + \epsilon  $$
+$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim \mathcal{U}(-1,1), \ \ \ \ \ N = 100 $$
+![Figure 4](./images/scenario4_all.jpeg)
+
+The PDPs are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
+
+```{r eval=FALSE, include=FALSE}
+# pdp
+pdp_simulation <- function(runs, N, error_std){ 
+  pdp_simulations <- setNames(data.frame(matrix(ncol = 2, nrow = 0)),  c("X1", "y_hat"))
+  
+  for(i in 1:runs){
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- runif(N, -1, 1)
+    Y <- X + e
+    df <- data.frame(X, Z, Y)
+    
+    rf.basic = randomForest(Y ~ . , data = df, importance = T)
+    mod = Predictor$new(rf.basic, data = df)
+    pdp.obj = FeatureEffect$new(mod, feature = c("X"), method = "pdp") 
+    p_pdp_mod <- plot(pdp.obj)
+    
+    simulation <- as.data.frame(pdp.obj$results[,1:2])
+    simulation$run <- i
+    colnames(simulation) <- c("X", "Y_hat", "run_number")
+    pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
+  }
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+}
+# standard deviation eq 0.1
+scen4_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
+scen4_plot_1 <- scen4_plot_1 + labs(x = "X", y = "Y_hat")
+scen4_plot_2 <- pdp_simulation(runs=20, N = 1000, error_std=0.1)
+scen4_plot_2 <- scen4_plot_2 + labs(x = "X", y = "Y_hat")
+scen4_plot_3 <- pdp_simulation(runs=20, N = 10000, error_std=0.1)
+scen4_plot_3 <- scen4_plot_3 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.3
+scen4_plot_4 <- pdp_simulation(runs=20, N = 100, error_std=0.3)
+scen4_plot_4 <- scen4_plot_4 + labs(x = "X", y = "Y_hat")
+scen4_plot_5 <- pdp_simulation(runs=20, N = 1000, error_std=0.3)
+scen4_plot_5 <- scen4_plot_5 + labs(x = "X", y = "Y_hat")
+scen4_plot_6 <- pdp_simulation(runs=20, N = 10000, error_std=0.3)
+scen4_plot_6 <- scen4_plot_6 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.5
+scen4_plot_7 <- pdp_simulation(runs=20, N = 100, error_std=0.5)
+scen4_plot_7 <- scen4_plot_7 + labs(x = "X", y = "Y_hat")
+scen4_plot_8 <- pdp_simulation(runs=20, N = 1000, error_std=0.5)
+scen4_plot_8 <- scen4_plot_8 + labs(x = "X", y = "Y_hat")
+scen4_plot_9 <- pdp_simulation(runs=20, N = 10000, error_std=0.5)
+scen4_plot_9 <- scen4_plot_9 + labs(x = "X", y = "Y_hat")
+
+# intervention
+
+intervention <- function(runs, N, error_std){ 
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("X", "Z", "Y"))
+  for(i in 1:runs){
+    
+    e <- rnorm(N,0, error_std)
+    X <- runif(N, -1, 1)
+    Z <- runif(N, -1, 1)
+    Y <- X + e
+    df <- data.frame(X, Z, Y)
+    for(j in 1:length(unique(df$X))){
+      X <- unique(df$X)[j]
+      Y <- X + e
+      df_intervention <- data.frame(X, Z, Y)
+      df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+    }
+  }
+  
+  df_intervention_group <- df_intervention_all %>%
+    group_by(X) %>%
+    summarise(Y_intervention = mean(Y),
+              n = n()) %>%
+    
+    arrange(X)
+  
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+}
+# standard deviation eq 0.1
+scen4_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
+# standard deviation eq 0.3
+scen4_int_plot_5 <- intervention(runs=1, N = 1000, error_std=0.3)
+# standard deviation eq 0.5
+scen4_int_plot_8 <- intervention(runs=1, N = 1000, error_std=0.5)
+
+
+scenario_4_all <- ggarrange(scen4_plot_1, # N = 100,  std = 0.1
+                            scen4_plot_2, # N = 1000, std = 0.1
+                            scen4_plot_3, # N = 2000, std = 0.1
+                            scen4_int_plot_2,
+                            
+                            scen4_plot_4, # N = 100,  std = 0.3
+                            scen4_plot_5, # N = 1000, std = 0.3
+                            scen4_plot_6, # N = 2000, std = 0.3
+                            scen4_int_plot_5,
+                            
+                            scen4_plot_7, # N = 100,  std = 0.5
+                            scen4_plot_8, # N = 1000, std = 0.5
+                            scen4_plot_9, # N = 2000, std = 0.5
+                            scen4_int_plot_8,
+                            
+                            nrow= 3, ncol = 4)
+annotate_figure(scenario_4_all,
+                top = text_grob("Increasing number of observations to the right", color = "black"),
+                left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
+                fig.lab.face = "bold")
+
+```
+
+
+## Conclusion
+
+Causal interpretability of a PDP is dependent on several things:
+(1) The backdoor criterion being met. We have seen that if the backdoor criterion is met, meaning no variable in the complement set $C$ is a descendant of our variable of interest, theoretically the PDP will be the same as the intervention curve. We say theoretically, because in practice it will also depend on:
+(2) The model fit. Even when the backdoor criterion is met, the PDP might not fully capture the exact same relationship as the intervention curve. Especially in extreme regions, where data is potentially sparse, the PDP can be deceptive. Same in scenarios with a higher(er) error and low number of observations.
+
+Point (2) can be checked through the standard goodness of fit measures that are pervasive in the statistics literature. Point (1) is more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met.
