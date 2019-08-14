@@ -16,8 +16,8 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {8.1}{\ignorespaces The correlation is clearly recognizable.\relax }}{27}{figure.caption.14}% 
-\contentsline {figure}{\numberline {8.2}{\ignorespaces Theoretical vs estiamated ALE\relax }}{28}{figure.caption.15}% 
-\contentsline {figure}{\numberline {8.3}{\ignorespaces Theoretical vs estimated ALE\relax }}{30}{figure.caption.16}% 
+\contentsline {figure}{\numberline {8.2}{\ignorespaces Theoretical vs estimated ALE\relax }}{28}{figure.caption.15}% 
+\contentsline {figure}{\numberline {8.3}{\ignorespaces Theoretical vs estimated ALE for different grid sizes\relax }}{30}{figure.caption.16}% 
 \contentsline {figure}{\numberline {8.4}{\ignorespaces ALE-plots for grid sizes 10 and 25 (zoomed in)\relax }}{31}{figure.caption.17}% 
 \contentsline {figure}{\numberline {8.5}{\ignorespaces Maximum range of estimation\relax }}{32}{figure.caption.18}% 
 \contentsline {figure}{\numberline {8.6}{\ignorespaces Delta of maximal and minimal estimated ALE for different grid sizes\relax }}{33}{figure.caption.19}% 

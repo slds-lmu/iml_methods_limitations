@@ -30,7 +30,7 @@
 \contentsline {section}{\numberline {8.2}Problems with piece-wise constant models}{35}{section.8.2}% 
 \contentsline {subsection}{\numberline {8.2.1}Example 4: Simple step function}{36}{subsection.8.2.1}% 
 \contentsline {subsection}{\numberline {8.2.2}Example 5: Two dimensional step functions and unluckily distributed data}{37}{subsection.8.2.2}% 
-\contentsline {subsection}{\numberline {8.2.3}Outlook}{41}{subsection.8.2.3}% 
+\contentsline {subsection}{\numberline {8.2.3}Outlook}{43}{subsection.8.2.3}% 
 \contentsline {section}{\numberline {8.3}Categorical Features}{43}{section.8.3}% 
 \contentsline {subsection}{\numberline {8.3.1}Ordering the features}{43}{subsection.8.3.1}% 
 \contentsline {subsection}{\numberline {8.3.2}Estimation of the ALE}{44}{subsection.8.3.2}% 

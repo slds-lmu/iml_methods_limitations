@@ -70,7 +70,7 @@ $$(5)~~~~ \int_{z_{0,1}}^x  3z^2 -30z +74~dz~~~=$$
 $$(6)~~~~ [z^3 -15z^2 +74z + c]_{z_{0,1}}^x~~~=$$
 
 $$(7)~~~~ x^3 -15x^2 +74x - z_{0,1} ^ 3 + 15 z_{0,1}^2 - 74z_{0,1}~~~$$
-Herby $p_{X_2\vert X_1=z}(x_2)$ notates the conditional density of $X_2\vert X_1$ for $x_1 = z$.   
+Here $p_{X_2\vert X_1=z}(x_2)$ notates the conditional density of $X_2\vert X_1$ for $x_1 = z$.   
 Step (3) makes use of the fact that $\hat{f}^1(x_1,x_2)$ doesn't depend on $x_2$ and in step (4) the integral over the density gives 1.
 To get the centered ALE we have to calculate:
 
@@ -193,7 +193,7 @@ ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2, common.legend = TRUE, lege
 
 knitr::include_graphics("images/ALE_2_example1_.PNG")
 ```
-(ref:exampleALE1) Theoretical vs estiamated ALE
+(ref:exampleALE1) Theoretical vs estimated ALE
 
 While the estimated ALE with grid size 2 only shows a linear effect over the whole data range, the estimated ALE with grid size 3 already gives a good approximation to the theoretical ALE in the second interval, where the theoretical ALE has a low curvature. With grid size 5 only the outer intervals show clearly recognizable deviations to the theoretical ALE and with grid size 10 the approximation looks quite reasonable.
 As the partial derivative of the prediction function was independent of $x_2$, there was no risk of getting bad estimations due to too few datapoints within an interval. Thats why we take a look on a second example.
@@ -356,7 +356,7 @@ ggarrange(plot1, plot2, plot3, plot4, plot5, plot6 , ncol=2, nrow=3, common.lege
 
 knitr::include_graphics("images/ALE_2_example2_6plots_.PNG")
 ```
-(ref:exampleALE2) Theoretical vs estimated ALE 
+(ref:exampleALE2) Theoretical vs estimated ALE for different grid sizes 
 
 While for grid size 5 and bigger the approximations for the region 0 to 7.5 seem quite reasonable it looks like for the region 7.5 to 10 the approximation is best for grid size 10 and gets worse with higher grid sizes. Zooming in for grid sizes 10 and 25 reveals this effect more clearly (Figure \@ref(fig:exampleALE2a)).
 
@@ -509,7 +509,7 @@ knitr::include_graphics("images/ALE_2_example2_zoom_.PNG")
 ```
 (ref:exampleALE2a) ALE-plots for grid sizes 10 and 25 (zoomed in) 
 
-Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsuffficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation, obviously its quite probable that the $x_2$ values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated the error persists for the whole ALE curve from that point on.
+Where does this come from? The structure of the prediction function leads to an increasing effect of $x_2$ on the total differences calculated for the series of intervals. Due to unsufficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation. Obviously it's quite probable that the $x_2$ values of those data points are clearly above average in some intervals. If that happens for high $x_1$ - which implies due to the correlation structure high $x_2$ - the total difference will be clearly overestimated as the delta in $x_1$ is multiplied by the average $x_2^3$. As the effect on the intervals is accumulated, the error persists for the whole ALE-curve from that point on.
 
 To get a deeper insight in this dynamic, for the given context ALE - curves for 50 sampled datasets were estimated with grid sizes 10, 25, and 50. For each grid size at each value of $x_1$ the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Figure \@ref(fig:exampleALE2b) shows this range exemplarily for gride size 10.
 
@@ -1075,8 +1075,8 @@ knitr::include_graphics("images/ALE_2_dataset2_.PNG")
 ```
 (ref:datasetALE2) Mixture of normal and uniform distributed features
 
-For this example the sample size was 1000. As expected the correlation is clearly recognizable. This time only few data points lay in the outer regions, i.e. between 0 and 2.5 and 17.5 and 20, while there is a high concentration of data around the mean at 10.  
-Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)~x_2$. The calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = x~sin(x) + \frac{1}{10}cos(10x)$. For centering the expectation of the uncentered ALE, i.e. $E[\widetilde{ALE}_{\hat{f},1}(X_1)]$ was estimated by Monte-Carlo integration to be almost zero. 
+For this example the sample size was 1000 (see figure \@ref(fig:datasetALE2)). As expected the correlation is clearly recognizable. This time only few data points lay in the outer regions, i.e. between 0 and 2.5 and 17.5 and 20, while there is a high concentration of data around the mean at 10.  
+Furthermore we look at the prediction function $\hat{f}_3(x_1,x_2) = sin(10x_1)~x_2$. The calculation of the theoretical uncentered ALE (as before) yields $~~~~\widetilde{ALE}_{\hat{f},1}(x) = x~sin(x) + \frac{1}{10}cos(10x)$. For centering the expectation of the uncentered ALE, i.e. $E[\widetilde{ALE}_{\hat{f},1}(X_1)]$, was estimated by Monte-Carlo integration to be almost zero. 
 As well as the prediction function, the theoretical ALE has lots of extreme points. This leads to some troubles especially for low grid sizes.
 Figure \@ref(fig:example33gs) shows the estimated and the theoretical ALE for three different grid sizes. 
 
@@ -1348,7 +1348,7 @@ knitr::include_graphics("images/ALE_2_example3_zoom_.PNG")
 Figure \@ref(fig:example3zoom) shows a very small part around the mean. 
 As expected the estimations for grid size 100 are a little closer to the theoretical ALE as again the true effect of the second feature, which still affects the prediction, is better estimated within each interval (10 observations vs 1 observation).
 
-At the end of this section we have seen a good example for the natural trade off of small intervals on the one hand and sufficient data to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals thereby higly depends on the given prediction function and the data. This is the main message of the section. The next section shall provide the reader with the understanding of in how far additional problems can occur in the context of piece-wise constant models.       
+At the end of this section we have seen a good example for the natural trade off between small intervals on the one hand and sufficient data to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals thereby higly depends on the given prediction function and the data. This can be taken as main message of the section. The next section shall provide the reader with the understanding of in how far additional problems can occur in the context of piece-wise constant models.       
 
 
 
@@ -1559,7 +1559,7 @@ Having a second look on the data situation in this example, one notes that only 
 
 We assume the same data distribution as in the former example. Furthermore well take a look on two prediciton functions, one independent of $x_2$ defined as $f(x_1, x_2) =  1 +  1_{[0,~\frac{10}{3}]}(x_1)+ 1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)$. The second also depends on $x_2$ and is defined as 
 $f(x_1, x_2) =   3~(1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)~*~1_{[\frac{10}{3},~\frac{20}{3}]}(x_2)) +    2~(1_{[0,~\frac{10}{3}]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2)) +    ~(1_{[\frac{20}{3},~10]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2))$ .
-Both on the first sigth a little unhandy become quite easy to understand looking at the sketches below. 
+Both on the first sigth a little unhandy become quite easy to understand looking at the sketches below (see figures \@ref(fig:pwcexample5predf1) and \@ref(fig:pwcexample5predf2)). 
 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
@@ -1900,7 +1900,7 @@ knitr::include_graphics("images/ALE_2_pwc_example5_gs5_10_.PNG")
 (ref:pwcexample5gs510) Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)
 
 For grid size 5 both estimations recognize the step but estimate it relativley flat, which is not very suprising as the interval length should be around 2. For the first prediction function we see a total increase within the second grid interval of 1 and a total decrease in the fourth one of 2. This reflects the behaviour of the prediction function, so the only problem is the low grid size. For the second prediction functions the total changes are estimated to be much lower. This is due to the areas of 0 prediction which clearly influence the mean change in prediction, as some data points change from 0 to 3, but others from 2 to 0 within the second grid interval, as well as from 3 to 0 and from 0 to 1 within the fourth grid interval. So the absolut effect of $x_1$ is relativized by the influence of $x_2$, which is intended by the concept of ALE.
-At grid size 10 the estimations for both prediction function look quite similar. The steps become steeper as the grid intervals shrink to half their length. The estimated change in prediction for the second prediction function now is even bigger than for the first one. Due to the correlation now more (relatively more) data datapoints are shifted from prediction 0 to 3 and 3 to 0 respectivly, which leads to the sligthly higher estimation of the effect. 
+At grid size 10 the estimations for both prediction functions look quite similar. The steps become steeper as the grid intervals shrink to half their length. The estimated change in prediction for the second prediction function now is even bigger than for the first one. Due to the correlation now more (relatively more) datapoints are shifted from prediction 0 to 3 and 3 to 0 respectivly, which leads to the sligthly higher estimation of the effect. 
 
 ``` {r eval = FALSE, include = FALSE}
 
@@ -2269,7 +2269,7 @@ So far we were only interested in ALE-estimations for a numerical feature of int
 
 ### Ordering the features
 
-One of the biggest and crucial differences of categorical and numerical features in the context of ALE is that categorical features usually don't have a natural order. As the concept of ALE is based on accumulating the local effects in a certain direction, an order of the feature is indispensable. Sometimes the categorical feature is an ordinal feature which comes with an natural order. In this case the natural order should be used. If there is no natural order, the first essential step to calculate the ALE is to order the feature. Therefore different methods are conceivable. The iml-package implementation tries to order the feature with respect to the similarity of the other features. As we'll see in the next subsection for the estimation of the ALE the datapoints of a category will be shifted to the neighbour categories (neighbour categories only exist if the feature is ordered). To stay with the original idea of ALE and try to avoid extrapolation, ordering the feature with respect to the similarity of the other features seems reasonable. Within the iml-package in a first step the distance of each pair of categories (of the feature of interest) is calculated with respect to every other feature. this results in $\frac{c~(c-1)~(f-1)}{2}$ distances, where f is the total number of features while c is the number of categories of the feature of interest. To calculate these distances for numerical features the Kolmogorov-Smirnov distance is used. It is defined as the maximal absolut difference of two distribution functions, which are estimated from the data within the two compared categories. For categorical features one simply sums up the absolute differences of the relative frequencys of the categories.
+One of the biggest and crucial differences of categorical and numerical features in the context of ALE is that categorical features usually don't have a natural order. As the concept of ALE is based on accumulating the local effects in a certain direction, an order of the feature is indispensable. Sometimes the categorical feature is an ordinal feature which comes with an natural order. In this case the natural order should be used. If there is no natural order, the first essential step to calculate the ALE is to order the feature. Therefore different methods are conceivable. The iml-package implementation tries to order the feature with respect to the similarity of the other features. As we'll see in the next subsection for the estimation of the ALE the datapoints of a category will be shifted to the neighbour categories (neighbour categories only exist if the feature is ordered). To stay with the original idea of ALE and try to avoid extrapolation, ordering the feature with respect to the similarity of the other features seems reasonable. Within the iml-package in a first step the distance of each pair of categories (of the feature of interest) is calculated with respect to every other feature. This results in $\frac{c~(c-1)~(f-1)}{2}$ distances, where f is the total number of features while c is the number of categories of the feature of interest. To calculate these distances for numerical features the Kolmogorov-Smirnov distance is used. It is defined as the maximal absolut difference of two distribution functions, which are estimated from the data within the two compared categories. For categorical features one simply sums up the absolute differences of the relative frequencys of the categories.
 Finally the distance between two categories is calculated as the sum of their distances with respect to all features. 
 Once the distance between all categories is calculated, multidimensional scaling is used to reduce the distance matrix to a one dimensional distance messure [@molnar2019].
 
@@ -2280,7 +2280,7 @@ Once the features are ordered (no matter if as proposed by [@Apley2016] and [@mo
 
 ### Example of ALE with categorical feature  
 
-For the following example the munich rent dataset, which consists of a sample of 2053 appartments from the data collected for the preparation of the Munich rent index 2003, was used. For our purposes we restricted the data to the variables rentm (Net rent per square meter in EUR (numeric)), size (Floor area in square meters (numeric)), rooms (Number of rooms (numeric)), year (Year of construction (numeric)) and area (Urban district where the apartment is located (Factor with 25 levels)). In a first step a model (Support Vector Machine for Regression) was fitted to predict the variable rentm. Now the ALE for the feature area which is a categorical variable was estimated with the iml-package. Figure \@ref(fig:ALE2catfullmod) shows the result.   
+For the following example the munich rent dataset, which consists of a sample of 2053 appartments from the data collected for the preparation of the Munich rent index 2003, was used. For our purposes we restricted the data to the variables rentm (Net rent per square meter in EUR (numeric)), size (Floor area in square meters (numeric)), rooms (Number of rooms (numeric)), year (Year of construction (numeric)) and area (Urban district where the apartment is located (Factor with 25 levels)). In a first step a model (Support Vector Machine for Regression) was fitted to predict the variable rentm. Now the ALE for the feature area, which is a categorical variable, was estimated with the iml-package. Figure \@ref(fig:ALE2catfullmod) shows the result.   
 
 
 ``` {r eval = FALSE, include = FALSE}
