@@ -41,13 +41,13 @@ saveRDS(p, file = "R-results/LIME/Neighbourhood/fig3.RDS")
 ### piece-wise linear model.
 f <- function(x) {
   y <- rep(0, length(x))
-  y <- ifelse(x >= min(x) & x < 5.8, 0.225 * x + 4.5, y)
-  y <- ifelse(x >= 5.8 & x < 8.496, - 2.3 * x + 19.14, y)
+  y <- ifelse(x >= min(x) & x < 6.2, 0.3 * x + 3, y)
+  y <- ifelse(x >= 6.2 & x < 8.496, - 2.3 * x + 19.12, y)
   y <- ifelse(x >= 8.496 & x < 9.1, - 0.4, y)
   y <- ifelse(x >= 9.1 & x < 11.1, 4.25 * x - 39.13, y)
   y <- ifelse(x >= 11.1 & x < 11.8, 8.045, y)
-  y <- ifelse(x >= 11.8 & x < 13.1, - 4.5 * x + 61.15, y)
-  y <- ifelse(x >= 13.1 & x <= max(x), 2.25 * x - 27.27, y)
+  y <- ifelse(x >= 11.8 & x < 13.4, - 4.5 * x + 61.15, y)
+  y <- ifelse(x >= 13.4 & x <= max(x), 2.75 * x - 36, y)
   y
 }
 
