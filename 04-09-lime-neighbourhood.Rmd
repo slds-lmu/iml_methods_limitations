@@ -35,7 +35,7 @@ This may work in low dimensional problems and descriptive statistics.
 However, machine learning models operate in multivariate space and mostly tackle complex associations.
 Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.
 
-This chapter reviews the neighbourhood issue w.r.t. the LIME algorithm critically.
+This chapter reviews the neighbourhood issue of the LIME algorithm critically.
 The objective of this chapter is rather to outline this particular issue and not to suggest solutions for it.
 First of all, it describes the neighbourhood definition abstractly in greater detail (section \@ref(id2)). 
 Then, it illustrates how problematic the neighbourhood definition can be in a simple one-dimensional example in section \@ref(id3). 
@@ -58,7 +58,7 @@ However, there is no natural law stating that local models have to be found this
 Alternatively, @craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve locally fidele models.
 Hence, locality could be obtained in many more different ways than weighting observations combined with global sampling as it is in LIME.
 After sampling, the data points are weighted w.r.t. their proximity to the observation to be explained.
-One possible alternative to this procedure might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm ^[refer to the previous chapter] to a local sampling.
+One possible alternative to this procedure might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm ^[Refer to the previous chapter.] to a local sampling.
 This way we would increase the density around the instance already by proper sampling. 
 In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
 In this chapter, however, we focus on the explicit implementation of LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model accuracy and stability.
@@ -67,22 +67,22 @@ When working with LIME, the weighting of instances is performed using a kernel f
 This leaves us _arbitrary_ (in fact, they may not be _that_ arbitrary) choices on two parameters:
 the distance and the kernel function.
 Typical distance functions applicable to statistical data analysis are based on the L0, L1 and L2 norms.
-For numerical features, one tends to use either manhattan distance (L1) or Euclidean distance (L2).
-For categorical features, one would classically apply hamming distance (L0).
+For numerical features, one tends to use either Manhattan distance (L1) or Euclidean distance (L2).
+For categorical features, one would classically apply Hamming distance (L0).
 For mixed data (data with both categorical and numerical features), one usually combines distances for numerical and categorical features.
 So does Gower's distance (@gower1971general) or the distance proposed by @huang1998kproto:
 
 $$ d_H(x_i, x_j) = d_{euc}(x_i, x_j) + \lambda d_{ham}(x_i, x_j) $$
 
-with $d_{euc}$ referring to the euclidean distance and $d_{ham}$ to the hamming distance.
+with $d_{euc}$ referring to the Euclidean distance and $d_{ham}$ to the Hamming distance.
 $d_{euc}$ is only computed for numerical and $d_{ham}$ only for categorical ones.
 $\lambda$ steers the importance of categorical features relative to numerical ones.
 @huang1998kproto recommends setting $\lambda$ equal to the average standard deviation of the numerical features.
-For scaled numerical features (standard deviation is one) this metric is equivalent to the Euclidean distance (if categorical features are one-hot-encoded).
+For scaled numerical features (standard deviation is one) this metric is equivalent to the Euclidean distance.
 It is important to note that despite these existing measures it may be challenging to properly determine distances for mixed data. 
 For text data, @ribeiro2016should recommend using cosine distance and Euclidean distance for images.
 
-For the kernel function itself, there are two hyperparameters to be set.
+For the kernel function itself, there are two parameters to be set.
 First of all, the type of kernel.
 Second, the kernel width.
 By default, the R implementation uses an exponential kernel where the kernel width equals the square root of the number of features.
@@ -114,7 +114,7 @@ knitr::include_graphics("images/04-09-03.png")
 
 LIME could now be used to explain this random forest locally.
 "Good" local models would look very different w.r.t. the value of the feature, `x1`.
-For example, we could describe the data locally well by piece-wise linear models.
+For example, we could describe the predictions locally well by piece-wise linear models.
 This is depicted in figure \@ref(fig:fig4).
 
 ```{r, fig4, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship explained by a piece-wise linear model."}
@@ -124,7 +124,7 @@ knitr::include_graphics("images/04-09-04.png")
 LIME should be able to find these _good_ local explanations -- given the right kernel size.
 Let's select one instance which we want an explanation for.
 We illustrate this instance by the green point in figure \@ref(fig:fig5).
-This particular instance can be linearly described approximately by linear regression with intercept $60$ and slope $-4.5$.
+This particular instance can be approximately linearly described by a linear regression with intercept $60$ and slope $-4.5$.
 If we set the kernel width to $0.08$, we fit this local model.
 This is indicated by the red line in figure \@ref(fig:fig5).
 However, if we increased the kernel width to $2$, the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure \@ref(fig:fig5).
@@ -182,7 +182,7 @@ In the second one, the true associations are linear but only affect the target w
 In the third one, we simulate globally non-linear associations.
 For all three data sets, we expect the kernel width to have an impact on the resulting explainer.
 However, for the global linear relationships, we expect the weakest dependency because the true local model and the true global model are identical.
-
+Details on the simulation can be obtained in our R code and section \@ref(id411).
 
 #### Global Linear Relationships {#id411}
 
@@ -280,7 +280,7 @@ More formally, one could describe this sort of explanation as a global surrogate
 Additionally, we observe that for smaller kernel widths, the local models are rather volatile.
 More systematically, @alvarez2018robustness investigate this volatility and find that LIME is prone to finding unstable explanations.
 
-This motivates us to further investigate the volatility.
+This motivates us to further research the volatility.
 We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure \@ref(fig:fig11) for $x_1$.
 The black lines interpolate averaged coefficient estimates for different kernel sizes. 
 The solid black line indicates the true local coefficient. 
@@ -298,7 +298,7 @@ Our analysis suggests the following.
 Too large kernel sizes result in explanations biased towards a global surrogate.
 At the same time, the kernel width must result in stable coefficients.
 This means we cannot set it infinitissimately small.
-The resulting trade-off suggests choosing the minimal kernel size with stable coefficients.
+The resulting trade-off suggests choosing the minimal kernel size with stable coefficients as an optimal solution.
 Mathematically speaking, we aim minimal kernel size which still satisfies a volatility condition.
 
 
