@@ -141,7 +141,7 @@ This is a priori not clear at all.
 For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
 Numerical features may be drawn from a properly parametrised (normal) distribution.
 The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points -- especially in sparse areas.
-Further details on this topic will be studied in chapter X.
+Further details on this topic will be studied in the next chapters.
 
 ## Example
 
