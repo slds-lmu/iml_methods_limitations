@@ -5,12 +5,12 @@
 
 ## Understanding Sampling in LIME
 
-In this chapter we will discuss the fundamentals of LIME from a slightly different angle to receive further understanding of what enables sampling and to have a look how basic results look like.
+In this chapter, we will discuss the fundamentals of LIME from a slightly different angle to receive a further understanding of what enables sampling and to have a look at how basic results look like.
 
 
 ### Formula
 
-If we do some small changes of notations compared to the introductional chapter, the task of calculating the LIME explainer can be seen as
+If we do some small changes of notations compared to the introduction chapter, the task of calculating the LIME explainer can be seen as
 
 $$ g^* = \arg\min_{g \epsilon G} \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big) + \Omega\left(g\right) $$
 
@@ -19,8 +19,8 @@ This change of notation allows us to spot the enabling property for sampling.
 First of all, the original target variable $y$ is replaced by the response $ŷ := f\big(x^{(i)} \big)$ of the black box model.
 This means nothing more besides that we minimize this problem without accessing the original target.
 The great thing about this is, that $f$ can be evaluated for any value in the feature space, giving us -- theoretically -- an arbitrarily amount $n'$ of non-stochastic observations compared to before.
-This may sound absolutely great at first, but we still need values of our feature space for evaluation.
-And this is where problems arise in the horizon.
+This may sound absolutely great at first, but we still need the values of our feature space for evaluation.
+And this is where problems arise on the horizon.
 At first, one may ask why even try to receive new values of the feature space?
 Is our real dataset not enough?
 The ground truth for our surrogate model is a function of an infinite domain (assuming at least one numeric variable is present), so the more information we gather about this function, the better our approximation is going to be.
@@ -28,19 +28,19 @@ So, if we can get more data, we will simply take it.
 The first (and certainly not the last) issue here is the definition of the feature space.
 We need a new dataset to receive the responses of $f$.
 However, a priori, it is not clear how this new data may look like.
-Our original dataset is a finite sample of an infinite space in the numerical case, or of a finite space exponentially growing with its dimension in the categorical case.
+Our original dataset is a finite sample of infinite space in the numerical case, or of finite space exponentially growing with its dimension in the categorical case.
 As a consequence, we can't assume producing a dataset equal to the size of our feature space -- we need strategies to receive the best possible representation with respect to our task.
 
 
 ### Sampling strategies
 
-Originally, sampling in LIME was meant as a perturbation of the original data, to stay as closely as possible to the real data distribution. [cite]
+Originally, sampling in LIME was meant as a perturbation of the original data, to stay as close as possible to the real data distribution. [cite]
 Though, the implementations of LIME in R and Python took a different path and decided to estimate a univariate distribution for each feature and then draw samples out of that. [cite]
 The consequence of this approach is the total loss of the covariance structure, as our estimated distribution for the whole feature space is simply a product of several univariate distributions.
 This way, we may receive samples that lie outside the space of our real data generation process.
 Because almost all machine learning models are well defined on the whole input space, evaluating unrealistic values leads to no problems at first.
-But in theory issues could occure, if a lot of unrealistic evaluations lied close to our point for explanation and influenced greatly the fit of the surrogate model.
-In that case we would not be able to trust the results of LIME anymore, even though we got told the local fit is a very decent approximation.
+But in theory, issues could occur, if a lot of unrealistic evaluations lied close to our point for explanation and influenced greatly the fit of the surrogate model.
+In that case, we would not be able to trust the results of LIME anymore, even though we got told the local fit is a very decent approximation.
 On the other hand, an issue like this was not encountered during the preparation of this work as most used learners are well regularized in space of low data denseness.
 
 
@@ -49,7 +49,7 @@ On the other hand, an issue like this was not encountered during the preparation
 Categorical features are handled more straight forward then numerical ones due to finite space.
 The R LIME package will sample with probabilities of the frequency of each category appearing in the original dataset.
 The case when this goes wrong is if one category is very infrequent and then -- due to bad luck -- simply not drawn.
-Since the original data is thrown away after sampling, no information is left over about this category for the fitting process.
+Since the original data is thrown away after sampling, no information is leftover about this category for the fitting process.
 Additionally, by ignoring feature combinations, we may sample points that are impossible in the real world and add no value to our fit, or may even distort it. 
 
 
@@ -60,144 +60,114 @@ While categorical features make it possible for at least very low dimensions to 
 There are currently three different options implemented in the R LIME package for sampling numerical features.
 The first -- and default -- one uses a fixed amount of bins.
 The limits of these bins are picked by the quantiles of the original dataset.
-In the sampling step, one of these bins will be randomly picked and after that a value is uniformly sampled between the lower and upper limit of that bin.
-The small benefit here is being allowed to fine tune the amount of bins, leading to a rougher or more detailed sample representation of the original feature.
+In the sampling step, one of these bins will be randomly picked and after that, a value is uniformly sampled between the lower and upper limit of that bin.
+The small benefit here is being allowed to fine-tune the number of bins, leading to a rougher or more detailed sample representation of the original feature.
 The downside is that the order of the bins is ignored, as a consequence risking the loss of a global fit as each bin receives its own weight.
 Additionally, bins have a lower and upper limit, i.e. it is possible the new point for explanation lies outside of all bins.
 The current implementation handles this by discretizing the explanation with each bin as a category class, making it possible to assign values to the lowest (or highest) bin even if it lies below (or above) that bin.
 Another option would be to approximate the original feature through a normal distribution and then sample out of that one.
-This is relatively straight forward, but one may ask if the asumption of normally distributed features is correct.
+This is relatively straight forward, but one may ask if the assumption of normally distributed features is correct.
 A lack of denseness of the training data for the surrogate model may be a result of a wrong assumption.
-Additionally, it is not possible to change options for each feature, so by chosing this distribution, all your features will be handled as normally distributed with their own individual mean and variance.
+Additionally, it is not possible to change options for each feature, so by choosing this distribution, all your features will be handled as normally distributed with their own individual mean and variance.
 The last option for numerical features is approximating the real feature distribution through a kernel density estimation.
 Any downsides besides slightly increased computational effort have not been encountered with this option.
 Thus -- and after gathering empirical evidence supporting this --, we choose to not use binning, but rather kernel density estimation for most of our trials following down.
 
 
-### Visualization of an easy example
+### Visualization of a basic example
 
+To give more substance to the introduction, in \@ref(fig:fig_basic) one can see two LIME results of a simple numerical example.
+Both use the exact same settings except one uses a different sample seed than the other.
+ The black-box model in blue is tried to be explained by the surrogate model as the red line.
+The black dots are the sampled values dealing as training data set for the surrogate model, which tries to explain our target point, the dot in yellow.
+The vertical bars are an indicator of the kernel width.
+This color scheme is kept from now on in all further graphics.
 
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME implementation preliminaries", warning = FALSE}
-
-# default input parameters
-model_smoothness = 270
-kernel_width     = 900
-sample_seed      = 2
-sample_size      = 10
-
-# create ground truth of simulated black box model
-black_box = function(x) sin(x / model_smoothness)
-x = 1:1000
-y = black_box(x)
-
-set.seed(1)
-# pick data point to explain (by random in this case)
-x_ex = runif(1, 1, 1000)
-y_ex = black_box(x_ex)
-```
-
-
-```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME implementation", warning = FALSE}
-
-set.seed(sample_seed)
-# sample new data points uniformly
-x_samp  = runif(sample_size, 1, 1000)
-y_samp  = black_box(x_samp)
-samples = data.frame(x = x_samp, y = y_samp)
-  
-# apply gaussian kernel to receive proximity weights
-proximity = exp( - (x_samp - x_ex)^2 / kernel_width )
-  
-# fit interpretable model
-model = lm(y ~ x, data = samples, weights = proximity)
-
-```
-
-
-The next figure shows LIME results of a simple numerical example.
-Black box model in blue is tried to be explained by the surrogate model as the red line.
-The black dots are the sampled values dealing as train data set for the surrogate model.
-
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled", warning=FALSE}
+```{r, fig_basic, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled", warning=FALSE}
 
 knitr::include_graphics(c("images/convex_samples_1.png", "images/convex_samples_2.png"))
-#plot_lime(sample_seed = 2)
-#plot_lime(sample_seed = 1)  
 ```
 
-As we can see, the surrogate models depend only on randomly generated samples, that lie closer or further spread across the feature space, giving raise to the following questions.
-How much influences a new sample the explanation?
+As can be seen the results in both cases are very similar, as one would wish.
+But this may not always be the case.
+The surrogate models depend only on randomly generated samples, that lie closer or further spread across the feature space. This raises the following questions.
+How much influence has a new sample of the explanation?
 What is the average confidence of certain weights?
-Do settings influence these and is there a tendency?
+Do certain settings influence these and is there a tendency?
 
 
 ## Sketching Problems of Sampling
 
-A sinus shaped black box model makes two LIME explanations of the same scenario and with the same settings hold totally different results.
-This indicates how untrusty single explanations could be.
-What can we do here?
+To give an idea of the potential problems, a few artificial showcases are presented in the following.
+In \@ref(fig:fig_bad) a sinus shaped black-box model is tried to be explained twice again with a different seed.
 
-
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
+```{r, fig_bad, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
 
 knitr::include_graphics(c("images/nonconvex_samples_1.png", "images/nonconvex_samples_2.png"))
-#plot_lime(sample_seed = 1, model_smoothness = 50)
-#plot_lime(sample_seed = 2, model_smoothness = 50)
 
 ```
 
-The most obvious solution is increasing the sample size.
-This indeed shrinks the problem to almost non-existence.
-But this is computationally very intensive, so it would be good to know when the additional computational effort is necessary.
+The two LIME explanations of the same scenario and with the same settings hold totally different results.
+This indicates how untrusty single explanations could be.
+So, what can we do here?
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased sample size - resampled plot on the right", warning=FALSE}
+The most obvious step is increasing the sample size.
+As it is depicted in \@ref(fig:fig_good), this indeed shrinks the problem to irrelevancy, restoring some of the lost trust in our explanation.
+But the problem with this solution is its heavy computational burden, so it would be good to know in which cases the additional computational effort is necessary.
+
+```{r, fig_good, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased sample size - resampled plot on the right", warning=FALSE}
 
 knitr::include_graphics(c("images/nonconvex_samples_1_size100.png", "images/nonconvex_samples_2_size100.png"))
-#plot_lime(sample_seed = 1, model_smoothness = 50, sample_size = 100)
-#plot_lime(sample_seed = 2, model_smoothness = 50, sample_size = 100)
   
 ```
 
-A little quickcheck what an increase of the kernel width would do in this toy example.
-As we can see, the explanations are more similar, but the locality is lost.
-We won't deal with this further in this chapter, because chapter 9 gave an extensive look into this subtopic, plus we don't want to lose locality and thus rather investigate further options possibly influencing weight stability of the explanation.
+Another possible step would be to increase the kernel width as seen in \@ref(fig:fig_kernel), making the explanations again more similar, but also greatly losing the locality of the explanation.
+Since \@ref(id1) already gave a thorough overview of this and because we assume we don't want to lose any locality, we focus on the default kernel width in the following and investigate the influence of further options on the weight stability of the LIME explanations.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width - resampled plot on the right", warning=FALSE}
+```{r, fig_kernel, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width - resampled plot on the right", warning=FALSE}
 
 knitr::include_graphics(c("images/nonconvex_samples_1_width81000.png", "images/nonconvex_samples_2_width81000.png"))
-#plot_lime(sample_seed = 2, model_smoothness = 50, kernel_width = 81000)
-#plot_lime(sample_seed = 1, model_smoothness = 50, kernel_width = 81000)
   
 ```
 
 
 ## Real World Problems with LIME
 
-So far, only artificial problems have been shown, but how does LIME act applied on real world problems?
-We are using real datasets in the following to show weight stability associated with different samples.
+So far, only artificial problems have been shown for demonstration purposes, but how does LIME behave applied to real-world problems?
+We are using real datasets in the following to show weight stability associated with different circumstances.
+
 
 ### Boston Housing Data
 
-Boston housing dataset is a well-known data set, so a deeper description of its properties are skipped here.
-It's offering a good amount of numerical features (p = 12) and can be seen as a typical case of a numerical regression task.
+Boston housing dataset is a well-known data set, so a deeper description of its properties is skipped here.
+It's offering a good amount of numerical features ($p = 12$) and can be seen as a typical case of a numerical regression task.
+A quick overview of each of its features versus the target -- the median housing price -- is depicted in \@ref(fig:fig_boston).
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
+```{r, fig_boston, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
 
 knitr::include_graphics("images/boston_prezi.png")
 
 ```
 
+In the following, weight stability is explored by resampling an explanation 100 times for a specific setting.
+Of the 100 weights of each feature in the explanations, the mean and the empirical 2.5% and 97.5% quantiles are calculated and depicted in the figures.
+Based on the quantiles we then plot the empirical 95% confidence interval.
+As the black-box model, a random forest model with default parameters is used.
+The reasoning here is, that random forests are very common in practice and their default parameters usually perform well without tuning.
+For the sampling, we choose to use kernel density estimation.
+The reason is the results of later experiments, showing kernel density estimation as a benefactor for weight stability compared to the other methods.
+The target point to explain is the mean of the original dataset.
+In each of the following scenarios, only one of the above-described settings is changed.
+Not all possible scenarios are shown, but only a cherry-picked selection supposed to spark interest in the experiments further down.
+
 
 #### Mean point versus outlying point
-In the following weight stability is explored by resampling an explanation 100 times of specific settings.
-Of the each weight the mean and the empirical quantiles of the 100 results are calculated and depicted in the figures.
-Out of the quantiles we calculate and then plot the 95% confidence interval (by assuming the weights are approximately normally distributed due to the central limit theorem).
-As black box model, a random forest model with untuned default parameters is used.
-In the first case, the mean data point in the feature space is compared with an extreme outlier (having the maximum value of each feature in the original data set).
-As we can see, the outlier has clearly larger confidence intervals as the mean point.
-This suggests that either the model is behaving really roughly in its area, or, more likely, the sample size in the neighborhood has big influence on our stability.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
+In the first showcase, the mean data point is compared with an extreme outlier (having the maximum appearing value of each feature).
+As we can see in \@ref(fig:fig_bost_mean_outlier), the outlier has clearly larger confidence intervals as the mean point.
+This suggests that either the model is behaving really roughly in its area, or, more likely, the sample size in the neighborhood has a significant influence on our stability, as our original features have higher density mass around the mean with the kernel density estimation copying that approximately.
+
+```{r, fig_bost_mean_outlier, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
 
 knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_outlier_presi.png"))
 
@@ -205,10 +175,12 @@ knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_out
 
 
 #### Decision tree versus linear regression model
-Here, the same settings as above have been used, but both plots use the mean data point and the left plot shows the weights explaining a decision tree as black box model, while the right figure shows the case of a linear regression model.
-As we can see, the differences are striking, suggesting the black box model may have huge influence on the weight stability.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
+This scenario compares two different black-box models. 
+The left plot in \@ref(fig:fig_bost_tree_lm) shows the weights explaining a decision tree, while the right one shows the case for a linear regression model.
+It's kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black-box model could have a huge influence on weight stability.
+
+```{r, fig_bost_tree_lm, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
 
 knitr::include_graphics(c("images/boston_tree_presi.png", "images/boston_lm_presi.png"))
 
@@ -216,10 +188,13 @@ knitr::include_graphics(c("images/boston_tree_presi.png", "images/boston_lm_pres
 
 
 #### Kernel density estimation versus binning
-Again, the same settings as above, but using different sampling options.
-And again, the differences are clearly visible, leading to the question if their are strict ranks in weight stability of the sampling options.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of mean data point with binning as sampling strategy -- standard deviation highly increased compared to previous results"}
+In this case, we compare two different sampling options.
+Binning is the default setting in the R LIME package.
+Due to sampling via normal distribution acting very similar to the kernel density estimation in the experiments further down, this option is left out here.
+The differences in \@ref(fig:fig_bost_kde_bin) are clearly visible, leading to the question if there are strict ranks of the sampling options with respect to weight stability.
+
+```{r, fig_bost_kde_bin, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of mean data point with binning as sampling strategy -- standard deviation highly increased compared to previous results"}
 
 knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_bins_presi.png"))
 
@@ -228,24 +203,29 @@ knitr::include_graphics(c("images/boston_standard_presi.png", "images/boston_bin
 
 ### Rental Bikes Data
 
-We only used numerical features so far.
-We are using a dataset with only categorical features now (rental bikes).
-This means, we are forced to use gower distance (binary distance here).
-Do we get similar results as for numerical features?
+So far, we only used numerical features.
+To also cover the categorical case, we are using the rental bikes dataset with only categorical features here.
+Originally, the data also contained a few numerical features, but these have been manually categorized by creating classes based on their 25%-, 50%-, and 75%-quantiles.
+In \@ref(fig:fig_bike), boxplots of the classes in each feature with respect to the target 'cnt' -- the count of bikes rented a day -- is shown to give a quick overview.
+This means we are forced to use the Gower distance, a binary distance measure for the categorical case.
+The purpose of this short chapter is: Do we get similar results as for numerical features?
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
+```{r, fig_bike, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
 
 knitr::include_graphics("images/bikes_prezi.png")
 
 ```
 
+We compare the same scenarios under the same settings as in the case of the Boston housing data, except the sampling option, as we only have one (the class frequency of each feature).
+As we can't calculate the mean and maximum of a categorical variable, we switch to the majority and minority point -- the point having the most, and analogous the least frequent class in each feature respectively.
 
-#### Mean point versus outlying point
-Same settings as in the boston case.
-Comparing the majority data point versus the minority data point.
-The differences are a lot more subtle, almost not visible.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
+#### Majority data point versus minority data point
+
+In \@ref(fig:fig_major_minor), the majority data point is compared to the minority data point.
+The differences are a lot more subtle than in the Boston housing case, almost not visible.
+
+```{r, fig_major_minor, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point with errorbars indicating the standard deviation across repeated runs"}
 
 knitr::include_graphics(c("images/bikes_standard_presi.png", "images/bikes_outlier_presi.png"))
 
@@ -253,156 +233,208 @@ knitr::include_graphics(c("images/bikes_standard_presi.png", "images/bikes_outli
 
 
 #### Decision tree versus linear regression model
-Again, same settings as before.
-Comparing a decision tree with a linar regression model as black box model.
-The differences are visible, but by far not as much as in the numerical case.
-This suggests we include this categorical data set in our experiments further down, but expect the results won't be as clear cut as in the numerical case.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
+Again, we are comparing a decision tree with a linear regression model as the black-box model in \@ref(fig:fig_bike_tree_lm).
+The differences are visible, but by far not as much as in the numerical case.
+This suggests we include this categorical data set in our experiments further down but expect the results won't be as clear cut as in the numerical case.
+
+```{r, fig_bike_tree_lm, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of an extreme outlying data point"}
 
 knitr::include_graphics(c("images/bikes_tree_presi.png", "images/bikes_lm_presi.png"))
 
 ```
 
 
+## Experiments regarding Sampling stability
 
-## Experiments about Sampling stability
+All the different scenarios we have encountered so far show more or less discrepancy in weight stability between certain settings.
+We have observed:
+- a target point in an area with higher sample denseness is more stable than an extreme outlier
+- different black-box models have highly different stableness
+- different sampling options and numerical features compared to categorical ones also show different behavior
+Based on these findings, we construct several experiments to investigate each point and to see, if we receive results showing a clear, monotonous tendency for weight stability with respect to available parameters.
 
-We saw several evaluations of explanations of single points under different settings.
-How is the general trend over certain settings?
 
 ### Influence of feature dimension
 
-Is Curse of dimensionality real?
-How is the general trend over amount of feature dimensions in the train data set?
+The first and most obvious question regarding sampling, that wasn't showable for a fixed dataset, is if an increasing number of features also increases weight instability.
+The curse of dimensionality is a known problem in Machine Learning and to uncover its hidden influence on our case, we run the following experiment regarding feature dimension.
 
-#### Feature dimension setup
 
-Experiment design: 10 randomly sampled data points of the original data set are explained 10 times under increasing feature dimension.
-Each iteration adds a new feature to the existing feature set with a new black box model being trained on that set.
-The results of the experiment in terms of stability (= standard deviation of each weight) are averaged over all features.
-The plot of feature dimension vs stability is in the following.
+#### Feature dimension - setup
 
-#### Feature dimension results
+The experiment is designed as given by this algorithm:
+1) Start with only two features of the original data as the training data.
+2) Train a black-box model (random forest with default parameters).
+3) Ten randomly sampled data points of the original data set are explained repeatedly ten times.
+4) The standard deviation of the ten weights of each feature and each explained points is calculated, and then all the standard deviations are averaged to a single value.
+5) If there are unused features left, add a new feature to the existing feature set and continue from step 2), else stop.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation of 10 randomly sampled points for explanation repeated 100 times. Each feature is sequentially added with a new black box model being calculated each time. Increased feature amount has no monotonous effect on coefficient stability. Curse of dimensionality is not applying in this case."}
+
+#### Feature dimension - results
+
+This procedure is executed for all the sampling options possible for the Boston Housing and the Rental Bikes dataset.
+The results are shown in \@ref(fig:fig_sd_p) and as can be seen, it is hard to spot a clear tendency.
+If the curse of dimensionality would apply for our case, we definitely wouldn't expect improving stability by adding new features.
+Thus, a curse of dimensionality can not be identified in our case and a high feature amount shouldn't necessarily concern the user.
+As a further thought, since LIME models the black-box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.
+
+```{r, fig_sd_p, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Results of the experiment regarding the feature dimension for the Boston Housing and Rental Bikes dataset. Each line shows a different sampling option."}
 
 knitr::include_graphics(c("images/sd_p_presi.png", "images/sd_pc_presi.png"))
 
 ```
 
-No clear tendency can be found.
-This suggests a general curse of dimensionality can not be confirmed.
-As a further thought, the weight stability may depend on learned interactions of the black box model, but not on the actual train data.
 
-#### Amount of features selected setup
+#### Amount of features selected - setup
 
-But what about the option of selecting a small subset of the weights?
-Can this option deliver higher stability in the results?
+In the R LIME package, an option is available to only explain a fixed amount of features with the highest weight.
+This may sound interesting as a small side experiment to the general amount of features.
+Maybe this selection offers better stability in the results?
+For this, we use the full dataset instead of iterating over the number of features, but iterate over increasing parameter values of 'n_features' in the explainer function.
 
-#### Amount of features selected results
+#### Amount of features selected - results
 
-Full data set used.
-Averaged standard deviation of all features plotted versus the amount of features selected for explanation.
-Again, no tendency can be found.
+As can be seen in \@ref(fig:fig_sd_nfeat), weight stability is remarkably constant for a low amount of features and suddenly becomes very jumpy for a higher amount of selected features.
+If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately, no real rule of thumb can be suggested in this case. 
+The inverted 'U' shape of the graph may result due to globally linear predictions for the least important features.
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the amount of features selected for the explainer. As can be seen, the weight stability is remarkably constant for low amount of features and suddenly becomes very jumpy for higher amount of selected feature. If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately no real rule of thumb can be suggested in this case. The shape of the graph may result due to globally linear predictions for the lesser important features -- assuming the features are picked by weight size."}
+```{r, fig_sd_nfeat, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the number of features selected for the explainer."}
 
 knitr::include_graphics(c("images/sd_nfeat_presi.png", "images/sd_nfeatc_presi.png"))
 
 ```
 
-We can say overall no curse of dimensionality is visible.
-
 
 ### Influence of sample size
 
-How does increased denseness in the feature space (by increasing sample size) increase stability of the surrogate model?
-Results of single trials above suggest a lot.
-
-#### Sample size setup
-Experiment design: 10 randomly picked datapoints of the original data set explained 10 times with iteration over amount of permutations/size of sample.
-Again standard deviation of each weight calculated and averaged over all weights.
-
-#### Sample size results
+The next experiment is about the influence of the sample size.
+The difference between an explained point in a high-density region compared to one sitting in a low-density area was easily recognizable in \@ref(fig:fig_bost_mean_outlier).
+The question is how this relates to an increased global sampling size, which we try to answer in the following.
+Here, the setup is basically the same as in the case for the experiment about the number of features selected, except we iterate over different sample sizes.
 
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
+#### Sample size - results
+
+Again, we run the modified algorithm of the experiment for all the possible sampling options at the Boston Housing and Rental Bike dataset.
+As a result, we receive the averaged standard deviation of all weights per sample size and sampling option.
+These are depicted in \@ref(fig:fig_nperm) and show a clear and monotonous trend of more samples having a huge positive impact on the stability.
+Additionally, binning seems to be consistently dominated by other sampling options.
+
+
+```{r, fig_nperm, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
 knitr::include_graphics(c("images/sd_npermutations_presi.png"))
 ```
 
-Clear and monotonous trend of more permutations giving better stability can be seen.
-Feature dimension is unrelated to weight stability, but sample size highly related - does this make sense?
-We should move focus from train data to black box model.
+We have seen before in \@ref(fig:fig_sd_p) feature dimension being relatively unrelated to weight stability, while the sample size is the total opposite -- does this make sense?
+After all if not the feature dimension, what else may cause a high sample requirement?
+As we have already seen in \@ref(fig:fig_bost_tree_lm) the black-box model may be the phantom we are hunting.
+This motivates the last two experiments in this chapter.
 
 
-### Influence of black box fit
-The simulation suggests more overfitting and less smoothness of the prediction surface influences weight stability.
-Interim explanation of the random forest hyperparameters:
-Higher tree amount gives the prediction surface more smoothness (by reducing average step size of each step in the prediction function), while higher minimum node size reduces overfitting (by making predictions dependent on more train data points).
+### Influence of black-box
 
-#### Motivation
-We are demonstrating the problem by a small semi simulation.
-We are using sampled boston housing data of sample size 20, modelling only medv ~ lstat.
-Because LIME doesn't know the original data, the resulting black box fit seems like an impossible task to approximate linearly in an appropriate manner with only samples.
+The simulations already presented in \@ref(fig:fig_basic) and \@ref(fig:fig_bad) suggest more volatility and less smoothness of the prediction surface may influence weight stability.
+Demonstrating the problem through a slightly adjusted real case problem, we are using sampled Boston housing data of sample size 20, and modeling only $medv ~ lstat$.
+Because LIME doesn't know the original data, the resulting black-box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in \@ref(fig:fig_verybad).
 
-```{r, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation under the same settings as before. A clear trend can be seen here: Increasing the amount of samples acting as train data for our surrogate model has incredible influence on weight stability."}
+```{r, fig_verybad, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "LIME trying to explain an extremely volatily prediction surface."}
 knitr::include_graphics(c("images/boston_sampled_tree_presi.png", "images/boston_sampled_tree_1_presi.png"))
 ```
 
 
-#### Black box fit setup
-We expected: Better stability of smoother models (random forest and linear model).
-Experiment: 10 randomly picked data points of the original data set explained 10 times are used for iteration over random forest with different hyperparameter settings (each iteration more trees are added and minimum node size increased, leading to less overfitting and more smoothness)
-Results again used to get average standard deviation (= average weight stability).
+#### Black-box -- setup
+
+To receive meaningful results, we need comparable models.
+For this, we choose to pick a random forest as the model class and iterate over the two parameters being the most responsible for a smooth fit.
+These are the tree amount and the minimum node size.
+A higher tree amount gives the prediction surface more smoothness (by reducing the average step size of each step in the prediction function), while a higher minimum node size reduces overfitting (by making predictions dependent on more train data points) and as consequence reducing volatility of the prediction surface.
+Here is a slightly modified algorithm compared to above accomplishing the desired framework:
+1) Start with a tree amount of one and a minimum node size of one.
+2) Train a random forest with these parameters on the full data.
+3) Ten randomly sampled data points of the original data set are explained ten times repeatedly.
+4) The standard deviation of the ten weights of each feature and each explained points is calculated, and then all the standard deviations are averaged to a single value.
+5) If we haven't reached ten iterations, increment the tree amount by ten and the minimum node size by one, and continue from step 2), else stop.
 
 
-#### Black box fit results
+#### Black-box -- results
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before but with black box model smoothness/complexity iterated over. As a base model a random forest with only one tree and minimum node size of one was used and each iteration the amount of trees was increased by 10 and the minimum node size by one. This means the last tick in this graph is corresponding to a random forest with 91 trees and minimum node size of 10. It's nicely shown how important the smoothness of the model is for the weight stability. Keep in mind the model was fitted on some training data, which means if we would pick more complex data, the line may take much longer to flatten out, and vice versa for less complex data."}
+The results in \@ref(fig:fig_smooth) are unambiguous: It's shown clearly how important the smoothness of the model is for weight stability. 
+Keep in mind the model was fitted on two very specific datasets, which means if we would pick more complex data, the line could take much longer to flatten out, and vice versa for less complex data.
+As a small sidenote, binning is again consistently inferior.
+
+```{r, fig_smooth, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before versus the black-box model smoothness/complexity. As the model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10. "}
+
 knitr::include_graphics("images/sd_smoothness_presi.png")
+
 ```
 
-As can be seen, a big influence of the smoothness is present.
-Although the influence flattens quickly, but this may be different for more complex data sets requiring more "overfitting" (meant is less smooth fitting).
-This gives raise to the last experiment.
+We have just seen how important the smoothness is, but this would mean we can expect the inverted effect for more overfitting.
+After all, our data case could be misleading as there are more complicated tasks in the real world requiring a much more volatile fit.
+A certain level of smoothness is then often not given, so it would be nice to know of how much worse the stability can get in the case of extreme overfitting.
+This leads us to the last experiment.
 
-#### Black box overfit setup
 
-Before, we started with a really unsmooth model and gradually added more regularisation (more trees and higher minimum node size).
-But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure with increase of only a single hyperparameter: extreme gradient boosting.
-We start with only two trees (often known as 'M' or 'nrounds' or as 'the stopping parameter') and double the amount with each iteration.
-All the other settings and the procedure for receiving the results are kept the same.
+#### Black-box overfit -- setup
 
-#### Black box overfit results
+Before, we started with a very unsmooth model and gradually added more regularisation (more trees and higher minimum node size).
+But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure by increasing only a single hyperparameter: Extreme Gradient Boosting (Xgboost).
+For this, we start with only two trees and double the amount with each iteration.
+All the other settings and the algorithm for receiving the results are kept the same.
+Additionally, we are also interested in the training error as it is a good indicator of when our boosting algorithm stops overfitting more (due to its nature of fitting residuals the test error can't get worse after the training data is fitted perfectly).
 
-```{r, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Uniform sampling strategy -- black dots are sampled data points, red line is the LIME explanation, yellow dot the explained data point and the horizontal lines the square root of the kernel width, approximating size of neighborhood"}
+
+#### Black-box overfit -- results
+
+As we can see in  \@ref(fig:fig_overfit), as long as the Xgboost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer.
+Let's try to dissect why this is happening in such a dependent fashion:
+What makes the training error get smaller? 
+Reducing the residuals.
+What consequence has reducing the residuals on the prediction surface assuming a certain level of Gaussian noise? 
+It becomes more volatile.
+And this volatility kills our weight stability.
+
+
+```{r, fig_overfit, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before versus the tree amount of the xgboost model used as black-box."}
 
 knitr::include_graphics("images/sd_overfitting_presi.png")
 
 ```
 
-As we can see, as long as the xgboost learner is able to reduce the train error, the weight stability gets consistently worse.
-Let's try to get an idea of why this is happening in such a clear manner.
-What makes the train error get smaller? 
-Reducing the residuals.
-What consequence has reducing the residuals in this case on the prediction surface? 
-It becomes more volatile, assuming a certain level of noise.
-And this volatility kills our weight stability.
+## Outlook
+So far all the sampling methods have been about drawing out of a distribution representing the whole space of each feature. 
+This global sampling disregards the covariance structure and results in a lot of samples drawn in areas so far away in distance from the point to explain, that their weight for the fitting process is essentially zero.
+(Just to not spark any confusion: 'Weight' in this subchapter revers to the weights in the loss function and not the weights of the explanation, as we have used so far.)
+These samples are a huge computational burden while having almost no influence at all on the fit.
+A solution to this problem is not implemented in any LIME package known to the author but @laugel2018defining gives a thorough overview of how local sampling tackles exactly that for the classification case.
+In short, the weighting based on a distance measure can be removed while we only sample in the area around the point to explain.
+Thus, points having a higher distance are sampled less likely or not at all, making the weights redundant and hugely increasing sampling efficiency.
+Because we only focused on regression tasks in our work so far, the figure \@ref(fig:fig_localsampling) will also only show this case -- for more details about classification please have a look into @laugel2018defining.
+
+```{r, fig_localsampling, eval = TRUE, echo = FALSE, out.width='.49\\linewidth', fig.width=3, fig.height=3, fig.show='hold', fig.align = 'center', fig.cap = "By sampling locally around our point to explain we can catch the plateau the point sits on as seen on the left plot. As a local sampling strategy, a normal distribution was used with variance equal to the kernel width of the distance measure in the usual procedure. Achieving the same with global sampling in the right plot is a game of luck since the plateau is very narrow and hard to hit. In this case, our explanation even fails drastically as all the samples receive zero weight due to the small kernel width."}
+knitr::include_graphics(c("images/boston_sampled_tree_fst_better_slim.png", "images/boston_sampled_tree_snd_slim.png"))
+```
+
+In practice the increase in sampling efficiency wouldn't improve our computational burden since the sample size was a strictly monotonous benefactor for explanation stability and thus should not be reduced.
+But in the end, under the same settings, we simply draw more in the area of relevance, drastically increasing the sample size in the neighborhood of our explained point, making our results more stable and trustworthy.
+Due to the absence of implementation in the R LIME package, this new ambitious procedure could not be part of the experiments to reinforce the assertions just made, but further research is strongly recommended.
+
 
 ## Conclusion
-Categorical data and numerical data have weight stability issues, but categorical data offers less settings, making it easier to handle.
-But, numerical data can be improved a lot more by tweaking some settings.
-On of these is turning of binning, which is the default option in the LIME package.
-This results in a huge benefit in the weight stability in all encountered cases.
-What makes us have trust in a single explanation?
+In all cases of categorical data and numerical data we investigated, weight stability issues can be found easily.
+But LIME explanations for numerical data can be stabilized a lot by simply changing the default option of binning as the sampling strategy to kernel density estimation.
+The advantage of binning lies in a purely pragmatic way:
+By using bins, numerical features are handled as categoricals and the effects of classes occupied are a lot easier to explain to the layman than the slope of a regression line.
+In a more general way, we would ask ourselves in the end, what makes us having trust in a single explanation?
 Weight stability is almost independent of the weight size, so high weights are very trustworthy.
-Also picking a very high sample size increases the stability.
-Do this whenever possible.
-Furthermore, what makes us have no trust in the result?
-When we know the data set is very complex with a curvy/wavy fit almost surely going to happen.
-And if the model we are using is capable of extreme overfitting.
-In this case the less regularisation we put onto it, the less trustworthy our LIME explanations are going to be.
+Additionally, picking a very high sample size increases stability.
+This should be done whenever possible as the only disadvantage is a longer runtime.
+Furthermore, what makes us have less trust in the LIME result?
+When we know the data set is very complex with a curvy/wavy fit almost surely going to happen, then we should be very careful.
+The same holds true if the model we are using is capable of extreme overfitting.
+In this case, the less regularisation we put onto it, the less trustworthy our LIME explanations are going to be.
+If we are unsure about the trustworthiness of our explanation, it is always beneficial to rerun the same explanation a few times and average the results -- this has a similar effect than a higher sample size, but this way we can actually use already computed results and we can also calculate a confidence interval, giving good indication of how much variance the results have.
+
 
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
 req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
