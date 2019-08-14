@@ -26,17 +26,17 @@
 \contentsline {subsection}{\numberline {8.1.2}ALE Approximations}{26}{subsection.8.1.2}% 
 \contentsline {subsection}{\numberline {8.1.3}Example 1: additive feature effects}{26}{subsection.8.1.3}% 
 \contentsline {subsection}{\numberline {8.1.4}Example 2: multiplicative feature effects}{29}{subsection.8.1.4}% 
-\contentsline {subsection}{\numberline {8.1.5}Example 3: Unbalanced datasets and shaky prediction functions}{33}{subsection.8.1.5}% 
+\contentsline {subsection}{\numberline {8.1.5}Example 3: Unbalanced datasets and shaky prediction functions}{32}{subsection.8.1.5}% 
 \contentsline {section}{\numberline {8.2}Problems with piece-wise constant models}{35}{section.8.2}% 
 \contentsline {subsection}{\numberline {8.2.1}Example 4: Simple step function}{36}{subsection.8.2.1}% 
 \contentsline {subsection}{\numberline {8.2.2}Example 5: Two dimensional step functions and unluckily distributed data}{37}{subsection.8.2.2}% 
-\contentsline {subsection}{\numberline {8.2.3}Outlook}{40}{subsection.8.2.3}% 
-\contentsline {section}{\numberline {8.3}Categorical Features}{41}{section.8.3}% 
-\contentsline {subsection}{\numberline {8.3.1}Ordering the features}{42}{subsection.8.3.1}% 
-\contentsline {subsection}{\numberline {8.3.2}Estimation of the ALE}{43}{subsection.8.3.2}% 
+\contentsline {subsection}{\numberline {8.2.3}Outlook}{41}{subsection.8.2.3}% 
+\contentsline {section}{\numberline {8.3}Categorical Features}{43}{section.8.3}% 
+\contentsline {subsection}{\numberline {8.3.1}Ordering the features}{43}{subsection.8.3.1}% 
+\contentsline {subsection}{\numberline {8.3.2}Estimation of the ALE}{44}{subsection.8.3.2}% 
 \contentsline {subsection}{\numberline {8.3.3}Example of ALE with categorical feature}{44}{subsection.8.3.3}% 
-\contentsline {subsection}{\numberline {8.3.4}Interpretation}{44}{subsection.8.3.4}% 
-\contentsline {subsection}{\numberline {8.3.5}Changes of the ALE due to diffrent orders}{45}{subsection.8.3.5}% 
+\contentsline {subsection}{\numberline {8.3.4}Interpretation}{45}{subsection.8.3.4}% 
+\contentsline {subsection}{\numberline {8.3.5}Changes of the ALE due to diffrent orders}{46}{subsection.8.3.5}% 
 \contentsline {subsection}{\numberline {8.3.6}Conclusion}{47}{subsection.8.3.6}% 
 \contentsline {chapter}{\numberline {9}Introduction to Feature Importance}{49}{chapter.9}% 
 \contentsline {section}{\numberline {9.1}Permutation Feature Importance (PFI)}{49}{section.9.1}% 
