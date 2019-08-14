@@ -1,4 +1,12 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
 # Introduction to Local Interpretable Model-Agnostic Explanations (LIME)
+
+*Authors: Sebastian Gruber, Philipp Kopper*
 
 When doing machine learning we always build models.
 Models are simplifications of reality.
