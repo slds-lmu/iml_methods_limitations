@@ -133,7 +133,7 @@ knitr::include_graphics("images/ale_1_ALEs_x1x2x3_150_0_0p5_2_2.png")
 (ref:alesx1x2x3Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
 
 Plot \@ref(fig:pdpsx1x2x3) shows the 1D PDP for each of the three features. One can clearly see that the PDP detects a linear influence on the prediction for all 3 of the features.
-On the other hand the ALE (figure \@ref(fig:alesx1x2x3)) attests the linear influence to the feature $x_1$ only. This plot exposes a weakness of the ALE compared to the PDP. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature $x_1$. The two other features seem to rather have an exponential influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and the correlated features. Feature $x_3$ has (in expectation) the same value as $x_2$. Especially if feature $x_1$ has small values the variance of feature $x_2$ around $x_3$ becomes small as well. As consequence the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the exponential influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 x_2^2$ the following PDP and ALE plots are estimated.
+On the other hand the ALE (figure \@ref(fig:alesx1x2x3)) attests the linear influence to the feature $x_1$ only. This plot exposes a weakness of the ALE compared to the PDP. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature $x_1$. The two other features seem to rather have an quadratic influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and the correlated features. Feature $x_3$ has (in expectation) the same value as $x_2$. Especially if feature $x_1$ has small values the variance of feature $x_2$ around $x_3$ becomes small as well. As consequence the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the quadratic influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 x_2^2$ the following PDP and ALE plots are estimated.
 
 ```{r pdpsx1x22, fig.cap='(ref:pdpsx1x22Cap)', out.width='100%', echo=FALSE}
 
@@ -147,7 +147,7 @@ knitr::include_graphics("images/ale_1_ALEs_x1x22_150_0_0p5_2_2.png")
 ```
 (ref:alesx1x22Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1  x_2^2$.
 
-Plots \@ref(fig:pdpsx1x22) and \@ref(fig:alesx1x22) clearly show the linear influence of $x_1$ again. Additionally this time both (ALE and PDP) attest an exponential influence to feature $x_2$ on the prediction. Since $x_3$ does not have any influence on the prediction function, it is correct, that there is no influence detected.
+Plots \@ref(fig:pdpsx1x22) and \@ref(fig:alesx1x22) clearly show the linear influence of $x_1$ again. Additionally this time both (ALE and PDP) attest an quadratic influence to feature $x_2$ on the prediction. Since $x_3$ does not have any influence on the prediction function, it is correct, that there is no influence detected.
 The reason for this is the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features $x_1$ and $x_2$, the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.
 
 ### Example 2: Additive prediction function
@@ -360,18 +360,25 @@ Now the correction for the main effects (theoretical formula \@ref(eq:ale2DTheor
 \begin{align}
 \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = 
 &\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) \notag \\
-&-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]\notag \\
-&- \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})]
+&-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) \notag \\
+&~~~~~~~~~~~~~~~~~~~~~~~
+- \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]\notag \\
+&- \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) \notag \\
+&~~~~~~~~~~~~~~~~~~~~~~~ 
+- \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})]
 (\#eq:ale2DEstCorrection)
-\end{align}
+\end{align} 
 
 This is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of subtracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the general shape. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula \@ref(eq:ale2DTheoreticalCorrection). 
 
 \begin{equation}  
 \widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = 
-\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
-\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l})
  (\#eq:ale2DEst)
+\end{equation}
+
+\begin{equation}
+\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
+\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) \notag
 \end{equation}
 
 In difference to the ALE for one feature of interest, the 2D ALE is a two dimensional stepfunction, so there is no smoothing or something similar to make it a continuous function. 
@@ -387,7 +394,11 @@ knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 
 To calculate the delta \@ref(eq:ale2DEstDelta) for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the $x_l$ and $x_j$ values are cornervalues of the cell they are in. In the case of figure \@ref(fig:ale2DEstimation) these 2 dimensional cornervalues would be a,b,c,d. The delta for point x in this example would be calculated like this:
 
-$$ \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})]~ - [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})]$$
+\begin{align}
+\Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = 
+& [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})] \notag \\
+&- [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})] \notag
+\end{align}
 
 The same would be done for point y and then the deltas would be averaged to get the mean delta for cell $N_{\{j,~l\}}(4,3)$. This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in $N_{\{j,~l\}}(4,3)$. 
 
@@ -1281,22 +1292,24 @@ The features are sampled from the these disrtibutions:
 $X_1 \sim \mathcal{U}(a,~b)$, $X_2 \sim \mathcal{N}(\mu,~\sigma)$ and $X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)$
 The theoretical 2D ALE for features $x_1$ and $x_2$ will be calculated.
 
-1. Calculation of uncorrected and uncentered 2nd order effect:
+First is the calculation of uncorrected and uncentered 2nd order effect:
+
 \begin{align} 
-\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) 
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[\hat{f}^{(1,~2)}(X_1,~X_2,~X_3)\mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} E[X_3 \mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \int_{z_{0,~2}}^{x_2} z_2 ~dz_2~dz_1 \notag \\
-&= \int_{z_{0,~1}}^{x_1}  \frac{1}{2} (x_2^2 - z_{0,~2}) ~dz_1 \notag \\
+\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}&(x_1, x_2) = \notag \\
+&= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} E[\hat{f}^{(1,~2)}(X_1,~X_2,~X_3)\mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
+&= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} E[X_3 \mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
+&= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} z_2 ~dz_2~dz_1 \notag \\
+&= \int_{z_{0,1}}^{x_1}  \frac{1}{2} (x_2^2 - z_{0,~2}) ~dz_1 \notag \\
 &= \frac{1}{2} (x_2^2 - z_{0,~2})~(x_1 - z_{0,~1}) 
 \end{align}
 
-2. Calculation of corrected pure 2nd order effect:
+Next is the calculation of corrected pure 2nd order effect:
 
 \begin{align}
-\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = 
-&\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 \notag \\
-&- \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
+\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = ~
+&\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) \notag \\
+& ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 \notag \\
+& ~ - \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
 (\#eq:ale2DExampleCorrection)
 \end{align}
 
@@ -1304,7 +1317,8 @@ The theoretical 2D ALE for features $x_1$ and $x_2$ will be calculated.
 The two terms which are correcting for the main effect of the two features will be calculated seperately.
 
 \begin{align}
-\int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 
+\int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}
+& \mid X_1 = z_1]~dz_1 = \notag \\
 &= \int_{z_{0,~1}}^{x_1}  E[\frac{1}{2}(X_2^2 - z_{0, ~2}^2)\mid X_1 = z_1]~dz_1 \notag \\
 &= \int_{z_{0,~1}}^{x_1}  \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2) ~dz_1 \notag \\
 &= \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1})
@@ -1312,7 +1326,8 @@ The two terms which are correcting for the main effect of the two features will 
 \end{align}
 
 \begin{align}
-\int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
+\int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2} 
+&\mid X_2 = z_2]~dz_2 = \notag \\
 &= \int_{z_{0,~2}}^{x_2}  E[X_2 (X_1 - z_{0, ~1})\mid X_2 = z_2]~dz_2 \notag \\
 &= \int_{z_{0,~2}}^{x_2}  z_2(\frac{a+b}{2} - z_{0, ~1}) ~dz_2 \notag \\
 &= \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2)
@@ -1322,7 +1337,9 @@ The two terms which are correcting for the main effect of the two features will 
 Combining \@ref(eq:ale2DExampleCorrection1) and \@ref(eq:ale2DExampleCorrection2) with \@ref(eq:ale2DExampleCorrection) yields:
 
 \begin{align} 
-\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) &= \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) -~ \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) -~ \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) \notag \\
+\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) 
+&= \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) - \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) \notag \\
+& ~~~ - \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) \notag \\
 &= x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2)
 \end{align}
 
@@ -1331,9 +1348,9 @@ The last part is the centering for the mean:
 \begin{align} 
 ALE_{\hat{f},~1,~2}(x_1, x_2) &= \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) ~ -  E[\widetilde{ALE}_{\hat{f},~1,~2}(X_1, X_2)] \notag \\
 &= \frac{1}{2} (x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
-& ~~~~~ - E[X_2^2~x_1 + (X_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(X_2^2-z_{0,~2}^2)] ) \notag \\
+& ~~ - E[X_2^2~x_1 + (X_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(X_2^2-z_{0,~2}^2)] ) \notag \\
 &= \frac{1}{2} [x_2^2~x_1 - (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
-& ~~~~~ - (z_{0,1}(\mu^2+\sigma^2) + z_{0,~2}^2 \frac{a + b}{2} - (\mu^2+\sigma^2) \frac{a + b}{2}) ] \notag \\
+& ~~ - (z_{0,1}(\mu^2+\sigma^2) + z_{0,~2}^2 \frac{a + b}{2} - (\mu^2+\sigma^2) \frac{a + b}{2}) ] \notag \\
 &= \frac{1}{2} [x_2^2~x_1 - x_1(\mu^2+\sigma^2) - x_2^2 \frac{a + b}{2} + (\mu^2+\sigma^2) \frac{a + b}{2} ]
 \end{align}
 

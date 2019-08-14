@@ -12,8 +12,9 @@ As seen in section 2 PDPs don't work well as soon as two or more features are co
 ## The Theoretical Formula 
 
 The uncentered ALE with respect to a starting point $z_{0, j}$ is defined by [@Apley2016] as
+
 $$  \widetilde{ALE}_{\hat{f},~j}(x) = \hat{f}_{x_j,ALE}(x) = \int_{z_{0,~j}}^{x} E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j = z_j]~dz_j,$$
-where $\hat{f}$ is an arbitrary prediction function on the featurespace, as well as $\hat{f}^j(*,*)$ its j-th partial derivative. In this context $X_j$ is the feature of interest while $X_c$ represents the other features.
+where $\hat{f}$ is an arbitrary prediction function, as well as $\hat{f}^j(*,*)$ its j-th partial derivative. In this context $X_j$ is the feature of interest while $X_c$ represents the other features.
 
 ### Centering
 
