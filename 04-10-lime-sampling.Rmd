@@ -575,14 +575,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_100iter_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
-dev.off()
-
 
 # pick max of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
@@ -593,7 +585,6 @@ limes = sapply(1:100, function(k) {
   names(weights_l) = interim$feature
   weights_l
 })
-
 
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
@@ -609,14 +600,6 @@ dev.off()
 filename = paste0("images/boston_100iter_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_100iter_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 # switch to bins
@@ -649,15 +632,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_100iter_bins_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
-dev.off()
-
-
 # pick max of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
 # set index of datapoint to use
@@ -672,18 +646,9 @@ limes = sapply(1:100, function(k) {
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
 
-
 filename = paste0("images/boston_100iter_bins_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_100iter_bins_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -713,18 +678,9 @@ png(filename, width = 700L, height = 500L)
 presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
 dev.off()
 
-
 filename = paste0("images/boston_lm.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_lm_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -742,19 +698,11 @@ limes = sapply(1:100, function(k) {
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
 
-
 filename = paste0("images/boston_lm_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_lm_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
-dev.off()
 
 # switch to bins
 explainer  = lime(boston[, -ncol(boston)], black_box)
@@ -769,22 +717,12 @@ limes = sapply(1:100, function(k) {
   weights_l
 })
 
-
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
-
 
 filename = paste0("images/boston_lm_bins.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_lm_bins_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -798,22 +736,12 @@ limes = sapply(1:100, function(k) {
   weights_l
 })
 
-
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
-
 
 filename = paste0("images/boston_lm_bins_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_lm_bins_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 
@@ -832,7 +760,6 @@ limes = sapply(1:100, function(k) {
   weights_l
 })
 
-
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
 ci_upper = apply(limes, MARGIN = 1, quantile, 0.975)
@@ -849,14 +776,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_tree_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
-dev.off()
-
 
 # pick max of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
@@ -868,22 +787,12 @@ limes = sapply(1:100, function(k) {
   weights_l
 })
 
-
 means = apply(limes, MARGIN = 1, mean)
 sds   = apply(limes, MARGIN = 1, sd)
-
 
 filename = paste0("images/boston_tree_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/boston_tree_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight")
 dev.off()
 
 ```
@@ -1137,9 +1046,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1188,9 +1095,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = mean(sd_b, na.rm = TRUE),
   sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1269,8 +1174,9 @@ plotc
 dev.off()
 
 
-####################
+#######################
 ### plotting n_features
+#######################
 # boston
 results_12 = results[results$p == 12, ]
 # bikes
@@ -1328,9 +1234,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1346,10 +1250,8 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
   sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
 ))
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
 
+# boston
 results_gr = dplyr::group_by(
   results_sd,
   n_features,
@@ -1379,9 +1281,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = mean(sd_b, na.rm = TRUE),
   sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1710,9 +1610,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1728,10 +1626,8 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
   sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
 ))
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
 
+# boston
 results_gr = dplyr::group_by(
   results_sd,
   n_permutations,
@@ -1761,9 +1657,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = mean(sd_b, na.rm = TRUE),
   sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -1779,10 +1673,6 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_hum        = mean(as.numeric(as.character(sd_hum)), na.rm = TRUE),
   sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
 ))
-
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
 
 plot_data = data.frame(sd = c(
   apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)])),
@@ -2178,9 +2068,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -2196,10 +2084,8 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
   sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
 ))
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
 
+# boston
 results_gr = dplyr::group_by(
   results_sd,
   smoothness,
@@ -2229,9 +2115,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = mean(sd_b, na.rm = TRUE),
   sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -2248,10 +2132,6 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_windspeed  = mean(as.numeric(as.character(sd_windspeed)), na.rm = TRUE)
 ))
 
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
-
 plot_data = data.frame(
   sd = c(
     apply(results_sd[-1:-2], MARGIN = 1, function(row) mean(row[!is.nan(row)]))#,
@@ -2266,6 +2146,7 @@ plot_data = data.frame(
 
 ############################
 ### calculate train error
+############################
 
 # set exponential size for nrounds hyperparameter
 degree_seq = rep(1:10)
@@ -2443,9 +2324,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = sd(b, na.rm = TRUE),
   sd_lstat = sd(lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -2461,10 +2340,8 @@ resultsc_sd = as.data.frame(dplyr::summarize(
   sd_hum        = sd(as.numeric(as.character(hum)), na.rm = TRUE),
   sd_windspeed  = sd(as.numeric(as.character(windspeed)), na.rm = TRUE)
 ))
-# the following shows that the standard deviation is the same across (almost) all features
-# thus standardizing would do more harm than good
-#summary(resultsc_sd)
 
+# boston
 results_gr = dplyr::group_by(
   results_sd,
   smoothness,
@@ -2494,9 +2371,7 @@ results_sd = as.data.frame(dplyr::summarize(
   sd_b     = mean(sd_b, na.rm = TRUE),
   sd_lstat = mean(sd_lstat, na.rm = TRUE)#,
 ))
-# the following shows that the standard deviation is the same across all features
-# thus standardizing would do more harm than good
-#summary(results_sd)
+
 # bikes
 resultsc_sd = as.data.frame(dplyr::summarize(
   resultsc_gr,
@@ -2627,14 +2502,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
 
 # pick minority of each feature as data point
 data_point = as.data.frame(lapply(
@@ -2666,14 +2533,6 @@ dev.off()
 filename = paste0("images/bikes_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 
@@ -2714,14 +2573,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_lm_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
 
 # pick minority of each feature as data point
 data_point = as.data.frame(lapply(
@@ -2744,14 +2595,6 @@ sds   = apply(limes, MARGIN = 1, sd)
 filename = paste0("images/bikes_lm_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_lm_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 ####
@@ -2793,14 +2636,6 @@ png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_tree_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
 
 # pick minority of each feature as data point
 data_point = as.data.frame(lapply(
@@ -2823,14 +2658,6 @@ sds   = apply(limes, MARGIN = 1, sd)
 filename = paste0("images/bikes_tree_outlier.png")
 png(filename, width = 700L, height = 500L)
 book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-means_scaled = means / means
-sds_scaled   = sds / abs(means)
-
-filename = paste0("images/bikes_tree_outlier_scaled.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means_scaled, sds_scaled, ylab = "Weight / weight", color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
 dev.off()
 
 ```
