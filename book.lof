@@ -24,14 +24,25 @@
 \contentsline {figure}{\numberline {8.7}{\ignorespaces Mixture of normal and uniform distributed features\relax }}{33}{figure.caption.20}% 
 \contentsline {figure}{\numberline {8.8}{\ignorespaces Theoretical vs.\nobreakspace {}estimated ALE\relax }}{34}{figure.caption.21}% 
 \contentsline {figure}{\numberline {8.9}{\ignorespaces Zooming in reveals the bias for grid size 1000\relax }}{35}{figure.caption.22}% 
+\contentsline {figure}{\numberline {8.10}{\ignorespaces Prediction Function 1\relax }}{36}{figure.caption.23}% 
+\contentsline {figure}{\numberline {8.11}{\ignorespaces Behaviour of ALE estimation with increasing grid size\relax }}{37}{figure.caption.24}% 
+\contentsline {figure}{\numberline {8.12}{\ignorespaces Prediction function 2\relax }}{38}{figure.caption.25}% 
+\contentsline {figure}{\numberline {8.13}{\ignorespaces Prediction function 3\relax }}{39}{figure.caption.26}% 
+\contentsline {figure}{\numberline {8.14}{\ignorespaces Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)\relax }}{40}{figure.caption.27}% 
+\contentsline {figure}{\numberline {8.15}{\ignorespaces Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)\relax }}{41}{figure.caption.28}% 
+\contentsline {figure}{\numberline {8.16}{\ignorespaces Points that are used to estimate the step at grid size 20\relax }}{42}{figure.caption.29}% 
+\contentsline {figure}{\numberline {8.17}{\ignorespaces Points that are used to estimate the step at grid size 50\relax }}{43}{figure.caption.30}% 
+\contentsline {figure}{\numberline {8.18}{\ignorespaces ALE for the variable area (categorical)\relax }}{45}{figure.caption.31}% 
+\contentsline {figure}{\numberline {8.19}{\ignorespaces ALE-plot of the full model vs ALE-plot of the restricted model\relax }}{46}{figure.caption.32}% 
+\contentsline {figure}{\numberline {8.20}{\ignorespaces Two ALE-plots for different orderes of the category area\relax }}{47}{figure.caption.33}% 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the feature of interest and the target value. Based on the formular underneath the tables, the PFI is calculated.\relax }}{51}{figure.caption.23}% 
-\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset. The depicted points correspond to the median PFI over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively (see \texttt {iml} package).\relax }}{51}{figure.caption.24}% 
-\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formular underneath the tables, the Feature Importance of LOCO is calculated.\relax }}{53}{figure.caption.25}% 
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the feature of interest and the target value. Based on the formular underneath the tables, the PFI is calculated.\relax }}{51}{figure.caption.34}% 
+\contentsline {figure}{\numberline {9.2}{\ignorespaces Visualization of Permutation Feature Importance with a random forest applied on Boston dataset. The depicted points correspond to the median PFI over all shuffling iterations of one feature and the boundaries of the bands illustrate the 0.05- and 0.95-quantiles, respectively (see \texttt {iml} package).\relax }}{51}{figure.caption.35}% 
+\contentsline {figure}{\numberline {9.3}{\ignorespaces Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formular underneath the tables, the Feature Importance of LOCO is calculated.\relax }}{53}{figure.caption.36}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{63}{figure.caption.26}% 
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Simplified graphical representaion of the LIME algorithm. Each single panel represents one step of the described algorithm. It reads from left to right.\relax }}{63}{figure.caption.37}% 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
