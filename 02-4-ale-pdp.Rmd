@@ -1,8 +1,3 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
 # Comparison of ALE and PDP
 
 *Author: Jakob Bodensteiner*
@@ -125,33 +120,32 @@ meth <- "PDPs"
 #        width = 14, height = 7, units = "cm")
 
 ```
-
-```{r pdpsx1x2x3, fig.cap='(ref:pdpsx1x2x3Cap)', echo=FALSE}
+```{r pdpsx1x2x3, fig.cap='(ref:pdpsx1x2x3Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_PDPs_x1x2x3_150_0_0p5_2_2.png")
 ```
 (ref:pdpsx1x2x3Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
 
-```{r alesx1x2x3, fig.cap='(ref:alesx1x2x3Cap)', echo=FALSE}
+```{r alesx1x2x3, fig.cap='(ref:alesx1x2x3Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALEs_x1x2x3_150_0_0p5_2_2.png")
 ```
 (ref:alesx1x2x3Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 x_2 x_3$.
 
 Plot \@ref(fig:pdpsx1x2x3) shows the 1D PDP for each of the three features. One can clearly see that the PDP detects a linear influence on the prediction for all 3 of the features.
-On the other hand the ALE (figure \@ref(fig:alesx1x2x3)) attests the linear influence to the feature $x_1$ only. This plot exposes a weakness of the ALE compared to the PDP. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature $x_1$. The two other features seem to rather have an exponential influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and the correlated features. Feature $x_3$ has (in expectation) the same value as $x_2$. Especially if feature $x_1$ has small values the variance of feature $x_2$ around $x_3$ becomes small as well. As consequence the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the exponential influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 \times x_2^2$ the following PDP and ALE plots are estimated.
+On the other hand the ALE (figure \@ref(fig:alesx1x2x3)) attests the linear influence to the feature $x_1$ only. This plot exposes a weakness of the ALE compared to the PDP. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature $x_1$. The two other features seem to rather have an exponential influence on the prediction. And this is the case indeed, since it is the 'true' link between prediction and the correlated features. Feature $x_3$ has (in expectation) the same value as $x_2$. Especially if feature $x_1$ has small values the variance of feature $x_2$ around $x_3$ becomes small as well. As consequence the last part of the prediction function $x_2 \times x_3$ can be approximated by $x_2^2$ or $x_3^2$. This explains the exponential influence. By changing the prediction formula to $f(x_1, x_2, x_3) = y = x_1 x_2^2$ the following PDP and ALE plots are estimated.
 
-```{r pdpsx1x22, fig.cap='(ref:pdpsx1x22Cap)', echo=FALSE}
+```{r pdpsx1x22, fig.cap='(ref:pdpsx1x22Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_PDPs_x1x22_150_0_0p5_2_2.png")
 ```
-(ref:pdpsx1x22Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2^2$.
+(ref:pdpsx1x22Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1  x_2^2$.
 
-```{r alesx1x22, fig.cap='(ref:alesx1x22Cap)', echo=FALSE}
+```{r alesx1x22, fig.cap='(ref:alesx1x22Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALEs_x1x22_150_0_0p5_2_2.png")
 ```
-(ref:alesx1x22Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1 \times x_2^2$.
+(ref:alesx1x22Cap) ALEs for prediction function $f(x_1, x_2, x_3) = x_1  x_2^2$.
 
 Plots \@ref(fig:pdpsx1x22) and \@ref(fig:alesx1x22) clearly show the linear influence of $x_1$ again. Additionally this time both (ALE and PDP) attest an exponential influence to feature $x_2$ on the prediction. Since $x_3$ does not have any influence on the prediction function, it is correct, that there is no influence detected.
 The reason for this is the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features $x_1$ and $x_2$, the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.
@@ -261,13 +255,13 @@ ggsave(save_text,
        width = 14, height = 7, units = "cm")
 ```
 
-```{r pdpsx1px2mx3, fig.cap='(ref:pdpsx1px2mx3Cap)', echo=FALSE}
+```{r pdpsx1px2mx3, fig.cap='(ref:pdpsx1px2mx3Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_PDPs_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
 (ref:pdpsx1px2mx3Cap) PDPs for prediction function $f(x_1, x_2, x_3) = x_1 + x_2 - x_3$.
 
-```{r alesx1px2mx3, fig.cap='(ref:alesx1px2mx3Cap)', echo=FALSE}
+```{r alesx1px2mx3, fig.cap='(ref:alesx1px2mx3Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALEs_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
@@ -301,7 +295,11 @@ The whole formula would be very long, so it is split into 3 parts (compare [@Apl
 Following equation \@ref(eq:ale2DTheoretical1stLvl) is the 2nd order effect with no correction for main effects of $x_j$ and $x_l$. So this is not yet the pure 2nd order effect the 2D ALE is aiming for.
 
 \begin{equation} 
-\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l}             E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j 
+\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \notag
+\end{equation}
+
+\begin{equation}
+\int_{z_{0,~j}}^{x_j}  \int_{z_{0,~l}}^{x_l} E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j 
   (\#eq:ale2DTheoretical1stLvl)
 \end{equation}
 
@@ -334,18 +332,28 @@ The areas including data for feature $x_j$ and $x_l$ are divided into the same n
 The estimation equvalent to Formula \@ref(eq:ale2DTheoretical1stLvl) is:
 
 \begin{equation} 
-\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}),
+\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \notag
+\end{equation}
+
+\begin{equation}
+\sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}),
   (\#eq:ale2DEst1stLvl)
 \end{equation}
 
 while the $\Delta$ function is:
 
-\begin{align}
-\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = 
-&[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag \\ 
-&- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
+\begin{equation}
+\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = \notag
+\end{equation}
+
+\begin{equation}
+[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag
+\end{equation}
+
+\begin{equation}
+- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
 (\#eq:ale2DEstDelta) 
-\end{align}
+\end{equation}
 
 Now the correction for the main effects (theoretical formula \@ref(eq:ale2DTheoreticalCorrection))is estimated:
 
@@ -370,7 +378,7 @@ In difference to the ALE for one feature of interest, the 2D ALE is a two dimens
 
 This formulas are pretty long, so to get an intuition of the estimation figure \@ref(fig:ale2DEstimation) will be helpfull.
 
-```{r ale2DEstimation, fig.cap='(ref:ale2DEstimationCap)', echo=FALSE}
+```{r ale2DEstimation, fig.cap='(ref:ale2DEstimationCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALE_2D_estimation.PNG")
 ```
@@ -486,7 +494,7 @@ meth <- "ALE_2D_theo_vs_estim"
 ```
 
 
-```{r theo2Dale, fig.cap='(ref:theo2DaleCap)', echo=FALSE}
+```{r theo2Dale, fig.cap='(ref:theo2DaleCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1.png")
 ```
@@ -565,7 +573,7 @@ plot_row <- plot_grid(pdp, ale, nrow = 1)
 plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
 ```
 
-```{r x1px2mx3ale2D, fig.cap='(ref:x1px2mx3ale2DCap)', echo=FALSE}
+```{r x1px2mx3ale2D, fig.cap='(ref:x1px2mx3ale2DCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_2d_comp_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
@@ -674,7 +682,7 @@ ggsave(save_text,
 
 ```
 
-```{r ale2DaddedUp, fig.cap='(ref:ale2DaddedUpCap)', echo=FALSE}
+```{r ale2DaddedUp, fig.cap='(ref:ale2DaddedUpCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_2d_ale_plus_x1_plus_x2_minus_x3_150_0_2_0p5.png")
 ```
@@ -777,7 +785,7 @@ ggsave(save_text,
        width = 14, height = 7, units = "cm")
 ```
 
-```{r ale2DaddedUpx1x2x3, fig.cap='(ref:ale2DaddedUpx1x2x3Cap)', echo=FALSE}
+```{r ale2DaddedUpx1x2x3, fig.cap='(ref:ale2DaddedUpx1x2x3Cap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_x1x2x3_150_0_0p5_5_1.png")
 ```
@@ -923,7 +931,7 @@ plot_grid(title, plot_row, ncol=1, rel_heights=c(0.1, 1))
 meth <- "comp_2d_1st_orders_added_and_smaller3_bigger6"
 ```
 
-```{r pdp2Ddamaged, fig.cap='(ref:pdp2DdamagedCap)', echo=FALSE}
+```{r pdp2Ddamaged, fig.cap='(ref:pdp2DdamagedCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_and_smaller3_bigger6_x1x2x3_150_0_0p5_5_1.png")
 ```
@@ -1098,7 +1106,7 @@ microbenchmark(ale_one_cat(svm.regr_100_5),
 
 ```
 
-```{r runtime1DnumColAndSize, fig.cap='(ref:runtime1DnumericColAndSizeCap)', echo=FALSE}
+```{r runtime1DnumColAndSize, fig.cap='(ref:runtime1DnumericColAndSizeCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_one_numeric_cols_and_gridsize.PNG")
 ```
@@ -1107,7 +1115,7 @@ knitr::include_graphics("images/ale_1_one_numeric_cols_and_gridsize.PNG")
 Figure \@ref(fig:runtime1DnumColAndSize) shows the runtimes for different configurations in milliseconds. The microbenchmark output shows the compared expressions (here the calculation of ALE and PDP) in the first collumn. The other columns are the measured runtime for 10 different runs. From left to right it is the minimum runtime, the lower quantile of the runtimes, the mean, the median, the upper quantile and the maximal runtime. The main attention usually lies on the mean. In the expression there are also configurations for the sampled dataset integrated. For example 'ale_one_numeric(svm.regr_100_5, grid.size = 20)' represents the following estimation: An ALE for one numeric feature of interest has been estimated. The prediction funciton was a SVM fitted and evaluated on a sample of 100 observations with 5 features. The grid size in this case was 20, so evaluated on 20 intervals.
 This plot \@ref(fig:runtime1DnumColAndSize) shows the comparison for a change in grid size and number of features for one numeric feature of interest. It seems like the number of features does barely have an influence on the runtime. Additionally for the ALE the grid size is not signifcantly changing the runtime. That is comletely different for the PDP. Here a factor 5 for number of intervals increases the runtime by the same factor. This can be derived from the estimation. The ALE does the same number of predictions for any number of intervals, namely #observaions $\times$ 2. It just averages more often for mor intervals. But that happens without the prediction function and is just a simple mean calculation, so it barely needs time. The PDP on the other hand estimates the mean prediction for each interval border. So here (#intervals + 1) $\times$ #observations predictions have to be calculated. So the runtime grows linearly with the grid size and factor #observations. This is also the explanation for the next comparison (figure \@ref(fig:runtime1DnumNrow)). Here again one can see a way faster increas of runtime for PDPs than for ALEs when increasing the number of observations
 
-```{r runtime1DnumNrow, fig.cap='(ref:runtime1DnumNrowCap)', echo=FALSE}
+```{r runtime1DnumNrow, fig.cap='(ref:runtime1DnumNrowCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_one_numeric_nrows.PNG")
 ```
@@ -1115,7 +1123,7 @@ knitr::include_graphics("images/ale_1_one_numeric_nrows.PNG")
 
 ### Two numerical features of interest
 
-```{r runtime2DnumColAndSize, fig.cap='(ref:runtime2DnumericColAndSizeCap)', echo=FALSE}
+```{r runtime2DnumColAndSize, fig.cap='(ref:runtime2DnumericColAndSizeCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_two_numeric_cols_and_gridsize.PNG")
 ```
@@ -1123,7 +1131,7 @@ knitr::include_graphics("images/ale_1_two_numeric_cols_and_gridsize.PNG")
 
 In figure \@ref(fig:runtime2DnumColAndSize) the runtimes for different 2D ALE and PDP configurations can be seen. Again the number of features is not a great deal for both algorithms. The ALE has no huge increase in runtime when the grid size is higher but the PDP has. The issue here is that the estimation for 2D PDP requires $gris.size^2 \times \#observations$ predictions while the ALE just needs $4 \times \#observations$ predictions calculated for the estimation. This especially can be seen when increasing the number of observations. 
 
-```{r runtime2DnumNrow, fig.cap='(ref:runtime2DnumNrowCap)', echo=FALSE}
+```{r runtime2DnumNrow, fig.cap='(ref:runtime2DnumNrowCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_two_numeric_nrows.PNG")
 ```
@@ -1135,7 +1143,7 @@ Figure \@ref(fig:runtime2DnumNrow) shows such an increas in observations. One ca
 
 Lastly a look at the estimation for 1D categorial PDP and ALE will be taken. 
 
-```{r runtime1DcatColAndSize, fig.cap='(ref:runtime1DcatColAndSizeCap)', echo=FALSE}
+```{r runtime1DcatColAndSize, fig.cap='(ref:runtime1DcatColAndSizeCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_one_cat_cols_and_gridsize.PNG")
 ```
@@ -1143,7 +1151,7 @@ knitr::include_graphics("images/ale_1_one_cat_cols_and_gridsize.PNG")
 
 Figure \@ref(fig:runtime1DcatColAndSize) shows the runtimes of PDP and ALE for a categorial feature of interest. Analyzing categorial features does not require a grid size, since the number of categories already defines the number of different evaluations. This time one recognises that it is the other way around. The calculation time stays the same for the PDP with growing number of features, while ALE shows a significant growth. This is clearly caused by the reordering of the features for their category (will be explained in the next chapter). The reordering is based on kind of nearest neighbors (depends on implementation). The calculation of these neighbors takes longer the more features have to be taken into account. 
 
-```{r runtime1DcatNrow, fig.cap='(ref:runtime1DcatNrowCap)', echo=FALSE}
+```{r runtime1DcatNrow, fig.cap='(ref:runtime1DcatNrowCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_one_cat_nrows.PNG")
 ```
@@ -1232,13 +1240,13 @@ ggsave(save_text,
 
 ```
 
-```{r correlationMatrixRents, fig.cap='(ref:correlationMatrixRentsCap)', echo=FALSE}
+```{r correlationMatrixRents, fig.cap='(ref:correlationMatrixRentsCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_correlation_munich_rents.png")
 ```
 (ref:correlationMatrixRentsCap) Correlatin matrix for rents in Munich.
 
-```{r pdpaleRents, fig.cap='(ref:pdpaleRentsCap)', echo=FALSE}
+```{r pdpaleRents, fig.cap='(ref:pdpaleRentsCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl.png")
 ```
@@ -1246,7 +1254,7 @@ knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl.png")
 
 Figure \@ref(fig:pdpaleRents) shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100 the PDP looks more smooth than the ALE which is a bit shaky. In the area with not that much observations it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Since the ALE shows a more expected behavior for the prediction of rents one could tend to state that the ALE outperforms the PDP. One could think that some unrealistic feature combinations in the estimation of the PDP caused this strange drop. But a look at the ICE plot reveals something else.
 
-```{r aleIceRents, fig.cap='(ref:aleIceRentsCap)', echo=FALSE}
+```{r aleIceRents, fig.cap='(ref:aleIceRentsCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl_ALE_vs_ICE.png")
 ```
@@ -1254,7 +1262,7 @@ knitr::include_graphics("images/ale_1_rf_rent_for_rooms_and_wfl_ALE_vs_ICE.png")
 
 Figure \@ref(fig:aleIceRents) additionally shows the ICE curves for this example. Since the only other feature used for the fit was 'rooms' and in the data set are just flats with 6 or less rooms, there are just 6 graphs. Now one could argue, maybe the appartments with less than 4 rooms (which are way more in this data set than those with 4 or more rooms) somehow cause the strange drop for the PDP. But figure (ref:iceZoomedRents) shows that almost all rooms have this drop, especially the apartments with 4 and 5 rooms. 
 
-```{r iceZoomedRents, fig.cap='(ref:iceZoomedRentsCap)', echo=FALSE}
+```{r iceZoomedRents, fig.cap='(ref:iceZoomedRentsCap)', out.width='100%', echo=FALSE}
 
 knitr::include_graphics("images/ale_1_ice_zoomed.PNG")
 ```
