@@ -1,7 +1,20 @@
-## Interpretable Machine Learning: Wrapper Functions 
+
+
+## load packages 
+library(mlr)
+
 
 ## Wrapper for training Random Forest model with mlr package
-
+## Input: 
+## target: corresponds to reponse variable in the model
+## data: full dataset, including response variable and all explanatory features
+## training_size: specify the share of data use for training the algorithm: defined between 0 and 1
+## n_tree: specify the number of tree used for fitting the random forest model
+## Output:
+## function returns a list of values: test, train, mod
+## test: returns the test data
+## training: returns the training data
+## mod: returns the algorithm, obtained by fitting the model on the data
 train_mlr_model <- function(target, data, training_size, n_tree){
   
   lrn <- makeLearner("regr.randomForest", ntree = n_tree)
@@ -26,7 +39,17 @@ train_mlr_model <- function(target, data, training_size, n_tree){
   
 }
 
-## Function to calculate the PFI for all features of interest
+## Wrapper function to calculate the PFI for all features of interest
+## Input: 
+## data: corresponds to the whole dataset that was used when training and validating the algorithm
+## features: specify the features for which the Feature Importance needs to be calculated
+## target: specify the response variable from the data, must be the same as the repsonse defined for fitting the algorithm
+## mod: corresponds to the model fitted. Derived by function train_mlr_model
+## mid: performance measure. Based on that the Feature Importance is evaluated. Per default: "mse"
+## local: TRUE/FALSE => specifies whether the local or global Feature Importance shall be outputted. Default: TRUE
+## replace.ids: specify the grid points used => randomly sample number of observations
+## Output: 
+## returns the Feature Importance for each feature
 
 calculate_PFI <- function(data, features, target, mod, mid, local = TRUE, replace.ids){
   

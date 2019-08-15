@@ -24,77 +24,20 @@ library(featureImportance)
 library(sfsmisc)
 source("dICE.R")
 
-## Load Boston Housing Data
-require(MASS)
-data(BostonHousing, package = "mlbench")
-str(BostonHousing)
 
-## Specify and train ML algorithm 
-#### Random Forest model
-
-boston.task = makeRegrTask(data = BostonHousing, target = "medv")
-
-# Specify the machine learning algorithm with the mlr package
-lrn = makeLearner("regr.randomForest", ntree = 100)
-
-# Create indices for train and test data
-n = getTaskSize(boston.task)
-train.ind = sample(n, size = 0.6*n)
-test.ind = setdiff(1:n, train.ind)
-
-## Create test data using test indices
-test = getTaskData(boston.task, subset = test.ind)
-
-## Fit model on train data using train indices
-mod = train(lrn, boston.task, subset = train.ind)
-
-
-## Use feature values of 20 randomly chosen observations from test data to plot the importance curves
-obs.id = sample(1:nrow(test), 1000)
-
-## Measure feature importance on test data
-imp = featureImportance(mod, data = test, replace.ids = obs.id, local = TRUE)
-summary(imp)
-
-dataBoston_dICI <- imp$importance
-dataBoston_dICI <- as_tibble(dataBoston_dICI)
-dataBoston_dICI %>% arrange(features, row.id)
-
-dataBoston_dICI_age <- filter(dataBoston_dICI, features %in% "age") %>% arrange(features, row.id)
-dataBoston_dICI_age <- mutate(dataBoston_dICI_age, delta_f = finite.differences(dataBoston_dICI_age))
-
-
-
-
-
-
-
-
-## Derive Feature Importance on local scale 
-
-
-
-#### Transform data.frame to tibble
-data_dICI <- imp$importance
-data_dICI <- as_tibble(data_dICI)
-data_dICI %>% arrange(features, row.id)
-
-
-#### Subset data and order by feature and row.id 
-data_dICI_X_1 <- filter(data_dICI, features %in% "X_1") %>% arrange(features, row.id)
-data_dICI_X_2 <- filter(data_dICI, features %in% "X_2") %>% arrange(features, row.id)
-data_dICI_X_3 <- filter(data_dICI, features %in% "X_3") %>% arrange(features, row.id)
-
-
-
-#######
+## derivative-ICI function:
+## calculates the approximated derivatives for each ICI curve,
+## For that, it relies on the function finite.differences()
+## finite.differences() is an algorithm which calculates the approx. derivatives of function values through interpolation
+## Input: 
+## data: Permutation Feature Importance derived from calculate_PFI()
+## feat: specify the feature for which the d-ICI shall be calculated
+## measure: default "mse", 
+## Output: 
+## returns a dataset which merges a column with the respective derivatives to the data
 
 dICI <- function(data = pfi, feat, measure){
   
-  ## Include assertions
-  ## data must be of type dataframe, feature must be list() of characters, measure (i.e. "mse")
-  
-  ## Produces n list objects (n = number of features) 
   data_dICI <- as_tibble(data)
   data_dICI %>% lapply(feat, filter(data_dICI, features %in% feat)
                       %>% arrange(features, row.id)
@@ -106,10 +49,13 @@ dICI <- function(data = pfi, feat, measure){
 }
 
 
-#### Formular/Function for numerical approximation of derivative 
+## Function that calculates the numerical approx. derivatives of function values
+## Input:
+## Data: pfi data sorted by the input values of the feature for which the derivatives shall be approximated
+## Ouput:
+## fdx_final: 
 
 finite.differences <- function(data){
-  
   
   if(length(data$feature.value) != length(data$mse)){
     stop('x and y must be equal length')
@@ -150,22 +96,7 @@ finite.differences <- function(data){
   return(fdx_final)
 }
 
-###### test finite.differences function
 
-unique(dataBoston_dICI_age$row.id)
-data_by_row.id_test <- filter(dataBoston_dICI_age, row.id %in% 1)
-
-feature_test2 <- data_by_row.id_test[, "feature.value"]
-
-data_by_row.id <- filter(dataBoston_dICI_age, row.id %in% 1)
-
-#### testlines for finite.differences
-data_dICI_X_1 <- mutate(data_dICI_X_1 ,delta_f = finite.differences(data_dICI_X_1))
-data_dICI_X_2 <- mutate(data_dICI_X_2 ,delta_f = finite.differences(data_dICI_X_2))
-dataBoston_dICI_age <- mutate(dataBoston_dICI_age, delta_f = finite.differences(dataBoston_dICI_age))
-
-
-##########
 
 
 
@@ -188,29 +119,16 @@ dICI_plot <- function(data, feature){
 }
 
 
-p_X_1 <- ggplot(data_dICI_X_1, aes(feature.value, delta_f)) +
-  geom_line(aes(group = row.id))
-
-p_X_2 <- ggplot(data_dICI_X_2, aes(feature.value, delta_f)) +
-  geom_line(aes(group = row.id))
-
-grid.arrange(p_X_1, p_X_2, nrow = 1)
-
-## Plot BostonHousing data
-
-pp_dataBoston_dICI_age <- ggplot(dataBoston_dICI_age, aes(feature.value, delta_f)) +
-  geom_line(aes(group = row.id))
-
-pp_dataBoston_dICI_age
 
 
 
+## dICI_2 function is equivalent to dICI)(), however it relies on an different algorithm for calculating the derivatives
+## Input:
+## data: Permutation Feature Importance derived from calculate_PFI()
+## feat: specify the feature for which the d-ICI shall be calculated
+## measure: default "mse",
+## Output: 
 
-
-
-
-
-### Other function
 
 dICI_2 <- function(data = pfi, feature, measure){
   
@@ -224,12 +142,6 @@ dICI_2 <- function(data = pfi, feature, measure){
   return(data_dICI_test_mutated)
   
 }
-
-
-
-
-
-
 
 
 finite.differences_2 <- function(data, measure){
@@ -257,4 +169,24 @@ finite.differences_2 <- function(data, measure){
   
 }
 
+
+
+## Assertions here
+
+## number of features => determines number of rows for grid.arrange
+
+## ggplot per feature again with lapply ?
+
+## the amount of rows and columns should be specified based on the number of features
+##grid.arrange(pp1, pp2, nrow = 1) ## amount of rows to be specified!!
+
+## input: list of tibble data 
+dICI_plot <- function(data, feature){
+ 
+  pp1 <- ggplot(data, aes(feature.value, delta_f)) +
+    geom_line(group = data$row.id) + 
+    ggtitle(paste("Approximated Numerical Derivative of", feature))
+  return(pp1)
+
+}
 
