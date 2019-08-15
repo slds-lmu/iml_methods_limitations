@@ -15,6 +15,7 @@ library(mlr)
 ## test: returns the test data
 ## training: returns the training data
 ## mod: returns the algorithm, obtained by fitting the model on the data
+
 train_mlr_model <- function(target, data, training_size, n_tree){
   
   lrn <- makeLearner("regr.randomForest", ntree = n_tree)

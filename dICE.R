@@ -1,20 +1,3 @@
-
-#### Feature Importance and derivative Individual Conditional Expectation Plots (dICI)
-#### Question 1: Is this method/concept even applicable to ICI ?
-#### Question 2: If so, what is the optimal simulation method to illustrate the concept: Study "Visualizing Feature Effects..."
-#### Steps:
-#### 1) calculate for each row.id the 
-#### 2) 
-#### 3)
-#### 4)
-#### 5) 
-
-
-
-
-## install packages
-install.packages("tidyverse")
-
 ## Load packages
 
 library(MASS)
@@ -22,19 +5,17 @@ library(tidyverse)
 library(mlr)
 library(featureImportance)
 library(sfsmisc)
-source("dICE.R")
-
 
 ## derivative-ICI function:
 ## calculates the approximated derivatives for each ICI curve,
 ## For that, it relies on the function finite.differences()
-## finite.differences() is an algorithm which calculates the approx. derivatives of function values through interpolation
+## finite.differences() is an algorithm which calculates the approx. derivatives of function values through linear interpolation
 ## Input: 
 ## data: Permutation Feature Importance derived from calculate_PFI()
 ## feat: specify the feature for which the d-ICI shall be calculated
 ## measure: default "mse", 
 ## Output: 
-## returns a dataset which merges a column with the respective derivatives to the data
+## returns a dataset which merged the respective derivatives for each observations to the data
 
 dICI <- function(data = pfi, feat, measure){
   
@@ -53,14 +34,13 @@ dICI <- function(data = pfi, feat, measure){
 ## Input:
 ## Data: pfi data sorted by the input values of the feature for which the derivatives shall be approximated
 ## Ouput:
-## fdx_final: 
+## fdx_final: returns the approximated derivatives for each observation
 
 finite.differences <- function(data){
   
   if(length(data$feature.value) != length(data$mse)){
     stop('x and y must be equal length')
   }
-  
   
   n_all <- length(data$feature.value)
   n_row_unique <- length(unique(data$row.id))
@@ -93,47 +73,24 @@ finite.differences <- function(data){
   print(fdx_all)
   fdx_final <- unlist(fdx_all)
   print(fdx_final)
+  
   return(fdx_final)
 }
 
 
-
-
-
-
-## input: list of tibble data 
-dICI_plot <- function(data, feature){
-  ## Assertions here
-  
-  ## number of features => determines number of rows for grid.arrange
-  
-  ## ggplot per feature again with lapply ?
-  pp1 <- ggplot(data, aes(feature.value, delta_f)) +
-            geom_line(group = data$row.id) + 
-            ggtitle(paste("Approximated Numerical Derivative of", feature))
-  return(pp1)
-  
-  ## the amount of rows and columns should be specified based on the number of features
-  ##grid.arrange(pp1, pp2, nrow = 1) ## amount of rows to be specified!!
-  
-}
-
-
-
-
-
-## dICI_2 function is equivalent to dICI)(), however it relies on an different algorithm for calculating the derivatives
+## dICI_2 function is equivalent to dICI(), however it relies on an different algorithm for calculating the derivatives
+## For that, it relies on the function finite.differences_2()
+## finite.differences_2() is an algorithm which calculates the approx. first order derivatives via the function D1ss() 
+## D1ss: uses cubic smoothing splines to to estimate first order derivatives
 ## Input:
 ## data: Permutation Feature Importance derived from calculate_PFI()
 ## feat: specify the feature for which the d-ICI shall be calculated
 ## measure: default "mse",
-## Output: 
-
+## Output:
+## returns a dataset which merged the respective derivatives for each observations to the data
 
 dICI_2 <- function(data = pfi, feature, measure){
   
-  ## Include assertions
-  ## data must be of type dataframe, feature must be list() of characters, measure (i.e. "mse")
   data_dICI_test <- as_tibble(data)
   data_dICI_test_filtered <- filter(data_dICI_test ,features %in% feature)
   data_dICI_test_arranged <- arrange(data_dICI_test_filtered, features, row.id, feature.value)
@@ -144,12 +101,17 @@ dICI_2 <- function(data = pfi, feature, measure){
 }
 
 
+## Function that calculates the numerical approx. derivatives of function values
+## Input:
+## Data: pfi data sorted by the input values of the feature for which the derivatives shall be approximated
+## Ouput:
+## fdx_final: returns the approximated derivatives for each observation
+
 finite.differences_2 <- function(data, measure){
   
   if(length(data$feature.value) != length(data$mse)){
     stop('x and y must be equal length')
   }
-  
   
   n_all <- length(data$feature.value)
   n_row_unique <- length(unique(data$row.id))
@@ -164,29 +126,30 @@ finite.differences_2 <- function(data, measure){
     list_fdx[[row]] <- D1ss(feature, target)
     
   }
+  
   fdx_final <- unlist(list_fdx)
   return(fdx_final)
   
 }
 
 
+## dICI_plot function: visualizes the approximated derivates for the respective feature
+## Input: 
+## data: data, containing the approx. derivatives for each observations, derived through dICI() or dICI_2()
+## feature: specify the feature for which the derivatives should be visualized
+## Output:
+## derivative plots
 
-## Assertions here
-
-## number of features => determines number of rows for grid.arrange
-
-## ggplot per feature again with lapply ?
-
-## the amount of rows and columns should be specified based on the number of features
-##grid.arrange(pp1, pp2, nrow = 1) ## amount of rows to be specified!!
-
-## input: list of tibble data 
 dICI_plot <- function(data, feature){
- 
+
   pp1 <- ggplot(data, aes(feature.value, delta_f)) +
     geom_line(group = data$row.id) + 
     ggtitle(paste("Approximated Numerical Derivative of", feature))
+  
   return(pp1)
-
+  
 }
+
+
+
 
