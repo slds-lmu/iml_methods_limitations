@@ -1,12 +1,8 @@
-library(devtools)
-install_github("https://github.com/pkopper/lime")
-library(lime)
-library(ggplot2)
-library(mlr)
-library(reshape2)
-library(gridExtra)
-source("utils.R")
-library(dplyr)
+### Simulation refering to the subsubsection "Global Linear Relationships" of
+### "Simulated data" of "The problem in more complex settings"
+set.seed(1)
+
+### Data simulation based on function out of utils.R
 data_set <- simulate_data(2500, 
                           3, 
                           seed = 1, 
@@ -20,26 +16,22 @@ data_set <- simulate_data(2500,
 ### Define the task (mlr)
 task <- makeRegrTask(data = data_set$train, target = "y")
 ### Define the learner (mlr)
-learner <- makeLearner("regr.randomForest", ntree = 1000)
+learner <- makeLearner("regr.glm", family = "gaussian")
 ### Train the model (mlr)
 black_box <- train(learner, task)
 ### predict
 task_pred <- predict(black_box, newdata = data_set$test)
-
-png("04-09-07.png", width = 1000, height = 848)
-ggplot(data = task_pred$data, aes(x = response, y = truth)) +
-  geom_point(size = 3) +
-  theme(text = element_text(size = 35))
-dev.off()
+saveRDS(task_pred, file = "R-results/LIME/Neighbourhood/task_pred_lm.RDS")
 
 # Set up LIME explainer
 explainer <- lime(data_set$train[ , 2:4], black_box,
                   bin_continuous = FALSE, use_density = FALSE)
 
-
+### We choose 4 different observations (random) for which we aim to analyse
+### how the model estimates change as the kernel size changes.
 # obs 1 .- plot 8a
-kernel_widths <- seq(0.1, 5, 0.1)
-kernel_widths <- c(0.02, 0.05, kernel_widths)
+kernel_widths <- seq(0.1, 3, 0.1)
+kernel_widths <- c(0.025, 0.05, kernel_widths)
 kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     data_set$test[1, 2:4], 
                                                     explainer,
@@ -48,9 +40,6 @@ kernel_matrix1 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     dist_fun = "euclidean",
                                                     seed = 1)
 
-panel1 <- plot_kernels(kernel_matrix1, kernel_widths, c(4, -3, 5), "",
-                       ymin = -5, ymax = 8)
-
 # obs 21 .- plot 8b
 kernel_matrix2 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     data_set$test[21, 2:4], 
@@ -58,10 +47,7 @@ kernel_matrix2 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     n_features = 3, 
                                                     n_permutations = 1000, 
                                                     dist_fun = "euclidean",
-                                                    seed = 1)
-
-panel2 <- plot_kernels(kernel_matrix2, kernel_widths, c(4, -3, 5), "",
-                       ymin = -5, ymax = 8)
+                                                    seed = 2)
 
 # obs 33 - plot 8c
 kernel_matrix3 <- analyse_multivariate_kernel_width(kernel_widths,
@@ -70,10 +56,7 @@ kernel_matrix3 <- analyse_multivariate_kernel_width(kernel_widths,
                                                     n_features = 3, 
                                                     n_permutations = 1000, 
                                                     dist_fun = "euclidean",
-                                                    seed = 1)
-
-panel3 <- plot_kernels(kernel_matrix3, kernel_widths, c(4, -3, 5), "",
-                       ymin = -5, ymax = 8)
+                                                    seed = 3)
 
 # obs 103 - plot 8d
 kernel_matrix4 <- analyse_multivariate_kernel_width(kernel_widths,
@@ -82,13 +65,16 @@ kernel_matrix4 <- analyse_multivariate_kernel_width(kernel_widths,
                                                    n_features = 3, 
                                                    n_permutations = 1000, 
                                                    dist_fun = "euclidean",
-                                                   seed = 1)
+                                                   seed = 4)
 
-
-panel4 <- plot_kernels(kernel_matrix4, kernel_widths, c(4, -3, 5), "",
-                       ymin = -5, ymax = 8)
-
-png("04-09-08.png", width = 2000, height = 1700)
-grid.arrange(panel1, panel2, panel3, panel4, ncol = 2)
-dev.off()
-
+### Save for reproducibility and plots.
+saveRDS(kernel_matrix1, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-global_linear1.RDS")
+saveRDS(kernel_matrix2, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-global_linear2.RDS")
+saveRDS(kernel_matrix3, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-global_linear3.RDS")
+saveRDS(kernel_matrix4, 
+        file = "R-results/LIME/Neighbourhood/kernelmatrix-global_linear4.RDS")
+saveRDS(kernel_widths, 
+        file = "R-results/LIME/Neighbourhood/kw_global_linear.RDS")

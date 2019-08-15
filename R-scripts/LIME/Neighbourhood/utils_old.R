@@ -1,8 +1,6 @@
-library(MASS)
-library(foreach)
-library(doRNG)
-library(doParallel)
-make_split <- function(data, share) {
+
+make_split <- function(data, share, seed = 100) {
+  set.seed(seed)
   split <- sample(1:nrow(data), floor(share * nrow(data)))
   return(list(train = data[split, ], test = data[-split, ]))
 }
@@ -12,14 +10,16 @@ extract_local_model <- function(observation,
                                 n_features, 
                                 n_permutations, 
                                 kernel_width,
-                                dist_fun = "euclidean",
-                                feature_select) {
+                                dist_fun,
+                                feature_select,
+                                ...) {
   explanation <- explain(observation, explainer,
                          n_features = n_features, 
                          n_permutations = n_permutations, 
                          kernel_width = kernel_width, 
                          dist_fun = dist_fun,
-                         feature_select = feature_select)
+                         feature_select = feature_select,
+                         ...)
   n_col <- ncol(observation)
   sorted_col_names <- colnames(observation)[order(colnames(observation))]
   if (n_features < n_col) {
@@ -47,27 +47,114 @@ extract_local_model <- function(observation,
   return(coefs)
 }
 
+
+extract_local_models <- function(observations, 
+                                 explainer, 
+                                 n_features, 
+                                 n_permutations, 
+                                 kernel_width,
+                                 dist_fun,
+                                 feature_select,
+                                 ...) {
+  explanations <- explain(observations, explainer,
+                          n_features = n_features, 
+                          n_permutations = n_permutations, 
+                          kernel_width = kernel_width, 
+                          dist_fun = dist_fun,
+                          feature_select = feature_select,
+                          ...)
+  n_col <- ncol(observations)
+  n_row <- nrow(observations)
+  sorted_col_names <- colnames(observations)[order(colnames(observations))]
+  coefs <- as.data.frame(matrix(NA, ncol = n_col + 1, nrow = n_row))
+  coefs[, 1] <- explanations$model_intercept[seq(1, n_row * n_features, 
+                                                 by = n_features)]
+  colnames(coefs)[1] <- "Intercept"
+  colnames(coefs)[2:(n_col + 1)] <- sorted_col_names
+  for (i in 2:(n_col + 1)) {
+    coefs[rep(1:n_row, each = n_features)[explanations$feature == 
+                                            sorted_col_names[i - 1]], i] <- 
+      explanations$feature_weight[explanations$feature == 
+                                    sorted_col_names[i - 1]]
+  }
+return(coefs)
+}
+
 extract_average_local_model <- function(observation, 
                                         explainer, 
                                         n_features, 
                                         n_permutations, 
                                         kernel_width,
-                                        dist_fun = "euclidean",
+                                        dist_fun,
                                         iterations = 25,
                                         se = FALSE,
                                         seed,
-                                        feature_select = feature_select) {
+                                        feature_select = feature_select,
+                                        parallel = TRUE,
+                                        ...) {
+  res <- vector(mode = "list", length = iterations)
+  if (parallel) {
+    res <- foreach(m = 1:iterations, .options.RNG = seed, 
+                   .combine = bind_rows) %dorng% {
+                     extract_local_model(observations, 
+                                         explainer, 
+                                         n_features, 
+                                         n_permutations, 
+                                         kernel_width,
+                                         dist_fun = dist_fun,
+                                         feature_select = feature_select, 
+                                         ...)
+                   }
+  } else {
+    set.seed(seed)
+    for (i in 1:iterations) {
+      res[[i]] <- extract_local_model(observations, 
+                                      explainer, 
+                                      n_features, 
+                                      n_permutations, 
+                                      kernel_width,
+                                      dist_fun = dist_fun,
+                                      feature_select = feature_select, 
+                                      ...)
+    }
+  }
+  means <- colMeans(res, na.rm = TRUE)
+  NA_count <- 1 - (apply(is.na(res), 2, sum) / iterations)
+  if (!se) {
+    out <- means
+  } else {
+    sds <- sapply(res, sd, na.rm = TRUE)
+    out <- list(means, sds)
+  }
+  if (n_features < ncol(observation)) {
+    out <- list(out, NA_count)
+  }
+  out
+}
+
+extract_average_local_models <- function(observations, 
+                                        explainer, 
+                                        n_features, 
+                                        n_permutations, 
+                                        kernel_width,
+                                        dist_fun,
+                                        iterations,
+                                        se = FALSE,
+                                        seed,
+                                        feature_select = feature_select,
+                                        ...) {
   res <- vector(mode = "list", length = iterations)
   res <- foreach(m = 1:iterations, .options.RNG = seed, 
                  .combine = bind_rows) %dorng% {
-                   extract_local_model(observation, 
+                   extract_local_models(observations, 
                                        explainer, 
                                        n_features, 
                                        n_permutations, 
                                        kernel_width,
-                                       dist_fun = "euclidean",
-                                       feature_select = feature_select)
-  }
+                                       dist_fun = dist_fun,
+                                       feature_select = feature_select, 
+                                       ...)
+                 }
   means <- colMeans(res, na.rm = TRUE)
   NA_count <- 1 - (apply(is.na(res), 2, sum) / iterations)
   if (!se) {
@@ -86,9 +173,10 @@ analyse_univariate_kernel_width <- function(kernel_widths,
                                             observation, 
                                             explainer, 
                                             n_features, 
-                                            n_permutations,
+                                            n_permutations = 2500,
                                             dist_fun = "euclidean",
-                                            iterations = 25) {
+                                            iterations,
+                                            seed) {
   result <- rep(0, length(kernel_widths))
   result <- cbind(result, result)
   result <- as.data.frame(result)
@@ -98,10 +186,12 @@ analyse_univariate_kernel_width <- function(kernel_widths,
     local_model <- extract_average_local_model(observation,
                                                explainer,
                                                n_features = 1, 
-                                               n_permutations = 2500,
-                                               dist_fun = "euclidean", 
-                                               kernel_width = k)
-    result[i, ] <- local_model
+                                               n_permutations,
+                                               dist_fun, 
+                                               kernel_width = k,
+                                               seed = seed,
+                                               feature_select = "auto")
+    result[i, ] <- local_model[[1]][1:2]
   }
   result
 }
@@ -178,7 +268,8 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                               iterations = 50,
                                               ci = FALSE,
                                               seed, 
-                                              feature_select = "auto") {
+                                              feature_select = "auto",
+                                              ...) {
   n_cores <- detectCores()
   registerDoParallel(n_cores - 1)
   if (!ci) {
@@ -193,12 +284,13 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                            explainer,
                                            n_features, 
                                            n_permutations,
-                                           dist_fun = "euclidean", 
+                                           dist_fun = dist_fun, 
                                            kernel_width = k,
                                            iterations = iterations,
                                            se = FALSE,
                                            seed = seed,
-                                           feature_select = feature_select)
+                                           feature_select = feature_select,
+                                           ...)
       if (n_features < ncol(observation)) {
         local_model <- local[[1]]
         NA_count[i, ] <- local[[2]]
@@ -226,12 +318,13 @@ analyse_multivariate_kernel_width <- function(kernel_widths,
                                            explainer = explainer,
                                            n_features = n_features, 
                                            n_permutations = n_permutations,
-                                           dist_fun = "euclidean", 
+                                           dist_fun = dist_fun, 
                                            kernel_width = k,
                                            iterations = iterations,
                                            se = TRUE,
                                            seed = seed,
-                                           feature_select = feature_select)
+                                           feature_select = feature_select,
+                                           ...)
       if (n_features < ncol(observation)) {
         local_model <- local[[1]]
         NA_count[i, ] <- local[[2]]
@@ -277,7 +370,7 @@ plot_kernels <- function(kernel_matrix,
   
   p <- ggplot(data = plot_frame, aes(y = coefficient, x = kernel, 
                                      group = Feature)) + 
-    geom_line(aes(color = Feature), size = 3) + 
+    geom_line(aes(color = Feature), size = 2) + 
     geom_point(aes(color = Feature), size = 3) + 
     labs(x = "Kernel width", y = "Coefficient") +
     theme(text = element_text(size = 35)) +
@@ -326,8 +419,8 @@ plot_kernels_real <- function(kernel_matrix,
   eval(parse(text = call_text))
 }
 
-plot_stability_paths <- function(kernel_widths, stability_paths, 
-                                 max_kernel = NULL){
+plot_pseudo_stability_paths <- function(kernel_widths, stability_paths, 
+                                        max_kernel = NULL, title = ""){
   stability_paths <- cbind(melt(stability_paths), kernel_widths)
   names(stability_paths) <- c("variable", "probality", "kernel")
   if (!(is.null(max_kernel))) {
@@ -337,9 +430,10 @@ plot_stability_paths <- function(kernel_widths, stability_paths,
   y <- stability_paths$probality
   variable <- stability_paths$variable
   p <- ggplot(data = stability_paths, aes(x = x, y = y, group = variable))
-  p <- p + geom_line(aes(color = variable)) + 
-    geom_point(aes(color = variable)) + 
-    labs(x = "Kernel Width", y = expression(pi))
+  p <- p + geom_line(aes(color = variable), size = 1.75) + 
+    geom_point(aes(color = variable), size = 3) + 
+    labs(x = "Kernel Width", y = expression(pi)) + labs(title = title) + 
+    theme(text = element_text(size = 35))
   return(p)
 }
 

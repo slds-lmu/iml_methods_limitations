@@ -9,7 +9,7 @@ output:
 *Author: Sebastian Gruber*
 
 
-## Understanding Sampling in LIME
+## Understanding sampling in LIME
 
 In this chapter, we will discuss the fundamentals of LIME from a slightly different angle to receive a further understanding of what enables sampling and to have a look at how basic results look like.
 
