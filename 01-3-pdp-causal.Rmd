@@ -97,7 +97,7 @@ These last two formulas thus seem to be the same, if $C$ is the complement of $S
 
 ## Scenarios
 
-After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of [@pearl1993]. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions.
+After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of [@pearl1993]. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions. 
 
 In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests resulted in a large increase in computation time with a higher number of observations, but with results that hardly differed from those obtained with one thousand observations.
 
