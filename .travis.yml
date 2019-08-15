@@ -3,8 +3,9 @@ pandoc_version: 1.19.2.1
 sudo: required
 cache:
   packages: true
+install:
+- sudo apt-get install libv8-dev 
 before_script:
 - chmod +x ./_build.sh
-- sudo apt-get install libv8-dev 
 script: ./_build.sh
 
