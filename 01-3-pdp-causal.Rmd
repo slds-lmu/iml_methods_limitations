@@ -15,14 +15,14 @@ library(randomForest)
 ```
 
 ## Introduction
-In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) will be used to visualize various causal relationships. Judea Pearl's framework of do-calculus will be used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention.  
+In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) are used to visualize various data generating mechanisms. Judea Pearl's framework of do-calculus is used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention.  
 
-[@zhaohastie] formulated 3 elements that are needed for a causal interpretation:  
+[@zhaohastie] formulated three elements that are needed to ensure that the PDP coincides with the intervention effect:  
 1. A good predictive model which closely approximates the real relationship.  
 2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.  
 3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)  
 
-The first point is an important one, because there is a big difference between being able to causally interpret an effect for the *model* and using it as a causal interpretation for the real world. The second point will make clear when PDPs are  the same, and when they are different from interventions on the data. In this chapter we will systematically go through scenarios in order to see when PDPs can be causally interpreted and when this would be unwise. 
+The first condition is an important one, because there is a big difference between being able to causally interpret an effect for the *model* and using it as a causal interpretation for the real world. The second condition will make clear when PDPs are  the same, and when they are different from interventions on the data. In this chapter we will systematically analyze a number of scenarios in order to see under which conditions PDPs can be causally interpreted or not. 
 
 ## A brief look at PDP problems  
 
@@ -43,7 +43,7 @@ data("Icecream")
   grid.arrange(p1, p2, ncol = 2)
 ```
 
-Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. As discussed above, domain knowledge is also a necessity in order to determine whether the backdoor criterion is met.
+Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
 
 Another problem with PDPs was shown by [include citation]. Assume we have data that is distributed as follows:
 
@@ -71,7 +71,7 @@ plot(pdp.obj)
 
 ## Causal Interpretability: Interventions and Directed Acyclical Graphs
 
-In the rest of this chapter, we will be using the concept of interventions and showing causal structures visually. When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. 
+In the rest of this chapter, we will use the concept of interventions and show causal structures visually. When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. 
 The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
 
 Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs have to be acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing an edge that is directed towards the variable we fix. 
@@ -87,7 +87,7 @@ If we take the expectation of Pearl's adjustment formula we get:
 $$ E[Y |do(X_S = x_S)] = \int E[Y |X_S = x_S, X_C = x_C] dP(x_C) $$
 These last two formulas thus seem to be the same, if $C$ is the complement of $S$. 
 
-[@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It holds that:
+[@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It states that:
 
 1. No node in $X_C$ can be a descendant of $X_S$ in the DAG $G$.
 
@@ -99,14 +99,14 @@ These last two formulas thus seem to be the same, if $C$ is the complement of $S
 
 After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of [@pearl1993]. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions.
 
-In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests saw a large increase in computation time with a higher number, but with results that hardly differed from those obtained with one thousand observations.
+In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests resulted in a large increase in computation time with a higher number of observations, but with results that hardly differed from those obtained with one thousand observations.
 
 The process for obtaining the intervention curve was as follows:
 Let $X$ be the predictor variable of interest with possible values $x_{1}, x_{2}, x_{n}$ and $Y$ the response variable of interest.
 for each unique $i \in \{1,2,\dots,n\}$ do  
 (1) make a copy of the data set  
 (2) replace the original values of $X$ with the value $X_(i)$ of $X$ under intervention  
-(3) recompute all variables dependent on $X$ using the replacement values as input. This includes $Y$, but potentially also other features that rely on $X$ for their value.  
+(3) recompute all variables dependent on $X$ using the replacement values as input. This includes $Y$, but potentially also other features that rely on $X$ for their value.  Note that only $X$ is replaced with $X_i$ in the existing equations. Both the equations and error terms remain the same as before.  
 (4) Compute the average $Y_i$ in dataset $i$ given $X_i$.  
 (5) ($X_i$, $Y_i$) are a single point on the intervention curve.  
 
@@ -124,15 +124,6 @@ In the first scenario, we have a chain DAG. Our variable $X$ is impacted by $Z$ 
 
 $$ Y = X + \epsilon  $$
 $$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \sim Z + \epsilon, \ \ \ \ \ N = 100 $$
-
-
-```{r echo=FALSE}
-set.seed(18)
-dagify(Y ~ X,
-       X ~ Z
-) %>% 
-  ggdag() 
-```
 
 As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ were varied across 3 levels leading to 9 settings.  
 
