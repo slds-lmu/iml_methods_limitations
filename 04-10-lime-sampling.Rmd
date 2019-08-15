@@ -20,7 +20,7 @@ If we do some small changes of notations compared to the introduction chapter, t
 
 $$ g^* = \arg\min_{g \epsilon G} \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big) + \Omega\left(g\right) $$
 
-with $\mathcal{L}\left(f, g, \pi_{\tilde x} \right) := \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) \times L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big)$ further expressed more in detail as in the introduction and $\tilde x$ as our desired point to explain.
+with $\mathcal{L}\left(f, g, \pi_{\tilde x} \right) := \sum_{i=1}^{n'} \pi_{\tilde x}(x^{(i)}) \times L\Big( f\big(x^{(i)}\big), \, g\big(x^{(i)}\big) \Big)$ further expressed more in detail as in the introduction and $\tilde x$ as our desired point to explain (@LIMEformula).
 This change of notation allows us to spot the enabling property for sampling.
 First of all, the original target variable $y$ is replaced by the response $ŷ := f\big(x^{(i)} \big)$ of the black box model.
 This means nothing more besides that we minimize this problem without accessing the original target.
@@ -40,8 +40,8 @@ As a consequence, we can't assume producing a dataset equal to the size of our f
 
 ### Sampling strategies
 
-Originally, sampling in LIME was meant as a perturbation of the original data, to stay as close as possible to the real data distribution. [cite]
-Though, the implementations of LIME in R and Python took a different path and decided to estimate a univariate distribution for each feature and then draw samples out of that. [cite]
+Originally, sampling in LIME was meant as a perturbation of the original data, to stay as close as possible to the real data distribution (@ribeiro2016should).
+Though, the implementations of LIME in R and Python (@thomasp85lime and @marcotcrlime) took a different path and decided to estimate a univariate distribution for each feature and then draw samples out of that.
 The consequence of this approach is the total loss of the covariance structure, as our estimated distribution for the whole feature space is simply a product of several univariate distributions.
 This way, we may receive samples that lie outside the space of our real data generation process.
 Because almost all machine learning models are well defined on the whole input space, evaluating unrealistic values leads to no problems at first.
@@ -53,7 +53,7 @@ On the other hand, an issue like this was not encountered during the preparation
 #### Categorical features
 
 Categorical features are handled more straight forward then numerical ones due to finite space.
-The R LIME package will sample with probabilities of the frequency of each category appearing in the original dataset.
+The R LIME package (@thomasp85lime) will sample with probabilities of the frequency of each category appearing in the original dataset.
 The case when this goes wrong is if one category is very infrequent and then -- due to bad luck -- simply not drawn.
 Since the original data is thrown away after sampling, no information is leftover about this category for the fitting process.
 Additionally, by ignoring feature combinations, we may sample points that are impossible in the real world and add no value to our fit, or may even distort it. 
@@ -63,7 +63,7 @@ Additionally, by ignoring feature combinations, we may sample points that are im
 
 Numerical features rise the challenge higher.
 While categorical features make it possible for at least very low dimensions to gather a dataset with all possible values, numerical features are theoretically of infinite size.
-There are currently three different options implemented in the R LIME package for sampling numerical features.
+There are currently three different options implemented in the R LIME package (@thomasp85lime) for sampling numerical features.
 The first -- and default -- one uses a fixed amount of bins.
 The limits of these bins are picked by the quantiles of the original dataset.
 In the sampling step, one of these bins will be randomly picked and after that, a value is uniformly sampled between the lower and upper limit of that bin.
@@ -114,7 +114,7 @@ knitr::include_graphics(c("images/nonconvex_samples_1.png", "images/nonconvex_sa
 ```
 
 The two LIME explanations of the same scenario and with the same settings hold totally different results.
-This indicates how untrusty single explanations could be.
+This indicates how untrustworthy single explanations could be.
 So, what can we do here?
 
 The most obvious step is increasing the sample size.
@@ -196,7 +196,7 @@ knitr::include_graphics(c("images/boston_tree_presi.png", "images/boston_lm_pres
 #### Kernel density estimation versus binning
 
 In this case, we compare two different sampling options.
-Binning is the default setting in the R LIME package.
+Binning is the default setting in the R LIME package (@thomasp85lime).
 Due to sampling via normal distribution acting very similar to the kernel density estimation in the experiments further down, this option is left out here.
 The differences in \@ref(fig:figbostkdebin) are clearly visible, leading to the question if there are strict ranks of the sampling options with respect to weight stability.
 
@@ -213,8 +213,8 @@ So far, we only used numerical features.
 To also cover the categorical case, we are using the rental bikes dataset with only categorical features here.
 Originally, the data also contained a few numerical features, but these have been manually categorized by creating classes based on their 25%-, 50%-, and 75%-quantiles.
 In \@ref(fig:figbike), boxplots of the classes in each feature with respect to the target 'cnt' -- the count of bikes rented a day -- is shown to give a quick overview.
-This means we are forced to use the Gower distance, a binary distance measure for the categorical case.
-The purpose of this short chapter is: Do we get similar results as for numerical features?
+This means we are forced to use the Gower distance (@gower1971general), a binary distance measure for the categorical case.
+The purpose of this short section is: Do we get similar results as for numerical features?
 
 ```{r, figbike, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to target 'medv' in the boston housing dataset"}
 
@@ -255,9 +255,12 @@ knitr::include_graphics(c("images/bikes_tree_presi.png", "images/bikes_lm_presi.
 
 All the different scenarios we have encountered so far show more or less discrepancy in weight stability between certain settings.
 We have observed:
-- a target point in an area with higher sample denseness is more stable than an extreme outlier
-- different black-box models have highly different stableness
-- different sampling options and numerical features compared to categorical ones also show different behavior
+\begin{itemize}
+\item[-] a target point in an area with higher sample denseness is more stable than an extreme outlier
+\item[-] different black-box models have highly different stableness
+\item[-] different sampling options and numerical features compared to categorical ones also show different behavior
+\end{itemize}
+
 Based on these findings, we construct several experiments to investigate each point and to see, if we receive results showing a clear, monotonous tendency for weight stability with respect to available parameters.
 
 
@@ -296,10 +299,10 @@ knitr::include_graphics(c("images/sd_p_presi.png", "images/sd_pc_presi.png"))
 
 #### Amount of features selected - setup
 
-In the R LIME package, an option is available to only explain a fixed amount of features with the highest weight.
+In the R LIME package (@thomasp85lime), an option is available to only explain a fixed amount of features with the highest weight.
 This may sound interesting as a small side experiment to the general amount of features.
 Maybe this selection offers better stability in the results?
-For this, we use the full dataset instead of iterating over the number of features, but iterate over increasing parameter values of 'n_features' in the explainer function.
+For this, we use the full dataset instead of iterating over the number of features, but iterate over increasing parameter values of $'n\_features'$ in the explainer function.
 
 #### Amount of features selected - results
 
@@ -388,7 +391,7 @@ This leads us to the last experiment.
 #### Black-box overfit -- setup
 
 Before, we started with a very unsmooth model and gradually added more regularisation (more trees and higher minimum node size).
-But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure by increasing only a single hyperparameter: Extreme Gradient Boosting (Xgboost).
+But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure by increasing only a single hyperparameter: Extreme Gradient Boosting (@XGBoost).
 For this, we start with only two trees and double the amount with each iteration.
 All the other settings and the algorithm for receiving the results are kept the same.
 Additionally, we are also interested in the training error as it is a good indicator of when our boosting algorithm stops overfitting more (due to its nature of fitting residuals the test error can't get worse after the training data is fitted perfectly).
@@ -396,7 +399,7 @@ Additionally, we are also interested in the training error as it is a good indic
 
 #### Black-box overfit -- results
 
-As we can see in  \@ref(fig:figoverfit), as long as the Xgboost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer.
+As we can see in  \@ref(fig:figoverfit), as long as the XGBoost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer.
 Let's try to dissect why this is happening in such a dependent fashion:
 What makes the training error get smaller? 
 Reducing the residuals.
@@ -416,7 +419,7 @@ So far all the sampling methods have been about drawing out of a distribution re
 This global sampling disregards the covariance structure and results in a lot of samples drawn in areas so far away in distance from the point to explain, that their weight for the fitting process is essentially zero.
 (Just to not spark any confusion: 'Weight' in this subchapter revers to the weights in the loss function and not the weights of the explanation, as we have used so far.)
 These samples are a huge computational burden while having almost no influence at all on the fit.
-A solution to this problem is not implemented in any LIME package known to the author but @laugel2018defining gives a thorough overview of how local sampling tackles exactly that for the classification case.
+A solution to this problem is not implemented in the R and Python LIME packages (@thomasp85lime and @marcotcrlime) but @laugel2018defining gives a thorough overview of how local sampling tackles exactly that for the classification case.
 In short, the weighting based on a distance measure can be removed while we only sample in the area around the point to explain.
 Thus, points having a higher distance are sampled less likely or not at all, making the weights redundant and hugely increasing sampling efficiency.
 Because we only focused on regression tasks in our work so far, the figure \@ref(fig:figlocalsampling) will also only show this case -- for more details about classification please have a look into @laugel2018defining.
@@ -427,7 +430,7 @@ knitr::include_graphics(c("images/boston_sampled_tree_fst_better_slim.png", "ima
 
 In practice the increase in sampling efficiency wouldn't improve our computational burden since the sample size was a strictly monotonous benefactor for explanation stability and thus should not be reduced.
 But in the end, under the same settings, we simply draw more in the area of relevance, drastically increasing the sample size in the neighborhood of our explained point, making our results more stable and trustworthy.
-Due to the absence of implementation in the R LIME package, this new ambitious procedure could not be part of the experiments to reinforce the assertions just made, but further research is strongly recommended.
+Due to the absence of implementation in the R LIME package (@thomasp85lime), this new ambitious procedure could not be part of the experiments to reinforce the assertions just made, but further research is strongly recommended.
 
 
 ## Conclusion
@@ -437,11 +440,11 @@ The advantage of binning lies in a purely pragmatic way:
 By using bins, numerical features are handled as categoricals and the effects of classes occupied are a lot easier to explain to the layman than the slope of a regression line.
 In a more general way, we would ask ourselves in the end, what makes us have trust in a single explanation?
 Weight stability is almost independent of the weight size, so high weights are very trustworthy.
-Additionally, picking a very high sample size increases stability.
+Additionally, picking a very high sample size increases stability in our experiments.
 This should be done whenever possible as the only disadvantage is a longer runtime.
 Furthermore, what makes us have less trust in the LIME result?
 When we know the data set is very complex with a curvy/wavy fit almost surely going to happen, then we should be very careful.
-The same holds true if the model we are using is capable of extreme overfitting.
+The same is suggested by our empirical findings if the model we are using is capable of extreme overfitting.
 In this case, the less regularisation we put onto it, the less stable our LIME explanations are going to be.
 If we are unsure about the trustworthiness of our explanation, it is always beneficial to rerun the same explanation a few times and average the results -- this has a similar effect than a higher sample size, but this way we can actually use already computed results and we can also calculate a confidence interval, giving good indication of how much variance the results have.
 
@@ -449,7 +452,6 @@ If we are unsure about the trustworthiness of our explanation, it is always bene
 ```{r, eval = FALSE, echo = FALSE, fig.align = 'center', fig.cap = "LIME output", warning = FALSE}
 req_packages  = c("lime", "mlr", "ggplot2", "ranger", "mlbench")
 install_these = req_packages[!(req_packages %in% installed.packages())]
-# Wo bleibt meine Zitation ;-)? Better work with the Description file, though!
 
 if (length(install_these) > 0) install.packages(install_these)
 library(ggplot2)
