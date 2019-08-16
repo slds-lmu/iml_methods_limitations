@@ -2,22 +2,19 @@
 
 *Author: Thommy Dassen*
 
-## Introduction
-
 ```{r include=FALSE}
 library(dplyr) # for group by
 library(Ecdat) # icecream datasets
 library(ggdag) # for structural causal graphs
 library(ggpubr) # ggarrange
-library(gridExtra)
 library(iml)  # pdp
 library(randomForest)
 ```
 
 ## Introduction
-In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) are used to visualize various data generating mechanisms. Judea Pearl's framework of do-calculus is used to intervene on simulated data. The goal is to compare the PDP for a model without an intervention with the expected value under an intervention.  
+In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) are used to visualize various data generating mechanisms. Judea Pearl's framework of do-calculus is used to intervene on simulated data. The goal is to compare the PDP with the expected value under an intervention. We will see scenarios in which the PDP gives the same result as an intervention and scenarios in which the limitations of the PDP as a tool for causal interpretation become clear.  
 
-[@zhaohastie] formulated three elements that are needed to ensure that the PDP coincides with the intervention effect:  
+To interpret causally means to interpret one state (the effect) to be the result of another (the cause), with the cause being (partly) responsible for the effect, and the effect being partially dependent on the cause. [@zhaohastie] formulated three elements that are needed to ensure that the PDP coincides with the intervention effect:  
 1. A good predictive model which closely approximates the real relationship.  
 2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.  
 3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)  
@@ -47,13 +44,13 @@ data("Icecream")
 knitr::include_graphics('images/ice_cream.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
+Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Not all cases are as clear-cut as the one here: Think for instance of the link between smoking and depression. Does smoking cause depression, or depression cause smoking? Potentially they cause and reinforce each other. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
 
-Another problem with PDPs was shown by [include citation]. Assume we have data that is distributed as follows:
+Another problem with PDPs was shown by [@scholbeck]. Assume we have data that is distributed as follows:
 
-$$ Y =  X_{1}^2 - 15X_{1}X_2 + \epsilon $$
-$$ X_1 \sim \mathcal{U}(-1, 1), \ \ \ \ \ X_2 \sim \mathcal{U}(-1, 1), \ \ \ \ \ \epsilon \sim \mathcal{N}(0,0.1), \ \ \ \ \ N = 1000    $$
-Training a Random Forest on this data leads to the PDP+ICE plot below. The problem should be immediately clear. Looking at the PDP, one would assume that $X_1$ has virtually no impact on $Y$. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally and state that $X_1$ does not have any impact on $Y$ whatsoever. This would be correct for the average effect, but evidently not true on the individual level.
+$$ Y \leftarrow  X_{1}^2 - 15X_{1}X_2 + \epsilon $$
+$$ X_1 \sim \mathcal{U}(-1, 1), \ \ \ \ \ X_2 \sim \mathcal{U}(-1, 1), \ \ \ \ \ \epsilon \sim \mathcal{N}(0,0.1), \ \ \ \ \ N \leftarrow 1000    $$
+Training a Random Forest on this data leads to Figure \@ref(fig:Figure2) below. The problem should be immediately clear. Looking at the PDP, one would assume that $X_1$ has virtually no impact on $Y$. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally and state that $X_1$ does not have any impact on $Y$ whatsoever. This would be correct for the average effect, but evidently not true on the individual level.
 
 ```{r eval=FALSE, include=FALSE}
 set.seed(13)
@@ -82,7 +79,7 @@ The difference between a variable $X$ taking a value $x$ naturally and having a 
 
 Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs are per definition acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing edges from direct parents to the variable.
 
-In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by  [@pearl1993] adresses exatly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
+In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by  [@pearl1993] adresses exactly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
 
 $$P(Y|do(X_S = x_S)) = \int P(Y |X_S = x_S, X_C = x_C) dP(x_C)$$
 As [@zhaohastie] pointed out, this formula is basically the same as the formula for the partial
@@ -111,7 +108,7 @@ The process for obtaining the intervention curve was as follows:
 Let $X$ be the predictor variable of interest with possible values $x_{1}, x_{2}, x_{n}$ and $Y$ the response variable of interest.
 for each unique $i \in \{1,2,\dots,n\}$ do  
 (1) make a copy of the data set  
-(2) replace the original values of $X$ with the value $X_(i)$ of $X$ under intervention  
+(2) replace the original values of $X$ with the value $X_{(i)}$ of $X$ under intervention  
 (3) recompute all variables dependent on $X$ using the replacement values as input. This includes $Y$, but potentially also other features that rely on $X$ for their value.  Note that only $X$ is replaced with $X_i$ in the existing equations. Both the equations and error terms remain the same as before.  
 (4) Compute the average $Y_i$ in dataset $i$ given $X_i$.  
 (5) ($X_i$, $Y_i$) are a single point on the intervention curve.  
@@ -126,10 +123,10 @@ dagify(Y ~ X,
   ggdag() 
 ```
 
-In the first scenario, we have a chain DAG. Our variable $X$ is impacted by $Z$ and has a direct effect on $Y$. $Z$, however, does not. $X_C$ consists of $Z$, which is not a descendant of $X$. There is also no backdoor path between $X$ and $Y$. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario is as follows:
+In the first scenario, we have a chain DAG, seen in Figure \@ref(fig:Figure3). Our variable $X$ is impacted by $Z$ and has a direct effect on $Y$. $Z$, however, does not. $X_C$ consists of $Z$, which is not a descendant of $X$. There is also no backdoor path between $X$ and $Y$. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario are as follows:
 
-$$ Y = X + \epsilon_Y  $$
-$$ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ X = Z + \epsilon_X, \ \ \ \ \ N = 100 $$
+$$ Y \leftarrow X + \epsilon_Y  $$
+$$ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 $$
 
 As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ were varied across 3 levels leading to 9 settings.  
 
@@ -259,17 +256,17 @@ dagify(Y ~ Z,
   ggdag() 
 ```
 
-In this scenario the DAG again looks like a chain. $X$ has an effect on $Y$ through $Z$, but no direct relationship between $X$ and $Y$ exists. The initial simulation settings for this scenario were as follows: 
+In this scenario the DAG again looks like a chain. $X$ has an effect on $Y$ through $Z$, but no direct relationship between $X$ and $Y$ exists. Note that since $Z$ is a descendant of $X$, the PDP and intervention curve should not coincide. The initial simulation settings for this scenario are as follows: 
 
-$$ Y = Z + \epsilon_Y  $$
-$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X, \ \ \ \ \ Z = X + \epsilon_Z, \ \ \ \ \ N = 100 $$
+$$ Y \leftarrow Z + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X, \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
 
 
 ```{r  echo=FALSE, Figure6, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 2 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario2_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-As can be seen from Figure \@ref(fig:Figure6), the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show an inverse relationship between $X$ and $Y$ in comparison to the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
+As can be seen from Figure \@ref(fig:Figure6), the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show a negative slope for the relationship between $X$ and $Y$ in comparison to the overall positive slope for the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -378,7 +375,7 @@ annotate_figure(scenario_2_all,
 
 **Scenario 3**
 
-After two chains, we now have a scenario where $X$ has an influence on both $Z$ and $Y$ directly, as well as $Z$ having an impact on $Y$. This scenario is similar to the previous one with only an edge between $X$ and $Y$ having been added. As can be seen from the DAG below, $Z$ is still a descendant of $X$. The expectation is that the PDPs and the true interventions will not be equal.
+After two chains, we now have a scenario where $X$ has an influence on both $Z$ and $Y$ directly, as well as $Z$ having an impact on $Y$, as seen in Figure \@ref(fig:Figure7). X confounds $Z \rightarrow Y$ here. An example of a confounding variable in real life might be for instance the relationship between the *level of physical activity* and *weight gain*, which is confounded by *age*. *Age* affects both *weight gain* and the *level of physical activity* (on average), making it similar to the X in our scenario here. This scenario is similar to the previous one with only an edge between $X$ and $Y$ having been added. As can be seen from the DAG in \@ref(fig:Figure7), $Z$ is still a descendant of $X$. The expectation is that the PDPs and the true interventions will not be equal.
 
 ```{r Figure7, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="X is a confounding variable impacting both Z and Y"}
 dagify(Y ~ X,
@@ -390,8 +387,8 @@ dagify(Y ~ X,
 
 The similarity to the previous scenario can also be noted in the simulation settings, where the only difference is the addition of $X$ to the equation for $Y$.
 
-$$ Y = Z + X + \epsilon_Y  $$
-$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X, \ \ \ \ \ Z = X + \epsilon_Z, \ \ \ \ \ N = 100 $$
+$$ Y \leftarrow Z + X + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X, \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
 
 ```{r  echo=FALSE, Figure8, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 3 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario3_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
@@ -515,8 +512,8 @@ knitr::include_graphics('images/scenario4.jpeg', auto_pdf = getOption("knitr.gra
 ``` 
 
 For the simulation the initial settings look as follows, again increasing both the standard deviation of the error and the magnitude of observations from this starting point. 
-$$ Y = X + \epsilon_Y  $$
-$$ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X,\ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ N = 100 $$
+$$ Y \leftarrow X + \epsilon_Y  $$
+$$ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X,\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
 ```{r  echo=FALSE, Figure10, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario4_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
@@ -630,7 +627,7 @@ annotate_figure(scenario_4_all,
 
 **Scenario 5**
 
-In this scenario Z is a confounding variable. Since $X$ has no descendants and there is no backdoor path, the expectation here is that the PDPs will be similar to the intervention curve. 
+In this scenario Z is a confounding variable. This is similar to scenario 3 where $X$ was the confounder. Thinking back to the example of *age* being a confounding variable for *level of physical activity* and *weight gain*, in the previous example our $X$ was comparable to the confounder *age*. In this scenario, we can keep the same example, but say our variable $X$ is now comparable to the variable *level of physical activity* that is being confounded. Since $X$ has no descendants and there is no backdoor path, the expectation here is that the PDPs will be similar to the intervention curve. 
 
 ```{r Figure11, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Z is a confounding variable impacting both X and Y"}
 dagify(Y ~ X,
@@ -640,14 +637,16 @@ dagify(Y ~ X,
   ggdag() 
 ```
 
-$$ Y = Z + X + \epsilon_Y  $$
-$$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ X = Z + \epsilon_X, \ \ \ \ \ N = 100 $$
+The following simulation settings were used:
+
+$$ Y \leftarrow Z + X + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 $$
 
 ```{r  echo=FALSE, Figure12, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario5_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-Figure \@ref(fig:Figure12)
+We can see in Figure \@ref(fig:Figure12) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs are most accurate with the highest number of observations and lowest standard deviation of errors.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -755,12 +754,62 @@ annotate_figure(scenario_5_all,
 
 ## Theoretical Comparison
 
+The empirical comparison of the modeled PDP and the intervention curve is of course not ideal. The PDP is dependent on the model fit, meaning a badly fitted model could give unexpected results. Ideally, we want to see what a PDP would look like given a perfect model. One way to approximate this is the following:  
+  
+Taking the PDP formula:
 
+$$ \hat{f}(x_S) = \frac{1}{n} \sum_{i=1}^n \hat{f} (x_S, x_{C}^{(i)})$$
+
+We can replace $\hat{f} (x_S, x_{C}^{(i)})$ with the conditional expectation $E[Y|X_s = x_s, X_c = x_c]$. This is the only change we make.
+
+For a scenario where $X$ is a confounding variable, as seen in Figure \@ref(fig:Figure7) with scenario 3, we have:  
+$$  X \leftarrow  \epsilon_X , \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ Y \leftarrow X + Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) $$
+
+Then   
+
+$\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\
+ =E[x+z+\epsilon_Y] = x + z + E[\epsilon_y]\\
+ = x + z
+\end{aligned}$
+
+Similarly, for a scenario where $Z$ is a confounding variable, as seen in Figure \@ref(fig:Figure11) with scenario 5, the result is:  
+$$  Z \leftarrow  \epsilon_z , \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ Y \leftarrow X + Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) $$
+
+$\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\
+= x + z
+\end{aligned}$
+
+
+And for a scenario where we have a chain $X \rightarrow Z \rightarrow Y$, as seen in Figure \@ref(fig:Figure5) with scenario 2, this means the following:  
+
+$$  X \leftarrow  \epsilon_X , \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ Y \leftarrow Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) $$
+
+$\begin{aligned} E[Y|X = x, Z = z] = E[Z + \epsilon_Y| X = x, Z = z]\\
+= z
+\end{aligned}$
+
+When implemented, however, we did not get the the expected results. In fact, while the results of the modeled PDP versus the intervention curve seen earlier seemed to give expected results, the theoretical PDP implementation seemed to give the opposite of the expected result. The theoretical PDP was not similar to the intervention curve when the backdoor criterion was met, nor was it dissimilar when the backdoor criterion was not met. 
+I assume a mistake in implementation is at fault. In the end, I was unable to figure out where the mistake lies: In the modeling of the PDP, the calculation of the intervention curve, the derivation of the theoretical PDP or the implementation of the theoretical PDP. If no mistake was made, I was unable to come up with a satisfactory explanation of the results. An example of the unexpected results is seen in \@ref(fig:Figure13) . 
+
+```{r  echo=FALSE, Figure13, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where X is a confounder (Scenario 3)"}
+knitr::include_graphics('images/theoretical_pdp.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+The expectation for this scenario, as we have seen before when discussing Figure \@ref(fig:Figure8), is that the PDP and the Intervention Curve should not be the same. Now again, as before, we see that this is true for the modeled PDP on the left and the IC on the right. However, the theoretical PDP in the middle is the same as the IC, which expectation is it should not be.
+
+Figure \@ref(fig:Figure14) shows the result obtained for the scenario where Z is a confounder. This was our Scenario 5, discussed in Figure \@ref(fig:Figure12). We expect the PDP to be the same as the Intervention Curve here, because the backdoor criterion is met. Comparing the modeled PDP on the left to the IC on the right, this seems to be the case. However, as in the previous case, $E[Y]$ ranges from (-2, 2), making it different from the IC and the modeled PDP.
+
+
+```{r  echo=FALSE, Figure14, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where Z is a confounder (Scenario 5)"}
+knitr::include_graphics('images/theoretical_pdp2.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
 
 ## Conclusion
 
 Causal interpretability of a PDP is dependent on several things:
-(1) The backdoor criterion being met. We have seen that if the backdoor criterion is met, meaning no variable in the complement set $C$ is a descendant of our variable of interest, theoretically the PDP will be the same as the intervention curve. We say theoretically, because in practice it will also depend on:
+(1) The backdoor criterion being met. We have seen that if the backdoor criterion is met, meaning no variable in the complement set $C$ is a descendant of our variable of interest, the PDP should be the same as the intervention curve. We say should, because in practice it will also depend on:
 (2) The model fit. Even when the backdoor criterion is met, the PDP might not fully capture the exact same relationship as the intervention curve. Especially in extreme regions, where data is potentially sparse, the PDP can be deceptive. Same in scenarios with a higher(er) error and low number of observations.
 
-Point (2) can be checked through the standard goodness of fit measures that are pervasive in the statistics literature. Point (1) is more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met.
+Point (2) can be checked through the standard goodness of fit measures that are pervasive in the statistics literature. Point (1) is more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met. Still, it is a hard assumption to verify which could limit the confidence people have in a causal interpretation of a PDP.
+
+Additionally, a further limitation is that directionality is not something that can be deduced from a PDP. As we saw with the ice-cream example, sometimes this problem is trivial. In many cases, however, it is not and sufficient domain knowledge is necessary to ensure the correct process is depicted.
