@@ -93,7 +93,7 @@ Gradient boosting involves three elements:
 1. A loss function to be optimized
 
   * The loss function used depends on the type of problem being solved
-  *  Must be differentiable
+  * Must be differentiable
   
 2. A weak learner to make predictions
 
