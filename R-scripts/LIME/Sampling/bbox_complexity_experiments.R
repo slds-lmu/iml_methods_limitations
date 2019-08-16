@@ -360,7 +360,7 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
   theme(
     text = element_text(size = 25L),
     axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
+    #axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = ggplot2::margin(20,20,30,20)
   ) +
   ylab("Average Standard Deviation") +
@@ -568,7 +568,7 @@ plot = ggplot(plot_data, aes(y = sd, x = smoothness, color = type)) +
   theme(
     text = element_text(size = 25),
     axis.title.x = element_text(vjust = -4),
-    axis.text.x = element_text(angle = 45, hjust = 1),
+    #axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = ggplot2::margin(20,20,30,20)#,
     #axis.ticks.x = element_blank()
   ) +

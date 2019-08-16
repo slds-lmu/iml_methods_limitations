@@ -1,5 +1,5 @@
 #' @description Generating artificial LIME examples of a sinus shaped prediction surface
-plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sample_size = 10) {
+plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sample_size = 10, ylab = "target") {
   
   # create ground truth
   black_box = function(x) sin(x / model_smoothness)
@@ -26,15 +26,18 @@ plot_lime = function(model_smoothness = 270, sample_seed, kernel_width = 900, sa
   
   # visualize everything
   ggplot(data = NULL, aes(y = y, x = x)) +
-    geom_line(color = "#00C5CD", size = 1.5) +
-    geom_point(data = NULL, aes(x = x_samp, y = y_samp)) +
-    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 1) +
-    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 3) +
+    geom_line(color = "#00C5CD", size = 2.5) +
+    geom_line(data = NULL, aes(x = x, y = y_pred), color = "#e04d2e", size = 2) +
+    geom_point(data = NULL, aes(x = x_samp, y = y_samp), size = 4) +
+    geom_point(data = NULL, aes(x = x_ex, y = y_ex), color = "#c1c10d", size = 10) +
     geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
     geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
     theme_minimal() +
+    theme(
+      text = element_text(size = 30)
+    ) +
     ylim(c(-1.5, 1.5)) +
-    ylab("target") +
+    ylab(ylab) +
     xlab("feature")
   
 }
@@ -58,7 +61,7 @@ book_plot = function(means, sds, color1 = rgb(135/255, 150/255, 40/255), color2 
 }
 
 #' @description Function creating a plot of means and upper / lower ci bounds for each feature weight.
-presi_plot = function(means, lower, upper, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight", angle = 0, hjust = 0, ylim = NULL) {
+presi_plot = function(means, lower, upper, color1 = rgb(135/255, 150/255, 40/255), color2 = rgb(70/255, 95/255, 25/255), xlab = "Feature", ylab = "Weight", angle = 0, hjust = 0, ylim = NULL, size = 25) {
   
   ggplot(data = NULL, aes(x = names(means), y = means, ymin = lower, ymax = upper)) +
     geom_errorbar(color = color1, width = 1L, size = 1.6) +
@@ -66,7 +69,7 @@ presi_plot = function(means, lower, upper, color1 = rgb(135/255, 150/255, 40/255
     geom_hline(yintercept = 0L) +
     theme_minimal() +
     theme(
-      text = element_text(size = 25),
+      text = element_text(size = size),
       axis.title.x = element_text(vjust = -4),
       axis.text.x = element_text(angle = angle, hjust = hjust),
       plot.margin = ggplot2::margin(20,20,30,20)

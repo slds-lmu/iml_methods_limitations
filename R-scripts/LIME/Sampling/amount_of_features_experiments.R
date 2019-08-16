@@ -316,13 +316,13 @@ plot = ggplot(plot_data, aes(y = sd, x = p, color = type)) +
   geom_line(size = 2) +
   theme_minimal() +
   theme(
-    text = element_text(size = 25L),
+    text = element_text(size = 30L),
     axis.title.x = element_text(vjust = -4L),
     axis.text.x = element_text(angle = 45L, hjust = 1L),
     plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
-  ylab("Average Standard Deviation") +
+  ylab("Average Standard Dev.") +
   xlab("Added feature") +
   scale_x_continuous(
     breaks = 1L:12L,
@@ -345,13 +345,13 @@ plotc = ggplot(plot_datac, aes(y = sd, x = p, color = type)) +
   geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 25L),
+    text = element_text(size = 30L),
     axis.title.x = element_text(vjust = -4L),
     axis.text.x = element_text(angle = 45L, hjust = 1L),
     plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
-  ylab("Average Standard Deviation") +
+  ylab("") +
   xlab("Added feature") +
   scale_x_continuous(
     breaks = 1L:11L,
@@ -364,6 +364,12 @@ filename = paste0("images/sd_pc_presi2.png")
 png(filename, width = 700L, height = 500L)
 plotc
 dev.off()
+
+filename = paste0("images/sd_p_presi3.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot, plotc, nrow = 1)
+dev.off()
+
 
 
 #######################
@@ -500,13 +506,13 @@ plot = ggplot(plot_data, aes(y = sd, x = n_features, color = type)) +
   geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 25L),
+    text = element_text(size = 30L),
     axis.title.x = element_text(vjust = -4L),
-    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    #axis.text.x = element_text(angle = 45L, hjust = 1L),
     plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
-  ylab("Average Standard Deviation") +
+  ylab("Average Standard Dev.") +
   xlab("Amount selected features") +
   scale_x_continuous(
     breaks = 1:12L,
@@ -530,13 +536,13 @@ plotc = ggplot(plot_datac, aes(y = sd, x = n_features, color = type)) +
   geom_line(size = 2L) +
   theme_minimal() +
   theme(
-    text = element_text(size = 25L),
+    text = element_text(size = 30L),
     axis.title.x = element_text(vjust = -4L),
-    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    #axis.text.x = element_text(angle = 45L, hjust = 1L),
     plot.margin = ggplot2::margin(20L, 20L, 30L, 20L),
     axis.ticks.x = element_blank()
   ) +
-  ylab("Average Standard Deviation") +
+  ylab("") +
   xlab("Amount selected features") +
   scale_x_continuous(
     breaks = 1L:11L,
@@ -547,4 +553,9 @@ plotc = ggplot(plot_datac, aes(y = sd, x = n_features, color = type)) +
 filename = paste0("images/sd_nfeatc_presi2.png")
 png(filename, width = 700L, height = 500L)
 plotc
+dev.off()
+
+filename = paste0("images/sd_nfeat_presi3.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot, plotc, nrow = 1)
 dev.off()

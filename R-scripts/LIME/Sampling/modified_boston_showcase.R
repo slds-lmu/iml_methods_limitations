@@ -18,13 +18,13 @@ plot = ggplot() +
     data = data.frame(x_grid, y_pred=y_pred$data$response),
     aes(x = x_grid, y = y_pred),
     color = "#00C5CD",
-    size  = 2L
+    size  = 2.5
   ) +
-  geom_point(data = boston, aes(y = medv, x = lstat), size = 3L) +
+  geom_point(data = boston, aes(y = medv, x = lstat), size = 4L) +
   ylim(c(0, 50)) +
   theme_minimal() +
   theme(
-    text = element_text(size = 25L),
+    text = element_text(size = 30L),
     axis.title.x = element_text(vjust = -4),
     plot.margin = ggplot2::margin(20,20,30,20)
   ) +
@@ -66,31 +66,31 @@ plot_lime_boston = function(model_smoothness = 50, sample_seed, kernel_width = 2
   
   # visualize everything
   ggplot(data = NULL, aes(x = x_grid, y = y_grid$data$response)) +
-    geom_line(color = "#00C5CD", size = 2) +
-    geom_point(data = data, aes(x = x, y = y), size = 3) +
+    geom_line(color = "#00C5CD", size = 2.5) +
+    geom_point(data = data, aes(x = x, y = y), size = 4) +
     geom_line( data = NULL, aes(x = x_grid, y = y_pred), color = "#e04d2e", size = 2) +
-    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 5) +
+    geom_point(data = NULL, aes(x = x_ex,   y = y_ex  ), color = "#c1c10d", size = 10) +
     geom_vline(aes(xintercept = x_ex - sqrt(kernel_width))) +
     geom_vline(aes(xintercept = x_ex + sqrt(kernel_width))) +
     theme_minimal() +
     theme(
-      text = element_text(size = 25),
+      text = element_text(size = 30L),
       axis.title.x = element_text(vjust = -4),
       plot.margin = ggplot2::margin(20,20,30,20)
     ) +
     ylim(c(0, 50)) +
-    ylab("target") +
+    ylab("") +
     xlab("feature")
   
 }
 
 filename = paste0("images/boston_sampled_tree_1_presi.png")
 png(filename, width = 700L, height = 500L)
-plot_lime_boston(sample_seed = 1, kernel_width = 1)
+plot2 = plot_lime_boston(sample_seed = 1, kernel_width = 1)
 dev.off()
 
 
-filename = paste0("images/boston_sampled_tree_snd.png")
-png(filename, width = 700L, height = 500L)
-plot_lime_boston(sample_seed = 5, kernel_width = 1)
+filename = paste0("images/boston_sampled_tree_presi3.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot, plot2, nrow = 1)
 dev.off()

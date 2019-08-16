@@ -320,7 +320,7 @@ plot = ggplot(plot_data, aes(y = sd, x = n_permutations, color = type)) +
   theme(
     text = element_text(size = 25L),
     axis.title.x = element_text(vjust = -4L),
-    axis.text.x = element_text(angle = 45L, hjust = 1L),
+    #axis.text.x = element_text(angle = 45L, hjust = 1L),
     plot.margin = ggplot2::margin(20L, 20L, 30L, 20L)
   ) +
   ylab("Average Standard Deviation") +

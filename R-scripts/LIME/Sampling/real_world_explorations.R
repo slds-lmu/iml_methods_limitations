@@ -26,8 +26,10 @@ regr_model = makeLearner("regr.ranger")
 black_box  = train(regr_model, btask)
 explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
 
+
 # pick mean of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
@@ -43,17 +45,15 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_standard_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+plot1 = presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.35), size = 30)
+plot1
 dev.off()
 
-filename = paste0("images/boston_100iter_standard.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
 
 
 # pick max of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
@@ -69,20 +69,24 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_outlier_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+plot2 = presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.35), size = 30, ylab = "")
+plot2
 dev.off()
 
 
-filename = paste0("images/boston_100iter_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
+filename = paste0("images/boston_meanVSmax.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot1, plot2, nrow = 1)
 dev.off()
+
 
 # switch to bins
 explainer  = lime(boston[, -ncol(boston)], black_box)
 
+
 # pick mean of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(boston)-1)
@@ -99,32 +103,14 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_bins_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.3))
+plot2 = presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.4, 0.35), size = 30, ylab = "")
+plot2
 dev.off()
 
 
-filename = paste0("images/boston_100iter_bins.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
-
-# pick max of each feature as data point
-data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/boston_100iter_bins_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
+filename = paste0("images/boston_kdeVSbins.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot1, plot2, nrow = 1)
 dev.off()
 
 
@@ -133,8 +119,10 @@ regr_model = makeLearner("regr.lm")
 black_box  = train(regr_model, btask)
 explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
 
+
 # pick mean of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
@@ -151,74 +139,10 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_lm_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
+plot2 = presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.65, 0.45), size = 30, ylab = "")
+plot2
 dev.off()
 
-filename = paste0("images/boston_lm.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
-
-
-# pick max of each feature as data point
-data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/boston_lm_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
-
-
-# switch to bins
-explainer  = lime(boston[, -ncol(boston)], black_box)
-
-# pick mean of each feature as data point
-data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/boston_lm_bins.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
-
-
-# pick max of each feature as data point
-data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(boston)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/boston_lm_bins_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
 
 
 ### OVERFITTING MODEL
@@ -226,8 +150,10 @@ regr_model = makeLearner("regr.ranger", num.trees = 1, min.node.size = 1)
 black_box  = train(regr_model, btask)
 explainer  = lime(boston[, -ncol(boston)], black_box, bin_continuous = FALSE, use_density = FALSE)
 
+
 # pick mean of each feature as data point
 data_point = as.data.frame(lapply(boston[, -ncol(boston)], mean))
+set.seed(123)
 # set index of datapoint to use
 limes = sapply(1:100, function(k) {
   interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
@@ -243,32 +169,14 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/boston_tree_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.45, 0.35))
+plot1 = presi_plot(means, lower = ci_lower, ci_upper, angle = 45L, hjust = 1L, ylim = c(-0.65, 0.45), size = 30)
+plot1
 dev.off()
 
 
-filename = paste0("images/boston_tree.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
-dev.off()
-
-
-# pick max of each feature as data point
-data_point = as.data.frame(lapply(boston[, -ncol(boston)], max))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(boston)-1, dist_fun = "euclidian")
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/boston_tree_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds)
+filename = paste0("images/boston_treeVSlm.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot1, plot2, nrow = 1)
 dev.off()
 
 
@@ -317,12 +225,12 @@ regr_model = makeLearner("regr.ranger")
 black_box  = train(regr_model, btask)
 explainer  = lime(bikes[, -ncol(bikes)], black_box)
 
+
 # pick majority of each feature as data point
 data_point = as.data.frame(lapply(
   bikes[, -ncol(bikes)],
   function(vec) names(table(vec))[which.max(table(vec))]
 ))
-
 set.seed(123)
 # repeat explanation 100 times
 limes = sapply(1:100, function(k) {
@@ -340,14 +248,10 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_standard_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
+plot1 = presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0), size = 30)
+plot1
 dev.off()
 
-
-filename = paste0("images/bikes_standard.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
 
 
 # pick minority of each feature as data point
@@ -373,13 +277,14 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_outlier_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0))
+plot2 = presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.0, 1.0), size = 30, ylab = "")
+plot2
 dev.off()
 
 
-filename = paste0("images/bikes_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
+filename = paste0("images/bikes_majVSmin.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot1, plot2, nrow = 1)
 dev.off()
 
 
@@ -411,38 +316,11 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_lm_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 1.1))
+plot2 = presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.1, 1.1), size = 30, ylab = "")
+plot2
 dev.off()
 
 
-filename = paste0("images/bikes_lm.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-
-# pick minority of each feature as data point
-data_point = as.data.frame(lapply(
-  bikes[, -ncol(bikes)],
-  function(vec) names(table(vec))[which.min(table(vec))]
-))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-
-filename = paste0("images/bikes_lm_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
 
 ####
 
@@ -474,162 +352,13 @@ ci_lower = apply(limes, MARGIN = 1, quantile, 0.025)
 
 filename = paste0("images/bikes_tree_presi.png")
 png(filename, width = 700L, height = 500L)
-presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-0.6, 1.1))
+plot1 = presi_plot(means, lower = ci_lower, ci_upper, color1 = "#62b1e7", color2 = "#6274e7", angle = 45L, hjust = 1L, ylim = c(-1.1, 1.1), size = 30)
+plot1
+dev.off()
+
+filename = paste0("images/bikes_treeVSlm.png")
+png(filename, width = 1400L, height = 500L)
+gridExtra::grid.arrange(plot1, plot2, nrow = 1)
 dev.off()
 
 
-filename = paste0("images/bikes_tree.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-
-# pick minority of each feature as data point
-data_point = as.data.frame(lapply(
-  bikes[, -ncol(bikes)],
-  function(vec) names(table(vec))[which.min(table(vec))]
-))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(bikes)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-
-filename = paste0("images/bikes_tree_outlier.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#62b1e7", color2 = "#6274e7", angle = 45, hjust = 1)
-dev.off()
-
-
-# MORE BIKES
-
-bikes = read.csv("datasets/day.csv")
-# remove undesired variables
-bikes = bikes[-which(names(bikes) %in% c("casual", "registered", "instant", "dteday"))]
-bikes[c("temp", "atemp", "hum", "windspeed")] = as.data.frame(lapply(
-  bikes[c("temp", "atemp", "hum", "windspeed")],
-  function(x) x/sd(x)
-))
-
-# normalize
-bikes$cnt = bikes$cnt / sd(bikes$cnt)
-
-bikes_num = as.data.frame(bikes[c("temp", "atemp", "hum", "windspeed")])
-bikes_num$cnt = bikes$cnt
-
-b_numtask = makeRegrTask(data = bikes_num, target = "cnt")
-
-# normal non-continuous model
-regr_model = makeLearner("regr.ranger")
-black_box  = train(regr_model, b_numtask)
-explainer  = lime(bikes_num[, -ncol(bikes_num)], black_box)
-
-# pick majority of each feature as data point
-data_point = as.data.frame(lapply(
-  bikes_num[, -ncol(bikes_num)],
-  mean
-))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(bikes_num)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-
-filename = paste0("images/bikes_bins_lime.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
-dev.off()
-
-# quantile binning with 4 bins
-bikes_bins = as.data.frame(lapply(
-  bikes[c("temp", "atemp", "hum", "windspeed")],
-  function(vec) {
-    quantiles = quantile(vec)
-    quantiles[5] = Inf
-    sapply(vec, function(x) sum(x >= quantiles))
-  }
-))
-
-bikes_bins$cnt = bikes$cnt
-bikes_bins[-ncol(bikes_bins)] = lapply(bikes_bins[-ncol(bikes_bins)], as.factor)
-
-
-b_binstask = makeRegrTask(data = bikes_bins, target = "cnt")
-
-# normal non-continuous model
-regr_model = makeLearner("regr.ranger")
-black_box  = train(regr_model, b_binstask)
-explainer  = lime(bikes_bins[, -ncol(bikes_bins)], black_box)
-
-# put mean point into bins
-data_point = as.data.frame(lapply(
-  names(data_point),
-  function(name) {
-    quantiles = quantile(bikes_num[[name]])
-    quantiles[5] = Inf
-    as.factor(sum(data_point[[name]] >= quantiles))
-  }
-))
-names(data_point) = names(bikes_bins[-ncol(bikes_bins)])
-
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(bikes_bins)-1)
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-filename = paste0("images/bikes_manual_bins.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
-dev.off()
-
-##########
-### non bins, but kernel density estimation
-
-# normal non-continuous model
-regr_model = makeLearner("regr.ranger")
-black_box  = train(regr_model, b_numtask)
-explainer  = lime(bikes_num[, -ncol(bikes_num)], black_box, bin_continuous = FALSE, use_density = FALSE)
-
-# pick majority of each feature as data point
-data_point = as.data.frame(lapply(
-  bikes_num[, -ncol(bikes_num)],
-  mean
-))
-# set index of datapoint to use
-limes = sapply(1:100, function(k) {
-  interim = explain(data_point, explainer, n_features = ncol(bikes_num)-1, dist_fun = "euclidian")
-  weights_l = interim$feature_weight
-  names(weights_l) = interim$feature
-  weights_l
-})
-
-
-means = apply(limes, MARGIN = 1, mean)
-sds   = apply(limes, MARGIN = 1, sd)
-
-
-filename = paste0("images/bikes_no_bins.png")
-png(filename, width = 700L, height = 500L)
-book_plot(means, sds, color1 = "#df8a4f", color2 = "#c64b00", angle = 45, hjust = 1)
-dev.off()
