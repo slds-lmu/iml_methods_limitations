@@ -51,7 +51,7 @@ After this brief review of the fundamentals of permutation feature importance, w
 
 **When to use test or training data? **
 
-At the beginning, we will discuss the case for test data and for training data based on @molnarimlbook.
+At the beginning, we will discuss the case for test data and for training data based on @molnar2019.
 
 Test data:
 First, we will focus on the more intuitive case for test data. One of the first things you learn about machine learning during your statistical studies is that one should not use the same data set on which the model was fitted for the evaluation of model quality because the results are too positive, which means that the model seems to work much better than it does in reality and since the permutation feature imporance is based on the model error we should evaluate the model based on the unseen test data. If the permutation feature importance is calculated on the training data instead, the impression is erroneously given that features are important for prediction. The model has only overfitted and the feature is actually unimportant. 
