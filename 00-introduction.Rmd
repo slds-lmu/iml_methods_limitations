@@ -13,6 +13,7 @@ Second, the algorithmic modeling approach that uses algorithmic models and treat
 Within the statistics community the data modeling approach was prevalently dominant for a long time. However, especially in the last decade the increasing availability of enormous amounts of complex and unstructured data as well as the increase in processing power of computers served as a breeding ground for a strong shift to the algorithmic modeling approach, primarily for two reasons.  
 First, the data modeling approach is not applicable to exciting problems like text, speech and image recognition. Second, for complex prediction problems new algorithms such as random forests and neural nets outperform classical models in prediction accuracy as they can model complex relationships in the data. 
 For these reasons, more and more researchers switched from the data modeling approach to the algorithmic modeling approach that is much more common under the name machine learning.  
+
 But what about the interpretability? As we learned in the first paragraph machine learning algorithms are black box models that do not provide any direct explanation for their predictions. Hence, the questions arises whether we need to know why an algorithm makes a certain prediction? To get a better feeling for this question it's helpful to understand how algorithms learn to make predictions and for which tasks machine learning is used in industry and academia.
 
 
@@ -21,7 +22,6 @@ But what about the interpretability? As we learned in the first paragraph machin
 * Use cases in academia
 * Uses cases in industry
 * Summary
-*** Note: Citations to be inserted
  
 Algorithms learn to make predictions from training data. Thus, algorithms also pick up biases of the training data and hence may not be robust under certain circumstances, e.g. they perform well on a test set, but not in the real-world. This can lead to undesired outcomes.  
 For instance, consider a simple husky versus wolf classifier that misclassifies some huskies as wolves. Since the machine learning model does not give any information on how the response and input variables are associated, we do not know why it classified a husky as a wolf. Using methods that make machine learning algorithms interpretable and that we will discuss later in the book, we would find that the misclassification was due to the snow on the image. The algorithm learned to use snow as a feature for classifying images as wolf. This might make sense in the training dataset, but not in the real-world. Thus, in this example interpretability helps us to understand how the algorithm gets to the result and hence, we know in which cases the robustness of the algorithm is not given.  
@@ -39,9 +39,9 @@ For instance, if the wrong movie is suggested to us it does not really matter, b
 
 To conclude, adding interpretability to machine learning algorithms is necessary in both academic and industrial applications. While we distinguished between academia and industry settings the general points, causality, robustness & reliability, trust and fairness are of course valid in both worlds.  
 However, for academia interpretability is especially key to identify causal relationships and increase the reliability and robustness of scientific discoveries made by the help of machine learning algorithms.  
-In industrial settings establishing trust in and fairness of machien learning systems matters most in low-risk environments whereas robustness and reliability is key to high-risk environments where machines take over decisions that have far reaching consequences.  
+In industrial settings establishing trust in and fairness of machine learning systems matters most in low-risk environments whereas robustness and reliability is key to high-risk environments where machines take over decisions that have far reaching consequences.  
 
-Now that we established the importance of interpretability, how do put this into practice? A restriction to structurally simpler models has the drawback that better performing models are often excluded a priori from model selection. Do we trade of prediction versus information and go back to the old models? - No!  
+Now that we established the importance of interpretability, how do we put this into practice? A restriction to structurally simpler models has the drawback that better performing models are often excluded a priori from model selection. Hence, do we trade of prediction versus information and go back to the old models? - No!  
 We use the data modeling approach to understand the algorithmic modeling approach and thus combine the best out of both approaches. 
 
 ## Interpretable Machine Learning (work in progress)
