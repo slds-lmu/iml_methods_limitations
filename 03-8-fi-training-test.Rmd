@@ -113,7 +113,7 @@ Generalize this idea:
 $F(x)=F_1(x)\mapsto F_2(x)=F_1(x)+h_1(x) ... \mapsto F_M(x)=F_{M-1}(x)+h_{M-1}(x)$
 
 ```{r,out.width="70%", echo = FALSE, message = FALSE, fig.align='center', fig.cap = "Simplified visualization of a gradient boosting machine. One trains a model based on the data. Then you fit a model to the resulting residuals. The result is then used to create a new model. This process is repeated until the desired result is achieved."}
-knitr::include_graphics("/images/ExampleGBM2.jpg",auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics("images/ExampleGBM2.jpg",auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 We forced the model to overfit via the depth of each tree and to underfit via the minimum samples used at each node.
@@ -693,7 +693,7 @@ But now we come to the problems regarding the meaningfulness of feature importan
 Our third question was, if correlation does effect the decision wheter to use test or training data for calculating the permutation feature importance:
 
 ```{r,out.width="70%", echo = FALSE, message = FALSE, fig.align='center', fig.cap = "Visualisation of the impact of correlation on the feature importance. As you have seen above, correlation is a problem regarding permutation feature importance but does not effect the decision regarding test vs. training data"}
-knitr::include_graphics("C:/Users/Cord/Documents/images/summary_correlation.jpg",auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics("images/summary_correlation.jpg",auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 ## Summary
