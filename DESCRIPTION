@@ -12,5 +12,8 @@ Depends:
   mlr,
   mvtnorm,
   matrixcalc,
-  ggpubr
+  ggpubr,
+  corrplot,
+  kernlab,
+  ggcorrplot
   
