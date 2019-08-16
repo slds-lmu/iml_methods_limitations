@@ -27,7 +27,7 @@ The first condition is an important one, because there is a big difference betwe
 ## A brief look at PDP problems  
 
 Before we have a look at various scenarios and settings involving interventions, let's look at two examples of other problems that can occur when using a PDP. The first example shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE ,}
 data("Icecream")
  rf.icecream = randomForest(cons ~ temp
                          , data = Icecream, importance = T)
@@ -40,7 +40,11 @@ data("Icecream")
   mod_reverse = Predictor$new(rf.icecream_reverse, data = Icecream)
   pdp.obj_reverse = Partial$new(mod_reverse, feature = c("cons"))  
   p2 <- plot(pdp.obj_reverse) 
-  grid.arrange(p1, p2, ncol = 2)
+  
+```
+
+```{r  echo=FALSE, Figure1, out.width='100%', fig.align= 'left', fig.cap="The PDP on the left shows temperature causing ice-cream consumption. The PDP on the right shows ice-cream consumption causing temperatures. Which one is correct?"}
+knitr::include_graphics('images/ice_cream.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
@@ -49,9 +53,9 @@ Another problem with PDPs was shown by [include citation]. Assume we have data t
 
 $$ Y =  X_{1}^2 - 15X_{1}X_2 + \epsilon $$
 $$ X_1 \sim \mathcal{U}(-1, 1), \ \ \ \ \ X_2 \sim \mathcal{U}(-1, 1), \ \ \ \ \ \epsilon \sim \mathcal{N}(0,0.1), \ \ \ \ \ N = 1000    $$
-Training a Random Forest on this data leads to the PDP+ICE plot below. The problem should be immediately clear. Looking at the PDP, one would assume that $X_1$ has virtually no impact on $Y$. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally.
+Training a Random Forest on this data leads to the PDP+ICE plot below. The problem should be immediately clear. Looking at the PDP, one would assume that $X_1$ has virtually no impact on $Y$. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally and state that $X_1$ does not have any impact on $Y$ whatsoever. This would be correct for the average effect, but evidently not true on the individual level.
 
-```{r echo=FALSE}
+```{r eval=FALSE, include=FALSE}
 set.seed(13)
 N <- 1000
 e <- rnorm(N, 0, 0.1)
@@ -67,14 +71,16 @@ pdp.obj = FeatureEffect$new(mod, feature = c("x1"), method = "pdp+ice")
 plot(pdp.obj)
 
 ```
-
+```{r  echo=FALSE, Figure2, out.width='100%', fig.align= 'left', fig.cap="The average effect of the PDP (yellow line) hides the heterogeneity of the individual effects "}
+knitr::include_graphics('images/avg_vs_individual.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
 
 ## Causal Interpretability: Interventions and Directed Acyclical Graphs
 
 In the rest of this chapter, we will use the concept of interventions and show causal structures visually. When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. 
 The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
 
-Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs have to be acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing an edge that is directed towards the variable we fix. 
+Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs are per definition acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing edges from direct parents to the variable.
 
 In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by  [@pearl1993] adresses exatly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
 
@@ -85,7 +91,7 @@ dependence of $g$ on a subset of variables $X_S$ given output $g(x)$:
 $$ g_S(x_S) = \mathbb E_{x_C}[g(x_S, X_C)] = \int g(x_S, x_C)dP(x_C)  $$
 If we take the expectation of Pearl's adjustment formula we get:
 $$ E[Y |do(X_S = x_S)] = \int E[Y |X_S = x_S, X_C = x_C] dP(x_C) $$
-These last two formulas thus seem to be the same, if $C$ is the complement of $S$. 
+These last two formulas are the same, if $C$ is the complement of $S$. 
 
 [@pearl1993] defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It states that:
 
@@ -112,7 +118,7 @@ for each unique $i \in \{1,2,\dots,n\}$ do
 
 **Scenario 1:  **
 
-```{r echo=FALSE}
+```{r Figure3, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Chain DAG where X has a direct impact on Y, but is dependent on Z"}
 set.seed(18)
 dagify(Y ~ X,
        X ~ Z
@@ -122,18 +128,21 @@ dagify(Y ~ X,
 
 In the first scenario, we have a chain DAG. Our variable $X$ is impacted by $Z$ and has a direct effect on $Y$. $Z$, however, does not. $X_C$ consists of $Z$, which is not a descendant of $X$. There is also no backdoor path between $X$ and $Y$. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario is as follows:
 
-$$ Y = X + \epsilon  $$
-$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \sim Z + \epsilon, \ \ \ \ \ N = 100 $$
+$$ Y = X + \epsilon_Y  $$
+$$ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ X = Z + \epsilon_X, \ \ \ \ \ N = 100 $$
 
 As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ were varied across 3 levels leading to 9 settings.  
 
-![Figure 1](./images/scenario1_all.jpeg)
+```{r  echo=FALSE, Figure4, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 1 of PDPs under various settings with the (yellow) intervention curve on the right"}
+knitr::include_graphics('images/scenario1_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
 
 Overall the PDPs match the intervention curves fairly well. Outside of the extreme regions of $X$, where some curvature is present, the linear quality of the intervention curve is evident in the PDPs. Furthermore, the scale of $\hat{Y}$ is comparable to the scale of $Y_{intervention}$ in most settings.
 
 
 
-```{r eval=FALSE, include=TRUE}
+```{r eval=FALSE, include=FALSE}
 # pdp
 pdp_simulation <- function(runs, N, error_std){ 
   pdp_simulations <- setNames(data.frame(matrix(ncol = 2, nrow = 0)),  c("X1", "y_hat"))
@@ -242,7 +251,7 @@ annotate_figure(scenario_1_all,
 
 **Scenario 2: Chain DAG**
 
-```{r echo=FALSE}
+```{r Figure5, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Chain DAG where X has no a direct impact on Y, but only indirectly through Z"}
 set.seed(18)
 dagify(Y ~ Z,
        Z ~ X
@@ -252,11 +261,15 @@ dagify(Y ~ Z,
 
 In this scenario the DAG again looks like a chain. $X$ has an effect on $Y$ through $Z$, but no direct relationship between $X$ and $Y$ exists. The initial simulation settings for this scenario were as follows: 
 
-$$ Y = Z + \epsilon  $$
-$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim X + \epsilon, \ \ \ \ \ N = 100 $$
-As can be seen from the plot below, the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show an inverse relationship between $X$ and $Y$ in comparison to the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
+$$ Y = Z + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X, \ \ \ \ \ Z = X + \epsilon_Z, \ \ \ \ \ N = 100 $$
 
-![Figure 2](./images/scenario2_all.jpeg)
+
+```{r  echo=FALSE, Figure6, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 2 of PDPs under various settings with the (yellow) intervention curve on the right"}
+knitr::include_graphics('images/scenario2_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
+
+As can be seen from Figure \@ref(fig:Figure6), the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show an inverse relationship between $X$ and $Y$ in comparison to the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -367,7 +380,7 @@ annotate_figure(scenario_2_all,
 
 After two chains, we now have a scenario where $X$ has an influence on both $Z$ and $Y$ directly, as well as $Z$ having an impact on $Y$. This scenario is similar to the previous one with only an edge between $X$ and $Y$ having been added. As can be seen from the DAG below, $Z$ is still a descendant of $X$. The expectation is that the PDPs and the true interventions will not be equal.
 
-```{r echo=FALSE}
+```{r Figure7, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="X is a confounding variable impacting both Z and Y"}
 dagify(Y ~ X,
        Y ~ Z,
        Z ~ X
@@ -377,12 +390,14 @@ dagify(Y ~ X,
 
 The similarity to the previous scenario can also be noted in the simulation settings, where the only difference is the addition of $X$ to the equation for $Y$.
 
-$$ Y = Z + X + \epsilon  $$
-$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim X + \epsilon, \ \ \ \ \ N = 100 $$
+$$ Y = Z + X + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X, \ \ \ \ \ Z = X + \epsilon_Z, \ \ \ \ \ N = 100 $$
 
-![Figure 3](./images/scenario3_all.jpeg)
+```{r  echo=FALSE, Figure8, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 3 of PDPs under various settings with the (yellow) intervention curve on the right"}
+knitr::include_graphics('images/scenario3_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+```
 
-The expectation was that the PDP would not show the same results as the true intervention. On first glance, the PDP does not seem to be as wrong as it was in scenario 2. An overall upward trend seen in the true intervention on the right is also captured by the PDPs in all settings. However, big differences do exist. First of all, the scale of $\hat{Y}$ is off in every setting. This issue gets worse both when the standard deviation of the error increases and when the number of observations is increased. The worst setting is the bottom right, where $N = 10.000$ and the standard deviation of the error is 0.5. The range of $\hat{Y}$ is very small compared to the true intervention next to it and the slope is not steep enough. In fact, the correct slope can only be seen in a very few points: In the top row plot 2 and 3 around $X=0$ and on the second row plot 3, also around $X=0$.
+The expectation was that the PDP would not show the same results as the true intervention. On first glance in Figure \@ref(fig:Figure8), the PDPs do not seem to be as inaccurate as they were in scenario 2. An overall upward trend seen in the true intervention on the right is also captured by the PDPs in all settings. However, big differences do exist. First of all, the scale of $\hat{Y}$ is off in every setting. This issue gets worse both when the standard deviation of the error increases and when the number of observations is increased. The worst setting is the bottom right, where $N = 10.000$ and the standard deviation of the error is 0.5. The range of $\hat{Y}$ is very small compared to the true intervention next to it and the slope is not steep enough. In fact, the correct slope can only be seen in a very few points: In the top row plot 2 and 3 around $X=0$ and on the second row plot 3, also around $X=0$.
 Overall the result is not as poor as in scenario 2, but a causal interpretation of these plots would lead to a severe underestimation of the impact $X$ has on $Y$.
 
 ```{r eval=FALSE, include=FALSE}
@@ -495,14 +510,18 @@ annotate_figure(scenario_3_all,
 
 Scenario 4 consists of a direct effect of $X$ on $Y$. $Z$ meanwhile is unrelated to both $X$ and $Y$. It is however included in the simulation and included in the model that is run to create the PDPs. In a non-simulated setting, $Z$ can be seen as a variable that we assume might be related to $Y$ and therefore include, but in actuality has nothing to do with the causal process and should not be included. We will see now how the PDP deals with this kind of variable in the mix.
 
-![Figure 4](./images/scenario4.jpeg) 
+```{r  echo=FALSE, Figure9, out.width='100%', fig.align= 'left', fig.cap="X directly impacts Y. Z is included in our model, but has no relationship to X or Y"}
+knitr::include_graphics('images/scenario4.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
 
 For the simulation the initial settings look as follows, again increasing both the standard deviation of the error and the magnitude of observations from this starting point. 
-$$ Y = X + \epsilon  $$
-$$ \epsilon ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ X \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \sim \mathcal{U}(-1,1), \ \ \ \ \ N = 100 $$
-![Figure 4](./images/scenario4_all.jpeg)
+$$ Y = X + \epsilon_Y  $$
+$$ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X = \epsilon_X,\ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ N = 100 $$
+```{r  echo=FALSE, Figure10, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right"}
+knitr::include_graphics('images/scenario4_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
 
-The PDPs are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
+The PDPs in Figure \@ref(fig:Figure10) are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -608,6 +627,134 @@ annotate_figure(scenario_4_all,
                 fig.lab.face = "bold")
 
 ```
+
+**Scenario 5**
+
+In this scenario Z is a confounding variable. Since $X$ has no descendants and there is no backdoor path, the expectation here is that the PDPs will be similar to the intervention curve. 
+
+```{r Figure11, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Z is a confounding variable impacting both X and Y"}
+dagify(Y ~ X,
+       Y ~ Z,
+       X ~ Z
+) %>% 
+  ggdag() 
+```
+
+$$ Y = Z + X + \epsilon_Y  $$
+$$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z = \epsilon_Z, \ \ \ \ \ X = Z + \epsilon_X, \ \ \ \ \ N = 100 $$
+
+```{r  echo=FALSE, Figure12, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right"}
+knitr::include_graphics('images/scenario5_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+``` 
+
+Figure \@ref(fig:Figure12)
+
+```{r eval=FALSE, include=FALSE}
+# pdp
+pdp_simulation <- function(runs, N, error_std){ 
+  pdp_simulations <- setNames(data.frame(matrix(ncol = 3, nrow = 0)),  c("X", "Y_hat", "run_number"))
+  all_dfs <<- setNames(data.frame(matrix(ncol = 3, nrow = 0)),  c("X", "Z", "Y"))
+  for(i in 1:runs){
+    e <- rnorm(N,0, error_std)
+    Z <- runif(N, -1, 1)
+    X <- Z + e
+    Y <- X + Z + e
+    df <- data.frame(X, Z, Y)
+    all_dfs <<- rbind.data.frame(all_dfs, df)
+    rf.basic <<- randomForest(Y ~ . , data = df, importance = T)
+    mod = Predictor$new(rf.basic, data = df)
+    pdp.obj = FeatureEffect$new(mod, feature = c("X"), method = "pdp") 
+    p_pdp_mod <- plot(pdp.obj)
+    
+    simulation <- as.data.frame(pdp.obj$results[,1:2])
+    simulation$run <- i
+    colnames(simulation) <- c("X", "Y_hat", "run_number")
+    pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
+  }
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+}
+# standard deviation eq 0.1
+scen5_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
+scen5_plot_1 <- scen5_plot_1 + labs(x = "X", y = "Y_hat")
+scen5_plot_2 <- pdp_simulation(runs=20, N = 1000, error_std=0.1)
+scen5_plot_2 <- scen5_plot_2 + labs(x = "X", y = "Y_hat")
+scen5_plot_3 <- pdp_simulation(runs=20, N = 10000, error_std=0.1)
+scen5_plot_3 <- scen5_plot_3 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.3
+scen5_plot_4 <- pdp_simulation(runs=20, N = 100, error_std=0.3)
+scen5_plot_4 <- scen5_plot_4 + labs(x = "X", y = "Y_hat")
+scen5_plot_5 <- pdp_simulation(runs=20, N = 1000, error_std=0.3)
+scen5_plot_5 <- scen5_plot_5 + labs(x = "X", y = "Y_hat")
+scen5_plot_6 <- pdp_simulation(runs=20, N = 10000, error_std=0.3)
+scen5_plot_6 <- scen5_plot_6 + labs(x = "X", y = "Y_hat")
+# standard deviation eq 0.5
+scen5_plot_7 <- pdp_simulation(runs=20, N = 100, error_std=0.5)
+scen5_plot_7 <- scen5_plot_7 + labs(x = "X", y = "Y_hat")
+scen5_plot_8 <- pdp_simulation(runs=20, N = 1000, error_std=0.5)
+scen5_plot_8 <- scen5_plot_8 + labs(x = "X", y = "Y_hat")
+scen5_plot_9 <- pdp_simulation(runs=20, N = 10000, error_std=0.5)
+scen5_plot_9 <- scen5_plot_9 + labs(x = "X", y = "Y_hat")
+
+# intervention
+
+intervention <- function(runs, N, error_std){ 
+  df_intervention_all <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("X", "Z", "Y"))
+  for(i in 1:runs){
+    
+    e <- rnorm(N,0, error_std)
+    Z <- runif(N, -1, 1)
+    X <- Z + e
+    Y <- X + Z + e
+    df <- data.frame(X, Z, Y)
+    for(j in 1:length(unique(df$X))){
+      X <- unique(df$X)[j]
+      Y <- X + Z + e
+      df_intervention <- data.frame(X, Z, Y)
+      df_intervention_all <- rbind.data.frame(df_intervention_all, df_intervention)
+    }
+  }
+  
+  df_intervention_group <- df_intervention_all %>%
+    group_by(X) %>%
+    summarise(Y_intervention = mean(Y),
+              n = n()) %>%
+    
+    arrange(X)
+  
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+}
+# standard deviation eq 0.1
+scen5_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
+# standard deviation eq 0.3
+scen5_int_plot_5 <- intervention(runs=1, N = 1000, error_std=0.3)
+# standard deviation eq 0.5
+scen5_int_plot_8 <- intervention(runs=1, N = 1000, error_std=0.5)
+
+
+scenario_5_all <- ggarrange(scen5_plot_1+ coord_cartesian(ylim=(-1:1)), # N = 100,  std = 0.1
+                            scen5_plot_2+ coord_cartesian(ylim=(-1:1)), # N = 1000, std = 0.1
+                            scen5_plot_3+ coord_cartesian(ylim=(-1:1)), # N = 2000, std = 0.1
+                            scen5_int_plot_2+ coord_cartesian(ylim=(-1:1)),
+                            
+                            scen5_plot_4+ coord_cartesian(ylim=(-2:2)), # N = 100,  std = 0.3
+                            scen5_plot_5+ coord_cartesian(ylim=(-2:2)), # N = 1000, std = 0.3
+                            scen5_plot_6+ coord_cartesian(ylim=(-2:2)), # N = 2000, std = 0.3
+                            scen5_int_plot_5+ coord_cartesian(ylim=(-2:2)),
+                            
+                            scen5_plot_7+ coord_cartesian(ylim=(-3:3)), # N = 100,  std = 0.5
+                            scen5_plot_8 + coord_cartesian(ylim=(-3:3)), # N = 1000, std = 0.5
+                            scen5_plot_9+ coord_cartesian(ylim=(-3:3)), # N = 2000, std = 0.5
+                            scen5_int_plot_8+ coord_cartesian(ylim=(-3:3)),
+                            
+                            nrow= 3, ncol = 4)
+annotate_figure(scenario_5_all,
+                top = text_grob("Increasing number of observations to the right", color = "black"),
+                left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
+                fig.lab.face = "bold")
+```
+
+## Theoretical Comparison
+
 
 
 ## Conclusion
