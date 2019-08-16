@@ -179,11 +179,19 @@ cond_plot_aggr_sim2 <- plotImportance(pfi_sim2, feat = "X_2", mid = "mse", hline
 
 n_sim3 <- 1000
 
+## define the distributional properties of each feature
+## X_1: normally distributed with mu = 0 and sigma = 1
+## X_2: normally distributed with mu = 1 and sigma = 4
+## X_3: binomially distributed with prob = 0.5
+## epsilon: normally distributed with mu = 0 and sigma = 1
+
 X_1 <- rnorm(n_sim3, mean = 0, sd = 1)
 X_2 <- rnorm(n_sim3, mean = 1, sd = 4)
 X_3 <- rbinom(n_sim3, size = 1, prob = 0.5)
 eps_sim3 <- rnorm(n_sim3, mean = 0, sd = 1)
 X_sim3 <- as.data.frame(cbind(X_1, X_2, X_3))
+
+## define functional relationship between the features (X_1, X_2 and X_3) and y (response)
 X_sim3$y_sim3 <- X_1 + 5*sin(X_2) + X_3 + ifelse(X_2 > 2, ifelse(X_3 == 0, 5*X_2, 0), 0) + eps_sim3
 target_sim3 <- "y_sim3"
 

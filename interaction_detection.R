@@ -17,17 +17,6 @@ library(partykit)
 library(randomForest)
 library(sfsmisc)
 
-#### Interaction Identifier with randomForest package instead of mlr package
-## Input: 
-## pfi: individual/local Feature Importance of variables
-## set of covariates, explaining the feature importance of variable X
-## type of model used: 1) Decision Tree (one stump) or Random Forest
-## model recommendation: 
-## Decision Tree, if only one variable seems to be interacting
-## Random Forest, if several variable seem to interact 
-## explain different use case. 
-## Return:
-## Estimation results from Decision Tree or Random Forest
 
 ## The function PFI_interaction_identifier_2() reveals between which features interaction takes place
 ## Therefore, fit the remaining features on the individual importance measures of the feature of interest

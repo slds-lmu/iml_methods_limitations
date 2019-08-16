@@ -78,7 +78,7 @@ inter_BH_lstat_model <- interaction_BH$model_results.lstat
 plot(as.party(inter_BH_lstat_model))
 
 
-### Conditionl Feature Importance for "lstat" and "dis"
+### Conditional Feature Importance for "lstat" and "dis"
 
 ici_BH_lstat <- subset(pfi_BH, features == "lstat")
 use0_BH_lstat <- pfi_BH[features == "dis" & feature.value >= 2.165, unique(replace.id)]
