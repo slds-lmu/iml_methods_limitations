@@ -1,6 +1,6 @@
-# Introduction (work in progress)
+# Introduction (first draft)
 
-## Statistical Modeling: The Two Approaches (first draft, citations to be inserted)
+## Statistical Modeling: The Two Approaches (citations to be inserted)
 * Data Modeling Approach
 * Algorithmic Modeling Approach
 * Historical Development
@@ -14,10 +14,10 @@ Within the statistics community the data modeling approach was prevalently domin
 First, the data modeling approach is not applicable to exciting problems like text, speech and image recognition. Second, for complex prediction problems new algorithms such as random forests and neural nets outperform classical models in prediction accuracy as they can model complex relationships in the data. 
 For these reasons, more and more researchers switched from the data modeling approach to the algorithmic modeling approach that is much more common under the name machine learning.  
 
-But what about the interpretability? As we learned in the first paragraph machine learning algorithms are black box models that do not provide any direct explanation for their predictions. Hence, the questions arises whether we need to know why an algorithm makes a certain prediction? To get a better feeling for this question it's helpful to understand how algorithms learn to make predictions and for which tasks machine learning is used.
+But what about interpretability? As we learned in the first paragraph machine learning algorithms are black box models that do not provide any direct explanation for their predictions. Hence, the questions arises whether we need to know why an algorithm makes a certain prediction? To get a better feeling for this question it's helpful to understand how algorithms learn to make predictions and for which tasks machine learning is used.
 
 
-## Importance of Interpretability (first draft, citations to be inserted)
+## Importance of Interpretability (citations to be inserted)
 * How do algorithms learn
 * Use cases in academia
 * Uses cases in industry
@@ -45,17 +45,17 @@ Now that we established the importance of interpretability, how do we put this i
 We seperate the explanations from the machine learning model and apply interpretable methods that analyze the model after the model is trained.
 
 
-## Interpretable Machine Learning (first draft)
+## Interpretable Machine Learning
 * Definition of post-hoc, model-agnostic interpretation methods
 * Overview of methods
 * Examples
 
-As discussed in the previous chapter, most machine learning algorithms produce black box models, because they do not provide any direct explanation for their predictions. However, we do not want to restrict ourselves to models that are considered interpretable due to their simple structure and thus trade prediction accuracy for interpretability.  
+As discussed in the previous chapter, most machine learning algorithms produce black box models, because they do not provide any direct explanation for their predictions. However, we do not want to restrict ourselves to models that are considered interpretable due to their simple structure and thus trade prediction accuracy for interpretability.
 Instead, we make machine learning models interpretable by applying methods that analyze the model after the model is trained, i.e. we establish post-hoc interpretability. Moreover, we are separating the explanations from the machine learning model, i.e we focus on so called model-agnostic interpretation methods.   
-Post-hoc, model-agnostic explanation systems have several advantages \citep{ribeiro2016model}. First, since we seperate the underlying machine learning model and its interpretation developers can work with any model as the interpretation method is independent of the model. Thus we establish model flexibility. Second, since the interpretation is independent of the of the underlying machine learning model, the form of the interpretation also becomes independent. For instance in some cases it might be useful to have a linear formula, in other cases a graphic with feature importances is more appropriate. Thus, we establish explanation flexibility.  
+Post-hoc, model-agnostic explanation systems have several advantages (@ribeiro2016model). First, since we seperate the underlying machine learning model and its interpretation developers can work with any model as the interpretation method is independent of the model. Thus we establish model flexibility. Second, since the interpretation is independent of the underlying machine learning model, the form of the interpretation also becomes independent. For instance in some cases it might be useful to have a linear formula, in other cases a graphic with feature importances is more appropriate. Thus, we establish explanation flexibility.  
 To conclude, post-hoc and model-agnostic explanation systems establish model and explanation flexibility.
 
-So what do these explanation systems do? - As discussed before interpretation methods for machine learning algorithms ensure causal relationships, robustness & reliability and establish trust and fairness. More specifically, they do so by shedding light on the following issues \citep{molnar2019}:
+So what do these explanation systems do? - As discussed before, interpretation methods for machine learning algorithms ensure causal relationships, robustness & reliability and establish trust and fairness. More specifically, they do so by shedding light on the following issues (@molnar2019):
 
 * Algorithm Transparency - How does the algorithm create the model? 
 * Global, Holistic Model Interpretability - How does the trained model make predictions?
@@ -63,17 +63,31 @@ So what do these explanation systems do? - As discussed before interpretation me
 * Local Interpretability for a Single Prediction - Why did the model make a certain prediction for an instance?
 * Local Interpretability for a Group of Predictions - Why did the model make specific predictions for a group of instances?
 
-This booklet introduces and investigates the limitations of current post-hoc and model agnostic approaches in interpretable machine learning, such as partial dependence plots (PDP), Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME). All of these methods can be used to explain the behavior and predictions of trained machine learning models. 
+Now that we learned that post-hoc and model-agnostic methods ensure model as well as explanantion flexibility and in which ways explanation systems ensure causal relationships, robustness & reliability and establish trust and fairness, we can move on to the outline of the booklet and discuss specific interpretation methods and their limitations.
 
 
-## Outline of the booklet (work in progress)
+## Outline of the booklet (first draft)
 * Methods (Model agnostic)
-  * Partial Dependence Plots
-  * Accumulative local effects
-  * Feature importance
-  * Lime
+  * Partial Dependence Plots (PDP)
+  * Accumulated Local Effects (ALE)
+  * Permutation Feature Importance (PMI)
+  * Leave-One-Covariate Out (LOCO)
+  * Local Interpretable Model-Agnostic Explanations (LIME)
 * Limitations 
   * if a model models interactions (e.g. when a random forest is used)
   * if features strongly correlate with each other
   * if the model does not correctly model causal relationships
   * if parameters of the interpretation method are not set correctly
+
+This booklet introduces and investigates the limitations of current post-hoc and model agnostic approaches in interpretable machine learning, such as Partial Dependence Plots (PDP), Accumulated Local Effects (ALE), Permutation Feature Importance (PMI), Leave-One-Covariate Out (LOCO) and Local Interpretable Model-Agnostic Explanations (LIME). All of these methods can be used to explain the behavior and predictions of trained machine learning models. However, their reliability and compactness deteriorates when models use a high number of features, have strong feature interactions and complex feature main effects among others. In the following the methods mentioned are introduced and the outline of the booklet is given.
+
+To start with, PDP and ALE are methods that enable a better understanding of the relationship between the outcome and feature variables of a machine learning model. 
+Common to both methods is that they reduce the prediction function to a function that depends on only one or two features (@molnar2019). All three methods reduce the function by averaging the effects of the other features, but they differ in how the averages are calculated.  
+PDP for example visualize whether the relationship between the outcome and a feature variable is for instance linear, monotonic or nonlinear and hence allow for a straightforward interpretation of the marginal effect of a certain feature on the predicted outcome of a model (@friedman2001greedy). However, this holds only true as long as the feature in question is not correlated with any other features of the model. ALE plots are basically a faster and unbiased alternative to PDP, because they can interpret models containing correlated variables correctly. Chapter 1.0 of the booklet gives a short introduction to PDP. Next, PDP and its limitations when features are correlated and the case of feature interactions are investigated in chapter 1.1 and 1.2, respectively. Finally, chapter 1.3 discusses if PDP allow for causal interpretations. Chapter 2.0 gives then a short introduction to ALE. ALE and PDP are compared in detail in chapter 2.1. ALE intervals, pice-wise constant models and categorial features in the context of ALE are investigated in chapter 2.2.
+
+Yet, PDP and ALE do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as feature importance. PFI and LOCO are two methods that allow to compute and visualize the importance of a certain feature for a machine learning model.
+PFI after @breiman2001random measures the importance of a feature by calculating the increase in the model’s prediction error after permuting the feature. Leave-One-Covariate-Out (LOCO) by @lei2018distribution, requires to refit the model as the approach is based on leaving features out instead of permuting them (@casalicchio2018visualizing). Chapter 3.0 gives a short introduction to PFI and LOCO and gives rise to limitations. Chapter 3.1 discussed both methods in the case of correlated features. Then partial and individual PFI are discussed in chapter 3.2 and practical examples with training and test data are discussed (compute importance on training or test data?). 
+
+Finally, LIME is a method that explaines individual predictions of a black box machine learning model by locally approximating the prediction using a less complex and interpretable model (@molnar2019). These simplifying models are referred to as surrogate models. For example, we may use a neural network to solve a classification task. While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients. Chapter 4.0 gives a short introduction to LIME. Chapter 4.1 sheds light on the effect of the neighbourhood on LIME's explanantion for tabular data. Chapter 4.2 deals with the sampling step in LIME and the resulting side effects in terms of feature weight stability of the surrogate model.
+
+Now that we shortly introduced the different methods we can move to the respective chapters of the booklet which discuss the methods and their limitations in more detail and by the help of practical examples.
