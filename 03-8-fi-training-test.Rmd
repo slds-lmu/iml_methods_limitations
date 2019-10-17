@@ -1,8 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 # PFI: Training vs. Test Data
 
 In this chapter we will deal with the question whether we should use test or training data to calculate permutation feature importance. First of all we want to give a short overview or review of the interesting components.
