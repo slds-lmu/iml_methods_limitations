@@ -1,4 +1,6 @@
-# Introduction Author: Emanuel Renkl
+# Introduction
+
+*Author: Emanuel Renkl*
 
 ## Statistical Modeling: The Two Approaches
 <!-- * Data Modeling Approach
