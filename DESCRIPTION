@@ -8,5 +8,8 @@ Depends:
   ggplot2,
   svglite,
   iml,
-  randomForest
+  randomForest,
+  gbm,
+  rsample,
+  h20
   
