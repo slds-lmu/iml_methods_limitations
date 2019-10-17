@@ -29,13 +29,13 @@ data("Icecream")
  rf.icecream = randomForest(cons ~ temp
                          , data = Icecream, importance = T)
   mod = Predictor$new(rf.icecream, data = Icecream)
-  pdp.obj = Partial$new(mod, feature = c("temp"))  
+  pdp.obj = FeatureEffect$new(mod, feature = c("temp"))  
   p1 <- plot(pdp.obj) 
   
     rf.icecream_reverse = randomForest(temp ~ cons
                              , data = Icecream, importance = T)
   mod_reverse = Predictor$new(rf.icecream_reverse, data = Icecream)
-  pdp.obj_reverse = Partial$new(mod_reverse, feature = c("cons"))  
+  pdp.obj_reverse = FeatureEffect$new(mod_reverse, feature = c("cons"))  
   p2 <- plot(pdp.obj_reverse) 
   
 ```
@@ -514,11 +514,11 @@ knitr::include_graphics('images/scenario4.jpeg', auto_pdf = getOption("knitr.gra
 For the simulation the initial settings look as follows, again increasing both the standard deviation of the error and the magnitude of observations from this starting point. 
 $$ Y \leftarrow X + \epsilon_Y  $$
 $$ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X,\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
-```{r  echo=FALSE, Figure10, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right"}
+```{r  echo=FALSE, Figure10causal, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario4_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-The PDPs in Figure \@ref(fig:Figure10) are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
+The PDPs in Figure \@ref(fig:Figure10causal) are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -629,7 +629,7 @@ annotate_figure(scenario_4_all,
 
 In this scenario Z is a confounding variable. This is similar to scenario 3 where $X$ was the confounder. Thinking back to the example of *age* being a confounding variable for *level of physical activity* and *weight gain*, in the previous example our $X$ was comparable to the confounder *age*. In this scenario, we can keep the same example, but say our variable $X$ is now comparable to the variable *level of physical activity* that is being confounded. Since $X$ has no descendants and there is no backdoor path, the expectation here is that the PDPs will be similar to the intervention curve. 
 
-```{r Figure11, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Z is a confounding variable impacting both X and Y"}
+```{r Figure11causal, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Z is a confounding variable impacting both X and Y"}
 dagify(Y ~ X,
        Y ~ Z,
        X ~ Z
@@ -642,11 +642,11 @@ The following simulation settings were used:
 $$ Y \leftarrow Z + X + \epsilon_Y  $$
 $$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 $$
 
-```{r  echo=FALSE, Figure12, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right"}
+```{r  echo=FALSE, Figure12causal, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right"}
 knitr::include_graphics('images/scenario5_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-We can see in Figure \@ref(fig:Figure12) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs are most accurate with the highest number of observations and lowest standard deviation of errors.
+We can see in Figure \@ref(fig:Figure12causal) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs are most accurate with the highest number of observations and lowest standard deviation of errors.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -772,7 +772,7 @@ $\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\
  = x + z
 \end{aligned}$
 
-Similarly, for a scenario where $Z$ is a confounding variable, as seen in Figure \@ref(fig:Figure11) with scenario 5, the result is:  
+Similarly, for a scenario where $Z$ is a confounding variable, as seen in Figure \@ref(fig:Figure11causal) with scenario 5, the result is:  
 $$  Z \leftarrow  \epsilon_z , \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ Y \leftarrow X + Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) $$
 
 $\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\
@@ -789,18 +789,18 @@ $\begin{aligned} E[Y|X = x, Z = z] = E[Z + \epsilon_Y| X = x, Z = z]\\
 \end{aligned}$
 
 When implemented, however, we did not get the the expected results. In fact, while the results of the modeled PDP versus the intervention curve seen earlier seemed to give expected results, the theoretical PDP implementation seemed to give the opposite of the expected result. The theoretical PDP was not similar to the intervention curve when the backdoor criterion was met, nor was it dissimilar when the backdoor criterion was not met. 
-I assume a mistake in implementation is at fault. In the end, I was unable to figure out where the mistake lies: In the modeling of the PDP, the calculation of the intervention curve, the derivation of the theoretical PDP or the implementation of the theoretical PDP. If no mistake was made, I was unable to come up with a satisfactory explanation of the results. An example of the unexpected results is seen in \@ref(fig:Figure13) . 
+I assume a mistake in implementation is at fault. In the end, I was unable to figure out where the mistake lies: In the modeling of the PDP, the calculation of the intervention curve, the derivation of the theoretical PDP or the implementation of the theoretical PDP. If no mistake was made, I was unable to come up with a satisfactory explanation of the results. An example of the unexpected results is seen in \@ref(fig:Figure13causal) . 
 
-```{r  echo=FALSE, Figure13, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where X is a confounder (Scenario 3)"}
+```{r  echo=FALSE, Figure13causal, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where X is a confounder (Scenario 3)"}
 knitr::include_graphics('images/theoretical_pdp.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 The expectation for this scenario, as we have seen before when discussing Figure \@ref(fig:Figure8), is that the PDP and the Intervention Curve should not be the same. Now again, as before, we see that this is true for the modeled PDP on the left and the IC on the right. However, the theoretical PDP in the middle is the same as the IC, which expectation is it should not be.
 
-Figure \@ref(fig:Figure14) shows the result obtained for the scenario where Z is a confounder. This was our Scenario 5, discussed in Figure \@ref(fig:Figure12). We expect the PDP to be the same as the Intervention Curve here, because the backdoor criterion is met. Comparing the modeled PDP on the left to the IC on the right, this seems to be the case. However, as in the previous case, $E[Y]$ ranges from (-2, 2), making it different from the IC and the modeled PDP.
+Figure \@ref(fig:Figure14causal) shows the result obtained for the scenario where Z is a confounder. This was our Scenario 5, discussed in Figure \@ref(fig:Figure12causal). We expect the PDP to be the same as the Intervention Curve here, because the backdoor criterion is met. Comparing the modeled PDP on the left to the IC on the right, this seems to be the case. However, as in the previous case, $E[Y]$ ranges from (-2, 2), making it different from the IC and the modeled PDP.
 
 
-```{r  echo=FALSE, Figure14, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where Z is a confounder (Scenario 5)"}
+```{r  echo=FALSE, Figure14causal, out.width='100%', fig.align= 'left', fig.cap="Model PDP versus Theoretical PDP vs Intervention for the scenario where Z is a confounder (Scenario 5)"}
 knitr::include_graphics('images/theoretical_pdp2.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
