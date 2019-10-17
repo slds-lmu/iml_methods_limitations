@@ -13,6 +13,15 @@ Depends:
   pdp,
   Ecdat,
   dplyr,
-  ggpubr
-
-  
+  ggpubr,
+  mlr,
+  mvtnorm,
+  ggcorrplot,
+  ggpubr,
+  cowplot, 
+  matrixcalc,
+  e1071,
+  mgcv,
+  tidyverse,
+  stringr,
+  viridis
