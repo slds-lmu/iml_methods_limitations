@@ -3,6 +3,8 @@
 
 
 
+
+
 ## Motivation
 
 As seen in section 2 PDPs don't work well as soon as two or more features are correlated. This gives rise to the definition of ALEs. Although their definition makes sense for high dimensional feature spaces including categorical features, within this section we only treat a space with two continous features. 
@@ -10,8 +12,9 @@ As seen in section 2 PDPs don't work well as soon as two or more features are co
 ## The Theoretical Formula {#ale-intro-formula}
 
 The uncentered ALE with respect to a starting point $z_{0, j}$ is defined by [@Apley2016] as
+
 $$  \widetilde{ALE}_{\hat{f},~j}(x) = \hat{f}_{x_j,ALE}(x) = \int_{z_{0,~j}}^{x} E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j = z_j]~dz_j,$$
-where $\hat{f}$ is an arbitrary prediction function on the featurespace, as well as $\hat{f}^j(*,*)$ its j-th partial derivative. In this context $X_j$ is the feature of interest while $X_c$ represents the other features.
+where $\hat{f}$ is an arbitrary prediction function, as well as $\hat{f}^j(*,*)$ its j-th partial derivative. In this context $X_j$ is the feature of interest while $X_c$ represents the other features.
 
 ### Centering
 
@@ -19,7 +22,7 @@ The ALE (centered ALE) is defined as
 
 $$  ALE_{\hat{f},~j}(x) = \widetilde{ALE}_{\hat{f},~j}(x) - E_{X_j}[\widetilde{ALE}_{\hat{f},~j}(X_j)]$$ 
 
-The centering makes sense as it helps interpreting the ALE in a reasonable way. This will be explained in section 3.4..
+The centering makes sense as it helps interpreting the ALE in a reasonable way. This will be explained in section \@ref(ale-intro-interpret).
 
 
 ## Estimation Formula 
@@ -53,7 +56,7 @@ Since in this formula there is no integral, it is easier to implement.
 
 
 
-## Intuition and Interpretation 
+## Intuition and Interpretation {#ale-intro-interpret}
 
 As the former sections introduced the theoretical basics for the ALE, this section shall provide an intuition as well for the calculation method as for the interpretation. As described above, the local behaviour of the model with respect to the variable of interest is estimated by moving the existing data points to the boundaries of their interval and evaluating the total difference of the prediction for the "new" data points. Figure \@ref(fig:dataALE) first offered by [@molnar2019] gives a good intuition for this procedure. 
 
@@ -72,7 +75,7 @@ As the evaluation is ideally done on relatively small intervals, on the one hand
 
 In a last step the uncentered ALE is centered, i.e. shifted by a constant such that the expectation of the centered ALE is zero.  
 
-Figure \@ref(fig:aleEx) shows an example ALE which could match the data situtaion of Figure \@ref(fig:dataALE) :
+Figure \@ref(fig:aleEx) shows an example ALE which could match the data situtaion of Figure \@ref(fig:dataALE).
 
 ```{r aleEx, fig.cap='(ref:aleExample)', out.width='100%', echo=FALSE}
 
@@ -82,6 +85,6 @@ knitr::include_graphics("images/ale_example.png")
 
 To understand the interpretation of the ALE it can be usefull to first have a look at the intuition behind the uncentered ALE.
 If the value of the uncentered ALE at $x_1 = 2$ equals $1$, this means that if one samples a data point from the joint distribution of both features but only knows that $x_1 = 2$, one would expect the prediction to be 1 higher than the average prediction for  realistic data points at $x_1 = z_{0,1}$ (i.e. data points sampled from the conditional distribution at $x_1 = z_{0,1}$). This expectation strongly depends on the reference point $z_{0,1}$, which per definition is smaller than the smallest $x_1$-value of the data.
-By substracting the expectation of the uncentered ALE - which is the mean difference of the prediction of a data point from the joint distibution to the prediction of a realistic data point(i.e. from the conditional distribution) at $x_1 = z_{0,1}$ - the interpretation becomes a lot easier. If the value of the (centered) ALE at $x_1 = 2$ equals for example $2$, this means that, if one samples a data point from the joint distribution of both features and $x_1$ equals 2, one would expect the prediction to be 2 higher than the average prediction for an average data point of the joint distribution.          
+By substracting the expectation of the uncentered ALE - which is the mean difference of the prediction of a data point from the joint distibution to the prediction of a realistic data point(i.e. from the conditional distribution) at $x_1 = z_{0,1}$ - the interpretation becomes a lot easier. If the value of the (centered) ALE at $x_1 = 2$ equals for example $2$, this means that, if one samples a data point from the joint distribution of both features and $x_1$ equals 2, one would expect the 1st order effect of feature $x_1$ to be 2 higher than the average 1st order effect of this feature.
 
 So far only the case of 2-dimensional feature spaces with one feature of interest was taken into account. In the following chapters methods and interpretation for ALE with two numeric features (second order effects) or one categorical feature will be in the focus. Furthermore we will have a look on the size of the intervals the data is evaluated on, which can be crucial for the expressiveness of the ALE.
