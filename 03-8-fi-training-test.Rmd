@@ -260,7 +260,7 @@ gbm <-  h2o.gbm(
 #h2o.auc(gbm, valid = TRUE)
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$test) %>% select(-y)
+features <- as.data.frame(splits$test) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$test$y))
@@ -326,7 +326,7 @@ gbm <-  h2o.gbm(
 #h2o.auc(gbm, valid = TRUE)
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$train) %>% select(-y)
+features <- as.data.frame(splits$train) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$train$y))
@@ -396,7 +396,7 @@ gbm <-  h2o.gbm(
 )
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$test) %>% select(-y)
+features <- as.data.frame(splits$test) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$test$y))
@@ -462,7 +462,7 @@ gbm <-  h2o.gbm(
 )
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$train) %>% select(-y)
+features <- as.data.frame(splits$train) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$train$y))
@@ -529,7 +529,7 @@ gbm <-  h2o.gbm(
 )
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$test) %>% select(-y)
+features <- as.data.frame(splits$test) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$test$y))
@@ -595,7 +595,7 @@ gbm <-  h2o.gbm(
 )
 
 # 1. create a data frame with just the features
-features <- as.data.frame(splits$train) %>% select(-y)
+features <- as.data.frame(splits$train) %>% dplyr::select(-y)
 
 # 2. Create a vector with the actual responses
 response <- as.numeric(as.vector(splits$train$y))
