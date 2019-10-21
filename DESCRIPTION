@@ -11,7 +11,7 @@ Depends:
   randomForest,
   gbm,
   rsample,
-  h20,
+  h2o,
   matrixcalc,
   corrplot,
   kernlab,
