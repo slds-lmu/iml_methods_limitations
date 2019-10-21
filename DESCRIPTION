@@ -12,5 +12,23 @@ Depends:
   ranger,
   mlbench,
   lime,
-  mlr
-  
+  mlr,
+  matrixcalc,
+  corrplot,
+  kernlab,
+  ggdag,
+  pdp,
+  Ecdat,
+  dplyr,
+  ggpubr,
+  mvtnorm,
+  ggcorrplot,
+  ggpubr,
+  cowplot, 
+  matrixcalc,
+  e1071,
+  mgcv,
+  tidyverse,
+  stringr,
+  viridis
+>>>>>>> master

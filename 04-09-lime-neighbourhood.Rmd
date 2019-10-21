@@ -1,8 +1,3 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
 # LIME and Neighbourhood {#id1}
 
 *Author: Philipp Kopper*
@@ -19,10 +14,10 @@ The weights are typically determined using kernels that transform the proximity 
 The proper parametrisation of the kernel is obviously important.
 However, this is true for any approach that uses kernels.
 Such as kernel density estimations.
-Figure \@ref(fig:fig1) illustrates kernel densities from a standard normal distribution.
+Figure \@ref(fig:lime-fig1) illustrates kernel densities from a standard normal distribution.
 We applied different kernel widths for the curve estimation.
 
-```{r, fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "In(appropriate) kernel widths for kernel density estimations. The left panel illustrates an appropriate kernel width. The right one features an inappropriate one."}
+```{r, lime-fig1, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "In(appropriate) kernel widths for kernel density estimations. The left panel illustrates an appropriate kernel width. The right one features an inappropriate one."}
 knitr::include_graphics("images/04-09-01.png")
 ```
 
@@ -98,55 +93,55 @@ Thus, we focus on the __kernel width__ in our experimental study.
 How crucial the proper setting of the kernel width can be, is illustrated by a very simple example.
 We simulate data with one target and two features.
 One feature is pure noise and the other one has a non-linear sinus-like effect on the target.
-If we plot the influential feature on the x-axis and the target on the y-axis, we can observe this pattern in figure \@ref(fig:fig2).
+If we plot the influential feature on the x-axis and the target on the y-axis, we can observe this pattern in figure \@ref(fig:lime-fig2).
 
-```{r, fig2, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: The non-linear relationship between the feature and the target."}
+```{r, lime-fig2, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: The non-linear relationship between the feature and the target."}
 knitr::include_graphics("images/04-09-02.png")
 ```
 
 Now we fit a random forest on this data situation which should be able to detect the non-linearity and incorporate it into its predictive surface.
-We observe that the predictions of the random forest look very accurate in figure \@ref(fig:fig3). 
+We observe that the predictions of the random forest look very accurate in figure \@ref(fig:lime-fig3). 
 Only on the edges of the covariate (where the density is lower) the random forest turns out to extrapolate not optimally. 
 
-```{r, fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for non-linear univariate relationship. The solid line represents the true predictive surface."}
+```{r, lime-fig3, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Random forest predictions for non-linear univariate relationship. The solid line represents the true predictive surface."}
 knitr::include_graphics("images/04-09-03.png")
 ```
 
 LIME could now be used to explain this random forest locally.
 "Good" local models would look very different w.r.t. the value of the feature, `x1`.
 For example, we could describe the predictions locally well by piece-wise linear models.
-This is depicted in figure \@ref(fig:fig4).
+This is depicted in figure \@ref(fig:lime-fig4).
 
-```{r, fig4, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship explained by a piece-wise linear model."}
+```{r, lime-fig4, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Non-linear univariate relationship explained by a piece-wise linear model."}
 knitr::include_graphics("images/04-09-04.png")
 ```
 
 LIME should be able to find these _good_ local explanations -- given the right kernel size.
 Let's select one instance which we want an explanation for.
-We illustrate this instance by the green point in figure \@ref(fig:fig5).
+We illustrate this instance by the green point in figure \@ref(fig:lime-fig5).
 This particular instance can be approximately linearly described by a linear regression with intercept $60$ and slope $-4.5$.
 If we set the kernel width to $0.08$, we fit this local model.
-This is indicated by the red line in figure \@ref(fig:fig5).
-However, if we increased the kernel width to $2$, the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure \@ref(fig:fig5).
+This is indicated by the red line in figure \@ref(fig:lime-fig5).
+However, if we increased the kernel width to $2$, the coefficients change to $-2.84$ (intercept) and $0.64$ (slope) (on average) which seems drastically distorted as observed by the yellow line in figure \@ref(fig:lime-fig5).
 The yellow line does not seem to fit a local linear model but rather a global one.
 
-```{r, fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Possible local (LIME) models for the non-linear univariate relationship."}
+```{r, lime-fig5, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Possible local (LIME) models for the non-linear univariate relationship."}
 knitr::include_graphics("images/04-09-05.png")
 ```
 
-As a next step, we review explanations resulting from altering the kernel size in figure \@ref(fig:fig6) more systematically. 
+As a next step, we review explanations resulting from altering the kernel size in figure \@ref(fig:lime-fig6) more systematically. 
 We average over many different models to achieve more robust local models.
 We do that because we observe some coefficient variations resulting from the (random) sampling in the LIME algorithm.
-In figure \@ref(fig:fig6) (upper panel) we see these averaged models for different kernel sizes.
+In figure \@ref(fig:lime-fig6) (upper panel) we see these averaged models for different kernel sizes.
 We observe that the larger we set the kernel size, the more we converge to a linear model that operates globally.
 The largest three kernel sizes ($0.5$, $1$ and $2$) appear very global while $0.05$ and $0.1$ seem to fit good local models.
 $0.25$ and $0.3$ are neither global nor very local.
 This is very intuitive and complies with the idea of a weighted local regression.
 
-Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure \@ref(fig:fig6).
+Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure \@ref(fig:lime-fig6).
 We observe a similar behaviour.
 
-```{r, fig6, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations."}
+```{r, lime-fig6, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations."}
 knitr::include_graphics("images/04-09-06.png")
 ```
 
@@ -213,11 +208,11 @@ We expect that the kernel size may be infinitely large as the global model shoul
 However, if the kernel width is set too small we may fit too much noise.
 Hence, in this case, we may find no good local models.
 
-The figures below (all four panels of figure \@ref(fig:fig8)) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
+The figures below (all four panels of figure \@ref(fig:lime-fig8)) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
 The three vertical lines indicate the true global coefficients.
 This behaviour is representative of all observations.
 
-```{r fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r lime-fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-08.png")
 ```
 
@@ -263,10 +258,10 @@ Hence, representative means that we should investigate observations with the fol
 
 We think these observations are best explained in areas with reasonable margin to $x_1 = 5$.
 
-Below in figure \@ref(fig:fig10), we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels: $x_1 < 5$, lower panels: $x_1 > 5$).
+Below in figure \@ref(fig:lime-fig10), we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels: $x_1 < 5$, lower panels: $x_1 > 5$).
 The true local coefficients are displayed by solid vertical lines.
 
-```{r, fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r, lime-fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-10.png")
 ```
 
@@ -281,14 +276,14 @@ Additionally, we observe that for smaller kernel widths, the local models are ra
 More systematically, @alvarez2018robustness investigate this volatility and find that LIME is prone to finding unstable explanations.
 
 This motivates us to further research the volatility.
-We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure \@ref(fig:fig11) for $x_1$.
+We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure \@ref(fig:lime-fig11) for $x_1$.
 The black lines interpolate averaged coefficient estimates for different kernel sizes. 
 The solid black line indicates the true local coefficient. 
 The grey shaded area represents the (capped) 95% confidence intervals.
 For very low kernel widths we observe massive volatility.
 The volatility decreases to an acceptable level only after $0.1$ for all covariates.
 
-```{r, fig11,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: For one observation we display the local coefficient and confidence intervals for different kernel widths. The underlying ground truth model is a linear model where x1 only has a local coefficient. Hence, we only investigate x1."}
+```{r, lime-fig11,  eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: For one observation we display the local coefficient and confidence intervals for different kernel widths. The underlying ground truth model is a linear model where x1 only has a local coefficient. Hence, we only investigate x1."}
 knitr::include_graphics("images/04-09-11-1.png")
 ```
 
@@ -324,18 +319,18 @@ We study three _representative_ observations complying with:
 
 As before, we use a MARS model as our black box.
 When explaining the black box with LIME, we observe the same pattern as before.
-Figures \@ref(fig:fig12) and \@ref(fig:fig13) look very similar to the corresponding figures of the previous section.
+Figures \@ref(fig:lime-fig12) and \@ref(fig:lime-fig13) look very similar to the corresponding figures of the previous section.
 However, the intervals of "good" solutions are -- naturally -- much smaller.
 The more complex the true associations become, the more we observe this trend of decreasing solution intervals.
 It seems as if the more complex the predictive surface is, the harder it is for LIME to even find a good local model.
 
 For globally non-linear associations, we also find that we prefer a small kernel which however also produces stable coefficients.
 
-```{r, fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for $x_2$)."}
+```{r, lime-fig12, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for $x_2$)."}
 knitr::include_graphics("images/04-09-12.png")
 ```
 
-```{r, fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for $x_2$)."}
+```{r, lime-fig13, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for $x_2$)."}
 knitr::include_graphics("images/04-09-13.png")
 ```
 
@@ -399,7 +394,7 @@ We can repeat this procedure for any other observation.
 Our _pseudo_ stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0.
 Furthermore, they should not change extremely when the kernel width slightly changes.
 
-Figure \@ref(fig:fig131) displays ideal stability paths with the three distinct areas observed earlier:
+Figure \@ref(fig:lime-fig131) displays ideal stability paths with the three distinct areas observed earlier:
 
 1. High variability for small kernels.
 
@@ -407,7 +402,7 @@ Figure \@ref(fig:fig131) displays ideal stability paths with the three distinct 
 
 3. Convergence to a global surrogate for large kernels.
 
-```{r fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour."}
+```{r lime-fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour."}
 knitr::include_graphics("images/04-09-14.png")
 ```
 
@@ -415,9 +410,9 @@ The (toy example) stability paths suggest that temperature, weather situation an
 
 This figure would help us to clearly identify a stable local model.
 However, in real life, things mostly are more complex.
-In figure \@ref(fig:fig14), we display the stability paths for different selected observations for our random forest.
+In figure \@ref(fig:lime-fig14), we display the stability paths for different selected observations for our random forest.
 
-```{r fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for different observations from the bycicle data set explaining a random forest."}
+```{r lime-fig14, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Stability paths for different observations from the bycicle data set explaining a random forest."}
 knitr::include_graphics("images/04-09-15.png")
 ```
 
@@ -516,9 +511,9 @@ In the current (July 2019) R implementation, when working with Gower distance th
 Explanations do not correspond to altering the kernel width.
 As we have seen, a proper kernel width may look very different depending on the associated problem.
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result.
-In figure \@ref(fig:fig15) we analyse this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
+In figure \@ref(fig:lime-fig15) we analyse this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
-```{r fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
+```{r lime-fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
 knitr::include_graphics("images/04-09-16.png")
 ```
 
