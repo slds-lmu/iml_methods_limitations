@@ -5,6 +5,10 @@ cache:
   packages: true
 before_install:
 - sudo apt-get install libv8-dev 
+- wget http://h2o-release.s3.amazonaws.com/h2o/rel-yau/8/h2o-3.26.0.8.zip
+- unzip h2o-3.26.0.8.zip
+- cd h2o-3.26.0.8
+- java -jar h2o.jar 
 before_script:
 - chmod +x ./_build.sh
 script: ./_build.sh
