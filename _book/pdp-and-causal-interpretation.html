@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods</title>
+  <title>Chapter 4 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.14 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:title" content="Chapter 4 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods" />
+  <meta name="twitter:title" content="Chapter 4 PDP and Causal Interpretation | Limitations of Interpretable Machine Learning Methods" />
   
   <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
   
@@ -24,15 +24,15 @@
 <meta name="author" content="" />
 
 
-<meta name="date" content="2019-08-06" />
+<meta name="date" content="2019-10-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="pdp-and-feature-interactions.html">
-<link rel="next" href="introduction-to-accumulated-local-effects-ale.html">
+<link rel="prev" href="pdp-and-correlated-features.html"/>
+<link rel="next" href="introduction-to-accumulated-local-effects-ale.html"/>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,6 +50,70 @@
 
 
 
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
@@ -66,10 +131,13 @@
 <li><a href="./">Limitations of ML Interpretability</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>1.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>1.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>1.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>1.4</b> Outline of the booklet</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><i class="fa fa-check"></i><b>2</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
 <li class="chapter" data-level="2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a><ul>
 <li class="chapter" data-level="2.1.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>2.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
@@ -80,32 +148,162 @@
 <li class="chapter" data-level="2.2.3" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>2.2.3</b> Advantages and Limitations of ICE Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a></li>
-<li class="chapter" data-level="4" data-path="pdp-and-feature-interactions.html"><a href="pdp-and-feature-interactions.html"><i class="fa fa-check"></i><b>4</b> PDP and Feature Interactions</a></li>
-<li class="chapter" data-level="5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a></li>
-<li class="chapter" data-level="6" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="6.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
-<li class="chapter" data-level="6.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
-<li class="chapter" data-level="6.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ProblemDescription"><i class="fa fa-check"></i><b>3.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>3.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>3.1.2</b> What is the issue with extrapolation?</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+<li class="chapter" data-level="3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#RealData"><i class="fa fa-check"></i><b>3.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>3.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>3.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#NumCat"><i class="fa fa-check"></i><b>3.2.3</b> Dependency between Numerical and Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+<li class="chapter" data-level="3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#SimulatedData"><i class="fa fa-check"></i><b>3.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>3.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>3.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="3.3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>3.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="3.3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>3.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="3.3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>3.3.5</b> Simulation Settings: Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a></li>
-<li class="chapter" data-level="8" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a></li>
-<li class="chapter" data-level="9" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
-<li class="chapter" data-level="9.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
-<li class="chapter" data-level="9.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
-<li class="chapter" data-level="9.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+<li class="chapter" data-level="3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>3.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>3.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="3.4.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>3.4.2</b> Simulation based on own prediction function</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a></li>
-<li class="chapter" data-level="11" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a></li>
-<li class="chapter" data-level="12" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a></li>
-<li class="chapter" data-level="13" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a></li>
-<li class="chapter" data-level="14" data-path="lime-and-neighbourhood.html"><a href="lime-and-neighbourhood.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a></li>
-<li class="chapter" data-level="15" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a></li>
+<li class="chapter" data-level="3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>4</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#a-brief-look-at-pdp-problems"><i class="fa fa-check"></i><b>4.2</b> A brief look at PDP problems</a></li>
+<li class="chapter" data-level="4.3" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>4.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="4.4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#scenarios"><i class="fa fa-check"></i><b>4.4</b> Scenarios</a></li>
+<li class="chapter" data-level="4.5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#theoretical-comparison"><i class="fa fa-check"></i><b>4.5</b> Theoretical Comparison</a></li>
+<li class="chapter" data-level="4.6" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#conclusion"><i class="fa fa-check"></i><b>4.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>5</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="5.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
+<li class="chapter" data-level="5.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>5.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>5.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>5.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>5.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>5.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>6</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="6.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>6.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>6.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="6.1.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>6.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>6.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>6.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="6.2.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>6.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>6.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>6.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="6.3.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>6.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="6.3.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>6.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>6.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="6.5" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>6.5</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>7</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>7.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#state-of-the-art"><i class="fa fa-check"></i><b>7.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ale-approximations"><i class="fa fa-check"></i><b>7.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="7.1.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-1-additive-feature-effects"><i class="fa fa-check"></i><b>7.1.3</b> Example 1: additive feature effects</a></li>
+<li class="chapter" data-level="7.1.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>7.1.4</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="7.1.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>7.1.5</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>7.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#outlook"><i class="fa fa-check"></i><b>7.2.1</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#categorical-features"><i class="fa fa-check"></i><b>7.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ordering-the-features"><i class="fa fa-check"></i><b>7.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>7.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>7.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="7.3.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#interpretation"><i class="fa fa-check"></i><b>7.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="7.3.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#changes-of-the-ale-due-to-diffrent-orders"><i class="fa fa-check"></i><b>7.3.5</b> Changes of the ALE due to diffrent orders</a></li>
+<li class="chapter" data-level="7.3.6" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#conclusion-1"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>8</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>8.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="8.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>8.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="8.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>8.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>9</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>9.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#simulation"><i class="fa fa-check"></i><b>9.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="9.1.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#real-data"><i class="fa fa-check"></i><b>9.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>9.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#summary-1"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
+<li class="chapter" data-level="9.4" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#note-to-the-reader"><i class="fa fa-check"></i><b>9.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>10</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="10.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch2"><i class="fa fa-check"></i><b>10.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="10.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch3"><i class="fa fa-check"></i><b>10.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch31"><i class="fa fa-check"></i><b>10.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="10.2.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch32"><i class="fa fa-check"></i><b>10.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="10.2.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch323"><i class="fa fa-check"></i><b>10.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch4"><i class="fa fa-check"></i><b>10.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="10.4" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch5"><i class="fa fa-check"></i><b>10.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#introduction-to-test-vs-training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs Training Data</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>11.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="11.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>11.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#gradient-boosting-machine"><i class="fa fa-check"></i><b>11.3.1</b> Gradient Boosting Machine</a></li>
+<li class="chapter" data-level="11.3.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>11.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="11.3.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#results"><i class="fa fa-check"></i><b>11.3.3</b> Results</a></li>
+<li class="chapter" data-level="11.3.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>11.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#summary-2"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="12.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="12.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="12.2.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
+<li class="chapter" data-level="12.4" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="id1.html"><a href="id1.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="id1.html"><a href="id1.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13.2" data-path="id1.html"><a href="id1.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="13.3" data-path="id1.html"><a href="id1.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="id1.html"><a href="id1.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="13.3.2" data-path="id1.html"><a href="id1.html#id42"><i class="fa fa-check"></i><b>13.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="id1.html"><a href="id1.html#id5"><i class="fa fa-check"></i><b>13.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="13.5" data-path="id1.html"><a href="id1.html#id6"><i class="fa fa-check"></i><b>13.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="id1.html"><a href="id1.html#id61"><i class="fa fa-check"></i><b>13.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="13.5.2" data-path="id1.html"><a href="id1.html#id62"><i class="fa fa-check"></i><b>13.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>14</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>14.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#formula"><i class="fa fa-check"></i><b>14.1.1</b> Formula</a></li>
+<li class="chapter" data-level="14.1.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sampling-strategies"><i class="fa fa-check"></i><b>14.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="14.1.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>14.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>14.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>14.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#boston-housing-data"><i class="fa fa-check"></i><b>14.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#rental-bikes-data"><i class="fa fa-check"></i><b>14.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="14.4.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="14.4.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
+<li class="chapter" data-level="14.6" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>15</b> Acknowledgements</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
@@ -128,26 +326,233 @@
 
             <section class="normal" id="section-">
 <div id="pdp-and-causal-interpretation" class="section level1">
-<h1><span class="header-section-number">Chapter 5</span> PDP and Causal Interpretation</h1>
-<p><em>Author: firstname lastname</em></p>
+<h1><span class="header-section-number">Chapter 4</span> PDP and Causal Interpretation</h1>
+<p><em>Author: Thommy Dassen</em></p>
+<div id="introduction-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Introduction</h2>
+<p>In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) are used to visualize various data generating mechanisms. Judea Pearl’s framework of do-calculus is used to intervene on simulated data. The goal is to compare the PDP with the expected value under an intervention. We will see scenarios in which the PDP gives the same result as an intervention and scenarios in which the limitations of the PDP as a tool for causal interpretation become clear.</p>
+<p>To interpret causally means to interpret one state (the effect) to be the result of another (the cause), with the cause being (partly) responsible for the effect, and the effect being partially dependent on the cause. <span class="citation">(Zhao and Hastie <a href="#ref-zhaohastie" role="doc-biblioref">2018</a>)</span> formulated three elements that are needed to ensure that the PDP coincides with the intervention effect:<br />
+1. A good predictive model which closely approximates the real relationship.<br />
+2. Domain knowledge to ensure the causal structure makes sense and the backdoor criterion, explained below, is met.<br />
+3. A visualization tool like a PDP (or an Individual Conditional Expectation plot)</p>
+<p>The first condition is an important one, because there is a big difference between being able to causally interpret an effect for the <em>model</em> and using it as a causal interpretation for the real world. The second condition will make clear when PDPs are the same, and when they are different from interventions on the data. In this chapter we will systematically analyze a number of scenarios in order to see under which conditions PDPs can be causally interpreted or not.</p>
+</div>
+<div id="a-brief-look-at-pdp-problems" class="section level2">
+<h2><span class="header-section-number">4.2</span> A brief look at PDP problems</h2>
+<p>Before we have a look at various scenarios and settings involving interventions, let’s look at two examples of other problems that can occur when using a PDP. The first example shows the need for domain knowledge. Let’s say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure1"></span>
+<img src="images/ice_cream.jpeg" alt="The PDP on the left shows temperature causing ice-cream consumption. The PDP on the right shows ice-cream consumption causing temperatures. Which one is correct?" width="100%" />
+<p class="caption">
+FIGURE 4.1: The PDP on the left shows temperature causing ice-cream consumption. The PDP on the right shows ice-cream consumption causing temperatures. Which one is correct?
+</p>
+</div>
+<p>Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption <em>causes</em> higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Not all cases are as clear-cut as the one here: Think for instance of the link between smoking and depression. Does smoking cause depression, or depression cause smoking? Potentially they cause and reinforce each other. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.</p>
+<p>Another problem with PDPs was shown by <span class="citation">(Scholbeck <a href="#ref-scholbeck" role="doc-biblioref">2018</a>)</span>. Assume we have data that is distributed as follows:</p>
+<p><span class="math display">\[ Y \leftarrow  X_{1}^2 - 15X_{1}X_2 + \epsilon \]</span>
+<span class="math display">\[ X_1 \sim \mathcal{U}(-1, 1), \ \ \ \ \ X_2 \sim \mathcal{U}(-1, 1), \ \ \ \ \ \epsilon \sim \mathcal{N}(0,0.1), \ \ \ \ \ N \leftarrow 1000    \]</span>
+Training a Random Forest on this data leads to Figure <a href="pdp-and-causal-interpretation.html#fig:Figure2">4.2</a> below. The problem should be immediately clear. Looking at the PDP, one would assume that <span class="math inline">\(X_1\)</span> has virtually no impact on <span class="math inline">\(Y\)</span>. The ICE curves, however, show that the averaging effect of the PDP completely obfuscates the true effect, which is highly positive for some observations while being highly negative for others. In this example too it would be misguided to simply interpret the PDP causally and state that <span class="math inline">\(X_1\)</span> does not have any impact on <span class="math inline">\(Y\)</span> whatsoever. This would be correct for the average effect, but evidently not true on the individual level.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure2"></span>
+<img src="images/avg_vs_individual.jpeg" alt="The average effect of the PDP (yellow line) hides the heterogeneity of the individual effects " width="100%" />
+<p class="caption">
+FIGURE 4.2: The average effect of the PDP (yellow line) hides the heterogeneity of the individual effects
+</p>
+</div>
+</div>
+<div id="causal-interpretability-interventions-and-directed-acyclical-graphs" class="section level2">
+<h2><span class="header-section-number">4.3</span> Causal Interpretability: Interventions and Directed Acyclical Graphs</h2>
+<p>In the rest of this chapter, we will use the concept of interventions and show causal structures visually. When we make an intervention, it means we fix the value of a variable <span class="citation">(Pearl <a href="#ref-pearl1993" role="doc-biblioref">1993</a>)</span>. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result.
+The difference between a variable <span class="math inline">\(X\)</span> taking a value <span class="math inline">\(x\)</span> naturally and having a fixed value <span class="math inline">\(X=x\)</span> is reflected in the notation. The latter is denoted by <span class="math inline">\(do(X=x)\)</span>. As such, <span class="math inline">\(P(Y=y|X=x)\)</span> is the probability that <span class="math inline">\(Y=y\)</span> conditional on <span class="math inline">\(X=x\)</span>. <span class="math inline">\(P(Y=y|do(X=x))\)</span> is then the population distribution of <span class="math inline">\(Y\)</span> if the value of <span class="math inline">\(X\)</span> was fixed at <span class="math inline">\(x\)</span> for the entire population.</p>
+<p>Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a <em>node</em> and the lines between these nodes, or <em>edges</em>, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs are per definition acyclical. This means that a relationship <span class="math inline">\(X \rightarrow Y \rightarrow Z \rightarrow X\)</span> can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing edges from direct parents to the variable.</p>
+<p>In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by <span class="citation">(Pearl <a href="#ref-pearl1993" role="doc-biblioref">1993</a>)</span> adresses exactly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of <span class="math inline">\(X_S\)</span> on <span class="math inline">\(Y\)</span> can be identified if the causal relationship between the variables can be visualized in a graph and <span class="math inline">\(X_C\)</span>, the complementary set to <span class="math inline">\(X_S\)</span>, adheres to what he called the back-door criterion. The back-door adjustment formula is:</p>
+<p><span class="math display">\[P(Y|do(X_S = x_S)) = \int P(Y |X_S = x_S, X_C = x_C) dP(x_C)\]</span>
+As <span class="citation">(Zhao and Hastie <a href="#ref-zhaohastie" role="doc-biblioref">2018</a>)</span> pointed out, this formula is basically the same as the formula for the partial
+dependence of <span class="math inline">\(g\)</span> on a subset of variables <span class="math inline">\(X_S\)</span> given output <span class="math inline">\(g(x)\)</span>:</p>
+<p><span class="math display">\[ g_S(x_S) = \mathbb E_{x_C}[g(x_S, X_C)] = \int g(x_S, x_C)dP(x_C)  \]</span>
+If we take the expectation of Pearl’s adjustment formula we get:
+<span class="math display">\[ E[Y |do(X_S = x_S)] = \int E[Y |X_S = x_S, X_C = x_C] dP(x_C) \]</span>
+These last two formulas are the same, if <span class="math inline">\(C\)</span> is the complement of <span class="math inline">\(S\)</span>.</p>
+<p><span class="citation">(Pearl <a href="#ref-pearl1993" role="doc-biblioref">1993</a>)</span> defined a back-door criterion that needs to be fulfilled in order for the adjustment formula to be valid. It states that:</p>
+<ol style="list-style-type: decimal">
+<li><p>No node in <span class="math inline">\(X_C\)</span> can be a descendant of <span class="math inline">\(X_S\)</span> in the DAG <span class="math inline">\(G\)</span>.</p></li>
+<li><p>Every “back-door” path between <span class="math inline">\(X_S\)</span> and <span class="math inline">\(Y\)</span> has to be blocked by <span class="math inline">\(X_C\)</span>.</p></li>
+</ol>
+</div>
+<div id="scenarios" class="section level2">
+<h2><span class="header-section-number">4.4</span> Scenarios</h2>
+<p>After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of <span class="citation">(Pearl <a href="#ref-pearl1993" role="doc-biblioref">1993</a>)</span>. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions.</p>
+<p>In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests resulted in a large increase in computation time with a higher number of observations, but with results that hardly differed from those obtained with one thousand observations.</p>
+<p>The process for obtaining the intervention curve was as follows:
+Let <span class="math inline">\(X\)</span> be the predictor variable of interest with possible values <span class="math inline">\(x_{1}, x_{2}, x_{n}\)</span> and <span class="math inline">\(Y\)</span> the response variable of interest.
+for each unique <span class="math inline">\(i \in \{1,2,\dots,n\}\)</span> do<br />
+(1) make a copy of the data set<br />
+(2) replace the original values of <span class="math inline">\(X\)</span> with the value <span class="math inline">\(X_{(i)}\)</span> of <span class="math inline">\(X\)</span> under intervention<br />
+(3) recompute all variables dependent on <span class="math inline">\(X\)</span> using the replacement values as input. This includes <span class="math inline">\(Y\)</span>, but potentially also other features that rely on <span class="math inline">\(X\)</span> for their value. Note that only <span class="math inline">\(X\)</span> is replaced with <span class="math inline">\(X_i\)</span> in the existing equations. Both the equations and error terms remain the same as before.<br />
+(4) Compute the average <span class="math inline">\(Y_i\)</span> in dataset <span class="math inline">\(i\)</span> given <span class="math inline">\(X_i\)</span>.<br />
+(5) (<span class="math inline">\(X_i\)</span>, <span class="math inline">\(Y_i\)</span>) are a single point on the intervention curve.</p>
+<p><strong>Scenario 1: </strong></p>
+<div class="figure"><span id="fig:Figure3"></span>
+<img src="book_files/figure-html/Figure3-1.svg" alt="Chain DAG where X has a direct impact on Y, but is dependent on Z" width="336" />
+<p class="caption">
+FIGURE 4.3: Chain DAG where X has a direct impact on Y, but is dependent on Z
+</p>
+</div>
+<p>In the first scenario, we have a chain DAG, seen in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure3">4.3</a>. Our variable <span class="math inline">\(X\)</span> is impacted by <span class="math inline">\(Z\)</span> and has a direct effect on <span class="math inline">\(Y\)</span>. <span class="math inline">\(Z\)</span>, however, does not. <span class="math inline">\(X_C\)</span> consists of <span class="math inline">\(Z\)</span>, which is not a descendant of <span class="math inline">\(X\)</span>. There is also no backdoor path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario are as follows:</p>
+<p><span class="math display">\[ Y \leftarrow X + \epsilon_Y  \]</span>
+<span class="math display">\[ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 \]</span></p>
+<p>As will be done in all scenarios, both standard deviaton for <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(N\)</span> were varied across 3 levels leading to 9 settings.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure4"></span>
+<img src="images/scenario1_all.jpeg" alt="Comparison for scenario 1 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
+<p class="caption">
+FIGURE 4.4: Comparison for scenario 1 of PDPs under various settings with the (yellow) intervention curve on the right
+</p>
+</div>
+<p>Overall the PDPs match the intervention curves fairly well. Outside of the extreme regions of <span class="math inline">\(X\)</span>, where some curvature is present, the linear quality of the intervention curve is evident in the PDPs. Furthermore, the scale of <span class="math inline">\(\hat{Y}\)</span> is comparable to the scale of <span class="math inline">\(Y_{intervention}\)</span> in most settings.</p>
+<p><strong>Scenario 2: Chain DAG</strong></p>
+<div class="figure"><span id="fig:Figure5"></span>
+<img src="book_files/figure-html/Figure5-1.svg" alt="Chain DAG where X has no a direct impact on Y, but only indirectly through Z" width="336" />
+<p class="caption">
+FIGURE 4.5: Chain DAG where X has no a direct impact on Y, but only indirectly through Z
+</p>
+</div>
+<p>In this scenario the DAG again looks like a chain. <span class="math inline">\(X\)</span> has an effect on <span class="math inline">\(Y\)</span> through <span class="math inline">\(Z\)</span>, but no direct relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> exists. Note that since <span class="math inline">\(Z\)</span> is a descendant of <span class="math inline">\(X\)</span>, the PDP and intervention curve should not coincide. The initial simulation settings for this scenario are as follows:</p>
+<p><span class="math display">\[ Y \leftarrow Z + \epsilon_Y  \]</span>
+<span class="math display">\[ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X, \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ N \leftarrow 100 \]</span></p>
+<div class="figure" style="text-align: left"><span id="fig:Figure6"></span>
+<img src="images/scenario2_all.jpeg" alt="Comparison for scenario 2 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
+<p class="caption">
+FIGURE 4.6: Comparison for scenario 2 of PDPs under various settings with the (yellow) intervention curve on the right
+</p>
+</div>
+<p>As can be seen from Figure <a href="pdp-and-causal-interpretation.html#fig:Figure6">4.6</a>, the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show a negative slope for the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in comparison to the overall positive slope for the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.</p>
+<p><strong>Scenario 3</strong></p>
+<p>After two chains, we now have a scenario where <span class="math inline">\(X\)</span> has an influence on both <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span> directly, as well as <span class="math inline">\(Z\)</span> having an impact on <span class="math inline">\(Y\)</span>, as seen in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure7">4.7</a>. X confounds <span class="math inline">\(Z \rightarrow Y\)</span> here. An example of a confounding variable in real life might be for instance the relationship between the <em>level of physical activity</em> and <em>weight gain</em>, which is confounded by <em>age</em>. <em>Age</em> affects both <em>weight gain</em> and the <em>level of physical activity</em> (on average), making it similar to the X in our scenario here. This scenario is similar to the previous one with only an edge between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> having been added. As can be seen from the DAG in <a href="pdp-and-causal-interpretation.html#fig:Figure7">4.7</a>, <span class="math inline">\(Z\)</span> is still a descendant of <span class="math inline">\(X\)</span>. The expectation is that the PDPs and the true interventions will not be equal.</p>
+<div class="figure"><span id="fig:Figure7"></span>
+<img src="book_files/figure-html/Figure7-1.svg" alt="X is a confounding variable impacting both Z and Y" width="336" />
+<p class="caption">
+FIGURE 4.7: X is a confounding variable impacting both Z and Y
+</p>
+</div>
+<p>The similarity to the previous scenario can also be noted in the simulation settings, where the only difference is the addition of <span class="math inline">\(X\)</span> to the equation for <span class="math inline">\(Y\)</span>.</p>
+<p><span class="math display">\[ Y \leftarrow Z + X + \epsilon_Y  \]</span>
+<span class="math display">\[ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X, \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ N \leftarrow 100 \]</span></p>
+<div class="figure" style="text-align: left"><span id="fig:Figure8"></span>
+<img src="images/scenario3_all.jpeg" alt="Comparison for scenario 3 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
+<p class="caption">
+FIGURE 4.8: Comparison for scenario 3 of PDPs under various settings with the (yellow) intervention curve on the right
+</p>
+</div>
+<p>The expectation was that the PDP would not show the same results as the true intervention. On first glance in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure8">4.8</a>, the PDPs do not seem to be as inaccurate as they were in scenario 2. An overall upward trend seen in the true intervention on the right is also captured by the PDPs in all settings. However, big differences do exist. First of all, the scale of <span class="math inline">\(\hat{Y}\)</span> is off in every setting. This issue gets worse both when the standard deviation of the error increases and when the number of observations is increased. The worst setting is the bottom right, where <span class="math inline">\(N = 10.000\)</span> and the standard deviation of the error is 0.5. The range of <span class="math inline">\(\hat{Y}\)</span> is very small compared to the true intervention next to it and the slope is not steep enough. In fact, the correct slope can only be seen in a very few points: In the top row plot 2 and 3 around <span class="math inline">\(X=0\)</span> and on the second row plot 3, also around <span class="math inline">\(X=0\)</span>.
+Overall the result is not as poor as in scenario 2, but a causal interpretation of these plots would lead to a severe underestimation of the impact <span class="math inline">\(X\)</span> has on <span class="math inline">\(Y\)</span>.</p>
+<p><strong>Scenario 4</strong></p>
+<p>Scenario 4 consists of a direct effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. <span class="math inline">\(Z\)</span> meanwhile is unrelated to both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. It is however included in the simulation and included in the model that is run to create the PDPs. In a non-simulated setting, <span class="math inline">\(Z\)</span> can be seen as a variable that we assume might be related to <span class="math inline">\(Y\)</span> and therefore include, but in actuality has nothing to do with the causal process and should not be included. We will see now how the PDP deals with this kind of variable in the mix.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure9"></span>
+<img src="images/scenario4.jpeg" alt="X directly impacts Y. Z is included in our model, but has no relationship to X or Y" width="100%" />
+<p class="caption">
+FIGURE 4.9: X directly impacts Y. Z is included in our model, but has no relationship to X or Y
+</p>
+</div>
+For the simulation the initial settings look as follows, again increasing both the standard deviation of the error and the magnitude of observations from this starting point.
+<span class="math display">\[ Y \leftarrow X + \epsilon_Y  \]</span>
+<span class="math display">\[ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X,\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ N \leftarrow 100 \]</span>
+<div class="figure" style="text-align: left"><span id="fig:Figure10causal"></span>
+<img src="images/scenario4_all.jpeg" alt="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
+<p class="caption">
+FIGURE 4.10: Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right
+</p>
+</div>
+<p>The PDPs in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure10causal">4.10</a> are able to capture the intervention curve well. Only in the cases where <span class="math inline">\(N=100\)</span> is there slight curvature at the extreme ends of <span class="math inline">\(X\)</span>. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from <span class="math inline">\(X = -1\)</span> to <span class="math inline">\(X = 1\)</span>, with the scale of <span class="math inline">\(\hat{Y}\)</span> matching that of <span class="math inline">\(Y_{intervention}\)</span>.</p>
+<p><strong>Scenario 5</strong></p>
+<p>In this scenario Z is a confounding variable. This is similar to scenario 3 where <span class="math inline">\(X\)</span> was the confounder. Thinking back to the example of <em>age</em> being a confounding variable for <em>level of physical activity</em> and <em>weight gain</em>, in the previous example our <span class="math inline">\(X\)</span> was comparable to the confounder <em>age</em>. In this scenario, we can keep the same example, but say our variable <span class="math inline">\(X\)</span> is now comparable to the variable <em>level of physical activity</em> that is being confounded. Since <span class="math inline">\(X\)</span> has no descendants and there is no backdoor path, the expectation here is that the PDPs will be similar to the intervention curve.</p>
+<div class="figure"><span id="fig:Figure11causal"></span>
+<img src="book_files/figure-html/Figure11causal-1.svg" alt="Z is a confounding variable impacting both X and Y" width="336" />
+<p class="caption">
+FIGURE 4.11: Z is a confounding variable impacting both X and Y
+</p>
+</div>
+<p>The following simulation settings were used:</p>
+<p><span class="math display">\[ Y \leftarrow Z + X + \epsilon_Y  \]</span>
+<span class="math display">\[ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 \]</span></p>
+<div class="figure" style="text-align: left"><span id="fig:Figure12causal"></span>
+<img src="images/scenario5_all.jpeg" alt="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
+<p class="caption">
+FIGURE 4.12: Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right
+</p>
+</div>
+<p>We can see in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure12causal">4.12</a> that aside from the extreme regions of <span class="math inline">\(X\)</span> where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of <span class="math inline">\(Y_intervention\)</span> from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs are most accurate with the highest number of observations and lowest standard deviation of errors.</p>
+</div>
+<div id="theoretical-comparison" class="section level2">
+<h2><span class="header-section-number">4.5</span> Theoretical Comparison</h2>
+<p>The empirical comparison of the modeled PDP and the intervention curve is of course not ideal. The PDP is dependent on the model fit, meaning a badly fitted model could give unexpected results. Ideally, we want to see what a PDP would look like given a perfect model. One way to approximate this is the following:</p>
+<p>Taking the PDP formula:</p>
+<p><span class="math display">\[ \hat{f}(x_S) = \frac{1}{n} \sum_{i=1}^n \hat{f} (x_S, x_{C}^{(i)})\]</span></p>
+<p>We can replace <span class="math inline">\(\hat{f} (x_S, x_{C}^{(i)})\)</span> with the conditional expectation <span class="math inline">\(E[Y|X_s = x_s, X_c = x_c]\)</span>. This is the only change we make.</p>
+<p>For a scenario where <span class="math inline">\(X\)</span> is a confounding variable, as seen in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure7">4.7</a> with scenario 3, we have:<br />
+<span class="math display">\[  X \leftarrow  \epsilon_X , \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ Y \leftarrow X + Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) \]</span></p>
+<p>Then</p>
+<p><span class="math inline">\(\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\  =E[x+z+\epsilon_Y] = x + z + E[\epsilon_y]\\  = x + z \end{aligned}\)</span></p>
+<p>Similarly, for a scenario where <span class="math inline">\(Z\)</span> is a confounding variable, as seen in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure11causal">4.11</a> with scenario 5, the result is:<br />
+<span class="math display">\[  Z \leftarrow  \epsilon_z , \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ Y \leftarrow X + Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) \]</span></p>
+<p><span class="math inline">\(\begin{aligned} E[Y|X = x, Z = z] = E[X+Z + \epsilon_Y| X = x, Z = z]\\ = x + z \end{aligned}\)</span></p>
+<p>And for a scenario where we have a chain <span class="math inline">\(X \rightarrow Z \rightarrow Y\)</span>, as seen in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure5">4.5</a> with scenario 2, this means the following:</p>
+<p><span class="math display">\[  X \leftarrow  \epsilon_X , \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ Y \leftarrow Z + \epsilon_Y, \ \ \ \ \ \epsilon_X \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Z \sim \mathcal{N}(0, \sigma^2), \ \ \ \ \ \epsilon_Y \sim \mathcal{N}(0, \sigma^2) \]</span></p>
+<p><span class="math inline">\(\begin{aligned} E[Y|X = x, Z = z] = E[Z + \epsilon_Y| X = x, Z = z]\\ = z \end{aligned}\)</span></p>
+<p>When implemented, however, we did not get the the expected results. In fact, while the results of the modeled PDP versus the intervention curve seen earlier seemed to give expected results, the theoretical PDP implementation seemed to give the opposite of the expected result. The theoretical PDP was not similar to the intervention curve when the backdoor criterion was met, nor was it dissimilar when the backdoor criterion was not met.
+I assume a mistake in implementation is at fault. In the end, I was unable to figure out where the mistake lies: In the modeling of the PDP, the calculation of the intervention curve, the derivation of the theoretical PDP or the implementation of the theoretical PDP. If no mistake was made, I was unable to come up with a satisfactory explanation of the results. An example of the unexpected results is seen in <a href="pdp-and-causal-interpretation.html#fig:Figure13causal">4.13</a> .</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure13causal"></span>
+<img src="images/theoretical_pdp.jpeg" alt="Model PDP versus Theoretical PDP vs Intervention for the scenario where X is a confounder (Scenario 3)" width="100%" />
+<p class="caption">
+FIGURE 4.13: Model PDP versus Theoretical PDP vs Intervention for the scenario where X is a confounder (Scenario 3)
+</p>
+</div>
+<p>The expectation for this scenario, as we have seen before when discussing Figure <a href="pdp-and-causal-interpretation.html#fig:Figure8">4.8</a>, is that the PDP and the Intervention Curve should not be the same. Now again, as before, we see that this is true for the modeled PDP on the left and the IC on the right. However, the theoretical PDP in the middle is the same as the IC, which expectation is it should not be.</p>
+<p>Figure <a href="pdp-and-causal-interpretation.html#fig:Figure14causal">4.14</a> shows the result obtained for the scenario where Z is a confounder. This was our Scenario 5, discussed in Figure <a href="pdp-and-causal-interpretation.html#fig:Figure12causal">4.12</a>. We expect the PDP to be the same as the Intervention Curve here, because the backdoor criterion is met. Comparing the modeled PDP on the left to the IC on the right, this seems to be the case. However, as in the previous case, <span class="math inline">\(E[Y]\)</span> ranges from (-2, 2), making it different from the IC and the modeled PDP.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure14causal"></span>
+<img src="images/theoretical_pdp2.jpeg" alt="Model PDP versus Theoretical PDP vs Intervention for the scenario where Z is a confounder (Scenario 5)" width="100%" />
+<p class="caption">
+FIGURE 4.14: Model PDP versus Theoretical PDP vs Intervention for the scenario where Z is a confounder (Scenario 5)
+</p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2><span class="header-section-number">4.6</span> Conclusion</h2>
+<p>Causal interpretability of a PDP is dependent on several things:
+(1) The backdoor criterion being met. We have seen that if the backdoor criterion is met, meaning no variable in the complement set <span class="math inline">\(C\)</span> is a descendant of our variable of interest, the PDP should be the same as the intervention curve. We say should, because in practice it will also depend on:
+(2) The model fit. Even when the backdoor criterion is met, the PDP might not fully capture the exact same relationship as the intervention curve. Especially in extreme regions, where data is potentially sparse, the PDP can be deceptive. Same in scenarios with a higher(er) error and low number of observations.</p>
+<p>Point (2) can be checked through the standard goodness of fit measures that are pervasive in the statistics literature. Point (1) is more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met. Still, it is a hard assumption to verify which could limit the confidence people have in a causal interpretation of a PDP.</p>
+<p>Additionally, a further limitation is that directionality is not something that can be deduced from a PDP. As we saw with the ice-cream example, sometimes this problem is trivial. In many cases, however, it is not and sufficient domain knowledge is necessary to ensure the correct process is depicted.</p>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-pearl1993">
+<p>Pearl, Judea. 1993. “Comment: Graphical Models, Causality and Intervention.” <em>Statistical Science</em> 8 (3): 266–69.</p>
+</div>
+<div id="ref-scholbeck">
+<p>Scholbeck, Christian. 2018. “Interpretierbares Machine-Learning. Post-Hoc Modellagnostische Verfahren Zur Bestimmung von Prädiktoreffekten in Supervised-Learning-Modellen.” Ludwig-Maximilians-Universität München.</p>
+</div>
+<div id="ref-zhaohastie">
+<p>Zhao, Qingyuan, and Trevor Hastie. 2018. <em>Causal Interpretations of Black-Box Models</em>. <a href="http://web.stanford.edu/~hastie/Papers/pdp_zhao_final.pdf">http://web.stanford.edu/~hastie/Papers/pdp_zhao_final.pdf</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="pdp-and-feature-interactions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="pdp-and-correlated-features.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="introduction-to-accumulated-local-effects-ale.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
 <script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
 <script src="libs/gitbook/js/plugin-sharing.js"></script>
 <script src="libs/gitbook/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -190,8 +595,9 @@ gitbook.start({
     script.type = "text/javascript";
     var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

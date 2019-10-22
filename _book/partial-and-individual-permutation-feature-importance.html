@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 11 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods</title>
+  <title>Chapter 10 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.14 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 11 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:title" content="Chapter 10 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 11 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods" />
+  <meta name="twitter:title" content="Chapter 10 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods" />
   
   <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
   
@@ -24,15 +24,15 @@
 <meta name="author" content="" />
 
 
-<meta name="date" content="2019-08-06" />
+<meta name="date" content="2019-10-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="pfi-loco-and-correlated-features.html">
-<link rel="next" href="pfi-training-vs-test-data.html">
+<link rel="prev" href="pfi-loco-and-correlated-features.html"/>
+<link rel="next" href="pfi-training-vs-test-data.html"/>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,6 +50,70 @@
 
 
 
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
@@ -66,10 +131,13 @@
 <li><a href="./">Limitations of ML Interpretability</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>1.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>1.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>1.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>1.4</b> Outline of the booklet</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><i class="fa fa-check"></i><b>2</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
 <li class="chapter" data-level="2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a><ul>
 <li class="chapter" data-level="2.1.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>2.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
@@ -80,32 +148,162 @@
 <li class="chapter" data-level="2.2.3" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>2.2.3</b> Advantages and Limitations of ICE Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a></li>
-<li class="chapter" data-level="4" data-path="pdp-and-feature-interactions.html"><a href="pdp-and-feature-interactions.html"><i class="fa fa-check"></i><b>4</b> PDP and Feature Interactions</a></li>
-<li class="chapter" data-level="5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a></li>
-<li class="chapter" data-level="6" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="6.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
-<li class="chapter" data-level="6.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
-<li class="chapter" data-level="6.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ProblemDescription"><i class="fa fa-check"></i><b>3.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>3.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>3.1.2</b> What is the issue with extrapolation?</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+<li class="chapter" data-level="3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#RealData"><i class="fa fa-check"></i><b>3.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>3.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>3.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#NumCat"><i class="fa fa-check"></i><b>3.2.3</b> Dependency between Numerical and Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+<li class="chapter" data-level="3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#SimulatedData"><i class="fa fa-check"></i><b>3.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>3.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>3.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="3.3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>3.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="3.3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>3.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="3.3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>3.3.5</b> Simulation Settings: Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a></li>
-<li class="chapter" data-level="8" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a></li>
-<li class="chapter" data-level="9" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
-<li class="chapter" data-level="9.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
-<li class="chapter" data-level="9.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
-<li class="chapter" data-level="9.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+<li class="chapter" data-level="3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>3.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>3.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="3.4.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>3.4.2</b> Simulation based on own prediction function</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a></li>
-<li class="chapter" data-level="11" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a></li>
-<li class="chapter" data-level="12" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a></li>
-<li class="chapter" data-level="13" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a></li>
-<li class="chapter" data-level="14" data-path="lime-and-neighbourhood.html"><a href="lime-and-neighbourhood.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a></li>
-<li class="chapter" data-level="15" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a></li>
+<li class="chapter" data-level="3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>4</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#a-brief-look-at-pdp-problems"><i class="fa fa-check"></i><b>4.2</b> A brief look at PDP problems</a></li>
+<li class="chapter" data-level="4.3" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>4.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="4.4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#scenarios"><i class="fa fa-check"></i><b>4.4</b> Scenarios</a></li>
+<li class="chapter" data-level="4.5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#theoretical-comparison"><i class="fa fa-check"></i><b>4.5</b> Theoretical Comparison</a></li>
+<li class="chapter" data-level="4.6" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#conclusion"><i class="fa fa-check"></i><b>4.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>5</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="5.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
+<li class="chapter" data-level="5.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>5.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>5.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>5.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>5.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>5.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>6</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="6.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>6.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>6.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="6.1.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>6.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>6.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>6.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="6.2.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>6.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>6.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>6.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="6.3.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>6.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="6.3.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>6.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>6.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="6.5" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>6.5</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>7</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>7.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#state-of-the-art"><i class="fa fa-check"></i><b>7.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ale-approximations"><i class="fa fa-check"></i><b>7.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="7.1.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-1-additive-feature-effects"><i class="fa fa-check"></i><b>7.1.3</b> Example 1: additive feature effects</a></li>
+<li class="chapter" data-level="7.1.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>7.1.4</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="7.1.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>7.1.5</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>7.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#outlook"><i class="fa fa-check"></i><b>7.2.1</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#categorical-features"><i class="fa fa-check"></i><b>7.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ordering-the-features"><i class="fa fa-check"></i><b>7.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>7.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>7.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="7.3.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#interpretation"><i class="fa fa-check"></i><b>7.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="7.3.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#changes-of-the-ale-due-to-diffrent-orders"><i class="fa fa-check"></i><b>7.3.5</b> Changes of the ALE due to diffrent orders</a></li>
+<li class="chapter" data-level="7.3.6" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#conclusion-1"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>8</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>8.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="8.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>8.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="8.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>8.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>9</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>9.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#simulation"><i class="fa fa-check"></i><b>9.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="9.1.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#real-data"><i class="fa fa-check"></i><b>9.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>9.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#summary-1"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
+<li class="chapter" data-level="9.4" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#note-to-the-reader"><i class="fa fa-check"></i><b>9.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>10</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="10.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch2"><i class="fa fa-check"></i><b>10.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="10.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch3"><i class="fa fa-check"></i><b>10.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch31"><i class="fa fa-check"></i><b>10.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="10.2.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch32"><i class="fa fa-check"></i><b>10.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="10.2.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch323"><i class="fa fa-check"></i><b>10.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch4"><i class="fa fa-check"></i><b>10.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="10.4" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch5"><i class="fa fa-check"></i><b>10.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#introduction-to-test-vs-training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs Training Data</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>11.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="11.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>11.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#gradient-boosting-machine"><i class="fa fa-check"></i><b>11.3.1</b> Gradient Boosting Machine</a></li>
+<li class="chapter" data-level="11.3.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>11.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="11.3.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#results"><i class="fa fa-check"></i><b>11.3.3</b> Results</a></li>
+<li class="chapter" data-level="11.3.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>11.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#summary-2"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="12.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="12.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="12.2.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
+<li class="chapter" data-level="12.4" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="id1.html"><a href="id1.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="id1.html"><a href="id1.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13.2" data-path="id1.html"><a href="id1.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="13.3" data-path="id1.html"><a href="id1.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="id1.html"><a href="id1.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="13.3.2" data-path="id1.html"><a href="id1.html#id42"><i class="fa fa-check"></i><b>13.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="id1.html"><a href="id1.html#id5"><i class="fa fa-check"></i><b>13.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="13.5" data-path="id1.html"><a href="id1.html#id6"><i class="fa fa-check"></i><b>13.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="id1.html"><a href="id1.html#id61"><i class="fa fa-check"></i><b>13.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="13.5.2" data-path="id1.html"><a href="id1.html#id62"><i class="fa fa-check"></i><b>13.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>14</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>14.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#formula"><i class="fa fa-check"></i><b>14.1.1</b> Formula</a></li>
+<li class="chapter" data-level="14.1.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sampling-strategies"><i class="fa fa-check"></i><b>14.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="14.1.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>14.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>14.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>14.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#boston-housing-data"><i class="fa fa-check"></i><b>14.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#rental-bikes-data"><i class="fa fa-check"></i><b>14.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="14.4.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="14.4.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
+<li class="chapter" data-level="14.6" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>15</b> Acknowledgements</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
@@ -128,9 +326,239 @@
 
             <section class="normal" id="section-">
 <div id="partial-and-individual-permutation-feature-importance" class="section level1">
-<h1><span class="header-section-number">Chapter 11</span> Partial and Individual Permutation Feature Importance</h1>
-<p><em>Author: firstname lastname</em></p>
+<h1><span class="header-section-number">Chapter 10</span> Partial and Individual Permutation Feature Importance</h1>
+<p><em>Author: Moritz Wagner</em></p>
+<p>The introductory chapter discussed the relevance of PFI and LOCO for the interpretability of machine learning models. It was argued that for interpretation purposes, the concept of Feature Importance is an indispensable complement to analyzing Feature Effects. The Feature Importance quantifies the contribution of a specific feature to the prediction power of a model. Yet, it was also remarked that an aggregated, global measure of Feature Importance might be insufficient. It might be the case that within a feature, some single values or subgroups are more important for predictions than others. This heterogeneity, however, could not be captured by a single metric. Besides, it is trivial to understand that with increasing heterogeneity, the global PFI becomes less revealing. By implication, a complementary method that captures such heterogeneity becomes more decisive.</p>
+<p>To identify whether such heterogeneity exists, an algorithm is required that calculates the Feature Importance for each value of the respective feature. Briefly, a measure that indicates the contribution of an individual value to the global Feature Importance. However, as the range of values can be rather large, a tabular description seems to be cluttered. Therefore, a visualization tool that allows gaining meaningful and concise insights on how the Feature Importance varies, should be derived. One would then plot the respective values of the feature against its local Feature Importance measures. In the case of heterogeneity, the plotted curve should then deviate from a constant shape.</p>
+<p>Following the objective of visualization, one can make use of the concepts of Partial Dependence and Individual Conditional Expectation, as these methods allow to detect heterogeneity in the context of Feature Effects. <span class="citation">Casalicchio, Molnar, and Bischl (<a href="#ref-casalicchio2018visualizing" role="doc-biblioref">2018</a>)</span> avail themselves from these concepts and transfer them to the concept of Feature Importance, by introducing the metrics Partial Importance (PI) and Individual Conditional Importance (ICI) (see <span class="citation">Goldstein et al. (<a href="#ref-Goldstein2013" role="doc-biblioref">2013</a>)</span>). They show that these methods enable to detect subgroups with differing levels of Feature Importance and are, therefore when striving for a complete picture, non-negligible complements to the global PFI metric.</p>
+<p>However, it might be of interest to not only reliably detect heterogeneity but to also better understand its drivers. In general, it can be distinguished between three different sources for heterogeneity. First, if the relationship between a feature and the response is non-linear. Secondly, if features are correlated and third if interaction effects between features are existent. In what follows, it will be focused on the latter as the first represents no actual concern and the second was already discussed in the previous chapter.</p>
+<p>As will be seen, uncovering interaction effects is not as straightforward, as the structural relationship between covariates and the outcome variables is unknown. Hence, from first glance, it is unclear whether there is just a non-linear relationship or whether indeed interactions between covariates exist. But if the PI or ICI method does not enable us to distinguish between these sources, the applicant does not gain a better understanding. If heterogeneity is not understood, one can hardly interpret the results and if so, the methods failed to a certain extent.</p>
+<p>Hence, the motivation is clear. If interaction effects between covariates are existent, it should be, for the sake of the interpretability of a machine learning model, of major interest to detect them. Detecting them is an indispensable objective to be enabled to then explain them. And only if they can be explained, the heterogeneity in Feature Importance can be understood and the results can be interpreted accordingly.</p>
+<p>To answer the questions, formulated above, the remaining subchapters are structured as follows: In chapter <a href="partial-and-individual-permutation-feature-importance.html#ch2">10.1</a>, the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) are theoretically introduced. This shall provide the reader with an in-depth understanding of how the Feature Importance can be visualized, both on an aggregated, global and disentangled, local level. With these preliminaries, the reader is equipped with sufficient knowledge to understand the following simulations (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch3">10.2</a>) which are meant to cover two broader topics.</p>
+<p>In the subchapter <a href="partial-and-individual-permutation-feature-importance.html#ch31">10.2.1</a>, it will be focussed on to what extent the PI and ICI plots can uncover interaction effects between features. To give this a new angle of perspective, a new method, called “derivative-ICI” (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch312">10.2.1.2</a>) will be introduced.</p>
+<p>The subchapter <a href="partial-and-individual-permutation-feature-importance.html#ch32">10.2.2</a> will then discuss the issue of actually explaining the detected interaction effects. Pursuing this objective, an additional method will be introduced which will predict the global Feature Importance of the feature of interest based on the remaining features in the model (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch321">10.2.2.1</a>). A significant relationship between the PFI and at least one feature would then not only confirm the conjecture of interaction effects but also explain between which features these interactions took place.</p>
+<p>The simulation chapter will then be closed by bringing the results together. With that, one can then calculate the respective conditional Feature Importance (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch322">10.2.2.2</a>). Plotting this provides the user with an exhaustive understanding of why the local Feature Importance differs between subgroups. Further, it even allows quantifying the difference in Feature Importance. Yet, the focus here will lay on the visualization and not on the direct quantification. The latter was already discussed by <span class="citation">Casalicchio, Molnar, and Bischl (<a href="#ref-casalicchio2018visualizing" role="doc-biblioref">2018</a>)</span>.</p>
+<p>The whole simulation chapter serves as a “cookbook” on how to still reach meaningful and interpretable results when heterogeneity is driven by unobserved interaction effects. After this is completed, the methods will be verified on real data (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch4">10.3</a>). Pursuing this, a brief analysis is conducted on the Boston Housing Data.</p>
+<p>The chapter is then closed by a summary and discussion of the methods (see chapter <a href="partial-and-individual-permutation-feature-importance.html#ch5">10.4</a>). This will include a final evaluation of the PI and ICI plots and thereby answer the question of whether the methods are useful or not.</p>
+<div style="page-break-after: always;"></div>
+<div id="ch2" class="section level2">
+<h2><span class="header-section-number">10.1</span> Preliminaries on Partial and Individual Conditional Importance</h2>
+<p>Once the concept of the global PFI is clear, it will be shown that deriving the Partial Importance as well as the Individual Conditional Importance is straightforward. To be able to comprehend that, one should briefly recall that the global PFI of a feature <span class="math inline">\(S\)</span> is defined as</p>
+<p><span class="math display">\[\begin{align}
+PFI_{S} = E(L(f(X_{S}, X_{C}), Y)) - E(L(f(X), Y)) \label{eq:eq1}\tag{1}
+\end{align}\]</span></p>
+<p>where the first term corresponds to the theoretical generalization error of the model, including the permuted feature <span class="math inline">\(x_{S}\)</span> and the second term depicts the generalization error resulting from the original model. The difference then gives the global PFI of feature <span class="math inline">\(S\)</span>. However, in the application, the joint distribution of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is unknown so that the generalization error needs to be approximated by the empirical error. The first term of equation (1) is derived by the formula</p>
+<p><span class="math display">\[\begin{align}
+\widehat{GE_{C}}(\hat{f}, D) = \frac{1}{n} \sum_{i = 1}^{n}\frac{1}{n} \sum_{k = 1}^{n}L(\hat{f}(X_{S}^{(k)}, X_{C}^{(i)}),  y^{(i)}) \label{eq:e2}\tag{2}
+\end{align}\]</span></p>
+<p>which states that the empirical losses for all observations <span class="math inline">\(i \in \{i, ..., n\}\)</span> are calculated respectively for each permutation <span class="math inline">\(k \in \{i, ..., n\}\)</span> of <span class="math inline">\(X_{S}\)</span> and averaged over <span class="math inline">\(n\)</span>. Here, <span class="math inline">\(\widehat{GE_{C}}(\hat{f}, D)\)</span> is subscripted with <span class="math inline">\(C\)</span> as it shall indicate the generalization error when only predicting with the remaining feature subset <span class="math inline">\(X_{C}\)</span>. Equivalently, the second term of equation (1) can be approximated by the formula</p>
+<p><span class="math display">\[\begin{align}
+\widehat{GE}(f, D) = \frac{1}{n}\sum_{i = 1}^{n}L(f(x^{(i)}, y^{(i)}) \label{eq:eq3}\tag{3}
+\end{align}\]</span></p>
+<p>In equations (2) and (3), <span class="math inline">\(\hat{f}\)</span> corresponds respectively to the fitted supervised machine learning model and <span class="math inline">\(D\)</span> is defined as the underlying test data, sampled from a <span class="math inline">\(i.i.d\)</span> distribution <span class="math inline">\(P\)</span>. Taking the difference of both approximations from equations (2) and (3) yields the formula for the global <span class="math inline">\(PFI_{S}\)</span> which is defined as</p>
+<p><span class="math display">\[\begin{align}
+\widehat{PFI}_{S}  =  \frac{1}{n^{2}}\sum_{i = 1}^{n}\sum_{k = 1}^{n}(L(\hat{f}(X_{S}^{(k)}, X_{C}^{(i)}),  y^{(i)}) - L(f(x^{(i)}, y^{(i)}) \label{eq:eq4}\tag{4}
+\end{align}\]</span></p>
+<p>whereby calculating the global PFI becomes computationally expensive when n is large as the iteration scales with <span class="math inline">\(O(n^{2})\)</span>. This issues becomes more apparent when considering the full set of possible permutations <span class="math inline">\((\tau_{1}, ..., \tau_{n!})\)</span>, resulting in an equation equivalent to formula (5) where the algorithm iterates over all <span class="math inline">\(n!\)</span> permutations</p>
+<p><span class="math display">\[\begin{align}
+\widehat{GE}_{C, perm}(\hat{f}, D) = \frac{1}{n}\sum_{i = 1}^{n} \frac{1}{n!}\sum_{k = 1}^{n!}L(f(x_{S}^{\tau_{k}^{(i)}}, x_{C}^{(i)}), y^{(i)}) \label{eq:eq5}\tag{5}
+\end{align}\]</span></p>
+<p>To circumvent the computational disadvantage, it is advisable to rather approximate <span class="math inline">\(GE_{C}(f,D)\)</span> by <span class="math inline">\(GE_{C, approx}(f,D)\)</span> which only entails a randomly selected set of m permutations, defined as</p>
+<p><span class="math display">\[\begin{align}
+\widehat{GE}_{C, approx}(\hat{f}, D) = \frac{1}{n}\sum_{i = 1}^{n} \frac{1}{m}\sum_{k = 1}^{m}L(f(x_{S}^{\tau_{k}^{(i)}}, x_{C}^{(i)}), y^{(i)}) \label{eq:eq6}\tag{6}
+\end{align}\]</span></p>
+<p>This results in an approximated global PFI defined as</p>
+<p><span class="math display">\[\begin{align}
+PFI_{S,approx} = \frac{1}{n \cdot m}\sum_{i = 1}^{n}\sum_{k = 1}^{m}(L(f(x_{S}^{\tau_{k}^{(i)}}, x_{C}^{(i)}), y^{(i)}) - L(f(x^{(i)}, y^{i})) \label{eq:eq7}\tag{7}
+\end{align}\]</span></p>
+<p>From there, Individual Conditional Importance can be computed. One can calculate the change in performance for each i-th observation by taking the summands from equation (7) which is defined as</p>
+<p><span class="math display">\[\begin{align}
+\Delta L^{(i)}(x_{S}) = L(\hat{f}(x_{S}, x_{C}^{(i)}), y^{(i)}) - L(\hat{f}(x^{(i)}), y^{(i)})  \label{eq:eq8}\tag{8}
+\end{align}\]</span></p>
+<p>and repeat that for all permutations <span class="math inline">\(m\)</span>, resulting in <span class="math inline">\(m\)</span> components <span class="math inline">\(\Delta L^{(i)}(x_{S}^{(k)})\)</span> for each observation <span class="math inline">\(i\)</span>. Taking the average overall permutations yields the global PFI for observation <span class="math inline">\(i\)</span> which can be interpreted as the individual contribution of the i-th observation to the global PFI metric.</p>
+<p>In order to visualize the ICI, one can plot the pairs <span class="math inline">\(\Big\{(x_{S}^{(k)}, \Delta L^{i}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}\)</span>. In the same manner, the partial importance (PI) which corresponds to the expected change in performance at a certain value of <span class="math inline">\(x_{S}\)</span>. The estimated PI can be derived by taking the pointwise average over all ICI curves at the respective fixed points of <span class="math inline">\(x_{S}\)</span>. This is equivalent to <span class="math inline">\(\widehat{PI}_{S}(x_{S}) = \frac{1}{n}\sum_{i = 1}^{n} \Delta L^{(i) (x_{S})}\)</span>. Equivalent to above, the PI curve can visualized by plotting the pairs <span class="math inline">\(\Big\{(x_{S}^{(k)}, \widehat{PI}_{S}(x_{S}^{(k)}))\Big\}_{k = 1}^{n}\)</span>.</p>
+<p>The visualization of both, the ICI curves and the PI curves is illustrated in figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig0">10.1</a>. The illustration corresponds to an artificial dataset with only three observations. The dashed lines correspond to the respective ICI curves and the solid line illustrates the PI curve. The plot can be interpreted as follows. If the ICI curve takes the value 0, the original value of <span class="math inline">\(x_{S}\)</span> was replaced by its original value and therefore, no change in performance occurred. Besides, it is also expected that if the distance between the original value and the replacing value increases, the difference in performance also increases. This is also confirmed by the shape of the ICI curves.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig0"></span>
+<img src="images/03-7-0.jpeg" alt="Visualization of PI and ICI plots based on an illustrative example. The visualization corresponds to three observations and a total of three permuted datasets. The dashed lines correspond to the ICI curves. The solid line corresponds to the PI curve." width="99%" />
+<p class="caption">
+FIGURE 10.1: Visualization of PI and ICI plots based on an illustrative example. The visualization corresponds to three observations and a total of three permuted datasets. The dashed lines correspond to the ICI curves. The solid line corresponds to the PI curve.
+</p>
+</div>
+<p>As already theoretical described, averaging the ICI curves, yields the PI curve and taking the integral of the PI curve yields the global PFI of feature <span class="math inline">\(x_{S}\)</span>. In figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig0">10.1</a>, the red line corresponds to the global PFI.</p>
+<p>Note, that the exchangeability between PFI, PI and ICI depicts a convenient property for further analyses. The PI allows detecting regions with a higher or lower Feature Importance, whereby the ICI allows us to analyze individual observations and its contribution to the global PFI.</p>
+</div>
+<div id="ch3" class="section level2">
+<h2><span class="header-section-number">10.2</span> Simulations: A cookbook for using with PI and ICI</h2>
+<p>Simulations are a convenient choice to check statistical models for their correctness and validity. The following simulations are meant to guide the reader through a proposed step-by-step procedure which first, shall detect, then explain and lastly visualize interaction effects and their impact on a feature’s heterogeneity in importance. Even though each step is motivated by a limitation from its preceding method, they should be considered as mutual complements that aim to derive a complete picture.</p>
+<div id="ch31" class="section level3">
+<h3><span class="header-section-number">10.2.1</span> Detect Interactions</h3>
+<p>In general, two kinds of relationships between two covariates exist. First, the most common one, they are correlated. Second, the covariates do interact. Detecting correlation can be obtained by calculating the correlation matrix between the features. If two features are independent, the correlation is 0. The reverse, however, is not necessarily true as correlation measures only linear dependence. In such cases, a concept of information theory could be used. The metric “mutual information” describes the amount of information about one feature that is obtained when observing the other feature. Briefly, it quantifies the amount of shared information between features and therefore, measures implicitly the dependence between them. If the mutual information is 0, the features are indeed independent. This allows to even quantify interactions between features.</p>
+<p>Hence, methods exist which can detect and even quantify the dependence between variables, apart from correlation. Now, it is to be clarified whether PI or ICI plots do have a similar power.</p>
+<div id="ch311" class="section level4">
+<h4><span class="header-section-number">10.2.1.1</span> Partial Importance and Individual Conditional Importance plots</h4>
+<p>Again, the goal is to assess whether visualizations can detect interaction effects. To gain a first visual understanding of PI and ICI plots, consider the following data-generating model.</p>
+<p><span class="math display">\[ y \, = \, 5x_{1} \,  + \, 5x_{2} \, + x_{3}  \, + \, \epsilon\]</span>
+<span class="math display">\[ x_{1} \, \overset{i.i.d}{\sim} \, \mathcal{N}(0,1), \, x_{2} \, \overset{i.i.d}{\sim}  \mathcal{N}(0, 1) \, and \, x_{3} \overset{i.i.d}{\sim} B(1, 0.5),\,  \epsilon \overset{i.i.d}{\sim} \mathcal{N}(0, 1)\]</span></p>
+<p>The model is simulated with 1000 observations which are split into 80% training and 20% test data. On the training data, a Random Forest model is fitted and based on the estimates, the Partial Importance and the Individual Conditional Importance are calculated on the test data. The latter is done as outlined in the preliminaries. In figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig1">10.2</a>, the plots are visualized for feature <span class="math inline">\(w_{2}\)</span>.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig1"></span>
+<img src="images/03-7-1.jpeg" alt="Simulated data (simulation 1): PI Plot and ICI Plot for feature $x_{2}$. Introductory example with no interaction effect. Still, heterogeneity is observed." width="99%" />
+<p class="caption">
+FIGURE 10.2: Simulated data (simulation 1): PI Plot and ICI Plot for feature <span class="math inline">\(x_{2}\)</span>. Introductory example with no interaction effect. Still, heterogeneity is observed.
+</p>
+</div>
+<p>The PI plot indicates already a heterogeneous relationship, where the Partial Importance becomes large for large absolute values. The minimum is reached at around <span class="math inline">\(x_{2} = 0\)</span>. The respective ICI plot provides even more insights. It shows that some observations have a low local Feature Importance for large negative values and a large local Feature Importance for large positive values and vice-versa. As the shape of the curves are in both directions similar and the minimum is around <span class="math inline">\(x_{2} = 0\)</span>, it can be concluded that the feature <span class="math inline">\(x_{2}\)</span> is equally distributed around its mean.</p>
+<p>But how does this coincide with the fact that none of the above-discussed sources for heterogeneity are apparent in this simulation? As expected, no heterogeneity should be observed and yet the heterogeneity is considerable. The observed heterogeneity is because inherently extreme input values are considered on average as more important. Extreme values are replaced by values that are on average further away from the original input value which in turn results in higher loss differences. This problem is getting worse when choosing loss functions that penalize large errors more extreme. Briefly, the heterogeneity should be higher with a L2-loss compared to a more robust L1-loss.</p>
+<p>Hence, the plots might be misleading as it should not be concluded that large positive or large negative values are more important. Therefore, if features are normally distributed, the shape of the curves should be considered as a baseline plot whereby only deviations from there can be considered as a “true”, interpretable or meaningful heterogeneity. Yet, keeping that in mind, the PI and ICI plots do explain the heterogeneity to the full extent.</p>
+<p>With these baseline insights, one can now evaluate to what extent PI and ICI plots can detect heterogeneity which evolved through interaction effects. Following this objective, the following data-generating model is considered:</p>
+<p><span class="math display">\[ y \, = \, x_{1} \,  + \, 5x_{2} \, + 5x_{2}  1_{x_2 &gt; 2, x_3 = 0} \, + \, \epsilon\]</span></p>
+<p><span class="math display">\[ x_{1} \, \overset{i.i.d}{\sim} \, \mathcal{N}(0,1), \, x_{2} \, \overset{i.i.d}{\sim}  \mathcal{N}(0, 4) \quad \text{and} \quad x_{3} \overset{i.i.d}{\sim} B(1, 0.5),\,  \epsilon \overset{i.i.d}{\sim} \mathcal{N}(0, 1)\]</span></p>
+<p>Besides the comparable linear relationship between the covariates and the outcome variable, the model contains additionally an interaction effect between <span class="math inline">\(x_{2}\)</span> and <span class="math inline">\(x_{3}\)</span>. The model suggest that the feature <span class="math inline">\(x_{2}\)</span> should become more important for values <span class="math inline">\(x_{2} &gt; 2\)</span> and <span class="math inline">\(x_{3} = 0\)</span>. Hence, the plots should reveal large values in this area.</p>
+<p>The respective PI and ICI plots (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig2">10.3</a>) are at first glance quite similar to the plots, resulting from simulation 1. Yet, the above-mentioned differences can be observed. First, the PI plot reveals that the Feature Importance increases with a higher magnitude for large positive values, indicating that these observations are relatively more important. Looking at the ICI plot and highlighting the observations with the highest, the lowest and the median FI, yields some clearer insights. The blue curve corresponds to the observation with the largest contribution to the global PFI. Its initial value for <span class="math inline">\(x_{2}\)</span> is beyond the threshold of 10 and the corresponding <span class="math inline">\(x_{3}\)</span> takes the value 0. Hence, the interaction effect triggered and the feature became more important. The blue curve ascends decisively in the area around <span class="math inline">\(x_{2} = 2\)</span>. Once the threshold is reached, the fitted model does not trigger the interaction effect anymore and therefore, the predictions diverge increasingly. This observed property already indicates that an interaction effect is a major driver for heterogeneity.</p>
+<p>Yet, the quite similar plots from simulation 1 and simulation 2 might cause problems to identify this interaction at first glance. Therefore, in what follows, an additional method will be introduced which aims for less ambiguous results. Besides, it is important to note that these plots still do not explain which features drive the heterogeneity in Feature Importance.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig2"></span>
+<img src="images/03-7-2.jpeg" alt="Simulated data (simulation 2): PI Plot and ICI Plot for feature $x_{2}$. Visualizations correspond to data-generative model with interaction effect between $x_{2}$ and $x_{3}$." width="99%" />
+<p class="caption">
+FIGURE 10.3: Simulated data (simulation 2): PI Plot and ICI Plot for feature <span class="math inline">\(x_{2}\)</span>. Visualizations correspond to data-generative model with interaction effect between <span class="math inline">\(x_{2}\)</span> and <span class="math inline">\(x_{3}\)</span>.
+</p>
+</div>
+</div>
+<div id="ch312" class="section level4">
+<h4><span class="header-section-number">10.2.1.2</span> d-ICI (derivative Individual Conditional Importance)</h4>
+<p>To supplement the results, yielded from the PI and ICI plots, a method will be proposed that was introduced by <span class="citation">Goldstein et al. (<a href="#ref-Goldstein2013" role="doc-biblioref">2013</a>)</span> with the purpose to detect interaction effects in the context of analyzing Feature Effects.</p>
+<p>By calculating the numerical derivative for each ICE curve, they show that the respective derivative plots enable to detect interaction effects. They argue that the derivatives should be constant over the range of values if no interaction effects exist. In the case of interaction effects, the derivatives should show a larger positive or negative magnitude at the point where the interaction effect takes place.</p>
+<p>Taking this, we can transfer the theoretical concept from Feature Effects to Feature Importance by calculating the derivatives of each ICI curve respectively. It was already observed that an interaction triggers an initially higher level of Feature Importance which was represented in a sudden increase or decrease of the ICI curves that were affected by the interaction. This should be perfectly captured by the derivatives.</p>
+<p>Even though the conceptual transfer seems straightforward, the interpretation of the derivative plots should be adjusted slightly. First, one should not expect that the plots are constant in the case when no interaction is existent. Figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig3">10.4</a> shows for the model with no interaction effect that, there is also some altitude in the derivatives. However, this is approximately equally distributed over the feature’s range of values and therefore, it is reasonable to assume that there is no interaction effect.</p>
+<p>Secondly, by contrast to the derivative of the ICE curves, it is to be expected that the derivatives of the ICI curves are both, negative (descending curves) and positive (ascending curves). The respective d-ICI plot (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig4">10.5</a>) for simulation 2 depicts a distinguished picture. Over the whole range of values, the derivatives are comparably low in magnitude, except for the derivatives at <span class="math inline">\(x_{2} = 2\)</span>.</p>
+<p>Without going into further detail at this point, one can conclude that d-ICI plot seems to be a valid method to obtain a more robust indicator for interaction effects. Besides, the plots directly reveal where the interaction effect triggers which constitutes an important property when aiming for better interpretability.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig3"></span>
+<img src="images/03-7-3.jpeg" alt="Simulated data (simulation 1): d-ICI plot for feature $x_{2}$. The d-ICI plot shows a less clear structure of the derivatives. This corresponds to a the case where the respective feature does not interact" width="75%" />
+<p class="caption">
+FIGURE 10.4: Simulated data (simulation 1): d-ICI plot for feature <span class="math inline">\(x_{2}\)</span>. The d-ICI plot shows a less clear structure of the derivatives. This corresponds to a the case where the respective feature does not interact
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:fig4"></span>
+<img src="images/03-7-4.jpeg" alt="Simulated data (simulation 2): d-ICI plot for feature $x_{2}$. The d-ICI plots shows a distinguished amplitude at $x_{2} = 2$. This finding is in line with the interaction effect between $x_{2}$ and $x_{3}$." width="75%" />
+<p class="caption">
+FIGURE 10.5: Simulated data (simulation 2): d-ICI plot for feature <span class="math inline">\(x_{2}\)</span>. The d-ICI plots shows a distinguished amplitude at <span class="math inline">\(x_{2} = 2\)</span>. This finding is in line with the interaction effect between <span class="math inline">\(x_{2}\)</span> and <span class="math inline">\(x_{3}\)</span>.
+</p>
+</div>
+<p>However, even if the d-ICI plots are sometimes convenient choices to detect interaction effects, they are still only applicable if some properties hold. First, and that is the most crucial one, the interaction effects shall not be existent over the entire range of values of the considered feature. If so, one cannot identify a single spot within the range where the feature becomes initially more important. Hence, the d-ICI plot is expected to take a similar shape as if no interaction was existent.</p>
+<p>Secondly, the d-ICI plot is only assumed to yield unambiguous results, if the interaction effect is strong enough. However, this must not necessarily be interpreted as a limitation. It merely shows that the second-order effect (interactions between two features) should not be decisively smaller than the first-order effect (main effect of the feature). If the second-order effect is too small, then it is open for discussion whether detecting this interaction effect is even decisive for interpreting the machine learning model.</p>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="ch32" class="section level3">
+<h3><span class="header-section-number">10.2.2</span> Explain Interactions</h3>
+<p>So far it is understood that PI and ICI plots do probably not provide the clearest insights on whether interaction effects exist or not. Yet, calculating the Individual Conditional Importance allows implementing d-ICI plots which provide better insights.</p>
+<p>Still, it is not clarified between which features the interaction takes place. Enabling this would have a major impact on the interpretability of machine learning models. The following will introduce a reliable method that resolves the issue of a lack of explanatory power for interaction effects. These results will then be complemented by the insights from the previous simulations to obtain a full picture of the heterogeneity in Feature Importance.</p>
+<div id="ch321" class="section level4">
+<h4><span class="header-section-number">10.2.2.1</span> Drivers for Heterogeneity in Feature Importance</h4>
+<p>Chapter <a href="partial-and-individual-permutation-feature-importance.html#ch2">10.1</a> highlighted the fact the taking the integral of the Individual Conditional Importance yields the aggregated Feature Importance for each observation. This property can be used to predict the global Feature Importance for each observation concerning the remaining covariates. If interaction exists, for instance a d-ICI plot suggests, then a significant relationship with at least one other feature should be yielded.</p>
+<p>Here, it is still not clarified which learner is the most suited. Ideally, one would like to yield sparse results where noise is not fitted. This would prevent that other independent features are included in the model. This property would hold for any regularized regression model. Yet, it would be additionally convenient if the learner would additionally output the threshold were the interaction takes place.</p>
+<p>Both desired properties hold best when inducing a decision-tree with a tree-depth of 1. This configuration is quite robust against noise and the returned split point indicates the threshold for which the conditional Feature Importance should be calculated.</p>
+<p>In conjunction with the results from the d-ICI plots, one obtains a complete understanding of the nature of the interaction effect. These insights can then be used to later calculate and visualize the conditional Feature Importance.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig5"></span>
+<img src="images/03-7-5.jpeg" alt="Simulated data (simulation 2): The decision stump reveals the interaction between $x_{2}$ and $x_{3}$. The split node gives information about where the interaction takes place." width="99%" />
+<p class="caption">
+FIGURE 10.6: Simulated data (simulation 2): The decision stump reveals the interaction between <span class="math inline">\(x_{2}\)</span> and <span class="math inline">\(x_{3}\)</span>. The split node gives information about where the interaction takes place.
+</p>
+</div>
+<p>Figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig5">10.6</a> visualizes the fitted decision tree. The results show that the Feature Importance of <span class="math inline">\(x_2\)</span> is distinctly larger for values <span class="math inline">\(x_3 &lt; 0.5\)</span>. As <span class="math inline">\(x_3\)</span> is a binary variable, either taking the value <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, the results show that if and only if <span class="math inline">\(x_3 = 0\)</span>, interaction takes place. In the case of only one interaction effect between two covariates, the decision tree should yield stable results.</p>
+<p>However, there might be several interaction effects taking place so that a decision-tree with tree-depth = 1 is insufficient. Still, this poses no actual problem as this method is in general not restricted to a specific learner. However, it would be still advantageous to preserve the Importance dimension. Hence, fitting a random forest model would be a suitable method. As the main idea should be clear, it will be refrained from going more into detail at this point.</p>
+</div>
+<div id="ch322" class="section level4">
+<h4><span class="header-section-number">10.2.2.2</span> Conditional Importance plots</h4>
+<p>With results from above, one can now calculate the Conditional Individual Importance of the feature <span class="math inline">\(x_{2}\)</span>. Therefore, one just simply subdivides the Individual Conditional Importance into the respective groups. Meaning, calculate the PI for <span class="math inline">\(x_2\)</span> for all observations where <span class="math inline">\(x_3 = 0\)</span> and for all observations where <span class="math inline">\(x_3 = 1\)</span>. As the plot below shows, the PI for the observations where the interaction triggered is above average and hence, the observations with <span class="math inline">\(x_3 = 1\)</span> are below average over the entire range.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig6"></span>
+<img src="images/03-7-6.jpeg" alt="Simulated data (simulation 2): The conditional Feature Importance plot visualizes the impact of the interaction effect on the heterogeneity in Feature Importance." width="99%" />
+<p class="caption">
+FIGURE 10.7: Simulated data (simulation 2): The conditional Feature Importance plot visualizes the impact of the interaction effect on the heterogeneity in Feature Importance.
+</p>
+</div>
+<p>Finally plotting the conditional Feature Importance (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig6">10.7</a>) indeed confirms the interaction effect and its impact on the Feature Importance. Besides, to get there, some additional interesting insights were obtained. Now, it is known between which features and where in the feature’s range of values the interaction effect takes place. With the conditional Feature Importance, one can even quantify the difference and therefore measure the impact of the interaction effect. Concluding, that that the initially observed heterogeneity is understood to its full extent.</p>
+<p>Applying this on a real data application would then allow a more meaningful, contextual interpretation.</p>
+</div>
+</div>
+<div id="ch323" class="section level3">
+<h3><span class="header-section-number">10.2.3</span> Stress Methods in a Non-Linear Relationship Setting</h3>
+<p>When trying to detect interaction effects, it was already seen that the inherent heterogeneity diffuses a clear and unambiguous pícture. However, with some background knowledge and the d-ICI plot, it was still possible to reliably detect the interaction effect.</p>
+<p>Still, it seems reasonable to further validate the robustness of these methods within a data-generative model with a non-linear relationship. By doing so, it can be assessed whether the methods still detect interaction effects even though additional inherent heterogeneity is introduced. For this purpose, consider the following data-generative model:</p>
+<p><span class="math display">\[y \, = \, x_{1} \,  - \, 5*sin(x_{2}) \, + x_{3} + 5x_{2} 1_{x_2 &gt; 2, x_3 = 0} \, + \, \epsilon\]</span>
+<span class="math display">\[ x_{1} \, \overset{i.i.d}{\sim} \, \mathcal{N}(0,1), \, x_{2} \, \overset{i.i.d}{\sim}  \mathcal{N}(1, 4) \quad \text{and} \quad x_{3} \overset{i.i.d}{\sim} B(1, 0.5),\,  \epsilon \overset{i.i.d}{\sim} \mathcal{N}(0, 1)\]</span>
+Inducing further heterogeneity by including the sinus function seems appropriate as heterogeneity is “uniformly” distributed over the feature’s range of values. The function values are bounded by -1 and 1, so that the heterogeneity is controlled and does not exceed extreme values.</p>
+<p>The plotted PI curve (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig7">10.8</a>) indicates that the Feature Importance for <span class="math inline">\(x_2 &gt; 5\)</span> is above the average. Therefore, one might conclude that interaction which makes the feature more important takes place in this area. Disentangling the PI curve into its components yields a slightly different picture. It shows a steep descent of some curves at <span class="math inline">\(x_2 = 2\)</span> and descending but also ascending curves at <span class="math inline">\(x_2 = 5\)</span>. Compared to the PI curves, the ICI curves allow a more detailed analysis of the heterogeneity. But, still it is not clarified whether interaction takes place at <span class="math inline">\(x_2 = 2\)</span> or <span class="math inline">\(x_2 = 5\)</span>.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig7"></span>
+<img src="images/03-7-NL1.jpeg" alt="Simualated data (simulation 3): PI Plot and ICI Plot corresponding to the variable $x_{2}$." width="99%" />
+<p class="caption">
+FIGURE 10.8: Simualated data (simulation 3): PI Plot and ICI Plot corresponding to the variable <span class="math inline">\(x_{2}\)</span>.
+</p>
+</div>
+<p>Hence, again the derivatives can be calculated and plotted as shown below (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig8">10.9</a>).</p>
+<div class="figure" style="text-align: center"><span id="fig:fig8"></span>
+<img src="images/03-7-NL2.jpeg" alt="Simulated data (simulation 3): d-ICI plot for variable $x_{2}$. Calculating and plotting the derivatives of the ICI curves, reveals the spot where interaction takes place." width="99%" />
+<p class="caption">
+FIGURE 10.9: Simulated data (simulation 3): d-ICI plot for variable <span class="math inline">\(x_{2}\)</span>. Calculating and plotting the derivatives of the ICI curves, reveals the spot where interaction takes place.
+</p>
+</div>
+<p>Despite the additional heterogeneity, the d-ICI plots still disentangles the diffused picture and uniquely identifies the interaction effects. It can be seen that the largest descent of the ICI curves takes place at <span class="math inline">\(x_2 = 2\)</span>. It further can be excluded that an interaction effect takes place at <span class="math inline">\(x_2 = 5\)</span>.</p>
+<p>Of course, as it is known that the feature is sinusoidally distributed, the steep ascent of the ICI curves at <span class="math inline">\(x_2 = 5\)</span> could have been explained. Having a closer look at the ICI plot it also reveals that the ascent is gradually increasing which does not hold for the ascent at <span class="math inline">\(x_2 = 2\)</span>. But still, it can be concluded that within this setting, the PI and ICI plots are not very telling.</p>
 
+</div>
+</div>
+<div id="ch4" class="section level2">
+<h2><span class="header-section-number">10.3</span> Real Data Application: Boston Housing</h2>
+<p>Before this chapter will be closed by a brief discussion and an outlook for further research, the introduced methods will be now applied to real data. Doing so is important for final validation. Only if it can be shown that these methods apply to real data, they can be assessed as useful.</p>
+<p>Pursuing this objective, we will calculate the PFI, PI, and ICI for the predictors of the Boston Housing dataset. In this setting, it is of interest to predict and explain the "median value of owner-occupied homes in USD1,000$. In a pre-analysis, the predictor variable <code>lstat</code> was chosen to conduct further analyses. Briefly, <code>lstat</code> measures the percentage share of lower status people in the population and from an economic perspective, it is assumed that there is a significant relationship between the predictor and the outcome variable.</p>
+<p>As in the simulation analysis, the model is fitted equivalently by a random forest model and the calculation of the Importance metrics follows the same principle. The PI and ICI plots below, allow a first interpretation of the Feature Importance.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig9"></span>
+<img src="images/03-7-RD1.jpeg" alt="Boston Housing Data: PI and ICI plot for feature `lstat`. A clear and not uniformly distributed heterogeneity can be observed." width="99%" />
+<p class="caption">
+FIGURE 10.10: Boston Housing Data: PI and ICI plot for feature <code>lstat</code>. A clear and not uniformly distributed heterogeneity can be observed.
+</p>
+</div>
+<p>The PI plot reveals that on average the explanatory power of <code>lstat</code> becomes decisively larger for values below 10. Briefly, if the percentage of people with lower status is below 10%, the variable becomes a more important constitute of the predictive model. The ICI plot confirms this result and shows some additional heterogeneity in this area which, however, is hard to interpret within this visualization setting. Therefore, again, the derivatives of the ICI curves can be calculated to detect the heterogeneity more comprehensively.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig10"></span>
+<img src="images/03-7-RD2.jpeg" alt="Boston Housing Data: d-ICI plot for feature `lstat`. The plot provides further insights on the initially observed heterogeneity." width="99%" />
+<p class="caption">
+FIGURE 10.11: Boston Housing Data: d-ICI plot for feature <code>lstat</code>. The plot provides further insights on the initially observed heterogeneity.
+</p>
+</div>
+<p>The d-ICI plot for the feature <code>lstat</code> additionally confirms the heterogeneity, visible in the ICI plot. Especially at <span class="math inline">\(lstat = 10\)</span> a significant amplitude can be identified. This indicates that an interaction between <code>lstat</code> and another covariate takes place in the area around <span class="math inline">\(lstat &lt;= 10\)</span>. Given this insight, it is now to be determined with which covariate the feature “lstat” interacts. Therefore, we again predict the integral of each observation’s Feature Importance concerning the remaining covariates.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig11"></span>
+<img src="images/03-7-RD3.jpeg" alt="Boston Housing Data: Explain Interaction Effects for feature `lstat`. The decision stump identifies the interaction between feature `lstat` and feature `dis`. Again the split point indicates where the interaction effect takes place." width="70%" />
+<p class="caption">
+FIGURE 10.12: Boston Housing Data: Explain Interaction Effects for feature <code>lstat</code>. The decision stump identifies the interaction between feature <code>lstat</code> and feature <code>dis</code>. Again the split point indicates where the interaction effect takes place.
+</p>
+</div>
+<p>At this point, one has gained a rather complete picture of why there is heterogeneity in the Feature Importance of the feature “lstat”. Therefore, one can now calculate the Conditional Feature Importance of <code>lstat</code> on the variable <code>dis</code>. Plotting the conditional curves (see figure <a href="partial-and-individual-permutation-feature-importance.html#fig:fig12">10.13</a>), confirms the analysis of the previous results. Even though the results are not as distinguished as in the simulation settings, the interaction taking place is still clearly visible.</p>
+<div class="figure" style="text-align: center"><span id="fig:fig12"></span>
+<img src="images/03-7-RD4.jpeg" alt="Boston Housing Data: Conditional Importance Plot. Importance of `lstat` conditional on values of `dist`" width="75%" />
+<p class="caption">
+FIGURE 10.13: Boston Housing Data: Conditional Importance Plot. Importance of <code>lstat</code> conditional on values of <code>dist</code>
+</p>
+</div>
+<p>With the insights from the Real Data Application, one can conclude that the presented methods also work beyond the simulation setting and is, therefore, applicable for explaining heterogeneity in Feature Importance within a machine learning model. Yet, the heterogeneity problem was merely discussed in the context of interaction effects. It could be further discussed whether it might be even possible to identify the structural relationship between a feature and the response. Besides, it would be also interesting to investigate the PI and ICI plots in the context of correlated features.</p>
+<div style="page-break-after: always;"></div>
+</div>
+<div id="ch5" class="section level2">
+<h2><span class="header-section-number">10.4</span> Discussion</h2>
+<p>So far, it was stressed to what extent the PI and ICI plots are suitable tools to obtain a better interpretation of Feature Importance. To give this a final evaluation, the critical assessment is subdivided into two parts. The first part will summarize the capabilities of the visualization tools. The second part will explore the possibilities that have arisen through the data obtained.</p>
+<p>The simulation chapter revealed that the ICI and PI plots are indeed able to visualize heterogeneity but both had its limitations when trying to detect interaction effects. First, even though no heterogeneity was expected, the PI and ICI plot still visualized heterogeneity. Even though it can be explained by the distributional properties of the feature, it can lead to confusion. One could circumvent the problem by weighting the local Feature Importance of each observation with its respective probability mass. This would “squash” the curves to a linear shape and merely only deviations from that could be interpreted as a proper heterogeneity. Second, when a non-linear relationship between response and the feature was induced, both methods did not yield robust and reliable results.</p>
+<p>Further, it was argued that explaining interactions is as important as detecting interaction effects. Even if the ICI plots were able to detect interaction effects, it was not possible to explain them. Briefly, between which features and where did the interaction take place.</p>
+<p>Concluding, the visualization of PI and ICI does indeed disentangle the global PFI metric but has its non-negligible limitations when interpreting the results properly.<br />
+Even though the PI and ICI plots themselves are very limited in its explanatory power, it was still possible with the underlying data to create a cookbook that enabled a full picture. The d-ICI plots represent a robust method for detecting interactions, even in a “messy” non-linear relationship. It turned out that calculating the approximated Feature Importance was easy to implement and therefore posed no major challenge. Further, as the Partial Importance was already calculated it was not difficult to implement a method which explains between which features interaction takes place. Solving that, one can calculate the conditional Feature Importance and therefore, finally visualize the actual effect of the interaction on Feature Importance.</p>
+<p>Concluding, even though the PI and ICI plots have its limitations, the underlying data represents an exhaustive foundation for yielding a complete picture of the heterogeneity. Therefore, it can be stated that disentangling the global PFI into its components is a valid and insightful approach to better understand what exactly drives the predictions of a machine learning model.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-casalicchio2018visualizing">
+<p>Casalicchio, Giuseppe, Christoph Molnar, and Bernd Bischl. 2018. “Visualizing the Feature Importance for Black Box Models.” In <em>Joint European Conference on Machine Learning and Knowledge Discovery in Databases</em>, 655–70. Springer.</p>
+</div>
+<div id="ref-Goldstein2013">
+<p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2013. “Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation.” <em>Journal of Computational and Graphical Statistics</em> 24 (September). <a href="https://doi.org/10.1080/10618600.2014.907095">https://doi.org/10.1080/10618600.2014.907095</a>.</p>
+</div>
 </div>
             </section>
 
@@ -143,11 +571,13 @@
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
 <script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
 <script src="libs/gitbook/js/plugin-sharing.js"></script>
 <script src="libs/gitbook/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -190,8 +620,9 @@ gitbook.start({
     script.type = "text/javascript";
     var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

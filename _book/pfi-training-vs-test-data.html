@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods</title>
+  <title>Chapter 11 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.14 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:title" content="Chapter 11 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods" />
+  <meta name="twitter:title" content="Chapter 11 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods" />
   
   <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
   
@@ -24,15 +24,15 @@
 <meta name="author" content="" />
 
 
-<meta name="date" content="2019-08-06" />
+<meta name="date" content="2019-10-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="partial-and-individual-permutation-feature-importance.html">
-<link rel="next" href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html">
+<link rel="prev" href="partial-and-individual-permutation-feature-importance.html"/>
+<link rel="next" href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"/>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,6 +50,70 @@
 
 
 
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
@@ -66,10 +131,13 @@
 <li><a href="./">Limitations of ML Interpretability</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>1.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>1.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>1.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>1.4</b> Outline of the booklet</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><i class="fa fa-check"></i><b>2</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
 <li class="chapter" data-level="2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a><ul>
 <li class="chapter" data-level="2.1.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>2.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
@@ -80,32 +148,162 @@
 <li class="chapter" data-level="2.2.3" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>2.2.3</b> Advantages and Limitations of ICE Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a></li>
-<li class="chapter" data-level="4" data-path="pdp-and-feature-interactions.html"><a href="pdp-and-feature-interactions.html"><i class="fa fa-check"></i><b>4</b> PDP and Feature Interactions</a></li>
-<li class="chapter" data-level="5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a></li>
-<li class="chapter" data-level="6" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="6.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
-<li class="chapter" data-level="6.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
-<li class="chapter" data-level="6.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ProblemDescription"><i class="fa fa-check"></i><b>3.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>3.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>3.1.2</b> What is the issue with extrapolation?</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+<li class="chapter" data-level="3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#RealData"><i class="fa fa-check"></i><b>3.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>3.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>3.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#NumCat"><i class="fa fa-check"></i><b>3.2.3</b> Dependency between Numerical and Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+<li class="chapter" data-level="3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#SimulatedData"><i class="fa fa-check"></i><b>3.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>3.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>3.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="3.3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>3.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="3.3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>3.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="3.3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>3.3.5</b> Simulation Settings: Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a></li>
-<li class="chapter" data-level="8" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a></li>
-<li class="chapter" data-level="9" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
-<li class="chapter" data-level="9.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
-<li class="chapter" data-level="9.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
-<li class="chapter" data-level="9.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+<li class="chapter" data-level="3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>3.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>3.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="3.4.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>3.4.2</b> Simulation based on own prediction function</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a></li>
-<li class="chapter" data-level="11" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a></li>
-<li class="chapter" data-level="12" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a></li>
-<li class="chapter" data-level="13" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a></li>
-<li class="chapter" data-level="14" data-path="lime-and-neighbourhood.html"><a href="lime-and-neighbourhood.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a></li>
-<li class="chapter" data-level="15" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a></li>
+<li class="chapter" data-level="3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>4</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#a-brief-look-at-pdp-problems"><i class="fa fa-check"></i><b>4.2</b> A brief look at PDP problems</a></li>
+<li class="chapter" data-level="4.3" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>4.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="4.4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#scenarios"><i class="fa fa-check"></i><b>4.4</b> Scenarios</a></li>
+<li class="chapter" data-level="4.5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#theoretical-comparison"><i class="fa fa-check"></i><b>4.5</b> Theoretical Comparison</a></li>
+<li class="chapter" data-level="4.6" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#conclusion"><i class="fa fa-check"></i><b>4.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>5</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="5.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
+<li class="chapter" data-level="5.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>5.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>5.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>5.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>5.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>5.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>6</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="6.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>6.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>6.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="6.1.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>6.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>6.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>6.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="6.2.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>6.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>6.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>6.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="6.3.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>6.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="6.3.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>6.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>6.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="6.5" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>6.5</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>7</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>7.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#state-of-the-art"><i class="fa fa-check"></i><b>7.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ale-approximations"><i class="fa fa-check"></i><b>7.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="7.1.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-1-additive-feature-effects"><i class="fa fa-check"></i><b>7.1.3</b> Example 1: additive feature effects</a></li>
+<li class="chapter" data-level="7.1.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>7.1.4</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="7.1.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>7.1.5</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>7.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#outlook"><i class="fa fa-check"></i><b>7.2.1</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#categorical-features"><i class="fa fa-check"></i><b>7.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ordering-the-features"><i class="fa fa-check"></i><b>7.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>7.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>7.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="7.3.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#interpretation"><i class="fa fa-check"></i><b>7.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="7.3.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#changes-of-the-ale-due-to-diffrent-orders"><i class="fa fa-check"></i><b>7.3.5</b> Changes of the ALE due to diffrent orders</a></li>
+<li class="chapter" data-level="7.3.6" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#conclusion-1"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>8</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>8.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="8.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>8.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="8.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>8.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>9</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>9.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#simulation"><i class="fa fa-check"></i><b>9.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="9.1.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#real-data"><i class="fa fa-check"></i><b>9.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>9.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#summary-1"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
+<li class="chapter" data-level="9.4" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#note-to-the-reader"><i class="fa fa-check"></i><b>9.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>10</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="10.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch2"><i class="fa fa-check"></i><b>10.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="10.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch3"><i class="fa fa-check"></i><b>10.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch31"><i class="fa fa-check"></i><b>10.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="10.2.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch32"><i class="fa fa-check"></i><b>10.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="10.2.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch323"><i class="fa fa-check"></i><b>10.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch4"><i class="fa fa-check"></i><b>10.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="10.4" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch5"><i class="fa fa-check"></i><b>10.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#introduction-to-test-vs-training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs Training Data</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>11.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="11.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>11.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#gradient-boosting-machine"><i class="fa fa-check"></i><b>11.3.1</b> Gradient Boosting Machine</a></li>
+<li class="chapter" data-level="11.3.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>11.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="11.3.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#results"><i class="fa fa-check"></i><b>11.3.3</b> Results</a></li>
+<li class="chapter" data-level="11.3.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>11.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#summary-2"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="12.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="12.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="12.2.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
+<li class="chapter" data-level="12.4" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="id1.html"><a href="id1.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="id1.html"><a href="id1.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13.2" data-path="id1.html"><a href="id1.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="13.3" data-path="id1.html"><a href="id1.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="id1.html"><a href="id1.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="13.3.2" data-path="id1.html"><a href="id1.html#id42"><i class="fa fa-check"></i><b>13.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="id1.html"><a href="id1.html#id5"><i class="fa fa-check"></i><b>13.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="13.5" data-path="id1.html"><a href="id1.html#id6"><i class="fa fa-check"></i><b>13.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="id1.html"><a href="id1.html#id61"><i class="fa fa-check"></i><b>13.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="13.5.2" data-path="id1.html"><a href="id1.html#id62"><i class="fa fa-check"></i><b>13.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>14</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>14.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#formula"><i class="fa fa-check"></i><b>14.1.1</b> Formula</a></li>
+<li class="chapter" data-level="14.1.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sampling-strategies"><i class="fa fa-check"></i><b>14.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="14.1.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>14.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>14.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>14.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#boston-housing-data"><i class="fa fa-check"></i><b>14.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#rental-bikes-data"><i class="fa fa-check"></i><b>14.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="14.4.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="14.4.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
+<li class="chapter" data-level="14.6" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>15</b> Acknowledgements</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
@@ -128,9 +326,293 @@
 
             <section class="normal" id="section-">
 <div id="pfi-training-vs.-test-data" class="section level1">
-<h1><span class="header-section-number">Chapter 12</span> PFI: Training vs. Test Data</h1>
-<p><em>Author: firstname lastname</em></p>
+<h1><span class="header-section-number">Chapter 11</span> PFI: Training vs. Test Data</h1>
+<p>In this chapter we will deal with the question whether we should use test or training data to calculate permutation feature importance. First of all we want to give a short overview or review of the interesting components.</p>
+<p>Permutation Feature Importance (PFI): In order to calculate the impact on a loss function (e.g. MSE) we shuffle the values for one feature to break the relationship between the feature and the outcome.</p>
+<p>Training data: Used to set up the model. Overfitting and underfitting is possible</p>
+<p>Test data: Used to check if the trained model works well on unknown data.</p>
+<p>We would like to deal primarily with 3 questions:</p>
+<ol style="list-style-type: decimal">
+<li><p>When should I use test or training data?</p></li>
+<li><p>How does the permutation feature importance of test or training data react to over and underfitting?</p></li>
+<li><p>Does correlation influence the decision what kind of data to use?</p></li>
+</ol>
+<div id="introduction-to-test-vs-training-data" class="section level2">
+<h2><span class="header-section-number">11.1</span> Introduction to Test vs Training Data</h2>
+<p>In addition to the question of how permutation feature importance should be used and interpreted, there is another question that has not yet been discussed in depth: Should the feature importance be calculated based on the test or the trainig data?
+This question is more of a philosophical one. To answer it you have to ask what feature importance really is (again a philosophical topic) and what goal you want to achieve with feature importance.</p>
+<p>So what is the difference of calculating the permutation feature importance based on training or test data? To illlustrate this question you have to think of an example.</p>
+<p>Imagine you have a data set with independent variables - so there is no correlation between the explanatory and the target variables. Therefore, the permutation feature importance for every variable should be around 1 (differences from 1 only by random deviations): By shuffling the variable at feature importance no information is lost, since there is no information in the variable that helps to predict the target variable.</p>
+<p>Let us look again at the permutation feature impportance algorithm based on Fisher, Rudin, and Dominici (2018):</p>
+<p>Input: Trained model <span class="math inline">\(f\)</span>, feature matrix <span class="math inline">\(X\)</span>, target vector <span class="math inline">\(y\)</span>, error measure <span class="math inline">\(L(y,f(X))\)</span></p>
+<ol style="list-style-type: decimal">
+<li>Estimate the original model error <span class="math inline">\(e_{orig} = L(y,f(X))\)</span> (e.g mean squared error)</li>
+<li>For each feature <span class="math inline">\(j = 1,...,p\)</span> do:
+<ul>
+<li>Generate feature matrix <span class="math inline">\(x_{perm}\)</span> by permuting feature j in the data <span class="math inline">\(X\)</span></li>
+<li>Estimate error <span class="math inline">\(e_{perm} = L(y,f(X_{perm}))\)</span> based on the predictions of the permuted data,</li>
+<li>Calculate permutation feature importance <span class="math inline">\(PFI_{j} = e_{perm}/e_{orig}\)</span>. Alternatively, the difference can be used: <span class="math inline">\(PFI_{j} = e_{perm} - e_{orig}\)</span></li>
+</ul></li>
+<li>Sort features by descending FI.</li>
+</ol>
+<p>The original model error calculated in step 1 is based on a variable that is totaly random and independent of the target variable. Therefore, we would not expect a change in the model error calculated in step 2: <span class="math inline">\(e_{orig} = E(e_{perm})\)</span></p>
+<p>This results in a calculated permutation feature importance of 1 or 0 - depending on which calculation method from step 2 is used.</p>
+<p>If we now have a model that overfits - so it “learns” any relationship, then we will observ an increase in the model error. The model has learned something based on overfitting - and this learned connection will now be destroyed by the shuffling. This will result in an increase of the permutation feature importance. So we would expect a higher PFI for training data than for test data.</p>
+<p>After this brief review of the fundamentals of permutation feature importance, we now want to look in detail at what we expect when feature importance is calculated on training or test data. To do this, we distinguish different models and data situations, discuss them theoretically first and then look at the real application - both on a real data set as well as on self-created “laboratory” data.</p>
+</div>
+<div id="theoretical-discussion-for-test-and-training-data" class="section level2">
+<h2><span class="header-section-number">11.2</span> Theoretical Discussion for Test and Training Data</h2>
+<p><strong>When to use test or training data? </strong></p>
+<p>At the beginning, we will discuss the case for test data and for training data based on <span class="citation">Molnar (<a href="#ref-molnar2019" role="doc-biblioref">2019</a>)</span>.</p>
+<p>Test data:
+First, we will focus on the more intuitive case for test data. One of the first things you learn about machine learning during your statistical studies is that one should not use the same data set on which the model was fitted for the evaluation of model quality because the results are too positive, which means that the model seems to work much better than it does in reality and since the permutation feature imporance is based on the model error we should evaluate the model based on the unseen test data. If the permutation feature importance is calculated on the training data instead, the impression is erroneously given that features are important for prediction. The model has only overfitted and the feature is actually unimportant.</p>
+<p>Training data:
+After the quite common case for test data we now want to focus on the case for training data. If we calculate the permutation feature importance based on the training data, we get an impression of what features the model has learned to use. So, in the example mentioned above, a permutation feature importance higher than the expected 1 indicates that the model has learned to use this feature, even though there is no “real” connection between the explanatory variable and the target variable. Finally, based on the training data, the PFI tells us which variables the model uses to make predictions.</p>
+<p>As you can see there are arguments for the calculation based on tests as well as training data - the decision which kind of data you want to use depends on the question you are interested in: How much does the model rely on the respective variable to make predictions? This question leads to a calculation based on the training data. The second possible question is as follows: How much does the feature contribute to model performance on unknown data? In this case, the test data would be used.</p>
+</div>
+<div id="reaction-to-model-behavior" class="section level2">
+<h2><span class="header-section-number">11.3</span> Reaction to model behavior</h2>
+<p><strong>What happens to the PFI when the model over/underfits?</strong></p>
+<p>In this section we want to deal with the PFIs behaviour regarding over and underfitting. The basic idea is that the PFI will change depending on the fit of the model.</p>
+<p>In order to examine this thesis we have decided to proceed as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose a model that is able to overfit and underfit</p></li>
+<li><p>Perform a parameter tuning to get the desired fit</p></li>
+<li><p>Run the model</p></li>
+<li><p>Check for PFI on test and trainingdata based on the above mentioned algorithm by Fisher, Rudin, and Dominici (2018)</p></li>
+</ol>
+<p>We have chosen the gradient boosting machine as it is very easy to implement overfitting and underfitting.</p>
+<p>In the following subchapter we will give a short overview of the gradient booosting machine.</p>
+<div id="gradient-boosting-machine" class="section level3">
+<h3><span class="header-section-number">11.3.1</span> Gradient Boosting Machine</h3>
+<p>Gradient boosting is a machine learning technique for regression and classification problems, which produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees. It builds the model in a stage-wise fashion like other boosting methods do, and it generalizes them by allowing optimization of an arbitrary differentiable loss function.</p>
+<p><strong>How does a gradient boosting machine work?</strong></p>
+<p>Gradient boosting involves three elements:</p>
+<ol style="list-style-type: decimal">
+<li>A loss function to be optimized</li>
+</ol>
+<ul>
+<li>The loss function used depends on the type of problem being solved</li>
+<li>Must be differentiable</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>A weak learner to make predictions</li>
+</ol>
+<ul>
+<li>Decision trees are used as the weak learner</li>
+<li>Constrain the weak learners in specific ways (maximum number of layers, nodes, splits or leaf nodes)</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>An additive model to add weak learners to minimize the loss function</li>
+</ol>
+<ul>
+<li>Trees are added one at a time, and existing trees in the model are not changed</li>
+<li>A gradient descent procedure is used to minimize the loss when adding trees</li>
+</ul>
+<p>To get an impression what a Gradient Boosting Machine does, we want to give a short (and naive) example in pseudocode:</p>
+<ol style="list-style-type: decimal">
+<li>Fit a model to the data: <span class="math inline">\(F_1(x)=y\)</span></li>
+<li>Fit a model to the residuals: <span class="math inline">\(h_1(x)=y-F_1(x)\)</span></li>
+<li>Create a new model: <span class="math inline">\(F_2(x)=F_1(x)+h_1(x)\)</span></li>
+</ol>
+<p>Generalize this idea:
+<span class="math inline">\(F(x)=F_1(x)\mapsto F_2(x)=F_1(x)+h_1(x) ... \mapsto F_M(x)=F_{M-1}(x)+h_{M-1}(x)\)</span></p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-46"></span>
+<img src="images/ExampleGBM2.jpg" alt="Simplified visualization of a gradient boosting machine. One trains a model based on the data. Then you fit a model to the resulting residuals. The result is then used to create a new model. This process is repeated until the desired result is achieved." width="70%" />
+<p class="caption">
+FIGURE 11.1: Simplified visualization of a gradient boosting machine. One trains a model based on the data. Then you fit a model to the resulting residuals. The result is then used to create a new model. This process is repeated until the desired result is achieved.
+</p>
+</div>
+<p>We forced the model to overfit via the depth of each tree and to underfit via the minimum samples used at each node.</p>
+</div>
+<div id="data-sets-used-for-calculations" class="section level3">
+<h3><span class="header-section-number">11.3.2</span> Data sets used for calculations</h3>
+<p>As Mentioned above, we want to use to different data sets:</p>
+<ol style="list-style-type: decimal">
+<li><p>A self-created data set with given correlations</p></li>
+<li><p>A real data set to see if the observations under “laboratory conditions” can also be observed in the real world.</p></li>
+</ol>
+<p>Our self created data set looks as follows:</p>
+<ul>
+<li>Uncorrelated features which leads to a 0/1-classification</li>
+<li><span class="math inline">\(x1\)</span>, <span class="math inline">\(x2\)</span>, <span class="math inline">\(x3\)</span> and <span class="math inline">\(x4\)</span> normally distributed with zero mean and standard deviation of 1</li>
+<li>Target variable based on linear function with a bias.</li>
+<li>Same data set with 2 highly correlated features <span class="math inline">\(x1\)</span> and <span class="math inline">\(x2\)</span> (correlation of 0.9)</li>
+</ul>
+<p>The second data set is the IBM Watson Analytics Lab data for employee attrition:</p>
+<ul>
+<li><p>Uncover factors that lead to employee attrition</p></li>
+<li><p>Dataset contains 1470 rows</p>
+<p>Used Features:</p>
+<ul>
+<li>Overtime</li>
+<li>Job Satisfaction</li>
+<li>Years at Company</li>
+<li>Age</li>
+<li>Gender</li>
+<li>Business Travel</li>
+<li>Monthly Income</li>
+<li>Distance from home</li>
+<li>Work-Life-Balance</li>
+<li>Education</li>
+<li>Years in current role</li>
+</ul></li>
+</ul>
+<p>With these data sets we have now applied the Gradient Boosting Machine as described and fitted it accordingly to generate over and underfitting - the results are listed in the following section</p>
+</div>
+<div id="results" class="section level3">
+<h3><span class="header-section-number">11.3.3</span> Results</h3>
+<p>In this section we want to give an overview of the results of the comparison between the calculation of permutation feature importance based on the test and the training data.</p>
+<p>We will start with the uncorrelated self created data set. Then the correlated self created data set and in the end we will have a look at the IBM Watson Employee Attrition data set.</p>
+<p><strong>Self created Data Set without Correlation</strong></p>
+<p>First, we will have the two permutation feature importance plots for a well tuned gradient boosting machine. We have four features, created based on the following formula:</p>
+<p><span class="math inline">\(z = 1 + 2*x1 + 3*x2 + x3 + 4*x4\)</span></p>
+<p>On the x-axis you can see the feature importance and on the y-axis the feature.</p>
+<div class="figure"><span id="fig:unnamed-chunk-48"></span>
+<img src="book_files/figure-html/unnamed-chunk-48-1.svg" alt="The used features are located on the x-axis. The corresponding permutation feature importance can be found on the y-axis. x4 ist the most important feature, followed by x2, x1 and x3" width="1152" />
+<p class="caption">
+FIGURE 11.2: The used features are located on the x-axis. The corresponding permutation feature importance can be found on the y-axis. x4 ist the most important feature, followed by x2, x1 and x3
+</p>
+</div>
+<div class="figure"><span id="fig:unnamed-chunk-49"></span>
+<img src="book_files/figure-html/unnamed-chunk-49-1.svg" alt="Again, x4 ist the most important feature, followed by x2, x1 and x3. The range of the PFI values differes from 1 - 4 and is therefore wider than the range regarding the test data" width="1152" />
+<p class="caption">
+FIGURE 11.3: Again, x4 ist the most important feature, followed by x2, x1 and x3. The range of the PFI values differes from 1 - 4 and is therefore wider than the range regarding the test data
+</p>
+</div>
+<p>As you can see, both plots are quite similar. The order of test and training data is exactly the same. <span class="math inline">\(x4\)</span> ist the most important feature, followed by <span class="math inline">\(x2\)</span> and <span class="math inline">\(x1\)</span>. The least important feature is <span class="math inline">\(x3\)</span>.</p>
+<p>Furthermore, the range of the two plots is not the same - but comparable. The PFI-plot based on test data has a range from 1 to 2.4 and the PFI-plot based on training data from 1.1 to 4. This indicates still an overfit of the GBM.</p>
+<p>Now, we used the same data set but an overfitting GBM.
+Please find the corresponding plots below:</p>
+<div class="figure"><span id="fig:unnamed-chunk-50"></span>
+<img src="book_files/figure-html/unnamed-chunk-50-1.svg" alt="For an overfitting GBM the order for test data is the same as seen before in the well fitted case. The range of the test data is quite the same as before." width="1152" />
+<p class="caption">
+FIGURE 11.4: For an overfitting GBM the order for test data is the same as seen before in the well fitted case. The range of the test data is quite the same as before.
+</p>
+</div>
+<div class="figure"><span id="fig:unnamed-chunk-51"></span>
+<img src="book_files/figure-html/unnamed-chunk-51-1.svg" alt="For an overfitting GBM the order for training data is the same as seen before in the well fitted case. In contrast to quite similar values of PFI, the range now differs a lot between test and training data and between training data in the well- and overfitting case" width="1152" />
+<p class="caption">
+FIGURE 11.5: For an overfitting GBM the order for training data is the same as seen before in the well fitted case. In contrast to quite similar values of PFI, the range now differs a lot between test and training data and between training data in the well- and overfitting case
+</p>
+</div>
+<p>At first sight these two plots look very similar to the first two. The order of the features has remained the same and the relative distances to each other are also very similar. It is also noticeable that the plot regarding the test data has hardly changed - whereas the range of the permutation feature importance based on training data has become much wider. This is a typical behavior of overfitting in terms of feature importance, since the models learns to use a variable “better” than it actually is.</p>
+The last 2 plots for the uncorrelated data set are the ones of an underfitting GBM:
+<div class="figure"><span id="fig:unnamed-chunk-52"></span>
+<img src="book_files/figure-html/unnamed-chunk-52-1.svg" alt="PFI plot of an underfitting GBM based on test data. The importance is now reduced with highest value at around 1.6 in contrast to 2.4 before. Furthermore, x1 is the least important feature now." width="1152" />
+<p class="caption">
+FIGURE 11.6: PFI plot of an underfitting GBM based on test data. The importance is now reduced with highest value at around 1.6 in contrast to 2.4 before. Furthermore, x1 is the least important feature now.
+</p>
+</div>
+<div class="figure"><span id="fig:unnamed-chunk-53"></span>
+<img src="book_files/figure-html/unnamed-chunk-53-1.svg" alt="Overall, the importance is reduced. X3 is still the least important one. All PFI values are lower than before" width="1152" />
+<p class="caption">
+FIGURE 11.7: Overall, the importance is reduced. X3 is still the least important one. All PFI values are lower than before
+</p>
+</div>
+<p>With the plots for an underfitting GBM it is noticeable that the range is almost the same - but at a low level (from 1-1.8 or 1-1.6). Most noticeable, however, is that the order has changed. Based on the test data, <span class="math inline">\(x1\)</span> is now the least important variable. Overall, the feature importance decreases - and therefore a change in the positions becomes more probable.</p>
+<p><strong>Self created Data Set without Correlation</strong></p>
+<p>Now, we used the same data set but included 2 highly correlated features. The correlation between <span class="math inline">\(x1\)</span> and <span class="math inline">\(x2\)</span> is set to 0.9.</p>
+<strong>In the first plot the results for a well tuned GBM are compared for test and training data. The noteworthy areas are highlighted in red.</strong>
+<div class="figure"><span id="fig:unnamed-chunk-54"></span>
+<img src="images/correlated_well.jpg" alt="For the well fitted GBM at the correlated self created data set, the order differs. For the test data x4 ist the most important feature followed by x1, x2 and x3 whereas for the training data x2 and x3 changed places" width="1454" />
+<p class="caption">
+FIGURE 11.8: For the well fitted GBM at the correlated self created data set, the order differs. For the test data x4 ist the most important feature followed by x1, x2 and x3 whereas for the training data x2 and x3 changed places
+</p>
+</div>
+<p>The order of the features has changed - but in the area of features that are close to 1 (i.e. unimportant features).</p>
+<strong>In the next plot, we want to compare test and training data permutation feature importance of an overfitting GBM:</strong>
+<div class="figure"><span id="fig:unnamed-chunk-55"></span>
+<img src="images/correlated_over.jpg" alt="x4 is the most important feature in both plots. Followed by x1, x3 and x2 in descending order for the test data - and again x2 and x3 changed places for the training data. It has to be stated, that the range for training data is much wider." width="1442" />
+<p class="caption">
+FIGURE 11.9: x4 is the most important feature in both plots. Followed by x1, x3 and x2 in descending order for the test data - and again x2 and x3 changed places for the training data. It has to be stated, that the range for training data is much wider.
+</p>
+</div>
+<p>The range for the training data set is much wider again - similar to the range for the uncorrelated data. In addition it is noticeable that the order has changed in the lower range - which is again due to the fact that the less important features are close to 1 (i.e. have no influence on the MSE).</p>
+<strong>The last plot for correlated data used an underfitting GBM:</strong>
+<div class="figure"><span id="fig:unnamed-chunk-56"></span>
+<img src="images/correlated_under.jpg" alt="x4 is the most important feature in both plots. Followed by x1, x3 and x2 in descending order. Except x4 all permutation feature importance values are close to 1" width="1460" />
+<p class="caption">
+FIGURE 11.10: x4 is the most important feature in both plots. Followed by x1, x3 and x2 in descending order. Except x4 all permutation feature importance values are close to 1
+</p>
+</div>
+<p>It can be said that the order has remained the same - but <span class="math inline">\(x1\)</span> <span class="math inline">\(x2\)</span> and <span class="math inline">\(x3\)</span> are very close to a feature importance of 1 (which means: no influence on the MSE). Furthermore, the range is very comparable.</p>
+<p><strong>IBM Watson Data of Employee Attrition</strong></p>
+<p>Finally, we will take a look at how test and training data behave outside laboratory conditions with real data. Here we looked at which variables contribute to an employee leaving the company.</p>
+<strong>Again, we compared the permutation feature importance of test and training data set.</strong>
+<div class="figure"><span id="fig:unnamed-chunk-57"></span>
+<img src="images/IBM_well.jpg" alt="For both data sets Overtime is the most important feature. Furthermore, the 4 least important variables are the same - and in the same order (Dist from home, WorkLifeBalance, Education and YearsInCurrentRole)" width="1454" />
+<p class="caption">
+FIGURE 11.11: For both data sets Overtime is the most important feature. Furthermore, the 4 least important variables are the same - and in the same order (Dist from home, WorkLifeBalance, Education and YearsInCurrentRole)
+</p>
+</div>
+<p>The noticeable features are highlighted in green. As with the previous well fittet GBM, the range is very comparable - the order has also remained the same, at least in parts. (Overtime is the most important variable in both cases)</p>
+<p>Also here we want to have a look at the behaviour at over and underfitting.</p>
+<strong>We start again with the plots for overfitting:</strong>
+<div class="figure"><span id="fig:unnamed-chunk-58"></span>
+<img src="images/IBM_over.jpg" alt="For the test data based on an overfitting GBM, DistanceFromHome is the most important variable. For the training data it is only the fourth most important one, wheras Overtime is most important. It can be stated that the order changed a lot" width="1444" />
+<p class="caption">
+FIGURE 11.12: For the test data based on an overfitting GBM, DistanceFromHome is the most important variable. For the training data it is only the fourth most important one, wheras Overtime is most important. It can be stated that the order changed a lot
+</p>
+</div>
+<p>There’s really a lot going on here. Both the range (as always with overfitting) and the order change a lot. The results are not comparable in any way.</p>
+<strong>Last but not least we will have a look at the underfitting GBM for the IBM Watson data set:</strong>
+<div class="figure"><span id="fig:unnamed-chunk-59"></span>
+<img src="images/IBM_under.jpg" alt="In this Figure it is quite interesting that the order changed completly. Overtime is the most important variable based on the test data and is only at place number 8 for the training data. Even more extreme is the case with WorkLifeBalance" width="1450" />
+<p class="caption">
+FIGURE 11.13: In this Figure it is quite interesting that the order changed completly. Overtime is the most important variable based on the test data and is only at place number 8 for the training data. Even more extreme is the case with WorkLifeBalance
+</p>
+</div>
+<p>The range is comparable - but very small (0.9 - 1.2). Again underfitting has a reducing effect on the feature importance. In addition, the order has changed extremely (work life balance has changed from the least important variable at the test data to the most important variable at the training data)</p>
+</div>
+<div id="interpretation-of-the-results" class="section level3">
+<h3><span class="header-section-number">11.3.4</span> Interpretation of the results</h3>
+<p>At the end of this subchapter we want to answer the question how the permutation feature importance behaves with regard to over and underfitting. First, it can be said that in the case of a well fit GBM there are only slight differences in feature importance. The results on test and training data are in any case comparable.
+But now we come to the problems regarding the meaningfulness of feature importance:</p>
+<p><strong>Problems with overfitting:</strong></p>
+<ul>
+<li>Overfitting results in a very strong effect on the MSE only on the training data</li>
+<li>Furthermore, the order differs a lot</li>
+</ul>
+<p><strong>Problems with underfitting:</strong></p>
+<ul>
+<li>The effect on the MSE is low - the results a consistently lower</li>
+<li>As in the overfitting case the order differs a lot</li>
+</ul>
+<p><strong>Over- and underfitting has definetly an impact on feature importance</strong></p>
+<p>Our third question was, if correlation does effect the decision wheter to use test or training data for calculating the permutation feature importance:</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-60"></span>
+<img src="images/summary_correlation.jpg" alt="Visualisation of the impact of correlation on the feature importance. As you have seen above, correlation is a problem regarding permutation feature importance but does not effect the decision regarding test vs. training data" width="70%" />
+<p class="caption">
+FIGURE 11.14: Visualisation of the impact of correlation on the feature importance. As you have seen above, correlation is a problem regarding permutation feature importance but does not effect the decision regarding test vs. training data
+</p>
+</div>
+</div>
+</div>
+<div id="summary-2" class="section level2">
+<h2><span class="header-section-number">11.4</span> Summary</h2>
+<p>The Question what data set you use for calculation of the permutation feature importance still depends on what you are interested in:</p>
+<ul>
+<li>Contribution to the performance on unknown data?</li>
+</ul>
+<p>or</p>
+<ul>
+<li>How much the model relies for prediction?</li>
+</ul>
+<p>It was shown that PFI reacts strongly to over and underfitting:</p>
+<ul>
+<li>PFI on both can be a proxy identifying over or underfitting</li>
+</ul>
+<p>Correlated features have a big influence on the results of feature importance, but not on the question whether to use test or training data - therefore they are negligible in this question. Nevertheless, correlations have been shown to lead to major feature importance problems, as discussed in previous chapters.</p>
+<p>Basically it can be said that it has been shown that the model behavior (overfitting or underfitting) greatly distorts the interpretation of the feature importance. Therefore it is important to set up your model well, because it was shown that the differences for a well calibrated model are only small and the question of choice doesn’t play a big role anymore.</p>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
 </div>
             </section>
 
@@ -143,11 +625,13 @@
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
 <script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
 <script src="libs/gitbook/js/plugin-sharing.js"></script>
 <script src="libs/gitbook/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -190,8 +674,9 @@ gitbook.start({
     script.type = "text/javascript";
     var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

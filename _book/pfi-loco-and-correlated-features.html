@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 10 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods</title>
+  <title>Chapter 9 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.14 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 10 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:title" content="Chapter 9 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 10 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
+  <meta name="twitter:title" content="Chapter 9 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
   
   <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
   
@@ -24,15 +24,15 @@
 <meta name="author" content="" />
 
 
-<meta name="date" content="2019-08-06" />
+<meta name="date" content="2019-10-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="introduction-to-feature-importance.html">
-<link rel="next" href="partial-and-individual-permutation-feature-importance.html">
+<link rel="prev" href="introduction-to-feature-importance.html"/>
+<link rel="next" href="partial-and-individual-permutation-feature-importance.html"/>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,6 +50,70 @@
 
 
 
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
@@ -66,10 +131,13 @@
 <li><a href="./">Limitations of ML Interpretability</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>1.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>1.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>1.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>1.4</b> Outline of the booklet</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><i class="fa fa-check"></i><b>2</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
 <li class="chapter" data-level="2.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>2.1</b> Partial Dependence Plots (PDP)</a><ul>
 <li class="chapter" data-level="2.1.1" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>2.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
@@ -80,32 +148,162 @@
 <li class="chapter" data-level="2.2.3" data-path="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html"><a href="introduction-to-partial-dependence-plots-pdp-and-individual-conditional-expectation-ice.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>2.2.3</b> Advantages and Limitations of ICE Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a></li>
-<li class="chapter" data-level="4" data-path="pdp-and-feature-interactions.html"><a href="pdp-and-feature-interactions.html"><i class="fa fa-check"></i><b>4</b> PDP and Feature Interactions</a></li>
-<li class="chapter" data-level="5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a></li>
-<li class="chapter" data-level="6" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="6.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
-<li class="chapter" data-level="6.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#the-theoretical-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
-<li class="chapter" data-level="6.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+<li class="chapter" data-level="3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html"><i class="fa fa-check"></i><b>3</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ProblemDescription"><i class="fa fa-check"></i><b>3.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>3.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>3.1.2</b> What is the issue with extrapolation?</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+<li class="chapter" data-level="3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#RealData"><i class="fa fa-check"></i><b>3.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>3.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>3.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#NumCat"><i class="fa fa-check"></i><b>3.2.3</b> Dependency between Numerical and Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#intuition-and-interpretation"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+<li class="chapter" data-level="3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#SimulatedData"><i class="fa fa-check"></i><b>3.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>3.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>3.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="3.3.3" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>3.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="3.3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>3.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="3.3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>3.3.5</b> Simulation Settings: Categorical Features</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a></li>
-<li class="chapter" data-level="8" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a></li>
-<li class="chapter" data-level="9" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
-<li class="chapter" data-level="9.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
-<li class="chapter" data-level="9.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
-<li class="chapter" data-level="9.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+<li class="chapter" data-level="3.4" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>3.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>3.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="3.4.2" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>3.4.2</b> Simulation based on own prediction function</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a></li>
-<li class="chapter" data-level="11" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a></li>
-<li class="chapter" data-level="12" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a></li>
-<li class="chapter" data-level="13" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a></li>
-<li class="chapter" data-level="14" data-path="lime-and-neighbourhood.html"><a href="lime-and-neighbourhood.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a></li>
-<li class="chapter" data-level="15" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a></li>
+<li class="chapter" data-level="3.5" data-path="pdp-and-correlated-features.html"><a href="pdp-and-correlated-features.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html"><i class="fa fa-check"></i><b>4</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#a-brief-look-at-pdp-problems"><i class="fa fa-check"></i><b>4.2</b> A brief look at PDP problems</a></li>
+<li class="chapter" data-level="4.3" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>4.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="4.4" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#scenarios"><i class="fa fa-check"></i><b>4.4</b> Scenarios</a></li>
+<li class="chapter" data-level="4.5" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#theoretical-comparison"><i class="fa fa-check"></i><b>4.5</b> Theoretical Comparison</a></li>
+<li class="chapter" data-level="4.6" data-path="pdp-and-causal-interpretation.html"><a href="pdp-and-causal-interpretation.html#conclusion"><i class="fa fa-check"></i><b>4.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html"><i class="fa fa-check"></i><b>5</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="5.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#motivation"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
+<li class="chapter" data-level="5.2" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>5.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#centering"><i class="fa fa-check"></i><b>5.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#estimation-formula"><i class="fa fa-check"></i><b>5.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#implementation-formula"><i class="fa fa-check"></i><b>5.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="introduction-to-accumulated-local-effects-ale.html"><a href="introduction-to-accumulated-local-effects-ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>5.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html"><i class="fa fa-check"></i><b>6</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="6.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>6.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>6.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="6.1.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>6.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>6.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>6.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="6.2.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>6.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>6.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>6.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="6.3.2" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>6.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="6.3.3" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>6.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>6.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="6.5" data-path="comparison-of-ale-and-pdp.html"><a href="comparison-of-ale-and-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>6.5</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><i class="fa fa-check"></i><b>7</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>7.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#state-of-the-art"><i class="fa fa-check"></i><b>7.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ale-approximations"><i class="fa fa-check"></i><b>7.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="7.1.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-1-additive-feature-effects"><i class="fa fa-check"></i><b>7.1.3</b> Example 1: additive feature effects</a></li>
+<li class="chapter" data-level="7.1.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>7.1.4</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="7.1.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>7.1.5</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>7.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#outlook"><i class="fa fa-check"></i><b>7.2.1</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#categorical-features"><i class="fa fa-check"></i><b>7.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#ordering-the-features"><i class="fa fa-check"></i><b>7.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>7.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>7.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="7.3.4" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#interpretation"><i class="fa fa-check"></i><b>7.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="7.3.5" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#changes-of-the-ale-due-to-diffrent-orders"><i class="fa fa-check"></i><b>7.3.5</b> Changes of the ALE due to diffrent orders</a></li>
+<li class="chapter" data-level="7.3.6" data-path="ale-intervals-piece-wise-constant-models-and-categorical-features.html"><a href="ale-intervals-piece-wise-constant-models-and-categorical-features.html#conclusion-1"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html"><i class="fa fa-check"></i><b>8</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>8.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="8.2" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>8.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="8.3" data-path="introduction-to-feature-importance.html"><a href="introduction-to-feature-importance.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>8.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html"><i class="fa fa-check"></i><b>9</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>9.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#simulation"><i class="fa fa-check"></i><b>9.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="9.1.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#real-data"><i class="fa fa-check"></i><b>9.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>9.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#summary-1"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
+<li class="chapter" data-level="9.4" data-path="pfi-loco-and-correlated-features.html"><a href="pfi-loco-and-correlated-features.html#note-to-the-reader"><i class="fa fa-check"></i><b>9.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html"><i class="fa fa-check"></i><b>10</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="10.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch2"><i class="fa fa-check"></i><b>10.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="10.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch3"><i class="fa fa-check"></i><b>10.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch31"><i class="fa fa-check"></i><b>10.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="10.2.2" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch32"><i class="fa fa-check"></i><b>10.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="10.2.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch323"><i class="fa fa-check"></i><b>10.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch4"><i class="fa fa-check"></i><b>10.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="10.4" data-path="partial-and-individual-permutation-feature-importance.html"><a href="partial-and-individual-permutation-feature-importance.html#ch5"><i class="fa fa-check"></i><b>10.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#introduction-to-test-vs-training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs Training Data</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>11.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="11.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>11.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#gradient-boosting-machine"><i class="fa fa-check"></i><b>11.3.1</b> Gradient Boosting Machine</a></li>
+<li class="chapter" data-level="11.3.2" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>11.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="11.3.3" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#results"><i class="fa fa-check"></i><b>11.3.3</b> Results</a></li>
+<li class="chapter" data-level="11.3.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>11.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="pfi-training-vs-test-data.html"><a href="pfi-training-vs-test-data.html#summary-2"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="12.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="12.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.2" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="12.2.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
+<li class="chapter" data-level="12.4" data-path="introduction-to-local-interpretable-model-agnostic-explanations-lime.html"><a href="introduction-to-local-interpretable-model-agnostic-explanations-lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="id1.html"><a href="id1.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="id1.html"><a href="id1.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13.2" data-path="id1.html"><a href="id1.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="13.3" data-path="id1.html"><a href="id1.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="id1.html"><a href="id1.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="13.3.2" data-path="id1.html"><a href="id1.html#id42"><i class="fa fa-check"></i><b>13.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="id1.html"><a href="id1.html#id5"><i class="fa fa-check"></i><b>13.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="13.5" data-path="id1.html"><a href="id1.html#id6"><i class="fa fa-check"></i><b>13.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="id1.html"><a href="id1.html#id61"><i class="fa fa-check"></i><b>13.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="13.5.2" data-path="id1.html"><a href="id1.html#id62"><i class="fa fa-check"></i><b>13.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html"><i class="fa fa-check"></i><b>14</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>14.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#formula"><i class="fa fa-check"></i><b>14.1.1</b> Formula</a></li>
+<li class="chapter" data-level="14.1.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sampling-strategies"><i class="fa fa-check"></i><b>14.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="14.1.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>14.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>14.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>14.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#boston-housing-data"><i class="fa fa-check"></i><b>14.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#rental-bikes-data"><i class="fa fa-check"></i><b>14.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="14.4.1" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="14.4.2" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
+<li class="chapter" data-level="14.6" data-path="lime-and-sampling.html"><a href="lime-and-sampling.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>15</b> Acknowledgements</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
@@ -128,9 +326,300 @@
 
             <section class="normal" id="section-">
 <div id="pfi-loco-and-correlated-features" class="section level1">
-<h1><span class="header-section-number">Chapter 10</span> PFI, LOCO and Correlated Features</h1>
-<p><em>Author: firstname lastname</em></p>
+<h1><span class="header-section-number">Chapter 9</span> PFI, LOCO and Correlated Features</h1>
+<p>The method of Feature Importance is a powerful tool in gaining insights into black box models under the assumption that there in no correlation between features of the given data set. However, this fundamental assumption can often be rejected in reality. As mentioned in chapter 3, PDPs may suffer in their interpretability, if this assumption is violated. Not only the interpretability of PDPs can be affected, but also the interpretability of Feature Importance can strongly depend on the correlations between the input features. In case of correlated features in the data, which are very likely to occur in reality, the results of the Feature Importance method do not reflect the individual true Feature Importance anymore. This can lead to a misleading importance ranking of the features and hence to incorrect interpretations of a feature’s relevance in a model.</p>
+<p>There are two main issues when it comes to correlated features, which will be illustrated in the following two examples. The first and most crucial issue is the misleading ranking of correlated features. Adding a correlated feature to the data set can lead to a decrease in Feature Importance. Imagine you want to predict the risk of a heart attack by looking at the weight of a person had yesterday as well as other uncorrelated features. For instances, you choose a random forest model and calculate the corresponding PFI. It is well known that overweight can have an significant influence on the likelihood of heart attacks. Thus, the PFI indicates that weight is the most important feature. What happens if you also add the weight of the person of today which is highly correlated to yesterday’s weight of a person? Usually, one big advantage of a random forest model is the application and predictive accuracy of high dimensional data sets <span class="citation">(Strobl et al. <a href="#ref-strobl2008" role="doc-biblioref">2008</a>)</span>. This also holds for cases of correlated features or interaction effects. Hence, adding a new component should cause no issues. Yet, some effects of the Feature Importance can make an interpretation more difficult. This is due to the fact that the PFI can now split between both features. During the training of the random forest some of the decision trees will choose the weight today, the weight yesterday, both or none of these as a split point. Eventually, both features will selected equally, because they are equally beneficial for the performance of the model. <span class="citation">(Molnar <a href="#ref-molnar2019" role="doc-biblioref">2019</a>)</span></p>
+<p>The second issue arises only when the PFI is conducted. During the shuffling step of a feature not only the association to the target variable gets broken, but also the association with the correlated features. So in case the features are correlated, unrealistic data points may occur. These new data points range from unlikely all the way up to completely impossible. The central question then becomes: Can we still trust the informative value of the PFI, if it is calculated with data instances that are not observed in reality and therefore biased <span class="citation">(Molnar <a href="#ref-molnar2019" role="doc-biblioref">2019</a>)</span>? Figure <a href="pfi-loco-and-correlated-features.html#fig:realPFI02">9.1</a> illustrates an example with a possible outcome of unrealistic data instances.</p>
+<p><img src="images/realPFI01.png" width="75%" style="display: block; margin: auto;" /></p>
+<div class="figure" style="text-align: center"><span id="fig:realPFI02"></span>
+<img src="images/realPFI02.png" alt="The two tables showing a subset of the bike sharing data set we already know from previous chapters. The one on top shows the first six rows of the original data set. The table below shows the first six rows of the data set where the feature `weekday` is shuffled. As you can see, some of the new data points appear to make no sense. For example, in observation 1 Wednesday is claimed to be a no working day." width="75%" />
+<p class="caption">
+FIGURE 9.1: The two tables showing a subset of the bike sharing data set we already know from previous chapters. The one on top shows the first six rows of the original data set. The table below shows the first six rows of the data set where the feature <code>weekday</code> is shuffled. As you can see, some of the new data points appear to make no sense. For example, in observation 1 Wednesday is claimed to be a no working day.
+</p>
+</div>
+<p>In this chapter, we want to shed light on some issues of correlated features with respect to Feature Importance and present possible reasons for the outcomes. Our purpose is not to list all possible effects, as this would go beyond the scope of this chapter. Rather than that we would like to increase the reader’s awareness of the problem itself, such that mistakes can be avoided in the future.</p>
+<div id="effect-on-feature-importance-by-adding-correlated-features" class="section level2">
+<h2><span class="header-section-number">9.1</span> Effect on Feature Importance by Adding Correlated Features</h2>
+<p>A major part of this chapter will pay attention to the problem of interpreting Feature Importance when adding or observing correlated features in a given data set. Our focus lies on the behavior of Permutation Feature Importance by <span class="citation">Breiman (<a href="#ref-breiman2001random" role="doc-biblioref">2001</a><a href="#ref-breiman2001random" role="doc-biblioref">a</a>)</span> as well as of the LOCO Feature Importance by <span class="citation">Lei et al. (<a href="#ref-lei2018distribution" role="doc-biblioref">2018</a>)</span>, which have been previously introduced. There will be a comparison of these measures applied on different learners namely the random forest, support vector machine (SVM) and linear model. Each of them will be trained on data sets with different correlation intensities between the features. The random forest and the SVM in this context are black box models (hard to interpret), whereas the linear model is a white box model (easy to interpret). These algorithms should show different behaviors. First, we have a look at simulated data sets and later on there is an application to a real data set <code>Boston</code>.</p>
+<div id="simulation" class="section level3">
+<h3><span class="header-section-number">9.1.1</span> Simulation</h3>
+<p>A good way to visualize the effects of correlated features on the Feature Importance measures is to simulate some data with the desired dependencies of the features. This allows us to show the effects on the PFI and LOCO Feature Importance more precisely than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect, it is necessary to hold the influence of other features as small as possible to prevent misinterpretations. For the complete R Code of these simulations please refer to the R file attached to this chapter. Our simulation design resembles the one from <span class="citation">Strobl et al. (<a href="#ref-strobl2008" role="doc-biblioref">2008</a>)</span> or <span class="citation">Archer and Kimes (<a href="#ref-archer2008" role="doc-biblioref">2008</a>)</span>.</p>
+<p>In total, there will be three different scenario settings to investigate the influence of correlated features on the PFI and LOCO. The following setup is used as a general baseline for the scenarios:</p>
+<p><span class="math display">\[
+y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
+\]</span>
+The scenarios differ in the way they represent different dependencies of the features on the target variable. We investigate here a linear dependence as well as a non-linear one. To create a simple fictive data set with these dependencies, four features <span class="math inline">\(x_{i1},...,x_{i4}\)</span> were randomly drawn a thousand times out of a multivariate Gaussian distribution with a mean of 0: <span class="math inline">\(X \sim MVN(0,\Sigma)\)</span>. The covariance <span class="math inline">\(\Sigma\)</span> depends on the variance of all features, which were set equally to <span class="math inline">\(\sigma_{j,j}=1\)</span>, and the covariances <span class="math inline">\(\sigma_{j,l}\)</span>. The covariance for feature <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> <span class="math inline">\(\sigma_{1,2}\)</span> were set to either <span class="math inline">\(\rho = 0\)</span>; <span class="math inline">\(0.25\)</span>; <span class="math inline">\(0.5\)</span>; <span class="math inline">\(0.75\)</span> or <span class="math inline">\(0.99\)</span> depending on our correlation intensity of interest whereas the covariances of the other features were set to <span class="math inline">\(\sigma_{j,l} = 0\)</span> which means they are independent. Note: Here the correlation and the covariance are the same, because we set the variance to 1 such that the Pearson correlation coefficient <span class="math inline">\(\rho = \frac{Cov(X_{j},X_{l})}{\sqrt{Var(X_{j})}\sqrt{Var(X_{l})}} =Cov(X_{j},X_{l})\)</span> . The reason behind setting <span class="math inline">\(\rho = 0.99\)</span> and not to <span class="math inline">\(\rho = 1\)</span> is to avoid issues when calculating with matrices. If <span class="math inline">\(\rho\)</span> would be equal to 1, we would have perfect multicollinearity. Thus, the rank of the covariance matrix would not be full. Hence, setting <span class="math inline">\(\rho\)</span> to 0.99 instead simplifies subsequent calculations, especially in terms of
+applying the linear model. The choice of the noise <span class="math inline">\(\epsilon_{i}\)</span> and its variance should be hold small in order to clarify the behavior we observe and avoid misinterpretation. In this case, we assume that the mean is zero and the standard deviation is only ten percent of the absolute value of the mean of <span class="math inline">\(y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}\)</span>.</p>
+<p>Furthermore, we will also include an uninformative feature ”Uninf” randomly drawn out of a uniform distribution to the data set. This is our benchmark indicating us whether the importances of the features are higher than this random effect. As a consequence, we are eventually generating five data sets, each with five numerical features. Now we are able to run the learning algorithms on the data sets. For the random forest, we use the <code>randomForest</code> package <span class="citation">(Leo Breiman et al. <a href="#ref-R-randomForest" role="doc-biblioref">2018</a>)</span> and for SVM the <code>ksvm()</code> function out of the <code>kernlab</code> package <span class="citation">(Karatzoglou et al. <a href="#ref-R-kernlab" role="doc-biblioref">2004</a>)</span>. For both functions the default settings for all the parameters were used.</p>
+<p><strong>How to compare PFI and LOCO?</strong></p>
+<p>As mentioned in the introduction to this chapter, for PFI as introduced by <span class="citation">Breiman (<a href="#ref-breiman2001random" role="doc-biblioref">2001</a><a href="#ref-breiman2001random" role="doc-biblioref">a</a>)</span>, one does not need to refit the model whereas for LOCO it is necessary to refit. In the <code>iml</code> package <span class="citation">(Molnar, Casalicchio, and Bischl <a href="#ref-molnar2018iml" role="doc-biblioref">2018</a>)</span>, which we use throughout the entire book, the implementation uses Hold-out for performance evaluation. Typically, Hold-out is not ideal to evaluate the performance of a model unless the data set is sufficiently large. The variance of the performance value can get quite high which means that it can fluctuate a lot. To lower the variance of PFI, the values are calculated by repeatedly shuffling the features in the permutation step. However, Hold-out is definitely not suitable for LOCO, because reshuffling is not possible due to the fact that the interested feature is completely left out of consideration. Thus, the danger of high variance increases tremendously. In contrast to Hold-out, we can make use of Resampling methods which use the data more efficiently by repeatedly dividing the data into train and test data and finally aggregating the results. Therefore, in order to improve the
+comparability of two approaches, we decided to use Subsampling (repeated Hold-out) for measuring the performance for PFI. This also means that we use PFI on test data (see also chapter 12), so it is necessary to refit our model. In our case a Subsampling with a 20-80% split and 10 iterations were used. In principle we want to compare two models in each iteration step, once without the permuted feature and once with the permuted feature. Therefore we should use the same train-test splits in each iteration. The following visualizations show the Feature Importance values as well as the importance ranks, which are both aggregated by the average over the 10 iterations of Subsampling. Furthermore, we calculate the Feature Importance by taking the ratio <span class="math inline">\(e_{perm}/e_{orig}\)</span> for PFI or the the ratio <span class="math inline">\(e_{-j}/e_{orig}\)</span> for LOCO (see chapter 9).</p>
+<p><strong>1) Linear Dependence:</strong></p>
+<p>In the first scenario setting the dependence of the features on the target value <span class="math inline">\(y\)</span> is a linear one:</p>
+<p><span class="math display">\[
+y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
+\]</span></p>
+<p>In order to get meaningful results, one has to first check, whether the underlying model was proved to be accurate. In case your model does not generalize accurately, the Feature Importance can vary greatly when rerunning the algorithms. Therefore, the resulting effects cannot be seen as significant <span class="citation">(Parr et al. <a href="#ref-parr2018" role="doc-biblioref">2018</a>)</span>. Figure <a href="pfi-loco-and-correlated-features.html#fig:bmr01">9.2</a> shows the benchmark result for the learning algorithms used on the simulated data sets with independence, medium and high correlation. As a performance measures we decided showing two. On the one hand, the mean squared error (MSE), since it is also used as a loss measure for evaluating the Feature Importance. On the other hand <span class="math inline">\(R^2\)</span>, because it is a common measure for linear models and we have a linear dependence of the features on the target value. <span class="math inline">\(R^2 = 1\)</span> implies that all residuals are zero, so a perfect prediction. Whereas <span class="math inline">\(R^2 = 0\)</span> means that we predict as badly as a constant. As you can see, all learning algorithms have very good up to perfect results, or in other words are accurate for our further investigations. The random forest is considered as the worst of the models at hand. That is not surprising as the random forest learns multiple step function trying to fit a linear prediction function. The linear model is by far the best model to predict this linear dependence on the target value.</p>
+<div class="figure"><span id="fig:bmr01"></span>
+<img src="images/bmr01b.png" alt="Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model." width="100%" />
+<p class="caption">
+FIGURE 9.2: Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom <span class="math inline">\(R^2\)</span>. The colour represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange01"></span>
+<img src="book_files/figure-html/arrange01-1.svg" alt="Scenario 1: PFI on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.3: Scenario 1: PFI on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange01">9.3</a> shows the result of applying the PFI on the random forest model. The plot on the left-hand side shows the average importance values (in the graph shown as a dot). Moreover, it presents the 0.05- and 0.95-quantiles over the 10 subsampling iterations, respectively. In addition, the plot on the right-hand side shows the average importance rank based on the ten subsampling iterations. It is important to mention that typically the Feature Importance is interpreted in a rank order. One can see that, in case of independence, the PFI of all features are approximately the same except for the uninformative one. Since the uninformative indicated a complete random effect, one can suggest that all features have an influence on the performance of the model. Overall, the PFI of the correlated features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> tend to increase more in comparison to the uncorrelated features as <span class="math inline">\(\rho\)</span> increases. Moreover, the span of the quantile bands increases with higher <span class="math inline">\(\rho\)</span>. This effect can also be seen in the right plot. For independence, all points are near the average rank of 2.5. The small fluctuations or deviations can be explained by the underlying stochastic. However, for a correlation higher than 0.5 we see a gap between the correlated features in red colour and the uncorrelated in green colour. The correlated features settle down at an average rank of about 1.5 and the uncorrelated ones at about 3.5. Although all features have the same influence on the target value, one can see that PFI can be misleading as it shows a higher PFI rank the higher the correlation between two features.</p>
+<div class="figure"><span id="fig:arrangeexp"></span>
+<img src="book_files/figure-html/arrangeexp-1.svg" alt="Extrapolation visualization. On the left, the prediction of the random forest on the simulated independent data set. On the right, the prediction of the random forest on the simulated high correlated data set. The arrow is indicating a permutation of one observation for feature $X1$." width="960" />
+<p class="caption">
+FIGURE 9.4: Extrapolation visualization. On the left, the prediction of the random forest on the simulated independent data set. On the right, the prediction of the random forest on the simulated high correlated data set. The arrow is indicating a permutation of one observation for feature <span class="math inline">\(X1\)</span>.
+</p>
+</div>
+<p>One possible explanation for this effect is given by <span class="citation">Hooker and Mentch (<a href="#ref-hooker2019" role="doc-biblioref">2019</a>)</span>. They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure <a href="pfi-loco-and-correlated-features.html#fig:arrangeexp">9.4</a> shows on the left the random forest applied on the simulated data set with independent features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. On the right it is applied on the data set where both are highly correlated. At first sight you cannot see a structure in the data distribution for the independent case. Furthermore, the data points fill out much more space in comparison to the correlated case. Here one can see a clear positive correlation between <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. For instance, if you permute one observation of <span class="math inline">\(X1\)</span> represented by the white arrow, the permuted observation point is still near the data distribution in the independent case. However, in the correlated case there are absolute no other data points nearby. The data distribution of the training data lies on the diagonal (bisector). The region outside of the point cloud was not learned well enough by the random forest which becomes evident through the less rectangle lines in this area. As a consequence of permuting, the random forest also evaluates points which are far away from training data. Thus, the prediction can be far away from the true value which leads to a large drop in performance. Although the feature is equally important in comparison to the others, it gets indicated as more important. The larger span of the quantile bands can be explained by the random permuting of the data points. If the observation is still close to the data distribution after permuting it, the error made is less severe as in the example shown in the plot. For example, the point is still in the blue shaded are. Hence, the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up, the extrapolation problem of the random forest is associated with the correlation intensity.</p>
+<div class="figure"><span id="fig:arrange02"></span>
+<img src="book_files/figure-html/arrange02-1.svg" alt="Scenario 1: PFI on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.5: Scenario 1: PFI on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>The next Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange02">9.5</a> demonstrates the application of the support vector machines on the simulated data sets. Again, we have the same results for the independence case, because the importance values and quantile bands are similar to each other. This is underpinned by the average rank plot, which as you can see fluctuates around the overall average rank. It seems like the importance values drop quite heavily when we are going from <span class="math inline">\(\rho=0\)</span> to <span class="math inline">\(\rho=0.25\)</span>. It then rises again slightly the higher the correlation becomes. For the features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> it seems like they are growing more in comparison to the independent ones. The average rank plot indicates the same, since for <span class="math inline">\(\rho &gt; 0.5\)</span> there is a clear change in pattern towards that the highly correlated features being indicated as more important. Furthermore, the quantile bands for the highly correlated features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> are getting larger in comparison to the independent ones. Thus, we recognize kind of similar effects like for random forest, where correlated features are indicated as more important. With the small deviation, that we do not exceed the initial importance value in case of independence and that the effect is less strong.</p>
+<div class="figure"><span id="fig:arrange03"></span>
+<img src="book_files/figure-html/arrange03-1.svg" alt="Scenario 1: PFI on the linear models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.6: Scenario 1: PFI on the linear models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>When applying the linear model and calculating the PFI, the ranking of the features varies a lot. The underlying reason is that the importance values for each correlation intensity are very close to each other. The ranking seems to be very random and thus can be explained by stochastic. One interesting effect is that, the higher the correlation, the lower the Feature Importance values get. Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange03">9.6</a> shows that the values of PFI are quite large. As mentioned before (see Figure <a href="pfi-loco-and-correlated-features.html#fig:bmr01">9.2</a>), the MSE values of the linear model are close to zero. The linear model performs unsurprisingly very well. For the calculation of PFI we take the ratio <span class="math inline">\(e_{perm}/e_{orig}\)</span>. Here the numerator’s value is very small, and the value of denominator is even smaller (close to zero) which results in a very large value for PFI. Increasing the error term <span class="math inline">\(\epsilon_{i}\)</span> would lower the PFI value, since the MSE would be higher. All in all, it looks like the PFI of a linear model is quite robust against changes in the correlation intensity. By assigning all features almost the same importance value, it reflects the true theoretical rank quite well.</p>
+<div class="figure"><span id="fig:arrange04"></span>
+<img src="book_files/figure-html/arrange04-1.svg" alt="Scenario 1: LOCO on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.7: Scenario 1: LOCO on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>In contrast to the PFI, there is a drop in LOCO Feature Importance of the two features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> the higher the correlation. In particular for almost perfect multicollinearity, the outcome differs a lot from the theoretical true importance with the value dropping to almost 1. In terms of ratio comparison of the errors, this indicates that there is no influence on the performance prediction of the two features. Here we can see the downside of correlation in regards to LOCO. Both features should generally be considered as equally influential as <span class="math inline">\(X3\)</span> and <span class="math inline">\(X4\)</span>. However, in case of almost perfect multicollinearity, if you leave one of the features <span class="math inline">\(X1\)</span> or <span class="math inline">\(X2\)</span> out of consideration to calculate the LOCO Feature Importance, the other feature can kind of “pick up” the effect on the target variable. As a consequence, there is no change in accuracy which means that there is only a small, up to no, increase in the error <span class="citation">(Parr et al. <a href="#ref-parr2018" role="doc-biblioref">2018</a>)</span>. Another noteworthy result is a kind of a compensation effect. The importance values for <span class="math inline">\(X3\)</span> and <span class="math inline">\(X4\)</span> increase as the correlation of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> rises. According to the right-hand side plot of Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange04">9.7</a>, the average rank till <span class="math inline">\(\rho = 0.5\)</span> fluctuates a lot. For larger <span class="math inline">\(\rho\)</span> values you can recognize a tendency towards higher average rank for uncorrelated features and a lower average rank for correlated features shown by the crossing over of the green and red lines. Basically, this is exactly the opposite to what we observe for PFI on the random forest model.</p>
+<div class="figure"><span id="fig:arrange05"></span>
+<img src="book_files/figure-html/arrange05-1.svg" alt="Scenario 1: LOCO on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.8: Scenario 1: LOCO on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange05">9.8</a> presents the LOCO Feature Importance on the simulated data sets within the SVM model. Once again, we can observe a drop in importance of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> the higher the correlation. In comparison to the random forest, you cannot recognize a compensation effect of the uncorrelated features. The plot on the left reveals that under independence the quantile bands for <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> are very large whereas under high correlation they are getting smaller and even hardly discernible. In addition to that, for <span class="math inline">\(\rho=0.99\)</span> you can recognize that the average importance rank for the uninformative feature increases, because <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> are also considered as unimportant.</p>
+<div class="figure"><span id="fig:arrange06"></span>
+<img src="book_files/figure-html/arrange06-1.svg" alt="Scenario 1: LOCO on the linear models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank." width="960" />
+<p class="caption">
+FIGURE 9.9: Scenario 1: LOCO on the linear models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line is used as an indicator of how far away certain features are from the true theoretical importance rank.
+</p>
+</div>
+<p>Apparently, the value of the average importance for LOCO is also very high if applying the linear model on the simulated data sets (Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange06">9.9</a>). The same phenomenon occurs for PFI on the linear model. Overall, one of the main similarities we can derive for the all three learning algorithms is that when perfectly multicolinearity is given the LOCO Feature Importance values are dropping to either 1 or 0 depending on whether you take the ratio or the difference of the estimated errors.</p>
+<p><strong>2) Linear Dependence with a larger coefficient for <span class="math inline">\(X4\)</span>:</strong></p>
+<p>In the second scenario the dependence of the features on the target value <span class="math inline">\(y\)</span> is also a linear one, yet with a small change in the coefficient of <span class="math inline">\(X4\)</span> from <span class="math inline">\(1\)</span> to <span class="math inline">\(1.2\)</span>. As a result, there is now a larger influence of this feature on the target <span class="math inline">\(y\)</span>:</p>
+<p><span class="math display">\[
+y_{i} = x_{i1}+x_{i2}+x_{i3}+1.2x_{i4}+\epsilon_{i}
+\]</span></p>
+<div class="figure"><span id="fig:arrange07"></span>
+<img src="book_files/figure-html/arrange07-1.svg" alt="Scenario 2: PFI on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.10: Scenario 2: PFI on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p>Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange07">9.10</a> underlines the common problem of PFI and random forest in case of high correlation. As noted, <span class="math inline">\(X4\)</span> has a higher impact on the target value i.e. a higher theoretical true importance in comparison to the other features. Nevertheless, one should notice the possibility that the PFI of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> are considered as more important than <span class="math inline">\(X_4\)</span>. Consequently, there occurs a misleading importance ranking which can result in misinterpretations. This is also confirmed by the right-hand side plot. The average rank of <span class="math inline">\(X_4\)</span> represented by the light green line decreases and finally stays below the average rank of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> pictured by the two red curves.</p>
+<div class="figure"><span id="fig:arrange08"></span>
+<img src="book_files/figure-html/arrange08-1.svg" alt="Scenario 2: PFI on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.11: Scenario 2: PFI on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p>Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange08">9.11</a> and Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange09">9.12</a> depict that there are no misleading PFI ranking for the SVM as well as for the linear model with respect to <span class="math inline">\(X4\)</span>. As expected, <span class="math inline">\(X4\)</span> has a higher overall importance rank; the other features are more or less equally important. There is a clearly defined pattern in the average rank plots where the graph shows a plateau for feature <span class="math inline">\(X4\)</span> at the average rank level of <span class="math inline">\(1\)</span>. This can be taken as indication that PFI considers the true theoretical importance rank for feature <span class="math inline">\(X4\)</span>. The main difference between SVM and LM is their typical appearance for PFI as described in scenario 1 before.</p>
+<div class="figure"><span id="fig:arrange09"></span>
+<img src="book_files/figure-html/arrange09-1.svg" alt="Scenario 2: PFI on the linear models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.12: Scenario 2: PFI on the linear models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange10"></span>
+<img src="book_files/figure-html/arrange10-1.svg" alt="Scenario 2: LOCO on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.13: Scenario 2: LOCO on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p>As you can see in Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange10">9.13</a> the LOCO Feature Importance remains unchanged throughout an increase of the <span class="math inline">\(X4\)</span> coefficient. The PFI and LOCO again have opposite effects with regard to the random forest. Generally speaking, the plots show the same main issues of LOCO as we already seen before. A small exception is the higher importance rank for <span class="math inline">\(X_4\)</span>. This is depicted again by the plateau of the average importance rank for <span class="math inline">\(X4\)</span> represented by the light green line. Furthermore, in case of high correlation the compensation effect also remains valid for <span class="math inline">\(X4\)</span>.</p>
+<p>The impact of LOCO on the SVM and the linear model are visualized in Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange11">9.14</a> and <a href="pfi-loco-and-correlated-features.html#fig:arrange12">9.15</a>. Both suggest that <span class="math inline">\(X4\)</span> is more important compared to <span class="math inline">\(X1 - X3\)</span>. Other than that, we can observe once more the typical behavior of LOCO in case of high correlation. At a correlation intensity of around <span class="math inline">\(\rho=0.5\)</span> the two correlated features are incorrectly identified as less important than <span class="math inline">\(X3\)</span>.</p>
+<div class="figure"><span id="fig:arrange11"></span>
+<img src="book_files/figure-html/arrange11-1.svg" alt="Scenario 2: LOCO on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.14: Scenario 2: LOCO on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange12"></span>
+<img src="book_files/figure-html/arrange12-1.svg" alt="Scenario 2: LOCO on the linear models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X1$, $X2$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.15: Scenario 2: LOCO on the linear models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X1\)</span>, <span class="math inline">\(X2\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p><strong>3) Nonlinear Dependence:</strong></p>
+<p>In the third scenario there is no pure linear relationship between the target value <span class="math inline">\(y\)</span> and the features. The two feature <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span> are plugged into the sine function:</p>
+<p><span class="math display">\[
+y_{i} = sin(x_{i1})+x_{i2}+sin(x_{i3})+x_{i4}+\epsilon_{i}
+\]</span></p>
+<p>In Figure <a href="pfi-loco-and-correlated-features.html#fig:bmr04">9.16</a> the benchmark result of the third scenario is illustrated. Here we can observe that the linear connection to the target value is broken. Since, one consequence of this break is that the linear model is no longer identified as the best model. The benchmark results present the SVM as the best performing model instead. Still the random forest is performing worst in comparison to the others. All in all, we have accurate models at hand again. Hence, we can investigate this scenario with regards to correlation effects on the Feature Importance as well.</p>
+<div class="figure" style="text-align: center"><span id="fig:bmr04"></span>
+<img src="images/bmr04.png" alt="Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model. " width="100%" />
+<p class="caption">
+FIGURE 9.16: Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom <span class="math inline">\(R^2\)</span>. The colour representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange13"></span>
+<img src="book_files/figure-html/arrange13-1.svg" alt="Scenario 3: PFI on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.17: Scenario 3: PFI on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p>Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange13">9.17</a> displays the effects of PFI for the application of the random forest on the simulated data sets of scenario 3. On first sight, comparing <span class="math inline">\(X_3\)</span> with <span class="math inline">\(X_4\)</span>, you can see that the features inside the sine function are ranked as less important than the linear ones. However, in case of high correlation feature <span class="math inline">\(X1\)</span> gains drastically in importance. This even goes as far as <span class="math inline">\(X1\)</span> having the same importance rank as those features with a linear dependence. This leads to the perception that the importance value of <span class="math inline">\(X1\)</span> adapts to the value of <span class="math inline">\(X2\)</span>. Once again the PFI assesses the importance rank incorrectly.</p>
+<div class="figure"><span id="fig:arrange14"></span>
+<img src="book_files/figure-html/arrange14-1.svg" alt="Scenario 3: PFI on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.18: Scenario 3: PFI on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<p>According to Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange14">9.18</a>, PFI shows its typical behavior on the SVM model. As in case of the
+random forest the features within the sine function are classified as less important than the linear ones. Similarly, it is interesting to see the adaption effect of feature <span class="math inline">\(X1\)</span>. Yet, <span class="math inline">\(X1\)</span> does not exceed the rank of <span class="math inline">\(X2\)</span>. The PFI on the linear model, illustrated in Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange15">9.19</a>, has a very parallel looking appearance. Thus, one can conclude that it is kind of robust against correlation and shows the theoretical true importance rank.</p>
+<div class="figure"><span id="fig:arrange15"></span>
+<img src="book_files/figure-html/arrange15-1.svg" alt="Scenario 3: PFI on the linear models with different correlations of features $X1$ and $X2$. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.19: Scenario 3: PFI on the linear models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the PFI values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange16"></span>
+<img src="book_files/figure-html/arrange16-1.svg" alt="Scenario 3: LOCO on the random forest models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$" width="960" />
+<p class="caption">
+FIGURE 9.20: Scenario 3: LOCO on the random forest models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>
+</p>
+</div>
+<p>The impacts of LOCO on the different models are visualized in Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange16">9.20</a>, <a href="pfi-loco-and-correlated-features.html#fig:arrange17">9.21</a> and <a href="pfi-loco-and-correlated-features.html#fig:arrange18">9.22</a> respectively. All of them suggest that the linear features are more important. The higher the correlation, the lower the feature importance for feature <span class="math inline">\(X2\)</span> drops. Again, we can observe the typical behavior of LOCO in case of high correlation. At a certain correlation intensity in the range between <span class="math inline">\(\rho=0.75\)</span> and <span class="math inline">\(\rho=0.99\)</span> LOCO specifies <span class="math inline">\(X3\)</span> as more important than <span class="math inline">\(X2\)</span>. Other than that LOCO shows the same results for the various models as mentioned before.</p>
+<div class="figure"><span id="fig:arrange17"></span>
+<img src="book_files/figure-html/arrange17-1.svg" alt="Scenario 3: LOCO on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.21: Scenario 3: LOCO on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange18"></span>
+<img src="book_files/figure-html/arrange18-1.svg" alt="Scenario 3: LOCO on the SVM models with different correlations of features $X1$ and $X2$. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of $X2$ and $X4$, the dotted line of $X1$ and $X3$." width="960" />
+<p class="caption">
+FIGURE 9.22: Scenario 3: LOCO on the SVM models with different correlations of features <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. The left plot shows the LOCO values for different correlation intensities. The right plot represents the average rank of the features at a certain correlation intensity. The red lines mark the two correlated features and the green lines the independent ones. The dashed line illustrates the true theoretical importance rank of <span class="math inline">\(X2\)</span> and <span class="math inline">\(X4\)</span>, the dotted line of <span class="math inline">\(X1\)</span> and <span class="math inline">\(X3\)</span>.
+</p>
+</div>
+</div>
+<div id="real-data" class="section level3">
+<h3><span class="header-section-number">9.1.2</span> Real Data</h3>
+<p>In order to illustrate the problems arising from correlated features on Feature Importance using a real data set, we will take a look at the “Boston” data set which is available in R via the <code>MASS</code> package. The data set was originally published by <span class="citation">Harrison and Rubinfeld (<a href="#ref-harrison1978" role="doc-biblioref">1978</a>)</span>. To make the results a little bit more feasible and clear, we only look at a subset of the data. Out of the original 13 features we picked out 6. The objective is to predict the house prices with respect to the given features.</p>
+<p>The following variables are considered part of the subset:</p>
+<pre><code>DIS   - weighted distances to five Boston employment centres
+AGE   - proportion of owner-occupied units built prior to 1940
+NOX   - nitric oxides concentration (parts per 10 million)
+CRIM  - per capita crime rate by town
+RM    - average number of rooms per dwelling
+LSTAT - % lower status of the population
 
+MEDV  - target: Median value of owner-occupied homes in $1000&#39;s</code></pre>
+<p>First of all, we want to have a look at the benchmark results illustrated in Figure <a href="pfi-loco-and-correlated-features.html#fig:bmrBoston">9.23</a> on the left-hand side. Here, the best result can be observed with respect to the MSE for the random forest. Since Features Importance was introduced to interpret black box models like the random forest, but has shown multiple complications in our simulations, our focus here is on the random forest model.</p>
+<p>The following experiments are inspired by <span class="citation">Parr et al. (<a href="#ref-parr2018" role="doc-biblioref">2018</a>)</span>. An easy way to create a feature with perfect multicollinearity in a data set is by duplicating one feature and adding it to the data set. As a result the correlation coefficient equals 1. To make the two features less correlated, we also present a case where instead of simply duplicating one, a noise constant is added to the duplicate. This should lower correlation to a certain amount. The noise constant was calculated so it fits the value range of the feature. In order to show meaningful results, the constant`s standard deviation was set to 30 percent times the mean of the feature itself.</p>
+<div class="figure"><span id="fig:bmrBoston"></span>
+<img src="images/bmreal.png" alt="On the left-hand side the benchmark result for the random forest (red), the SVM (green) and the linear model (blue) on the basis of the Boston data set. The underlying performance measure is the MSE. On the right-hand side a Pearson correlation plot with the features of the Boston data set." width="100%" />
+<p class="caption">
+FIGURE 9.23: On the left-hand side the benchmark result for the random forest (red), the SVM (green) and the linear model (blue) on the basis of the Boston data set. The underlying performance measure is the MSE. On the right-hand side a Pearson correlation plot with the features of the Boston data set.
+</p>
+</div>
+<div class="figure"><span id="fig:arrange19"></span>
+<img src="book_files/figure-html/arrange19-1.svg" alt="PFI on the original data set (left), on the data set including a duplicate of `lstat` (middle) and on data set with a noise added to the duplicate (right). " width="768" />
+<p class="caption">
+FIGURE 9.24: PFI on the original data set (left), on the data set including a duplicate of <code>lstat</code> (middle) and on data set with a noise added to the duplicate (right).
+</p>
+</div>
+<p>Evaluating the PFI on our given data set indicates the feature lower status of the population <code>lstat</code> as the most important feature with a value around 4.3 (see Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange19">9.24</a>). By duplicating the feature “lstat” and adding it to the data set as well as repeating PFI, one can see that <code>dup_lstat</code> and <code>lstat</code> are equally important. As a rule of thumb the PFI of both are kind of sharing the Feature Importance from the case before. Since now, the PFI values of <code>lstat</code> and <code>dup_lstat</code> dropping down to ca. 2.4. This makes sense as equally important features should be considered as a split with the same probability during the prediction process of random forest. As a consequence in this situation we have a 50-50 choice between <code>lstat</code> and <code>dup_lstat</code>. More importantly, the feature <code>lstat</code> is no longer ranked as the most important feature, instead the average number of rooms per dwelling <code>rm</code> moves to the leader board. Again, we show how correlation between features can lead to wrong interpretations.</p>
+<p>When adding a noise variable to <code>dup_lstat</code> (<code>n_lstat</code>), the correlation should decrease. In fact, Figure <a href="pfi-loco-and-correlated-features.html#fig:bmrBoston">9.23</a> shows in the right-hand side plot, that this yields to a Pearson correlation coefficient of around <span class="math inline">\(0.88\)</span>. Now the intial importance value of around 4.3 is shared between <code>lstat</code> = 3.3 and <code>n_lstat</code> = 1.2 at a ratio of 3 to 1. In contrast to the case of multicollinearity, the importance values are moving away from each other. Now <code>lstat</code> is ranked most important, yet only by a very marginal amount and still being below the actual value of 4.3 as in the initial case. It seems that two correlated features are pulling each other down, with the extent and fraction depending on the correlation strength.</p>
+<div class="figure"><span id="fig:arrange20"></span>
+<img src="book_files/figure-html/arrange20-1.svg" alt="LOCO on the original data set (left), on the data set including a duplicate of `lstat` (middle) and on data set with a noise added to the duplicate (right)." width="768" />
+<p class="caption">
+FIGURE 9.25: LOCO on the original data set (left), on the data set including a duplicate of <code>lstat</code> (middle) and on data set with a noise added to the duplicate (right).
+</p>
+</div>
+<p>As a contrast to PFI, the LOCO Feature Importance specifies <code>rm</code> = 1,8 as the most important feature, closely followed by <code>lstat</code> = 1.75 (see Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange20">9.25</a>). Furthermore, there is a large overlap of the quantile bands of both features. In order to make this case easier to compare with PFI, we have another look at <code>lstat</code>. Adding the duplicate of <code>lstat</code> to the data and rerunning LOCO, one can see that <code>lstat</code> disappears from the top ranking. This leads to the same effect as in previous simulations. Both highly correlated features <code>dup_lstat</code> and <code>lstat</code> are erroneously indicated as unimportant. Understanding the fact that LOCO Feature Importance measures the drop in performance of a model, one can easily come up with a reason for this. If you leave out one feature that is perfectly correlated to the other, the performance will be the same as before. Since the feature which is still in the data set contains exactly the same information as the one left out there is no alteration in performance. Adding a little bit of noise to the duplicate <code>dup_lstat</code> leads to an increase of LOCO Feature Importance for <code>lstat</code>. This trend increases with higher variance of the noise or, in other words, the lower the correlation of the two features.</p>
+<p>From the examples given as well as by looking at the correlation in the data set (see Figure <a href="pfi-loco-and-correlated-features.html#fig:bmrBoston">9.23</a>), one can conclude that there should be correlation effects even without intervening in the data set. For instance, <code>lstat</code> is correlated in multiple ways with other features. The extent of correlation with the other features never drops below the 0.5 mark. If you look at the correlation of the lower status of population and the average number of rooms per dwelling, this indicates a <span class="math inline">\(\rho\)</span> of -0.61. This makes sense, because one can assume
+that a larger amount of rooms can only be financed by wealthy people. A possible conclusion could be that in case of PFI both features are overestimated and hence at the top of the ranking board. Moreover, both features show quite large quantile bands in comparison to others. These outcomes look kind of similar to the ones shown in the simulation section (compare with Figure <a href="pfi-loco-and-correlated-features.html#fig:arrange01">9.3</a>). Obviously, correlation exists before adding any new feature to the data set. In these kinds of set-ups you cannot verify the true theoretical importance. The only option are assumptions about the underlying effects and guessing the true importance based on simulations as the ones presented here. This shows how unpleasant correlation can be in connection with Feature Importance.</p>
+</div>
+</div>
+<div id="alternative-measures-dealing-with-correlated-features" class="section level2">
+<h2><span class="header-section-number">9.2</span> Alternative Measures Dealing with Correlated Features</h2>
+<p>To sum up, we want to highlight that feature importance measures like LOCO or PFI can be strongly misleading when features of a given data set are correlated. Thus, a check for correlation between features before usage of these two methods is recommended or even necessary in order to have a credible interpretation. In the literature there are some suggestions on how to deal with collinearity with respect to Feature Importance. One suggestion which is related to the PFI seems kind of obvious. The PFI is usually calculated by permuting one specific feature. In case of strong correlation of, for example, two features, it is sensible to permute these together, meaning the building of a group such that the correlation is still present in the calculation of PFI <span class="citation">(Parr et al. <a href="#ref-parr2018" role="doc-biblioref">2018</a>)</span>. For illustration, let’s look at the example of the bikesharing data set mentioned in the introduction (Figure <a href="pfi-loco-and-correlated-features.html#fig:realPFI02">9.1</a>). Since <code>weekday</code> and <code>working day</code> are highly correlated, they should be only permuted together. If this is done, a strange combination of data like Wednesday and no working day is not possible. This should also solve the severe problems with extrapolation, because we are not leaving the real data distribution.</p>
+<p>Other alternative measures are focusing on the idea of permuting new values of a feature by taking the distribution conditional on the remaining features into consideration like the Conditional Feature Importance by <span class="citation">Strobl et al. (<a href="#ref-strobl2008" role="doc-biblioref">2008</a>)</span>. Despite the fact that the Conditional Feature Importance cannot completely solve the problem of overestimating correlated features as more important, it proves to be better at identifying the true important features of a model. Another approach is a mixture of a relearning PFI <span class="citation">(Mentch and Hooker <a href="#ref-mentch2016" role="doc-biblioref">2016</a>)</span> and the Conditional Feature Importance. <span class="citation">(Hooker and Mentch <a href="#ref-hooker2019" role="doc-biblioref">2019</a>)</span></p>
+<p>To conclude, some of these approaches are quite easy to implement, others prove to be a bit more complicated. What most of them have in common are high computational costs. These either emerge from refitting the model or simulating from the conditional distribution <span class="citation">(Hooker and Mentch <a href="#ref-hooker2019" role="doc-biblioref">2019</a>)</span>. This makes an application in case of large data sets and feature spaces less favourable. Another possible idea is an indicator variable for the given data set that shows how much trust we can have in the outcome on the basis of feature correlation. In order to derive a suitable interpretation of the machine learning algorithm, we recommend to have a look at other model-agnostic tools like PDP, ICE, ALE or LIME as well.</p>
+</div>
+<div id="summary-1" class="section level2">
+<h2><span class="header-section-number">9.3</span> Summary</h2>
+<p>Calculating Feature Importance for simple linear models is not strongly affected by correlation. However, the calculation of Feature Importance of black box models, like random forest, is susceptible to correlation effects. Overall, we cannot clearly define whether PFI or LOCO is the preferable Feature Importance measure. Both measures showed their pros and cons.</p>
+<p>In the simulation section we demonstrated some interesting results regarding issues caused by correlation. For LOCO Feature Importance, the most remarkable problem was the huge drop in importance value or ranking number for highly correlated features. This even goes so far as features being erroneously identified as completely unimportant. This issue was observable throughout all models. In contrast to LOCO, the effect of PFI mostly
+depends on the learning algorithm. In case of the random forest, there was a clear trend towards highly correlated features i.e. they were declared as more important than the other features. The SVM showed similar results as for the random forest, but the effects were less strong. In contrast, the linear model was more or less robust against correlations. In the literature the random forest calculated by the out-of bag observations or other learning algorithms, like neural networks, showed similar results <span class="citation">(Hooker and Mentch <a href="#ref-hooker2019" role="doc-biblioref">2019</a>)</span>. Furthermore, the real data application supported the theses, we saw in the simulation section. The results makes us even more aware that the correlation intensity is critical for the importance ranking of the features.</p>
+<p>Aside of the present simulations, further options are possible. For instance, we limited ourself to numerical features and regression tasks. However, in reality you often have correlated categorical features and classification tasks as well. Even an adjustment of the hyperparameters of the models used here is an option. This goes to show that, despite all of the used methods in this chapter, there are even more interesting effects to discover when it comes to Feature Importance and correlation. Yet, this goes beyond the scope of this chapter and deviates from our aim to raise the reader’s awareness of afore-mentioned issues with regards to correlation in order to avoid mistakes in the future.</p>
+<p>All in all, PFI and LOCO can have misleading effects in case of correlated features. This holds especially true as evaluating the Feature Importance rank can be expensive and most of the time you are only looking at e.g. the top three important features <span class="citation">(Molnar <a href="#ref-molnar2019" role="doc-biblioref">2019</a>)</span>. In those cases a wrong importance rank can cause a lot of damage to the unobservant user. This leads to the conclusion that next time we use Feature Importance we should be aware of correlation effects as a limitation to methods’ accuracy.</p>
+</div>
+<div id="note-to-the-reader" class="section level2">
+<h2><span class="header-section-number">9.4</span> Note to the reader</h2>
+<p>For our analysis, we used R <span class="citation">(R Core Team <a href="#ref-R-base" role="doc-biblioref">2019</a>)</span>. For all the models and Feature Importance measures,
+we used the mlr package <span class="citation">(Bischl et al. <a href="#ref-R-mlr" role="doc-biblioref">2019</a>)</span> as well as the iml package <span class="citation">(Molnar, Casalicchio, and Bischl <a href="#ref-molnar2018iml" role="doc-biblioref">2018</a>)</span>. All plots have been created using ggplot2 <span class="citation">(Wickham et al. <a href="#ref-R-ggplot2" role="doc-biblioref">2019</a>)</span>.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-archer2008">
+<p>Archer, Kellie J., and Ryan V. Kimes. 2008. “Empirical Characterization of Random Forest Variable Importance Measures.” <em>Computational Statistics and Data Analysis</em> 52: 2249–60.</p>
+</div>
+<div id="ref-R-mlr">
+<p>Bischl, Bernd, Michel Lang, Lars Kotthoff, Julia Schiffner, Jakob Richter, Zachary Jones, Giuseppe Casalicchio, Mason Gallo, and Patrick Schratz. 2019. <em>Mlr: Machine Learning in R</em>. <a href="https://CRAN.R-project.org/package=mlr">https://CRAN.R-project.org/package=mlr</a>.</p>
+</div>
+<div id="ref-breiman2001random">
+<p>Breiman, Leo. 2001a. “Random Forests.” <em>Machine Learning</em> 45 (1): 5–32.</p>
+</div>
+<div id="ref-harrison1978">
+<p>Harrison, D., and D. L. Rubinfeld. 1978. “Hedonic Prices and the Demand for Clean Air.” <em>Economics and Management</em> 5: 81–102.</p>
+</div>
+<div id="ref-hooker2019">
+<p>Hooker, Giles, and Lucas Mentch. 2019. “Please Stop Permuting Features: An Explanation and Alternatives.” <em>arXiv E-Prints</em>. <a href="https://arxiv.org/pdf/1905.03151.pdf">https://arxiv.org/pdf/1905.03151.pdf</a>.</p>
+</div>
+<div id="ref-R-kernlab">
+<p>Karatzoglou, Alexandros, Alex Smola, Kurt Hornik, and Achim Zeileis. 2004. “Kernlab – an S4 Package for Kernel Methods in R.” <em>Journal of Statistical Software</em> 11 (9): 1–20. <a href="http://www.jstatsoft.org/v11/i09/">http://www.jstatsoft.org/v11/i09/</a>.</p>
+</div>
+<div id="ref-lei2018distribution">
+<p>Lei, Jing, Max G’Sell, Alessandro Rinaldo, Ryan J Tibshirani, and Larry Wasserman. 2018. “Distribution-Free Predictive Inference for Regression.” <em>Journal of the American Statistical Association</em> 113 (523): 1094–1111.</p>
+</div>
+<div id="ref-R-randomForest">
+<p>Leo Breiman, Fortran original by, Adele Cutler, R port by Andy Liaw, and Matthew Wiener. 2018. <em>RandomForest: Breiman and Cutler’s Random Forests for Classification and Regression</em>. <a href="https://CRAN.R-project.org/package=randomForest">https://CRAN.R-project.org/package=randomForest</a>.</p>
+</div>
+<div id="ref-mentch2016">
+<p>Mentch, Lucas, and Giles Hooker. 2016. “Quantifying Uncertainty in Random Forest via Confidence Intervals and Hypothesis Tests.” <em>The Journal of Maschine Learning Research</em> 17 (1): 841–81.</p>
+</div>
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
+<div id="ref-molnar2018iml">
+<p>Molnar, Christoph, Giuseppe Casalicchio, and Bernd Bischl. 2018. “Iml: An R Package for Interpretable Machine Learning.” <em>The Journal of Open Source Software</em> 3 (786): 10–21105.</p>
+</div>
+<div id="ref-parr2018">
+<p>Parr, Terence, Kerem Turgutlu, Christopher Csiszar, and Jeremy Howard. 2018. “Beware Default Random Forest Importances.” <a href="https://explained.ai/rf-importance/index.html">https://explained.ai/rf-importance/index.html</a>.</p>
+</div>
+<div id="ref-R-base">
+<p>R Core Team. 2019. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.</p>
+</div>
+<div id="ref-strobl2008">
+<p>Strobl, Carolin, Anne-Laure Boulesteix, Thomas Kneib, and Thomas Augustin. 2008. “Conditional Variable Importance for Random Forest.” <em>BMC Bioinformatics</em> 9 (July). <a href="https://doi.org/10.1186/1471-2105-9-307">https://doi.org/10.1186/1471-2105-9-307</a>.</p>
+</div>
+<div id="ref-R-ggplot2">
+<p>Wickham, Hadley, Winston Chang, Lionel Henry, Thomas Lin Pedersen, Kohske Takahashi, Claus Wilke, Kara Woo, and Hiroaki Yutani. 2019. <em>Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2">https://CRAN.R-project.org/package=ggplot2</a>.</p>
+</div>
 </div>
             </section>
 
@@ -143,11 +632,13 @@
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
 <script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
 <script src="libs/gitbook/js/plugin-sharing.js"></script>
 <script src="libs/gitbook/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -190,8 +681,9 @@ gitbook.start({
     script.type = "text/javascript";
     var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
