@@ -243,7 +243,7 @@ y <- "y"
 x <- setdiff(names(df), y) 
 
 # gradient boosting machine model
-gbm <-  h2o.gbm(
+gbm.mod <-  h2o.gbm(
   x = x, 
   y = y,
   training_frame = splits$train,
@@ -273,11 +273,11 @@ pred <- function(model, newdata)  {
 }
 
 predictor.gbm <- Predictor$new(
-  model = gbm, 
+  model = gbm.mod, 
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
@@ -343,7 +343,7 @@ predictor.gbm <- Predictor$new(
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
@@ -413,7 +413,7 @@ predictor.gbm <- Predictor$new(
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
@@ -480,7 +480,7 @@ predictor.gbm <- Predictor$new(
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
@@ -548,7 +548,7 @@ predictor.gbm <- Predictor$new(
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
@@ -613,7 +613,7 @@ predictor.gbm <- Predictor$new(
   data = features, 
   y = response, 
   predict.fun = pred,
-  class = "classification"
+  class = 1
 )
 
 # compute feature importance with specified loss metric
