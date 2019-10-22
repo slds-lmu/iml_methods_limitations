@@ -1,11 +1,3 @@
----
-output:
-  pdf_document: default
-    fig_width: 1
-    fig_height: 1
-    fig_caption: true
-  html_document: default
----
 # Partial and Individual Permutation Feature Importance
 
 *Author: Moritz Wagner*
