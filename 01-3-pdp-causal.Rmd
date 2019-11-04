@@ -2,6 +2,8 @@
 
 *Author: Thommy Dassen*
 
+*Supervisor: Gunnar König*
+
 ```{r include=FALSE}
 library(dplyr) # for group by
 library(Ecdat) # icecream datasets

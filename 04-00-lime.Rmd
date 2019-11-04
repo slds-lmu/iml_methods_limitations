@@ -2,6 +2,8 @@
 
 *Authors: Sebastian Gruber, Philipp Kopper*
 
+*Supervisor: Christoph Molnar*
+
 When doing machine learning we always build models.
 Models are simplifications of reality.
 Even if the predictive power of a model may be very strong, it will still only be a model.

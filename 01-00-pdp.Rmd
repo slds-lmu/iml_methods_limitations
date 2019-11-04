@@ -1,5 +1,7 @@
 # Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)  {#pdp}
 
+*Authors: Thommy Dassen, Naiwen Hou, Veronika Kronseder*
+
 ## Partial Dependence Plots (PDP)
 
 The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can show the way a feature impacts an outcome variable. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s).\citep{molnar2019}

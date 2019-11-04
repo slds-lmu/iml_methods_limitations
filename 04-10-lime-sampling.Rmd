@@ -2,6 +2,8 @@
 
 *Author: Sebastian Gruber*
 
+*Supervisor: Christoph Molnar*
+
 This chapter will deal with the sampling step in LIME and the resulting side effects in terms of feature weight stability of the surrogate model.
 Due to the randomness of sampling, the resulting feature weights may suffer from high discrepancies between repeated evaluations.
 As a consequence, trust in the explanation offered by LIME is impacted negatively.

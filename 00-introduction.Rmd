@@ -2,6 +2,8 @@
 
 *Author: Emanuel Renkl*
 
+*Supervisor: Christoph Molnar*
+
 ## Statistical Modeling: The Two Approaches
 <!-- * Data Modeling Approach
 * Algorithmic Modeling Approach

@@ -2,6 +2,8 @@
 
 *Author: Moritz Wagner*
 
+*Supervisor: Giuseppe Casalicchio*
+
 The introductory chapter discussed the relevance of PFI and LOCO for the interpretability of machine learning models. It was argued that for interpretation purposes, the concept of Feature Importance is an indispensable complement to analyzing Feature Effects. The Feature Importance quantifies the contribution of a specific feature to the prediction power of a model. Yet, it was also remarked that an aggregated, global measure of Feature Importance might be insufficient. It might be the case that within a feature, some single values or subgroups are more important for predictions than others. This heterogeneity, however, could not be captured by a single metric. Besides, it is trivial to understand that with increasing heterogeneity, the global PFI becomes less revealing. By implication, a complementary method that captures such heterogeneity becomes more decisive. 
 
 To identify whether such heterogeneity exists, an algorithm is required that calculates the Feature Importance for each value of the respective feature. Briefly, a measure that indicates the contribution of an individual value to the global Feature Importance. However, as the range of values can be rather large, a tabular description seems to be cluttered. Therefore, a visualization tool that allows gaining meaningful and concise insights on how the Feature Importance varies, should be derived. One would then plot the respective values of the feature against its local Feature Importance measures. In the case of heterogeneity, the plotted curve should then deviate from a constant shape. 

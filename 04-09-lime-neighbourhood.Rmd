@@ -2,6 +2,8 @@
 
 *Author: Philipp Kopper*
 
+*Supervisor: Christoph Molnar*
+
 This section will discuss the effect of the neighbourhood on LIME's explanations.
 This is in particular critical for tabular data.
 Hence, we will limit ourselves to the analysis of tabular data for the remainder of this chapter.
