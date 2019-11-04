@@ -166,7 +166,7 @@
 \bibliographystyle{apalike}
 
 \title{Limitations of Interpretable Machine Learning Methods}
-\date{2019-10-22}
+\date{2019-11-04}
 
 \begin{document}
 \maketitle
@@ -1400,12 +1400,12 @@ So far only the case of 2-dimensional feature spaces with one feature of interes
 
 \emph{Author: Jakob Bodensteiner}
 
-This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two dimensional ALEs will be introduced and their difference to PDPs will be explained. Additionally a runtime comparison will be shown and to conclude this chapter a real world example will be analyzed with ALE, PDP and ICE plots.
+This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots.
 
 \hypertarget{comparison-one-feature}{%
 \section{Comparison one feature}\label{comparison-one-feature}}
 
-So far in this book one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solution for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP may fail in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation.
+So far in this book, one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solution for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP may fail in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation.
 
 Given a value for the feature of interest \ldots{}
 
@@ -1413,7 +1413,7 @@ Given a value for the feature of interest \ldots{}
 
 \ldots{} the 1D ALE shows the expected and centered first order effect of this feature.
 
-With this interpretations in mind the first example with artifical data will be discussed.
+With these interpretations in mind, the first example with artificial data will be discussed.
 
 \hypertarget{example-1-multiplicative-prediction-function}{%
 \subsection{Example 1: Multiplicative prediction function}\label{example-1-multiplicative-prediction-function}}
@@ -1422,9 +1422,9 @@ The following Problem is constructed: There is a data set consisting of 150 obse
 The features of each observation are sampled from the following disrtibutions.
 \(X_1 \sim \mathcal{U}(0,~0.5)\), \(X_2 \sim \mathcal{N}(2,~2)\) and \(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\).
 
-So features one and two are independent from each other, while \(x_3\) is strongly correlated with \(x_2\). It is also not independent from \(x_1\), although there is no influence of \(x_1\) on the expected value of \(x_3\).
+So features one and two are independent of each other, while \(x_3\) is strongly correlated with \(x_2\). It is also not independent from \(x_1\), although there is no influence of \(x_1\) on the expected value of \(x_3\).
 
-In this example (and in all other examples with artificial data in this chapter) the prediction function is not fitted but set as the target variable, here \(f(x_1, x_2, x_3) = y = x_1 x_2 x_3\). By setting the prediction function instead of fitting a learner on the data it is ensured that one can imagine how the `real' influence of each feature would look like. This way one can see clearly if ALE or PDP are making mistakes in the interpretation. If one would fit a random forest one could never be sure if the ALE and PDP plots are making a mistake in explaining the fitted model or if the mistake is made by the learner and the explanation of the learner itself would actually be fine. This will become clear at the end of the chapter when the real world example will be discussed.
+In this example (and in all other examples with artificial data in this chapter) the prediction function is not fitted but set as the target variable, here \(f(x_1, x_2, x_3) = y = x_1 x_2 x_3\). By setting the prediction function instead of fitting a learner on the data it is ensured that one can imagine how the `real' influence of each feature would look like. This way one can see clearly if ALE or PDP are making mistakes in the interpretation. If one would fit a random forest one could never be sure if the ALE and PDP plots are making a mistake in explaining the fitted model or if the mistake is made by the learner and the explanation of the learner itself would be fine. This will become clear at the end of the chapter when the real-world example will be discussed.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_PDPs_x1x2x3_150_0_0p5_2_2} \caption{PDPs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2 x_3\).}\label{fig:pdpsx1x2x3}
@@ -1438,9 +1438,9 @@ In this example (and in all other examples with artificial data in this chapter)
 
 
 
-Plot \ref{fig:pdpsx1x2x3} shows the 1D PDP for each of the three features. One can clearly see that the PDP detects a linear influence on the prediction for all 3 of the features.
+Plot \ref{fig:pdpsx1x2x3} shows the 1D PDP for each of the three features. One can see that the PDP detects a linear influence on the prediction for all 3 of the features.
 
-On the other hand the ALE (figure \ref{fig:alesx1x2x3}) attests the linear influence to the feature \(x_1\) only. This plot exposes a weakness of the ALE compared to the PDP straight away. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case it is that seriously one almost can't see the linear influence. If there would be more data or less intervals for the estimation, the plot would look more like the PDP for feature \(x_1\). The two other features seem to rather have an quadratic influence on the prediction. And this is the case indeed, since it is the `true' link between prediction and the correlated features. Feature \(x_3\) has (in expectation) the same value as \(x_2\). Especially if feature \(x_1\) has small values the variance of feature \(x_2\) around \(x_3\) becomes small as well. As consequence the last part of the prediction function `\(x_2 x_3\)' can be approximated by `\(x_2^2\)' or `\(x_3^2\)'. This explains the quadratic influence. By changing the prediction formula to \(f(x_1, x_2, x_3) = y = x_1 x_2^2\) the figures \ref{fig:pdpsx1x22} and \ref{fig:alesx1x22} for PDP and ALE plots are estimated.
+On the other hand, the ALE (figure \ref{fig:alesx1x2x3}) attests the linear influence to the feature \(x_1\) only. This plot exposes a weakness of the ALE compared to the PDP straight away. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case, it is that seriously one almost can't see the linear influence. If there would be more data or fewer intervals for the estimation, the plot would look more like the PDP for feature \(x_1\). The two other features seem to rather have a quadratic influence on the prediction. And this is the case indeed since it is the `true' link between prediction and the correlated features. Feature \(x_3\) has (in expectation) the same value as \(x_2\). Especially if feature \(x_1\) has small values the variance of feature \(x_2\) around \(x_3\) becomes small as well. As consequence the last part of the prediction function `\(x_2 x_3\)' can be approximated by `\(x_2^2\)' or `\(x_3^2\)'. This explains the quadratic influence. By changing the prediction formula to \(f(x_1, x_2, x_3) = y = x_1 x_2^2\) the figures \ref{fig:pdpsx1x22} and \ref{fig:alesx1x22} for PDP and ALE plots are estimated.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_PDPs_x1x22_150_0_0p5_2_2} \caption{PDPs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2^2\).}\label{fig:pdpsx1x22}
@@ -1455,12 +1455,12 @@ On the other hand the ALE (figure \ref{fig:alesx1x2x3}) attests the linear influ
 
 
 Plots \ref{fig:pdpsx1x22} and \ref{fig:alesx1x22} clearly show the linear influence of \(x_1\) again. Additionally this time both (ALE and PDP) attest a quadratic influence to feature \(x_2\) on the prediction. Since \(x_3\) does not have any influence on the prediction function, it is correct, that there is no influence detected.
-The reason for this behaviour lies in the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features \(x_1\) and \(x_2\), the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.
+The reason for this behavior lies in the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features \(x_1\) and \(x_2\), the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.
 
 \hypertarget{example-2-additive-prediction-function}{%
 \subsection{Example 2: Additive prediction function}\label{example-2-additive-prediction-function}}
 
-In this example PDP and ALE will be applied to an additive prediction function.
+In this example, PDP and ALE will be applied to an additive prediction function.
 
 A data set consisting of three features (\(x_1\), \(x_2\), \(x_3\)) is constructed. In this case the target variable is \(y = x_1 + x_2 - x_3\). Once again the prediction function is not learned but set to exactly the target variable, meaning \(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\).
 The distributions are similar to the ones from example 1 and again 150 observations are sampled.
@@ -1481,16 +1481,16 @@ The distributions are similar to the ones from example 1 and again 150 observati
 For this example one can see that the ALEs (\ref{fig:alesx1px2mx3}) and PDPs (\ref{fig:pdpsx1px2mx3}) are basically the same. Ignoring the centering both attest the same linear influence for all three features. And since it is an additive model this is actually correct. But neither the ALE nor the PDP recognize the strong correlation between the features \(x_2\) and \(x_3\). The real influence of features \(x_2\) and \(x_3\) is in expectation zero, since it is \(x_2 - x_3\) and \(E[X_3 \mid X_2] = X_2\). So \(E[X_2 - X_3 \mid X_2] = 0\).
 
 This shows a few points one has to be aware of when working with these plots.
-In this example, if one uses the interpretation of the PDP for feature \(x_2\) and states `If the value of feature \(x_2\) is 2.5, then I expect the prediction to be 1.5' it would be wrong. The problem here is the extrapolation in the estimation of the PDP. So it does not take into account any connection between the features, but still works as good as the ALE in this example.
+In this example, if one uses the interpretation of the PDP for feature \(x_2\) and states `If the value of feature \(x_2\) is 2.5, then I expect the prediction to be 1.5' it would be wrong. The problem here is the extrapolation in the estimation of the PDP. So it does not take into account any connection between the features but still works as good as the ALE in this example.
 
-The general advantage of the ALE is the small chance of extrapolation in the estimation. But this does not mean it would recognise any correlation between the features in each scenario. And it is in general not possible to state something about the prediction with only one 1D ALE. The ALE is just showing the expected and centered main effect of the feature. In this example an interpretation like `If feature \(x_2\) has value 2.5 then in expectation the prediction will be 0.5 higher than the average prediction' is wrong. If one needs a statement like that the other strongly correlated features have to be taken into account as well. One has to be aware of higher order effects of the ALE, too.
+The general advantage of the ALE is the small chance of extrapolation in the estimation. But this does not mean it would recognize any correlation between the features in each scenario. And it is in general not possible to state something about the prediction with only one 1D ALE. The ALE is just showing the expected and centered main effect of the feature. In this example an interpretation like `If feature \(x_2\) has value 2.5 then in expectation the prediction will be 0.5 higher than the average prediction' is wrong. If one needs a statement like that the other strongly correlated features have to be taken into account as well. One has to be aware of higher order effects of the ALE, too.
 
 To conclude the analysis of this example 2D ALEs are necessary. So it will be continued later this chapter.
 
 \hypertarget{comparison-two-features}{%
 \section{Comparison two features}\label{comparison-two-features}}
 
-Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE has to be introduced. In the first place the theoretical formula will be defined. Thereafter the estimation will be derived and then the comparison to the 2D PDP will be made.
+Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE has to be introduced. In the first place, the theoretical formula will be defined. Thereafter the estimation will be derived and then the comparison to the 2D PDP will be made.
 
 \hypertarget{the-2d-ale}{%
 \subsection{The 2D ALE}\label{the-2d-ale}}
@@ -1500,7 +1500,7 @@ Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE has
 
 Similar to one variable of interest there is a theoretical formula for a 2-dimensional ALE. This ALE aims to visualize the 2nd order effect. Meaning one will just see the additional effect of interaction between those two features. The main effects of the features will not be shown in the 2D ALE.
 
-To explain the formula it will be assumed that \(j\) and \(l\) are the two features of interest. The rest of the features is represented by \(c\). So in the following variable \(x_c\) can be of higher dimension than 1. As for the 1D ALE there is again a theoretical derivative for the fittet function \(\hat{f}\). But this time it is the derivative in the direction of both features of interest. So in the following this notation will hold:
+To explain the formula it will be assumed that \(j\) and \(l\) are the two features of interest. The rest of the features is represented by \(c\). So in the following variable \(x_c\) can be of higher dimension than 1. As for the 1D ALE, there is again a theoretical derivative for the fitted function \(\hat{f}\). But this time it is the derivative in the direction of both features of interest. So in the following, this notation will hold:
 
 \[ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}\]
 
@@ -1527,7 +1527,7 @@ Equation \eqref{eq:ale2DTheoretical1stLvl} is the 2nd order effect with no corre
   \label{eq:ale2DTheoretical1stLvl}
 \end{equation}
 
-Now from the uncorrected 2nd order effect the two main effects of both features on the uncorrected 2D ALE are subtracted (see equation \eqref{eq:ale2DTheoreticalCorrection}). In this way the main effects of \(x_j\) and \(x_l\) on the final \(ALE_{\hat{f},~j,~l}(x_j, x_l)\) are both zero \citep[page 9]{Apley2016}. But be carefull, this is not centering by a constant as in the one dimensional ALE. This is a correction for the also accumulated main effects which of course vary in the directions of the features.
+Now from the uncorrected 2nd order effect, the two main effects of both features on the uncorrected 2D ALE are subtracted (see equation \eqref{eq:ale2DTheoreticalCorrection}). In this way the main effects of \(x_j\) and \(x_l\) on the final \(ALE_{\hat{f},~j,~l}(x_j, x_l)\) are both zero \citep[page 9]{Apley2016}. But be careful, this is not centering by a constant as in the one-dimensional ALE. This is a correction for the also accumulated main effects which of course vary in the directions of the features.
 
 \begin{align}
 \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) 
@@ -1544,12 +1544,12 @@ ALE_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) ~ -  E
   \label{eq:ale2DTheoretical}
 \end{equation}
 
-In the appindex \ref{ale-2d-example-calculation} one can find the calculation of the theoretical ALE for Example 1.
+In the appendix \ref{ale-2d-example-calculation} one can find the calculation of the theoretical ALE for Example 1.
 
 \hypertarget{estimation-2d-ale}{%
 \subsubsection{Estimation 2D ALE}\label{estimation-2d-ale}}
 
-Analogously to the 1D ALE in most cases it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be a explenation including a visualization as well to clarify the estimation method.
+Analogously to the 1D ALE in most cases, it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be an explenation including a visualization as well to clarify the estimation method.
 
 First, all variables have to be defined. The two features of interest are \(x_j\) and \(x_l\). The prediction function is \(\hat{f}(x_j, x_l, x_{\setminus\{j,~l\}})\), while \(x_{\setminus\{j,~l\}}\) represents all the rest of the features, so it can be of higher dimension than 1.
 The areas including data for feature \(x_j\) and \(x_l\) are divided into the same number of intervals, namely K. The intervals in \(x_j\) direction are separated by \(z_{k,j}\) for \(k \in \{0,...,K\}\). \(k_j(x_j)\) returns the interval number in which \(x_j\) lies. This holds for \(z_{m,l}\) and \(k_l(x_l)\) respectively in direction of \(x_l\). \(N_{\{j,~l\}}(k,m)\) is the crossproduct of the k-th and m-th interval (in \(x_j\) and \(x_l\) direction), so it is defined as \((z_{k-1,j}, z_{k,j}] \times (z_{m-1,j}, z_{m,j}]\). \(n_{\{j,~l\}}(k,m)\) is the number of observations lying in this \(N_{\{j,~l\}}(k,m)\) cell. The parameter i represents the i-th observation \citep{Apley2016}. With this variables in mind, the definition of the 2D ALE estimation can begin.
@@ -1606,9 +1606,9 @@ Equation @ref(eq:ale2DEstCorrection is the uncentered 2D ALE since it is just co
  \label{eq:ale2DEst}
 \end{equation}
 
-In difference to the ALE for one feature of interest, the 2D ALE (\eqref{eq:ale2DEst} is a two dimensional stepfunction, so there is no smoothing or something similar to make it a continuous function.
+In contrast to the ALE for one feature of interest, the 2D ALE (\eqref{eq:ale2DEst} is a two-dimensional step function, so there is no smoothing or something similar to make it a continuous function.
 
-This formulas are pretty long, so to get an intuition of the estimation figure \ref{fig:ale2DEstimation} will be helpfull.
+These formulas are pretty long, so to get an intuition of the estimation figure \ref{fig:ale2DEstimation} will be helpful.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_ALE_2D_estimation} \caption{Visualization of the absolut differences for the 2nd order effect \citep[page 13]{Apley2016} and \citep{molnar2019}.}\label{fig:ale2DEstimation}
@@ -1616,7 +1616,7 @@ This formulas are pretty long, so to get an intuition of the estimation figure \
 
 
 
-To calculate the delta \eqref{eq:ale2DEstDelta} for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the \(x_l\) and \(x_j\) values are the cornervalues of the cell they are in. In the case of figure \ref{fig:ale2DEstimation} these 2 dimensional cornervalues would be a, b, c, d.~The delta for point x in this example would be calculated like this:
+To calculate the delta \eqref{eq:ale2DEstDelta} for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the \(x_l\) and \(x_j\) values are the corner values of the cell they are in. In the case of figure \ref{fig:ale2DEstimation}, these 2-dimensional corner values would be a, b, c, d.~The delta for point x in this example would be calculated like this:
 
 \begin{align}
 \Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = 
@@ -1626,7 +1626,7 @@ To calculate the delta \eqref{eq:ale2DEstDelta} for the uncorrected and uncenter
 
 The same would be done for point y. Thereafter the deltas would be averaged to get the mean delta for cell \(N_{\{j,~l\}}(4,3)\). This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in \(N_{\{j,~l\}}(4,3)\).
 
-The correction for the main effects extracts pure 2nd order effect for the two features of interest by subtracting the main effect of the single features on the ALE (equation \eqref{eq:ale2DEstCorrection}). To stick with this example the correction for the main effect of feature \(x_j\) for values in \(N_j(4)\) takes into account all cells in the first 4 columns and aggregates the first order effect. In cell \(N_{\{j,~l\}}(4,3)\) this would look like this:
+The correction for the main effects extracts the pure 2nd order effect for the two features of interest by subtracting the main effect of the single features on the ALE (equation \eqref{eq:ale2DEstCorrection}). To stick with this example the correction for the main effect of feature \(x_j\) for values in \(N_j(4)\) takes into account all cells in the first 4 columns and aggregates the first order effect. In cell \(N_{\{j,~l\}}(4,3)\) this would look like this:
 
 \[ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(a)\]
 
@@ -1638,9 +1638,9 @@ Thereafter the corrected ALE is centered for its mean (equation \eqref{eq:ale2DE
 
 There are a few questions that might arise.
 
-First, how is the grid for the estimation defined? In the iml package the cells are the crossproducts of the intervals used for the 1D estimation. It would be very hard to make a grid of rectangles which all include roughly the same amount of data points.
+First, how is the grid for the estimation defined? In the iml package, the cells are the cross products of the intervals used for the 1D estimation. It would be very hard to make a grid of rectangles which all include roughly the same amount of data points.
 
-Another question is: How does the estimation treat empty cells, which include no data points? There are two options, they can either be ignored and greyed out or they recieve the value of their nearest neighbor rectangle, which is determined using the center of the cells. The last method is implemented in the iml package. This happens right after averaging over the \(\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}})\)s before the correction for the 1st order effects is done.
+Another question is: How does the estimation treat empty cells, which include no data points? There are two options, they can either be ignored and greyed out or they receive the value of their nearest neighbor rectangle, which is determined using the center of the cells. The last method is implemented in the iml package. This happens right after averaging over the \(\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}})\)s before the correction for the 1st order effects is done.
 
 \hypertarget{example-1-continued---theoretical-and-estimated-2d-ale}{%
 \subsubsection{Example 1 continued - Theoretical and estimated 2D ALE}\label{example-1-continued---theoretical-and-estimated-2d-ale}}
@@ -1653,7 +1653,7 @@ But this time the three features are sampled from these disrtibutions:
 \(X_1 \sim \mathcal{U}(0,~0.5)\), \(X_2 \sim \mathcal{N}(5,~1)\) and \(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\).
 So feature \(x_2\) is expected to be 5 and has a lower variance than it has in example 1. The rest stays the same.
 
-With the formulas in the appindex \ref{ale-2d-example-calculation} it is possible to calculate the theoretical 2D ALE.
+With the formulas in the appendix \ref{ale-2d-example-calculation} it is possible to calculate the theoretical 2D ALE.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1} \caption{Theoretical 2D ALE (left) and estimated ALE (right).}\label{fig:theo2Dale}
@@ -1661,12 +1661,12 @@ With the formulas in the appindex \ref{ale-2d-example-calculation} it is possibl
 
 
 
-Figure \ref{fig:theo2Dale} shows the theoretical ALE compared to the estimated one. In this example it looks pretty similar. The interpretation is a bit hard. Since one can only see the 2nd order effects, isolated from the 1st order effects, it is hardly possible to state something reasonable about the prediction with just this plot. But this problem will be discussed in the coming up chapter.
+Figure \ref{fig:theo2Dale} shows the theoretical ALE compared to the estimated one. In this example, it looks pretty similar. The interpretation is a bit hard. Since one can only see the 2nd order effects, isolated from the 1st order effects, it is hardly possible to state something reasonable about the prediction with just this plot. But this problem will be discussed in the coming up chapter.
 
 \hypertarget{d-ale-vs-2d-pdp}{%
 \subsection{2D ALE vs 2D PDP}\label{d-ale-vs-2d-pdp}}
 
-In this Chapter only 2D plots for artifcially constructed examples will be analyzed. To show the statement, that there are no main effects in the 2D ALE example 2 will be discussed again.
+In this Chapter, only 2D plots for artificially constructed examples will be analyzed. To show the statement, that there are no main effects in the 2D ALE example 2 will be discussed again.
 
 \hypertarget{example-2---2d-comparison}{%
 \subsubsection{Example 2 - 2D comparison}\label{example-2---2d-comparison}}
@@ -1679,7 +1679,7 @@ Just a short reminder of example 2: the prediction function here is \(f(x_1, x_2
 
 
 
-Figure \ref{fig:x1px2mx3ale2D} shows the direct comparison of 2D PDP and 2D ALE. The ALE is almost completely zero as expected. In this additive example there are main effects only and since the 2D ALE is corrected for the main effects of the features, there is no pure 2nd order effect. The PDP in comparison shows the mean prediction. So of course there are the main effects estimated within the 2D PDP as well. Obviously it is hard to compare those two interpretation algorithms just like this.
+Figure \ref{fig:x1px2mx3ale2D} shows the direct comparison of 2D PDP and 2D ALE. The ALE is almost completely zero as expected. In this additive example, there are main effects only and since the 2D ALE is corrected for the main effects of the features, there is no pure 2nd order effect. The PDP in comparison shows the mean prediction. So, of course, there are the main effects estimated within the 2D PDP as well. Obviously, it is hard to compare those two interpretation algorithms just like this.
 
 To get a better comparison the main effects (1D ALEs) of the two features of interest can be added to the 2D ALE.
 
@@ -1689,9 +1689,9 @@ To get a better comparison the main effects (1D ALEs) of the two features of int
 
 
 
-Plot \ref{fig:ale2DaddedUp} shows the ALE added up with the corresponding 1st order effects of the features. And now it seems pretty much the same as the PDP in figure \ref{fig:x1px2mx3ale2D}. On the right side the same plot can be seen. This one additionally includes the underlying data points regarding features \(x_2\) and \(x_3\). Furthermore these two features are independent from feature \(x_1\), so the PDP and ALE yield the same correct interpretation, namely for realistic data points the influence of these two features is close to zero because of their strong positive correlation and their opposing first order effects (figures \ref{fig:alesx1px2mx3} and \ref{fig:pdpsx1px2mx3}).
+Plot \ref{fig:ale2DaddedUp} shows the ALE added up with the corresponding 1st order effects of the features. And now it seems pretty much the same as the PDP in figure \ref{fig:x1px2mx3ale2D}. On the right side, the same plot can be seen. This one additionally includes the underlying data points regarding features \(x_2\) and \(x_3\). Furthermore these two features are independent of feature \(x_1\), so the PDP and ALE yield the same correct interpretation, namely for realistic data points the influence of these two features is close to zero because of their strong positive correlation and their opposing first order effects (figures \ref{fig:alesx1px2mx3} and \ref{fig:pdpsx1px2mx3}).
 
-With this is mind, example 1 deserves another look regarding the 2nd order effect in comparison to the PDP.
+With this in mind, example 1 deserves another look regarding the 2nd order effect in comparison to the PDP.
 
 \hypertarget{example-1---2d-comparison}{%
 \subsubsection{Example 1 - 2D comparison}\label{example-1---2d-comparison}}
@@ -1706,7 +1706,7 @@ To be able to compare the 2D ALE from the last chapter for prediction function \
 
 This plot \ref{fig:ale2DaddedUpx1x2x3} shows exactly what happens in this case, when the 1st order effects of the ALE are added up to the 2nd order effects. One can see that although the connection between \(x_2\) and \(x_3\) has been detected by the 1st order ALEs (figure \ref{fig:alesx1x2x3}) and has not been by the 1D PDPs (figure \ref{fig:pdpsx1x2x3}), the comparable 2D plots look pretty much the same.
 
-In this two examples it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.
+In these two examples, it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.
 
 \hypertarget{example-1-modified---2d-comparison}{%
 \subsubsection{Example 1 modified - 2D comparison}\label{example-1-modified---2d-comparison}}
@@ -1720,7 +1720,7 @@ f(x_1, x_2, x_3) =
        x_1 x_2 x_3, \quad\text{else}\\
      \end{cases}
 \]
-This seems a bit unrealistic but especially tree based predictors tend to do `strange' things in areas without data.
+This seems a bit unrealistic but especially tree-based predictors tend to do `strange' things in areas without data.
 
 The result of the 2D PDP compared to the ALE (figure \ref{fig:pdp2Ddamaged}) shows the problem. In the area where \(x_2 < 4\) the values of the PDP are huge, since the big values for \(x_3^3\) if \(x_3 > 6\) increase the average drastically. These values are very unlikely for the underlying distribution but the PDP pretends them to be possible. This is the problem of the extrapolation in the PDP estimation. This is not a problem for the ALE. Here one can not recognise any difference to figure \ref{fig:ale2DaddedUpx1x2x3}, where the prediction function is just \(f(x_1, x_2, x_3) = x_1 x_2 x_3\).
 
@@ -1730,12 +1730,12 @@ The result of the 2D PDP compared to the ALE (figure \ref{fig:pdp2Ddamaged}) sho
 
 
 
-One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at seperated 1st and 2nd order effects, which can be very helpful, especially for real blackbox models with complicated links. Furthermore in the next chapter the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
+One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black-box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
 
 \hypertarget{runtime-comparison}{%
 \section{Runtime comparison}\label{runtime-comparison}}
 
-In this chapter the runtime of ALE and PDP will be compared. Therefore three general sizes of data sets have been sampled. One small with 100, a bigger one with 1,000 and the biggest with 10,000 observations. The number of features vary between 5 and 40, while there are always 2 categorial features and the others are numeric, as is the target variable. The predictor applied to these datasets is a regular SVM. It is way faster than the random forest, where the PDP estimation can easily take half a minute for just 1,000 observations.
+In this chapter, the runtime of ALE and PDP will be compared. Therefore three general sizes of data sets have been sampled. One small with 100, a bigger one with 1,000 and the biggest with 10,000 observations. The number of features varies between 5 and 40, while there are always 2 categorial features and the others are numeric, as is the target variable. The predictor applied to these datasets is a regular SVM. It is way faster than the random forest, where the PDP estimation can easily take half a minute for just 1,000 observations.
 
 To compare the runtime, the package `microbenchmark' has been used. So the discussed results will all have the same structure, which will be explained with the first example.
 The comparison will cover the runtime for\ldots{}
@@ -1757,19 +1757,19 @@ Each of these three will be compared for the different numbers of observations o
 \subsection{One numerical feature of interest}\label{one-numerical-feature-of-interest}}
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_one_numeric_cols_and_gridsize} \caption{Runtime comparison ALE vs.~PDP for one numeric feature. Differences for number of features and grid size.}\label{fig:runtime1DnumColAndSize}
+\includegraphics[width=1\linewidth]{images/ale_1_one_numeric_cols_and_gridsize} \caption{Runtime comparison ALE vs.~PDP for one numeric feature. Differences for the number of features and grid size.}\label{fig:runtime1DnumColAndSize}
 \end{figure}
 
 
 
-Figure \ref{fig:runtime1DnumColAndSize} shows the runtimes for different configurations in milliseconds. The microbenchmark output shows the compared expressions (here the calculation of ALE and PDP) in the first collumn. The other columns are the measured runtime for 10 different runs. From left to right it is the minimum runtime, the lower quantile of the runtimes, the mean, the median, the upper quantile and the maximal runtime. The main attention usually lies on the mean. In the expression there are also configurations for the sampled dataset integrated. For example `ale\_one\_numeric(svm.regr\_100\_5, grid.size = 20)' represents the following estimation: An ALE for one numeric feature of interest has been estimated. The prediction funciton was a SVM, fitted and evaluated on a sample of 100 observations with 5 features. The grid size in this case was 20, so the plots are estimated on 20 intervals.
+Figure \ref{fig:runtime1DnumColAndSize} shows the runtimes for different configurations in milliseconds. The microbenchmark output shows the compared expressions (here the calculation of ALE and PDP) in the first column. The other columns are the measured runtime for 10 different runs. From left to right it is the minimum runtime, the lower quantile of the runtimes, the mean, the median, the upper quantile, and the maximal runtime. The main attention usually lies in the mean. In the expression, there are also configurations for the sampled dataset integrated. For example `ale\_one\_numeric(svm.regr\_100\_5, grid.size = 20)' represents the following estimation: An ALE for one numeric feature of interest has been estimated. The prediction function was an SVM, fitted and evaluated on a sample of 100 observations with 5 features. The grid size, in this case, was 20, so the plots are estimated on 20 intervals.
 
-Plot \ref{fig:runtime1DnumColAndSize} shows the comparison for a change in grid size and number of features for one numeric feature of interest. It seems like the number of features does barely have an influence on the runtime. Additionally for the ALE the grid size is not signifcantly changing the runtime.
+Plot \ref{fig:runtime1DnumColAndSize} shows the comparison for a change in grid size and number of features for one numeric feature of interest. It seems like the number of features does barely influence the runtime. Additionally for the ALE the grid size is not significantly changing the runtime.
 
-That is completely different for the PDP. Here a factor 5 for number of intervals increases the runtime by the same factor. This can be derived from the estimation. The ALE does the same number of predictions for any number of intervals, namely \#observaions \(\times\) 2. It just averages more often for more intervals. But that happens without the prediction function and is just a simple mean calculation, so it barely needs time. The PDP on the other hand estimates the mean prediction for each interval border. So here (\#intervals + 1) \(\times\) \#observations predictions have to be calculated. So the runtime grows linearly with the grid size and factor \#observations. This is also the explanation for the next comparison (figure \ref{fig:runtime1DnumNrow}). Here again one can see a way faster increas of runtime for PDPs than for ALEs when increasing the number of observations
+That is completely different for the PDP. Here a factor 5 for the number of intervals increases the runtime by the same factor. This can be derived from the estimation. The ALE does the same number of predictions for any number of intervals, namely \#observaions \(\times\) 2. It just averages more often for more intervals. But that happens without the prediction function and is just a simple mean calculation, so it barely needs time. The PDP, on the other hand, estimates the mean prediction for each interval border. So here (\#intervals + 1) \(\times\) \#observations predictions have to be calculated. So the runtime grows linearly with the grid size and factor \#observations. This is also the explanation for the next comparison (figure \ref{fig:runtime1DnumNrow}). Here again, one can see a way faster increase of runtime for PDPs than for ALEs when increasing the number of observations
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_one_numeric_nrows} \caption{Runtime comparison ALE vs.~PDP for one numeric feature. Differences for number of observations.}\label{fig:runtime1DnumNrow}
+\includegraphics[width=1\linewidth]{images/ale_1_one_numeric_nrows} \caption{Runtime comparison ALE vs.~PDP for one numeric feature. Differences for the number of observations.}\label{fig:runtime1DnumNrow}
 \end{figure}
 
 
@@ -1786,17 +1786,17 @@ That is completely different for the PDP. Here a factor 5 for number of interval
 In figure \ref{fig:runtime2DnumColAndSize} the runtimes for different 2D ALE and PDP configurations can be seen. Again the number of features is not a great deal for both algorithms. The ALE has no huge increase in runtime when the grid size is higher but the PDP has. The issue here is that the estimation for 2D PDP requires \((grid.size + 1)^2 \times \#observations\) predictions, while the ALE just needs \(4 \times \#observations\) predictions calculated for the estimation. This especially can be seen when increasing the number of observations.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_two_numeric_nrows} \caption{Runtime comparison ALE vs.~PDP for two numeric features. Differences for number of observations.}\label{fig:runtime2DnumNrow}
+\includegraphics[width=1\linewidth]{images/ale_1_two_numeric_nrows} \caption{Runtime comparison ALE vs.~PDP for two numeric features. Differences for the number of observations.}\label{fig:runtime2DnumNrow}
 \end{figure}
 
 
 
-Figure \ref{fig:runtime2DnumNrow} shows such an increas in observations. One can see that factor 100 in observations becomes almost factor 1,000 for the runtime of PDP while it is just a bit more than 10 for ALE.
+Figure \ref{fig:runtime2DnumNrow} shows such an increase in observations. One can see that factor 100 in observations becomes almost factor 1,000 for the runtime of PDP while it is just a bit more than 10 for ALE.
 
 \hypertarget{one-categorial-feature-of-interest}{%
 \subsection{One categorial feature of interest}\label{one-categorial-feature-of-interest}}
 
-Lastly a look at the estimation for 1D categorial PDP and ALE will be taken.
+Lastly, a look at the estimation for 1D categorial PDP and ALE will be taken.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_one_cat_cols_and_gridsize} \caption{Runtime comparison ALE vs.~PDP for one categorial feature. Differences for number of features only, since there is no grid size for categorial features.}\label{fig:runtime1DcatColAndSize}
@@ -1804,24 +1804,24 @@ Lastly a look at the estimation for 1D categorial PDP and ALE will be taken.
 
 
 
-Figure \ref{fig:runtime1DcatColAndSize} shows the runtimes of PDP and ALE for a categorial feature of interest. Analyzing categorial features does not require a grid size, since the number of categories already defines the number of different evaluations. This time one recognises that it is the other way around. The calculation time stays the same for the PDP with growing number of features, while ALE shows a significant growth. This is clearly caused by the reordering of the features for their category (will be explained in the next chapter). The reordering is based on kind of nearest neighbors (depends on implementation). The calculation of these neighbors takes longer the more features have to be taken into account.
+Figure \ref{fig:runtime1DcatColAndSize} shows the runtimes of PDP and ALE for a categorial feature of interest. Analyzing categorial features does not require a grid size since the number of categories already defines the number of different evaluations. This time one recognizes that it is the other way around. The calculation time stays the same for the PDP with a growing number of features, while ALE shows a significant growth. This is clearly caused by the reordering of the features for their category (will be explained in the next chapter). The reordering is based on the kind of nearest neighbors (depends on implementation). The calculation of these neighbors takes longer the more features have to be taken into account.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_one_cat_nrows} \caption{Runtime comparison ALE vs.~PDP for one categorial feature. Differences for number of observations.}\label{fig:runtime1DcatNrow}
+\includegraphics[width=1\linewidth]{images/ale_1_one_cat_nrows} \caption{Runtime comparison ALE vs.~PDP for one categorical feature. Differences for the number of observations.}\label{fig:runtime1DcatNrow}
 \end{figure}
 
 
 
-Figure \ref{fig:runtime1DcatNrow} shows a similar picture as can be seen in figure \ref{fig:runtime1DnumColAndSize}. Just this time compared to the estimation for one numeric feature the ALE is way slower for the categorial feature, while the PDP is twice as fast as for the numeric feature. That might come from the fact that the grid size here (\ref{fig:runtime1DnumColAndSize}) was 20 and in this case there are just 10 classes for the feature of interest. Meaning that half as many calculations for the estimation are required. So it might be the same speed for the PDP from numeric to categorial (at least with comparable parameters). The ALE will always be slower for categorial features, since the reordering of the categories is necessary.
+Figure \ref{fig:runtime1DcatNrow} shows a similar picture as can be seen in figure \ref{fig:runtime1DnumColAndSize}. Just this time compared to the estimation for one numeric feature the ALE is way slower for the categorial feature, while the PDP is twice as fast as for the numeric feature. That might come from the fact that the grid size here (\ref{fig:runtime1DnumColAndSize}) was 20 and in this case, there are just 10 classes for the feature of interest. Meaning that half as many calculations for the estimation are required. So it might be the same speed for the PDP from numeric to categorial (at least with comparable parameters). The ALE will always be slower for categorical features since the reordering of the categories is necessary.
 
-In general one can state that ALE is by far faster. For a SVM that might not be that much of a problem. But with ensamble predictors like a random forest it can be very slow to calculate a PDP for a high grid size and 10,000+ observations.
+In general, one can state that ALE is by far faster. For an SVM that might not be that much of a problem. But with ensemble predictors like a random forest it can be very slow to calculate a PDP for a high grid size and 10,000+ observations.
 
 \hypertarget{comparison-for-unevenly-distributed-data---example-4-munich-rents}{%
 \section{Comparison for unevenly distributed data - Example 4: Munich rents}\label{comparison-for-unevenly-distributed-data---example-4-munich-rents}}
 
-To conclude this chapter a real world problem with a fitted learner will be analyzed with ICE, PDP and ALE, to see them in action.
+To conclude this chapter a real-world problem with a fitted learner will be analyzed with ICE, PDP, and ALE, to see them in action.
 
-This is an example with data for rents in Munich from 2003. The target variable `nm' is the rent per month per flat. To predict the rent a random forest has been fitted. The features in this example are `wfl' (size in square meters) and `rooms' (number of rooms) of the flat. These two variables are clearly positively correlated, since there will not be an apartment with 15 squaremeters and 5 rooms. The other features are not that strongly correlated as one can see in figure \ref{fig:correlationMatrixRents}. To fit the random forest only `wfl' and `rooms' were used.
+This is an example with data for rents in Munich from 2003. The target variable `nm' is the rent per month per flat. To predict the rent a random forest has been fitted. The features in this example are `wfl' (size in square meters) and `rooms' (number of rooms) of the flat. These two variables are clearly positively correlated since there will not be an apartment with 15 square meters and 5 rooms. The other features are not that strongly correlated as one can see in figure \ref{fig:correlationMatrixRents}. To fit the random forest only `wfl' and `rooms' were used.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_correlation_munich_rents} \caption{Correlation matrix for rents in Munich.}\label{fig:correlationMatrixRents}
@@ -1830,12 +1830,12 @@ This is an example with data for rents in Munich from 2003. The target variable 
 
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_rf_rent_for_rooms_and_wfl} \caption{PDP and ALE plots for influence of space on rents in Munich.}\label{fig:pdpaleRents}
+\includegraphics[width=1\linewidth]{images/ale_1_rf_rent_for_rooms_and_wfl} \caption{PDP and ALE plots for the influence of space on rents in Munich.}\label{fig:pdpaleRents}
 \end{figure}
 
 
 
-Figure \ref{fig:pdpaleRents} shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100 the PDP looks more smooth than the ALE which is a bit shaky. In the area with not that much observations it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Since the ALE shows a more expected behavior for the prediction of rents one could tend to state that the ALE outperforms the PDP. One could think that some unrealistic feature combinations in the estimation of the PDP caused this strange drop. But a look at the ICE plot reveals something else.
+Figure \ref{fig:pdpaleRents} shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100, the PDP looks more smooth than the ALE which is a bit shaky. In the area with not that many observations, it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Since the ALE shows a more expected behavior for the prediction of rents one could tend to state that the ALE outperforms the PDP. One could think that some unrealistic feature combinations in the estimation of the PDP caused this strange drop. But a look at the ICE plot reveals something else.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_1_rf_rent_for_rooms_and_wfl_ALE_vs_ICE} \caption{ICE, ALE and PDP plots for influence of space on rents in Munich.}\label{fig:aleIceRents}
@@ -1843,22 +1843,22 @@ Figure \ref{fig:pdpaleRents} shows a more or less expected influence of space on
 
 
 
-Figure \ref{fig:aleIceRents} additionally shows the ICE curves for this example. Since the only other feature used for the fit was `rooms' and in the data set are just flats with 6 or less rooms, there are just 6 graphs. Now one could argue, maybe the appartments with less than 4 rooms (which are way more in this data set than those with 4 or more rooms) somehow cause the strange drop for the PDP. But figure \ref{fig:iceZoomedRents} shows that almost all rooms have this drop, especially the apartments with 4 and 5 rooms.
+Figure \ref{fig:aleIceRents} additionally shows the ICE curves for this example. Since the only other feature used for the fit was `rooms' and in the data set are just flats with 6 or fewer rooms, there are just 6 graphs. Now one could argue, maybe the apartments with less than 4 rooms (which are way more in this data set than those with 4 or more rooms) somehow cause the strange drop for the PDP. But figure \ref{fig:iceZoomedRents} shows that almost all rooms have this drop, especially the apartments with 4 and 5 rooms.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ale_1_ice_zoomed} \caption{ICE for rents in Munich, zoomed in for the critical area.}\label{fig:iceZoomedRents}
+\includegraphics[width=1\linewidth]{images/ale_1_ice_zoomed} \caption{ICE for rents in Munich zoomed in for the critical area.}\label{fig:iceZoomedRents}
 \end{figure}
 
 
 
-The issue here is that rooms don't have a strong influence on the prediction at all. In return the PDP does not get problems with the correlation of the two features. And the PDP in the iml implementation generates a equidistant grid on the area with observations for feature `wfl'. On the other hand the ALE divides this area aiming for equally many observations in each interval. This results in very small intervalls for apartments with less than 109 squaremeters space. But the flats with 109 or more squaremeters are evaluated in one interval only. This simply yields to this ALE plot, where it just ignores/skips this drop. And as one can see this can be dangerous when interpreting the prediction function. In this special situtation the ALE might get better the true link between the rent and the size of the apartments but that is not what one is interested in. The goal is always to interpret the predictor and not the data.
+The issue here is that rooms don't have a strong influence on the prediction at all. In return, the PDP does not get problems with the correlation between the two features. And the PDP in the iml implementation generates an equidistant grid on the area with observations for feature `wfl'. On the other hand, the ALE divides this area aiming for equally many observations in each interval. This results in very small intervals for apartments with less than 109 square meters of space. But the flats with 109 or more square meters are evaluated in one interval only. This simply yields to this ALE plot, where it just ignores/skips this drop. And as one can see this can be dangerous when interpreting the prediction function. In this special situation, the ALE might get better the true link between the rent and the size of the apartments but that is not what one is interested in. The goal is always to interpret the predictor and not the data.
 
-This example demonstrated a crucual weakness of the ALE regarding the size of the intervals, which will be discussed in the next chapter. It also shows that ICE and PDP might still be worth a look despite their issues with correlated features and runtime. In general, if one needs to get a deep understanding of the prediction function it might be clever to use as many interpretation algorithms as possible. By being aware of their strengths and weeknesses and combining the results of those algorithms one can get a detailed look at the influence of each variable which should also be reliable.
+This example demonstrated a crucial weakness of the ALE regarding the size of the intervals, which will be discussed in the next chapter. It also shows that ICE and PDP might still be worth a look despite their issues with correlated features and runtime. In general, if one needs to get a deep understanding of the prediction function it might be clever to use as many interpretation algorithms as possible. By being aware of their strengths and weaknesses and combining the results of those algorithms one can get a detailed look at the influence of each variable which should also be reliable.
 
 \hypertarget{ale-2d-example-calculation}{%
 \section{Calculation of theoretical 2D ALE example}\label{ale-2d-example-calculation}}
 
-TODO: this should go to the appindex
+TODO: this should go to the appendix
 
 Features \(x_1\), \(x_2\), \(x_3\) and the prediction function \(\hat{f}(x_1, x_2, x_3) = x_1 x_2 x_3\) are given.
 The features are sampled from the these disrtibutions:
@@ -1934,32 +1934,30 @@ This formula was used to calculate the theoretical plot in figure \ref{fig:theo2
 
 \emph{Author: Nikolas Fritz}
 
-As mentioned in the former section the choice of intervals and starting value \(z_{0,j}\) have both a certain influence on the estimated ALE - curve. While the main influence of \(z_{0,j}\) is canceld out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic.
+As mentioned in the former section the choice of intervals and starting value \(z_{0,j}\) have both a certain influence on the estimated ALE - curve. While the main influence of \(z_{0,j}\) is canceled out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic.
 
 \hypertarget{how-to-choose-the-number-andor-length-of-the-intervals}{%
 \section{How to choose the number and/or length of the intervals}\label{how-to-choose-the-number-andor-length-of-the-intervals}}
 
-Before investigating the choice of intervals one should be clear about in how far they influence the estimation. On the one hand for a given interval the ALE estimation will be linear due to the expected constant effect within this interval.
+Before investigating the choice of intervals one should be clear about how far they influence the estimation. On the one hand for a given interval the ALE estimation will be linear due to the expected constant effect within this interval.
 Remember that within each interval the local effect within this interval was calculated by the mean total difference of the prediction when shifting the variable of interest from the lower interval boundary to the upper one. This leads by definition to a constant effect within this interval that results in a linear function when integrating over the interval.\\
 It seems obvious that the ALE estimation (within a grid interval) can only be as good as a linear approximation for the ``real'' and usually unknown prediction function can be. Therefore it is crucial for a good estimation to have small enough intervals especially in regions where the prediction function is shaky or far from linear (i.e high second derivatives) with respect to the feature of interest.
-On the other hand to get stable estimations for a grid interval it is important to have a sufficient high number of datapoints within the interval. This means that the intervals shouldn't become too small so that they would contain only a few data points. Note that this is only true if the other features have an influence on the local effect of the prediction function. If they dont, any data point within the grid interval would lead to the same predictions at the interval boundarys.
-Thats why there is a natural trade of between a small interval width and the number of the contained data points.
+On the other hand, to get stable estimations for a grid interval it is important to have a sufficiently high number of data points within the interval. This means that the intervals shouldn't become too small so that they would contain only a few data points. Note that this is only true if the other features have an influence on the local effect of the prediction function. If they don't, any data point within the grid interval would lead to the same predictions at the interval boundaries.
+That's why there is a natural trade-off between a small interval width and the number of the contained data points.
 
 \hypertarget{state-of-the-art}{%
 \subsection{State of the art}\label{state-of-the-art}}
 
-So the question is how to optimally choose the grid intervals. Should they all be of the same width containing a different number of datapoints? Should they all contain the same or at least a similar number of datapoints, accepting different interval sizes. Or could there even be a better solution in between the two concepts?\\
-Within the iml-package which is one of two implementations of ALE - plots the choosen method is the second one. The quantiles of the distribution of the feature are used as the grid that defines the intervals. That means the length of the intervals depends on the choosen grid size and the given feature distribution.
+So the question is how to optimally choose the grid intervals. Should they all be of the same width containing a different number of data points? Should they all contain the same or at least a similar number of data points, accepting different interval sizes. Or could there even be a better solution in between the two concepts?\\
+Within the iml-package which is one of two implementations of ALE - plots the chosen method is the second one. The quantiles of the distribution of the feature are used as the grid that defines the intervals. That means the length of the intervals depends on the chosen grid size and the given feature distribution.
 
-In the following section some examples with artificial data sets are provided, that should help to get a better feeling for the different deterministic factors that influence the goodness of the ALE estimation. Within the whole chapter the ALE estimation is conducted via the iml-package implementation.
+In the following section, some examples with artificial data sets are provided, that should help to get a better feeling for the different deterministic factors that influence the goodness of the ALE estimation. Within the whole chapter, the ALE estimation is conducted via the iml-package implementation.
 
 \hypertarget{ale-approximations}{%
 \subsection{ALE Approximations}\label{ale-approximations}}
 
-In the following section, we only consider two dimensional data sets, of continious features \(x_1\) and \(x_2\) with a certain correlation. Furthermore we use some exemplary prediction functions which are differentiable such that we can calculate the theoratical ALE (see section \ref{ale-intro-formula}) and use it to evaluate the goodness of the estimated ALE - curve. As we want to isolate some of the above mentioned influencial factors, we start with some easy examples adding step by step more complexity to the problem.
-
-\hypertarget{example-1-additive-feature-effects}{%
-\subsection{Example 1: additive feature effects}\label{example-1-additive-feature-effects}}
+In the following section, we only consider two-dimensional data sets, of continuous features \(x_1\) and \(x_2\) with a certain correlation. Furthermore, we use some exemplary prediction functions which are differentiable such that we can calculate the theoretical ALE (see section \ref{ale-intro-formula}) and use it to evaluate the goodness of the estimated ALE - curve. As we want to isolate some of the above mentioned influential factors, we start with some easy examples adding step by step more complexity to the problem.
+\#\#\# Example 1: additive feature effects
 
 In the first example we assume a uniform distribution for the feature \(x_1\) on the interval \([0, 10]\), i.e.
 \(X_1 \sim U(0,10)\). Furthermore we assume the conditional distribution of the feature \(x_2\) given \(x_1\) to be also uniform on the interval \([x_1 - 3,~x_1 + 3 ]\), i.e.~\(X_2 \vert X_1 = x_1 \sim U(x_1 - 3,~x_1 + 3 )\). Sampling 100 data points from this distribution yields the first dataset (see Figure \ref{fig:DatasetALE1}) .
@@ -1971,7 +1969,7 @@ In the first example we assume a uniform distribution for the feature \(x_1\) on
 
 
 Why we only made assumptions about the conditional distributon of \(X_2\) and not on the joint distribution of \((X_1,X_2)\) gets clearer once we take a look on the calculation of the theoratical ALE. Therefore we first asume the prediction function \(\hat{f}_1 (x_1, x_2) = (x_1-4)(x_1-5)(x_1-6) + x_2^3\). Due to the special structure of \(f_1\) the partial derivative with respect to \(x_1\) is a polynomial of degree 2 which doesn't depend on \(x_2\), concretley \(\hat{f}^1(x_1,x_2) = 3x_1^2 -30x_1 +74\) (Remember the unusual notation for the j-th partial derivative as \(f^{j}\)).
-Now we can calculate the theoratical (uncentered) ALE:
+Now we can calculate the theoretical (uncentered) ALE:
 
 \[(1)~~~~\widetilde{ALE}_{\hat{f},1}(x) = \int_{z_{0,1}}^x E_{X_2\vert X_1= Z_1}[\hat{f}^1(x_1,x_2)]~dz~~~=\]
 \[(2)~~~~ \int_{z_{0,1}}^x \int p_{X_2\vert X_1 = z }(x_2)\hat{f}^1(z,x_2)~dx_2~dz~~~=\]
@@ -2001,7 +1999,7 @@ To get the centered ALE we have to calculate:
 \[(13)~~~~ x^3 -15x^2 +74x - 120~~~.\]
 
 In Step (12) the formula for the kth - moment of the uniform distribution which is given by \(m_k = \frac{1}{k+1}\sum_{i=0}^k a^i b^{k-i}\) was used.
-Knowing the theoretical ALE-curve we can have a look on the behaviour of the estimated ALE for different grid sizes. Figure \ref{fig:exampleALE1} shows the theoretical ALE and the estimations for grid sizes 2, 3, 5, and 10.
+Knowing the theoretical ALE-curve we can have a look at the behavior of the estimated ALE for different grid sizes. Figure \ref{fig:exampleALE1} shows the theoretical ALE and the estimations for grid sizes 2, 3, 5, and 10.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_example1_} \caption{Theoretical vs estimated ALE}\label{fig:exampleALE1}
@@ -2010,7 +2008,7 @@ Knowing the theoretical ALE-curve we can have a look on the behaviour of the est
 
 
 While the estimated ALE with grid size 2 only shows a linear effect over the whole data range, the estimated ALE with grid size 3 already gives a good approximation to the theoretical ALE in the second interval, where the theoretical ALE has a low curvature. With grid size 5 only the outer intervals show clearly recognizable deviations to the theoretical ALE and with grid size 10 the approximation looks quite reasonable.
-As the partial derivative of the prediction function was independent of \(x_2\), there was no risk of getting bad estimations due to too few datapoints within an interval. Thats why we take a look on a second example.
+As the partial derivative of the prediction function was independent of \(x_2\), there was no risk of getting bad estimations due to too few data points within an interval. That's why we take a look at a second example.
 
 \hypertarget{example-2-multiplicative-feature-effects}{%
 \subsection{Example 2: multiplicative feature effects}\label{example-2-multiplicative-feature-effects}}
@@ -2041,7 +2039,7 @@ Again using the formula for the moments of a uniform distribution we finally obt
 \[(\frac{3}{6}\frac{10^6}{7}-\frac{30}{5}\frac{10^5}{6} +\frac{101}{4}\frac{10^4}{5}-90\frac{10^3}{4}+333\frac{10^2}{3}) ~~~=\]
 
 \[(12)~~~~ALE_{\hat{f},1}(x) =  \frac{3}{6} x^6 - \frac{30}{5}x^5 + \frac{101}{4}x^4 - 90 x^3 + 333 x^2 - 10528.57~~~.\]
-Figure \ref{fig:exampleALE2} shows the behaviour of the ALE with different grid sizes in this setting.
+Figure \ref{fig:exampleALE2} shows the behavior of the ALE with different grid sizes in this setting.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_example2_6plots_} \caption{Theoretical vs estimated ALE for different grid sizes}\label{fig:exampleALE2}
@@ -2057,9 +2055,9 @@ While for grid size 5 and bigger the approximations for the region 0 to 7.5 seem
 
 
 
-Where does this come from? The structure of the prediction function leads to an increasing effect of \(x_2\) on the total differences calculated for the series of intervals. Due to unsufficient many datapoints within the intervals, there is a high probability of under or over estimating this effect. With grid size 25 only 4 data points are used for the estimation. Obviously it's quite probable that the \(x_2\) values of those data points are clearly above average in some intervals. If that happens for high \(x_1\) - which implies due to the correlation structure high \(x_2\) - the total difference will be clearly overestimated as the delta in \(x_1\) is multiplied by the average \(x_2^3\). As the effect on the intervals is accumulated, the error persists for the whole ALE-curve from that point on.
+Where does this come from? The structure of the prediction function leads to an increasing effect of \(x_2\) on the total differences calculated for the series of intervals. Due to insufficient many datapoints within the intervals, there is a high probability of under or overestimating this effect. With grid size 25 only 4 data points are used for the estimation. Obviously, it's quite probable that the \(x_2\) values of those data points are clearly above average in some intervals. If that happens for high \(x_1\) - which implies due to the correlation structure high \(x_2\) - the total difference will be clearly overestimated as the delta in \(x_1\) is multiplied by the average \(x_2^3\). As the effect on the intervals is accumulated, the error persists for the whole ALE-curve from that point on.
 
-To get a deeper insight in this dynamic, for the given context ALE - curves for 50 sampled datasets were estimated with grid sizes 10, 25, and 50. For each grid size at each value of \(x_1\) the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Figure \ref{fig:exampleALE2b} shows this range exemplarily for gride size 10.
+To get a deeper insight into this dynamic, for the given context ALE - curves for 50 sampled datasets were estimated with grid sizes 10, 25, and 50. For each grid size at each value of \(x_1\) the minimal and the maximal ALE estimation was taken as the boundary of the range of estimations. Figure \ref{fig:exampleALE2b} shows this range exemplarily for gride size 10.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_ALErange_10_} \caption{Maximum range of estimation}\label{fig:exampleALE2b}
@@ -2067,7 +2065,7 @@ To get a deeper insight in this dynamic, for the given context ALE - curves for 
 
 
 
-The vertical lines indicate the absolut delta of the maximal and minimal ALE estimation at x. Plotting these deltas for the gride sizes 10, 25, and 50 yields Figure \ref{fig:exampleALE2c}.
+The vertical lines indicate the absolute delta of the maximal and minimal ALE estimation at x. Plotting these deltas for the gride sizes 10, 25, and 50 yields Figure \ref{fig:exampleALE2c}.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_example2.1_delta_} \caption{Delta of maximal and minimal estimated ALE for different grid sizes}\label{fig:exampleALE2c}
@@ -2077,7 +2075,7 @@ The vertical lines indicate the absolut delta of the maximal and minimal ALE est
 
 It is clearly recognizable that on the one hand for higher x the variance in the ALE estimation increases for all grid sizes. The expected higher variance of the estimations with higher grid sizes is in particular revealed in the region from \(x_1 = 7\) to \(x_1 = 10\), because the estimation is quite sensible to the absolute value of \(x_2\), which also increases with \(x_1\).
 
-As the the theoretical ALE in this example was quite smooth, grid size 10 gave reasonable estimations. The following example shows problems that occur once the prediction function is quite shaky especially in regions with only few observations.
+As the theoretical ALE in this example was quite smooth, grid size 10 gave reasonable estimations. The following example shows problems that occur once the prediction function is quite shaky especially in regions with only a few observations.
 
 \hypertarget{example-3-unbalanced-datasets-and-shaky-prediction-functions}{%
 \subsection{Example 3: Unbalanced datasets and shaky prediction functions}\label{example-3-unbalanced-datasets-and-shaky-prediction-functions}}
@@ -2086,14 +2084,14 @@ In the 3rd example we assume \(X_1 \sim N(10,3)\) as well as\\
 \(X_2 \vert X_1 = x_1 \sim U(x_1 - 3, x_1 + 3 )\).
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ALE_2_dataset2_} \caption{Mixture of normal and uniform distributed features}\label{fig:datasetALE2}
+\includegraphics[width=1\linewidth]{images/ALE_2_dataset2_} \caption{A mixture of normal and uniform distributed features}\label{fig:datasetALE2}
 \end{figure}
 
 
 
-For this example the sample size was 1000 (see figure \ref{fig:datasetALE2}). As expected the correlation is clearly recognizable. This time only few data points lay in the outer regions, i.e.~between 0 and 2.5 and 17.5 and 20, while there is a high concentration of data around the mean at 10.\\
+For this example the sample size was 1000 (see figure \ref{fig:datasetALE2}). As expected the correlation is clearly recognizable. This time only a few data points lay in the outer regions, i.e.~between 0 and 2.5 and 17.5 and 20, while there is a high concentration of data around the mean at 10.\\
 Furthermore we look at the prediction function \(\hat{f}_3(x_1,x_2) = sin(10x_1)~x_2\). The calculation of the theoretical uncentered ALE (as before) yields \(~~~~\widetilde{ALE}_{\hat{f},1}(x) = x~sin(x) + \frac{1}{10}cos(10x)\). For centering the expectation of the uncentered ALE, i.e.~\(E[\widetilde{ALE}_{\hat{f},1}(X_1)]\), was estimated by Monte-Carlo integration to be almost zero.
-As well as the prediction function, the theoretical ALE has lots of extreme points. This leads to some troubles especially for low grid sizes.
+As well as the prediction function, the theoretical ALE has lots of extreme points. This leads to some troubles, especially for low grid sizes.
 Figure \ref{fig:example33gs} shows the estimated and the theoretical ALE for three different grid sizes.
 
 \begin{figure}
@@ -2102,10 +2100,10 @@ Figure \ref{fig:example33gs} shows the estimated and the theoretical ALE for thr
 
 
 
-For grid size 20 the local behaviour of the theoretical ALE is absolutley not recognizable. Only one peak left of the mean was estimated resonable, which is due to the high data intensity in this region. For the rest of the plot the grid intervals contain two or more peaks. Within each of them the ALE is estimated linear and therefore the true effect smoothed out.\\
-Increasing the grid size to 100 one nicley sees how the approximation becomes quite reasonable in the inner region, i.e.~between 6 and 14, while in the outer region, where the intervalls still are too long the ALE continues to be estimated wrong.
-The more one increases the grid size the wider the inner region of good estimation becomes. Anyway still at grid size 1000 which implies only one data point per interval, the estimations near the boundaries stay bad, as there are simply not sufficient observations to show the fine structure of the prediction function. As this was a constructed example, the latter shouldn't be overrated, as in real data situations it is quite improbable that a learner reslults in a that granular prediciton function within regions with such few data points.
-While in figure \ref{fig:example33gs} apearentlly both grid sizes (100 and 1000) result in equally good ALE estimations in the inner region, zooming in reveals that this isn't the case.
+For grid size 20 the local behavior of the theoretical ALE is absolutely not recognizable. Only one peak left of the mean was estimated reasonable, which is due to the high data intensity in this region. For the rest of the plot, the grid intervals contain two or more peaks. Within each of them, the ALE is estimated linear and therefore the true effect smoothed out.\\
+Increasing the grid size to 100 one nicely sees how the approximation becomes quite reasonable in the inner region, i.e.~between 6 and 14, while in the outer region, where the intervals still are too long the ALE continues to be estimated wrong.
+The more one increases the grid size the wider the inner region of good estimation becomes. Anyway still at grid size 1000 which implies only one data point per interval, the estimations near the boundaries stay bad, as there are simply not sufficient observations to show the fine structure of the prediction function. As this was a constructed example, the latter shouldn't be overrated, as in real data situations it is quite improbable that a learner results in a that granular prediction function within regions with such few data points.
+While in figure \ref{fig:example33gs} apparently both grid sizes (100 and 1000) result in equally good ALE estimations in the inner region, zooming in reveals that this isn't the case.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_example3_zoom_} \caption{Zooming in reveals the bias for grid size 1000}\label{fig:example3zoom}
@@ -2116,21 +2114,21 @@ While in figure \ref{fig:example33gs} apearentlly both grid sizes (100 and 1000)
 Figure \ref{fig:example3zoom} shows a very small part around the mean.
 As expected the estimations for grid size 100 are a little closer to the theoretical ALE as again the true effect of the second feature, which still affects the prediction, is better estimated within each interval (10 observations vs 1 observation).
 
-At the end of this section we have seen a good example for the natural trade off between small intervals on the one hand and sufficient data to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals thereby higly depends on the given prediction function and the data. This can be taken as main message of the section. The next section shall provide the reader with the understanding of in how far additional problems can occur in the context of piece-wise constant models.
+At the end of this section, we have seen a good example of the natural trade-off between small intervals on the one hand and sufficient data to get a good and stable estimation on the other hand. The optimal choice of the number /size of intervals thereby highly depends on the given prediction function and the data. This can be taken as the main message of the section. The next section shall provide the reader with an understanding of how far additional problems can occur in the context of piece-wise constant models.
 
 \hypertarget{problems-with-piece-wise-constant-models}{%
 \section{Problems with piece-wise constant models}\label{problems-with-piece-wise-constant-models}}
 
-Piece-wise constant models such as for example decision trees and random forests don't have continous prediction functions, which implies they are not differentiable. Thus the concept of theoretical ALE doesn't make any sense in this context as the partial derivative doesn't exist. Still it is possible to estimate the ALE as the ``jump'' will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly dependes on if one manages to place the intervals quite narrow around the steps.
+Piece-wise constant models such as for example decision trees and random forests don't have continuous prediction functions, which implies they are not differentiable. Thus the concept of theoretical ALE doesn't make any sense in this context as the partial derivative doesn't exist. Still, it is possible to estimate the ALE as the ``jump'' will result in a more or less steep linear part, depending on the interval size of the interval containing the step. It is intuitive that the goodness of the estimation highly depends on if one manages to place the intervals quite narrow around the steps.
 As the following examples will show, problems can occur due to ``wrong'' interval sizes or unluckily distributed data in the region of the steps.
 
 \#\#\#Example 4: Simple step function
 
 Throughout this section we assume \(X_1\) to be uniformily distributed on the interval \([0,10]\), i.e.~\(X_1 \sim U(0,10)\) as well as \(X_2\) given \(X_1\) uniformily on the interval \([max(x_1 - 3, 0),~min( x_1 + 3, 10]\),\\
 i.e.~\(X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),~min( x_1 + 3, 10) )\). That means all the data is distributed within the 10 times 10 square.
-In the the first example we take a look on a simple prediction function to get a good understanding of the basic problem with piece-wise constant models. We assume a prediction function that independently of \(x_2\) predicts 0, except if \(x_1\) falls into a certain small interval arround 5. In this case it predicts 10. Concretely \(f(x_1, x_2) = 1_{[4.9,~5.1]}(x_1) * 10\).
+In the first example, we take a look at a simple prediction function to get a good understanding of the basic problem with piece-wise constant models. We assume a prediction function that independently of \(x_2\) predicts 0, except if \(x_1\) falls into a certain small interval around 5. In this case, it predicts 10. Concretely \(f(x_1, x_2) = 1_{[4.9,~5.1]}(x_1) * 10\).
 
-Figure \ref{fig:pwcexample4datasetpredf} shows a sampled data set of 100 datapoints and a sketch of the prediction function.
+Figure \ref{fig:pwcexample4datasetpredf} shows a sampled data set of 100 data points and a sketch of the prediction function.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_pwc_example4_dataset_predf_} \caption{Prediction Function 1}\label{fig:pwcexample4datasetpredf}
@@ -2138,23 +2136,23 @@ Figure \ref{fig:pwcexample4datasetpredf} shows a sampled data set of 100 datapoi
 
 
 
-As mentioned above a good estimation of the ALE would result into quite steep linear parts, one around 4.9 and a second inverse one around 5.1. The problem now is that the ALE estimation won't catch those jumps as long as both jumps lay within the same interval. The reason is that all the points within this interval would be moved to the interval boundaries which lay outside the area, where the prediction function predicts 10. This leads to an estimation of the local effect as zero.
+As mentioned above a good estimation of the ALE would result in quite steep linear parts, one around 4.9 and a second inverse one around 5.1. The problem now is that the ALE estimation won't catch those jumps as long as both jumps lay within the same interval. The reason is that all the points within this interval would be moved to the interval boundaries which lay outside the area, where the prediction function predicts 10. This leads to an estimation of the local effect as zero.
 Figure \ref{fig:pwcexample44plots} shows the estimates for different grid sizes 20, 30, 50 and 100.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ALE_2_pwc_example4_4plots_} \caption{Behaviour of ALE estimation with increasing grid size}\label{fig:pwcexample44plots}
+\includegraphics[width=1\linewidth]{images/ALE_2_pwc_example4_4plots_} \caption{The behavior of ALE estimation with increasing grid size}\label{fig:pwcexample44plots}
 \end{figure}
 
 
 
 As expected the ALE estimations with grid size 20 and 30 are not sensitive to the effect. Increasing the grid size ensures that some interval boundaries fall into the interval \([4.9, ~5.1]\) which exposes the step of the prediction function.
-Having a second look on the data situation in this example, one notes that only 2 datapoints fall to the interval \([4.9, ~5.1]\). Grid size 50 implies for 100 datapoints 2 datapoints per interval. That means that we even got lucky in this example that the 2 data points didn't fall into the same grid interval. Otherwise the effect would have remained hidden even at grid size 50. The following example shows how unluckily distributed datapoints can lead to bad ALE estimations.
+Having a second look at the data situation in this example, one notes that only 2 data points fall to the interval \([4.9, ~5.1]\). Grid size 50 implies for 100 datapoints 2 data points per interval. That means that we even got lucky in this example that the 2 data points didn't fall into the same grid interval. Otherwise, the effect would have remained hidden even at grid size 50. The following example shows how unluckily distributed data points can lead to bad ALE estimations.
 
-\#\#\#Example 5: Two dimensional step functions and unluckily distributed data
+\#\#\#Example 5: Two-dimensional step functions and unluckily distributed data
 
 We assume the same data distribution as in the former example. Furthermore well take a look on two prediciton functions, one independent of \(x_2\) defined as \(f(x_1, x_2) = 1 + 1_{[0,~\frac{10}{3}]}(x_1)+ 1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)\). The second also depends on \(x_2\) and is defined as
 \(f(x_1, x_2) = 3~(1_{[\frac{10}{3},~\frac{20}{3}]}(x_1)~*~1_{[\frac{10}{3},~\frac{20}{3}]}(x_2)) + 2~(1_{[0,~\frac{10}{3}]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2)) + ~(1_{[\frac{20}{3},~10]}(x_1)~*~(1_{[0,~\frac{10}{3}]}(x_2)+1_{[\frac{20}{3}, ~10]}(x_2))\) .
-Both on the first sigth a little unhandy become quite easy to understand looking at the sketches below (see figures \ref{fig:pwcexample5predf1} and \ref{fig:pwcexample5predf2}).
+Both on the first sight a little unhandy become quite easy to understand looking at the sketches below (see figures \ref{fig:pwcexample5predf1} and \ref{fig:pwcexample5predf2}).
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_pwc_example5_predf_1_} \caption{Prediction function 2}\label{fig:pwcexample5predf1}
@@ -2168,7 +2166,7 @@ Both on the first sigth a little unhandy become quite easy to understand looking
 
 
 
-In the following the ALE was estimated for increasing grid sizes. In figure \ref{fig:pwcexample5gs510} starting with grid size 5 on the left side we see the behaviour of the first prediction function on the right side for the second one.
+In the following, the ALE was estimated for increasing grid sizes. In figure \ref{fig:pwcexample5gs510} starting with grid size 5 on the left side we see the behavior of the first prediction function on the right side for the second one.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_pwc_example5_gs5_10_} \caption{Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)}\label{fig:pwcexample5gs510}
@@ -2176,8 +2174,8 @@ In the following the ALE was estimated for increasing grid sizes. In figure \ref
 
 
 
-For grid size 5 both estimations recognize the step but estimate it relativley flat, which is not very suprising as the interval length should be around 2. For the first prediction function we see a total increase within the second grid interval of 1 and a total decrease in the fourth one of 2. This reflects the behaviour of the prediction function, so the only problem is the low grid size. For the second prediction functions the total changes are estimated to be much lower. This is due to the areas of 0 prediction which clearly influence the mean change in prediction, as some data points change from 0 to 3, but others from 2 to 0 within the second grid interval, as well as from 3 to 0 and from 0 to 1 within the fourth grid interval. So the absolut effect of \(x_1\) is relativized by the influence of \(x_2\), which is intended by the concept of ALE.
-At grid size 10 the estimations for both prediction functions look quite similar. The steps become steeper as the grid intervals shrink to half their length. The estimated change in prediction for the second prediction function now is even bigger than for the first one. Due to the correlation now more (relatively more) datapoints are shifted from prediction 0 to 3 and 3 to 0 respectivly, which leads to the sligthly higher estimation of the effect.
+For grid size 5 both estimations recognize the step but estimate it relatively flat, which is not very surprising as the interval length should be around 2. For the first prediction function, we see a total increase within the second grid interval of 1 and a total decrease in the fourth one of 2. This reflects the behavior of the prediction function, so the only problem is the low grid size. For the second prediction functions, the total changes are estimated to be much lower. This is due to the areas of 0 prediction which clearly influence the mean change in prediction, as some data points change from 0 to 3, but others from 2 to 0 within the second grid interval, as well as from 3 to 0 and from 0 to 1 within the fourth grid interval. So the absolute effect of \(x_1\) is relativized by the influence of \(x_2\), which is intended by the concept of ALE.
+At grid size 10 the estimations for both prediction functions look quite similar. The steps become steeper as the grid intervals shrink to half their length. The estimated change in prediction for the second prediction function now is even bigger than for the first one. Due to the correlation, now more (relatively more) datapoints are shifted from prediction 0 to 3 and 3 to 0 respectively, which leads to the slightly higher estimation of the effect.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_pwc_example5_gs20_50_} \caption{Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)}\label{fig:pwcexample5gs2050}
@@ -2185,8 +2183,8 @@ At grid size 10 the estimations for both prediction functions look quite similar
 
 
 
-Increasing the grid size first to 20 and then to 50 reveals the whole danger of this situation. While prediction function 2 seems to be estimated quite stable (the absolute changes stay to be 1 and -2, while the steps become steeper and steeper), the estimation for prediction function 3 changes its behaviour. At grid size 20 the left step grows to be 3, at grid size 50 the second step to be -3. Centering leads to quite radical upwards and downwards shifts of the whole plot.
-To understand this we'll have a look on the data points that are used to estimate the steps.
+Increasing the grid size first to 20 and then to 50 reveals the whole danger of this situation. While prediction function 2 seems to be estimated quite stable (the absolute changes stay to be 1 and -2, while the steps become steeper and steeper), the estimation for prediction function 3 changes its behavior. At grid size 20 the left step grows to be 3, at grid size 50 the second step to be -3. Centering leads to quite radical upwards and downwards shifts of the whole plot.
+To understand this we'll have a look at the data points that are used to estimate the steps.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_pwc_example5_critical_points2_} \caption{Points that are used to estimate the step at grid size 20}\label{fig:ALE2pwcexample5criticalpoints2}
@@ -2202,34 +2200,34 @@ For grid size 20, 5 data points are used to estimate the total change in predict
 
 
 
-Analogiuously for grid size 50 only two datapoints are used. As again both fall into the same \(x_2\) - range, the estimation of the mean change of prediction in this grid interval is -3 now. Looking at figure \ref{fig:ALE2pwcexample5criticalpoints} it becomes clear that only a little higher \(x_2\) value of the upper data point would have lead to an estimation of -1 instead. This shows how sensitve the ALE estimation in the context of piece-wise constant models is. While there could be arguments for the heigth of the steps in the first 3 estimations, the last estimation clearly displays a false image. Here the interpretation would be that there is no main effect of feature 1 changing from less than \(\frac{10}{3}\) to higher than \(\frac{20}{3}\), which is obviously wrong.
+Analogously for grid size 50, only two data points are used. As again both fall into the same \(x_2\) - range, the estimation of the mean change of prediction in this grid interval is -3 now. Looking at figure \ref{fig:ALE2pwcexample5criticalpoints} it becomes clear that only a little higher \(x_2\) value of the upper data point would have lead to an estimation of -1 instead. This shows how sensitive the ALE estimation in the context of piece-wise constant models is. While there could be arguments for the height of the steps in the first 3 estimations, the last estimation clearly displays a false image. Here the interpretation would be that there is no main effect of feature 1 changing from less than \(\frac{10}{3}\) to higher than \(\frac{20}{3}\), which is obviously wrong.
 
 \hypertarget{outlook}{%
 \subsection{Outlook}\label{outlook}}
 
-We have seen that ALE estimations in the context of piece-wise constant models are even more critical due to sharp changes of the prediction at the steps. On the one hand one needs the intervals to be within the steps to recognize them and at the same time quite narrow arround them to catch the steepness of the step. Notice that in real world examples one cannot know if there is a step or if the flat linear aprroximation is true. On the other hand the data distribution around the steps has a strong influence on the ALE which leads to highly instable estimations. In this context different methods of interval selection, maybe even adaptive, data driven methods should be investigated.
+We have seen that ALE estimations in the context of piece-wise constant models are even more critical due to sharp changes in the prediction at the steps. On the one hand, one needs the intervals to be within the steps to recognize them and at the same time quite narrow around them to catch the steepness of the step. Notice that in real-world examples one cannot know if there is a step or if the flat linear approximation is true. On the other hand, the data distribution around the steps has a strong influence on the ALE which leads to highly unstable estimations. In this context different methods of interval selection, maybe even adaptive, data-driven methods should be investigated.
 
 \hypertarget{categorical-features}{%
 \section{Categorical Features}\label{categorical-features}}
 
-So far we were only interested in ALE-estimations for a numerical feature of interest. In real data situations categorical features often play an important role. That's why it would be nice to expand the concept of ALE so that it can also be applied to categorical features. In the original paper by \citep{Apley2016} this concept was not described but still a first method implemented. \citep{molnar2019} adapted the method for the iml-package. The following section brievly describes the implemented method as well as the interpretation of ALE-plots for categorical features. It also shows some specific problems.
+So far we were only interested in ALE-estimations for a numerical feature of interest. In real data situations, categorical features often play an important role. That's why it would be nice to expand the concept of ALE so that it can also be applied to categorical features. In the original paper by \citep{Apley2016} this concept was not described but still, the first method implemented. \citep{molnar2019} adapted the method for the iml-package. The following section briefly describes the implemented method as well as the interpretation of ALE-plots for categorical features. It also shows some specific problems.
 
 \hypertarget{ordering-the-features}{%
 \subsection{Ordering the features}\label{ordering-the-features}}
 
-One of the biggest and crucial differences of categorical and numerical features in the context of ALE is that categorical features usually don't have a natural order. As the concept of ALE is based on accumulating the local effects in a certain direction, an order of the feature is indispensable. Sometimes the categorical feature is an ordinal feature which comes with an natural order. In this case the natural order should be used. If there is no natural order, the first essential step to calculate the ALE is to order the feature. Therefore different methods are conceivable. The iml-package implementation tries to order the feature with respect to the similarity of the other features. As we'll see in the next subsection for the estimation of the ALE the datapoints of a category will be shifted to the neighbour categories (neighbour categories only exist if the feature is ordered). To stay with the original idea of ALE and try to avoid extrapolation, ordering the feature with respect to the similarity of the other features seems reasonable. Within the iml-package in a first step the distance of each pair of categories (of the feature of interest) is calculated with respect to every other feature. This results in \(\frac{c~(c-1)~(f-1)}{2}\) distances, where f is the total number of features while c is the number of categories of the feature of interest. To calculate these distances for numerical features the Kolmogorov-Smirnov distance is used. It is defined as the maximal absolut difference of two distribution functions, which are estimated from the data within the two compared categories. For categorical features one simply sums up the absolute differences of the relative frequencys of the categories.
-Finally the distance between two categories is calculated as the sum of their distances with respect to all features.
-Once the distance between all categories is calculated, multidimensional scaling is used to reduce the distance matrix to a one dimensional distance messure \citep{molnar2019}.
+One of the biggest and crucial differences of categorical and numerical features in the context of ALE is that categorical features usually don't have a natural order. As the concept of ALE is based on accumulating the local effects in a certain direction, an order of the feature is indispensable. Sometimes the categorical feature is an ordinal feature that comes with a natural order. In this case, the natural order should be used. If there is no natural order, the first essential step to calculate the ALE is to order the feature. Therefore different methods are conceivable. The iml-package implementation tries to order the feature with respect to the similarity of the other features. As we'll see in the next subsection for the estimation of the ALE the data points of a category will be shifted to the neighbor categories (neighbor categories only exist if the feature is ordered). To stay with the original idea of ALE and try to avoid extrapolation, ordering the feature with respect to the similarity of the other features seems reasonable. Within the iml-package, in a first step, the distance of each pair of categories (of the feature of interest) is calculated with respect to every other feature. This results in \(\frac{c~(c-1)~(f-1)}{2}\) distances, where f is the total number of features while c is the number of categories of the feature of interest. To calculate these distances for numerical features the Kolmogorov-Smirnov distance is used. It is defined as the maximal absolute difference of two distribution functions, which are estimated from the data within the two compared categories. For categorical features, one simply sums up the absolute differences of the relative frequencies of the categories.
+Finally, the distance between the two categories is calculated as the sum of their distances with respect to all features.
+Once the distance between all categories is calculated, multidimensional scaling is used to reduce the distance matrix to a one-dimensional distance measure \citep{molnar2019}.
 
 \hypertarget{estimation-of-the-ale}{%
 \subsection{Estimation of the ALE}\label{estimation-of-the-ale}}
 
-Once the features are ordered (no matter if as proposed by \citep{Apley2016} and \citep{molnar2019} or in a different order) it's still not clear how to estimate the ALE. The partioning of the axis into intervals doesn't make sense anymore as the categories themselves kind of partion the range of the feature in a natural manner. But there are no ``values'' in between of them and at the same time the datapoints fall exactly on them. A continious ALE wouldn't make sense at all, as there are no possibilities of changing the feature value if not from one category to another category. Thats why the idea is to estimate exactly these expected changes in prediction if one category is changed to its neighbour category. Therefore for each pair of neighbour categories the expected change is estimated by shifting the data from the lower to the upper category and vice verse and calculating the mean difference of the prediction. This mean difference is taken to be the expected effect between these two categories. How these changes are accumulated and how the ALE-plot looks, becomes clearer once looking at an example.
+Once the features are ordered (no matter if as proposed by \citep{Apley2016} and \citep{molnar2019} or in a different order) it's still not clear how to estimate the ALE. The partitioning of the axis into intervals doesn't make sense anymore as the categories themselves kind of partition the range of the feature in a natural manner. But there are no ``values'' in-between them and at the same time, the data points fall exactly on them. A continuous ALE wouldn't make sense at all, as there are no possibilities of changing the feature value if not from one category to another category. That's why the idea is to estimate exactly these expected changes in prediction if one category is changed to its neighbor category. Therefore for each pair of neighbor categories, the expected change is estimated by shifting the data from the lower to the upper category and vice verse and calculating the mean difference of the prediction. This mean difference is taken to be the expected effect between these two categories. How these changes are accumulated and how the ALE-plot looks, becomes clearer once looking at an example.
 
 \hypertarget{example-of-ale-with-categorical-feature}{%
 \subsection{Example of ALE with categorical feature}\label{example-of-ale-with-categorical-feature}}
 
-For the following example the munich rent dataset, which consists of a sample of 2053 appartments from the data collected for the preparation of the Munich rent index 2003, was used. For our purposes we restricted the data to the variables rentm (Net rent per square meter in EUR (numeric)), size (Floor area in square meters (numeric)), rooms (Number of rooms (numeric)), year (Year of construction (numeric)) and area (Urban district where the apartment is located (Factor with 25 levels)). In a first step a model (Support Vector Machine for Regression) was fitted to predict the variable rentm. Now the ALE for the feature area, which is a categorical variable, was estimated with the iml-package. Figure \ref{fig:ALE2catfullmod} shows the result.
+For the following example the Munich rent dataset, which consists of a sample of 2053 apartments from the data collected for the preparation of the Munich rent index 2003, was used. For our purposes we restricted the data to the variables rentm (Net rent per square meter in EUR (numeric)), size (Floor area in square meters (numeric)), rooms (Number of rooms (numeric)), year (Year of construction (numeric)) and area (Urban district where the apartment is located (Factor with 25 levels)). In the first step, a model (Support Vector Machine for Regression) was fitted to predict the variable rentm. Now the ALE for the feature area, which is a categorical variable, was estimated with the iml-package. Figure \ref{fig:ALE2catfullmod} shows the result.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_example_cat_} \caption{ALE for the variable area (categorical)}\label{fig:ALE2catfullmod}
@@ -2237,19 +2235,19 @@ For the following example the munich rent dataset, which consists of a sample of
 
 
 
-As described previously in a first step the categories (each number stands for one district) were ordered on basis of their similarity w.r.t. the other features. Notice that the first bar at category one only reflects the centering. The uncentered ALE wouldn't show an effect for this category as it is kind of the starting point.
-Now the mean difference of prediction between category 1 and 8 was calculated. Therefore datapoints from category 1 were shifted to category 8, letting the rest of the features untouched and vice versa. The total effect was estimated as the mean difference in prediction for these datapoints. It is shown as the delta of the category 1 bar and the category 8 bar. Without centering it would be seen at the category 8 bar. Now the same difference is estimated for the change from category 8 to category 2 and is shown as the delta of their bars.
-This procedure continoues till finally the change from category 23 to category 22 results in the last delta between their bars.
+As described previously in a first step the categories (each number stands for one district) were ordered on basis of their similarity w.r.t. the other features. Notice that the first bar at category one only reflects the centering. The uncentered ALE wouldn't show an effect on this category as it is kind of the starting point.
+Now the mean difference of prediction between category 1 and 8 was calculated. Therefore datapoints from category 1 were shifted to category 8, letting the rest of the features untouched and vice versa. The total effect was estimated as the mean difference in prediction for these data points. It is shown as the delta of the category 1 bar and the category 8 bar. Without centering it would be seen at the category 8 bar. Now the same difference is estimated for the change from category 8 to category 2 and is shown as the delta of their bars.
+This procedure continues until finally the change from category 23 to category 22 results in the last delta between their bars.
 
 \hypertarget{interpretation}{%
 \subsection{Interpretation}\label{interpretation}}
 
-The interpretation of the ALE-plot for categorical features is unfortunatley quite difficult. The deltas between two adjacent bars surely can be interpreted as the change between the corresponding categories. Once looking on deltas of two categories with one or more other categories in between this changes. The delta is not anylonger the change of prediction between the two categories but the estimated change of prediction for shifting throug all the categories in between in exactly the given order. The reason is that the estimated delta is not path independent. For example the delta between categories 1 and 2 in the example above was calculated using datapoints of category 1, 8, and 2. If they were direct neigbhours, the datapoints of category 8 wouldn't be involved in the estimation at all. This problem clearly grows the further two categories are ordered. Having this in mind the absolut values of the bars shouldn't be interpreted at all. Furthermore this is another argument for ordering the the categories in a reasonable manner, while it stays arguable what ``reasonable'' in this context means.
+The interpretation of the ALE-plot for categorical features is unfortunately quite difficult. The deltas between two adjacent bars surely can be interpreted as the change between the corresponding categories. Once looking at deltas of two categories with one or more other categories in between, this changes. The delta is not any longer the change of prediction between the two categories but the estimated change of prediction for shifting through all the categories in between in exactly the given order. The reason is that the estimated delta is not path independent. For example, the delta between categories 1 and 2 in the example above was calculated using data points of category 1, 8, and 2. If they were direct neighbors, the data points of category 8 wouldn't be involved in the estimation at all. This problem clearly grows the further two categories are ordered. Having this in mind the absolute values of the bars shouldn't be interpreted at all. Furthermore, this is another argument for ordering the categories in a reasonable manner, while it stays arguable what ``reasonable'' in this context means.
 
-\hypertarget{changes-of-the-ale-due-to-diffrent-orders}{%
-\subsection{Changes of the ALE due to diffrent orders}\label{changes-of-the-ale-due-to-diffrent-orders}}
+\hypertarget{changes-of-the-ale-due-to-different-orders}{%
+\subsection{Changes of the ALE due to different orders}\label{changes-of-the-ale-due-to-different-orders}}
 
-The last two graffics show how much the ALE for categorical features depends on the underlying order of the features. For the first one the same learner was fitted on a restricted feature space containing only the variables year and area.
+The last two graphics show how much the ALE for categorical features depends on the underlying order of the features. For the first one, the same learner was fitted on a restricted feature space containing only the variables year and area.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ALE_2_cat_different_features_} \caption{ALE-plot of the full model vs ALE-plot of the restricted model}\label{fig:ALE2catrestrmod}
@@ -2257,22 +2255,22 @@ The last two graffics show how much the ALE for categorical features depends on 
 
 
 
-As the comparison of the ALE-plots of figure \ref{fig:ALE2catrestrmod} shows, the similarity based order changes as it is only calculated on basis of the variable year (instead of size, room, year). As the underlying model is now a different one, changes of the ALE are not suprising. Still the comparison is quite difficult due to the new order.
+As the comparison of the ALE-plots of figure \ref{fig:ALE2catrestrmod} shows, the similarity-based order changes as it is only calculated on basis of the variable year (instead of size, room, year). As the underlying model is now a different one, changes in the ALE are not surprising. Still, the comparison is quite difficult due to the new order.
 
-The second ALE-plot of figure \ref{fig:ALE2catdifford} is again based on the full model. This time the area was taken as ordered factor, such that the similarity based order wasn't calculated. The resulting ALE takes the district enumeration as order and proceeds accordingly.
+The second ALE-plot of figure \ref{fig:ALE2catdifford} is again based on the full model. This time the area was taken as an ordered factor, such that the similarity-based order wasn't calculated. The resulting ALE takes the district enumeration as order and proceeds accordingly.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/ALE_2_cat_different_orders_} \caption{Two ALE-plots for different orderes of the category area}\label{fig:ALE2catdifford}
+\includegraphics[width=1\linewidth]{images/ALE_2_cat_different_orders_} \caption{Two ALE-plots for different orders of the category area}\label{fig:ALE2catdifford}
 \end{figure}
 
 
 
-Although the underlaying model is exactly the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity based order. This underlines how carefull one should be when interpreting ALE-plots for categorical features.
+Although the underlying model is exactly the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example, we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity-based order. This underlines how careful one should be when interpreting ALE-plots for categorical features.
 
 \hypertarget{conclusion-1}{%
 \subsection{Conclusion}\label{conclusion-1}}
 
-We have seen how sensitve the ALE (for categorical features) is to different orders of the category. Due to the lack of theoretical foundations concerning the implemented order method, further investigations are highly recomended. The interpretation of the ALE should be done quite carefully.
+We have seen how sensitive the ALE (for categorical features) is for different orders of the category. Due to the lack of theoretical foundations concerning the implemented order method, further investigations are highly recommended. The interpretation of the ALE should be done quite carefully.
 
 \hypertarget{introduction-to-feature-importance}{%
 \chapter{Introduction to Feature Importance}\label{introduction-to-feature-importance}}
