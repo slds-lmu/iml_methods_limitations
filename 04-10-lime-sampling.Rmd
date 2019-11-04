@@ -1,10 +1,4 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
-
-# LIME and Sampling
+# LIME and Sampling {#lime-sample}
 
 *Author: Sebastian Gruber*
 
@@ -139,7 +133,7 @@ knitr::include_graphics("images/nonconvex_samples_size100_1vs2.png")
 ```
 
 Another possible step would be to increase the kernel width as seen in figure \@ref(fig:figkernel), making the explanations again more similar, but also greatly losing the locality of the explanation.
-Since chapter \@ref(id1) already gave a thorough overview of this and because we assume we do not want to lose any locality, we focus on the default kernel width in the following and investigate the influence of further options on the weight stability of the LIME explanations.
+Since chapter \@ref(lime-neighbor) already gave a thorough overview of this and because we assume we do not want to lose any locality, we focus on the default kernel width in the following and investigate the influence of further options on the weight stability of the LIME explanations.
 
 ```{r, figkernel, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width and two different sample seeds in each plot", warning=FALSE}
 

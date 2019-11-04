@@ -1,4 +1,4 @@
-# Partial and Individual Permutation Feature Importance
+# Partial and Individual Permutation Feature Importance {#pfi-partial}
 
 *Author: Moritz Wagner*
 

@@ -4,7 +4,7 @@ output:
   pdf_document: default
   keep_tex: true
 ---
-# PDP and Correlated Features
+# PDP and Correlated Features {#pdp-correlated}
 
 *Author: Veronika Kronseder*
 

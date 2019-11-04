@@ -1,9 +1,4 @@
-# Introduction to Accumulated Local Effects (ALE) 
-
-
-
-
-
+# Introduction to Accumulated Local Effects (ALE) {#ale}
 
 ## Motivation
 

@@ -1,10 +1,4 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
-
-# Introduction to Local Interpretable Model-Agnostic Explanations (LIME)
+# Introduction to Local Interpretable Model-Agnostic Explanations (LIME) {#lime}
 
 *Authors: Sebastian Gruber, Philipp Kopper*
 

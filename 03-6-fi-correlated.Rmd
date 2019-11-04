@@ -1,4 +1,4 @@
-# PFI, LOCO and Correlated Features
+# PFI, LOCO and Correlated Features {#pfi-correlated}
 
 The method of Feature Importance is a powerful tool in gaining insights into black box models under the assumption that there in no correlation between features of the given data set. However, this fundamental assumption can often be rejected in reality. As mentioned in chapter 3, PDPs may suffer in their interpretability, if this assumption is violated. Not only the interpretability of PDPs can be affected, but also the interpretability of Feature Importance can strongly depend on the correlations between the input features. In case of correlated features in the data, which are very likely to occur in reality, the results of the Feature Importance method do not reflect the individual true Feature Importance anymore. This can lead to a misleading importance ranking of the features and hence to incorrect interpretations of a feature’s relevance in a model. 
 

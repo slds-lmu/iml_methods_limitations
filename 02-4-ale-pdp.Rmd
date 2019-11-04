@@ -1,4 +1,4 @@
-# Comparison of ALE and PDP
+# Comparison of ALE and PDP {#ale-pdp}
 
 *Author: Jakob Bodensteiner*
 
