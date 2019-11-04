@@ -1,4 +1,12 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
 # Introduction to Local Interpretable Model-Agnostic Explanations (LIME)
+
+*Authors: Sebastian Gruber, Philipp Kopper*
 
 When doing machine learning we always build models.
 Models are simplifications of reality.
@@ -13,6 +21,8 @@ While a neural network is anything but interpretable, we may find that some of t
 
 In general, there are two kinds of surrogate models: global and local surrogate models.
 In this chapter, we will focus on the latter ones.
+
+## Local Surrogate Models and LIME
 
 The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
 Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
@@ -46,7 +56,7 @@ It is coloured in yellow.
 With respect to this point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
-This yields an interpretable linear decision boundary - depicted by the purple line. 
+This yields an interpretable linear decision boundary -- depicted by the purple line. 
 As we can see, this is indeed locally very similar to the black box decision boundary and seems to be a reasonable result.
 
 ```{r, echo = FALSE}
@@ -65,6 +75,8 @@ knitr::include_graphics("images/lime.png")
 This way we receive a single explanation.
 This one explanation can only help to understand and validate the corresponding prediction.
 However, the model as a whole can be examined and validated by multiple (representative) LIME explanations.
+
+## How LIME works in detail
 
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
@@ -87,6 +99,8 @@ The explanation has to deal with two trade-off terms when minimising:
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
 
+### Neighbourhood
+
 This leads us to the first open question:
 What does neighbourhood refer to?
 Neighbourhood is a very vague term.
@@ -97,16 +111,20 @@ This may possibly be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
-We already answered the second open question - what properties suitable explainers should have - in parts.
+### What makes a good explainer?
+
+We already answered the second open question -- what properties suitable explainers should have -- in parts.
 We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
 However, we did not discuss further desired properties of these models.
 Since they have strong assumptions, it is unlikely that they are capable of maintaining an optimal fit to the original black box model. 
 Recall our formula.
-As we want local optimal fit subjected to a certain (low) degree of explainer complexity - in order to allow interpretation - our formula needs to facilitate this aspect.
+As we want local optimal fit subjected to a certain (low) degree of explainer complexity -- in order to allow interpretation -- our formula needs to facilitate this aspect.
 $\Omega\left(g\right)$ is our complexity measure and responsible to choose the model with the lowest complexity.
 For example, for decision trees, tree depth may describe the complexity.
 In the case of linear regression, the $L_1$ norm may indicate how simple the interpretation has to be. 
 The resulting LASSO model allows us to focus only on the most important features.
+
+### Sampling and perturbation
 
 Having answered the first two open question we still have the last question related to the data and the perturbation unresolved.
 Besides the tabular data case, we can also interpret models trained on more complex data, like text data or image data. 
@@ -122,13 +140,55 @@ But how does perturbation work?
 This is a priori not clear at all.
 For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
 Numerical features may be drawn from a properly parametrised (normal) distribution.
-The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points - especially in sparse areas.
-Further details on this topic will be studied in chapter X.
+The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points -- especially in sparse areas.
+Further details on this topic will be studied in the next chapters.
 
-As we did not provide any examples on the application of LIME, please refer to the next two chapters or @molnar2019 for some examples.
+## Example
+
+A fully implemented example of LIME can be seen in the following code block with its resulting plot. In the latter we can observe how much each feature contributes to the surrogate model's prediction and to what extend this prediction offers a good fit on the black box model ('Explanation Fit' between 0 and 1).
+
+```{r, eval = TRUE, echo = FALSE, warning = FALSE}
+required_packages = c("lime", "mlr")
+install_these = required_packages[!(required_packages %in%
+                                      installed.packages())]
+if (length(install_these) > 0) {
+  if ("lime" %in% install_these) {
+    install_these = install_these[install_these != "lime"]
+    install_github("https://github.com/thomasp85/lime")
+  }
+  install.packages(install_these)
+}
+```
+
+```{r, eval = TRUE, echo = TRUE, fig.align = 'center', out.width = '99%', fig.cap = "Basic example of a LIME application. We create a black box model on the iris dataset without the first data point and then explain the prediction of this point with LIME."}
+library(lime)
+library(mlr)
+
+# separate data point we want to explain
+to_explain  = iris[ 1, 1:4]
+train_set   = iris[-1, ]
+
+# create task and calculate black box model
+task_iris   = makeClassifTask(data = train_set, 
+                              target = "Species")
+learner     = makeLearner("classif.randomForest", 
+                          ntree = 200, predict.type = "prob")
+black_box   = train(learner, task_iris)
+
+# use lime to explain new data point
+explainer   = lime(train_set[, 1:4], black_box)
+explanation = explain(to_explain,
+                      explainer,
+                      n_labels = 1,
+                      n_features = 4)
+
+plot_features(explanation)
+```
+
+## Outlook
 
 The definition of LIME still seems after all very rough and vague.
-This leaves us many scientific degrees of freedom when implementing it - for the good and for the bad.
+This leaves us many scientific degrees of freedom when implementing it -- for the good and for the bad.
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer $g$ with the same complexity constraints. 
 
