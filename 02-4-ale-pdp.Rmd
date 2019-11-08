@@ -1306,8 +1306,9 @@ This example demonstrated a crucial weakness of the ALE regarding the size of th
 
 
 
-## Calculation of theoretical 2D ALE example {#ale-2d-example-calculation}
-TODO: this should go to the appendix
+## Appendix
+
+### Calculation of theoretical 2D ALE example {#ale-2d-example-calculation}
 
 Features $x_1$, $x_2$, $x_3$ and the prediction function $\hat{f}(x_1, x_2, x_3) = x_1 x_2 x_3$ are given.
 The features are sampled from the these disrtibutions:
