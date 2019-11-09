@@ -1,4 +1,6 @@
-# Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)
+# Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)  {#pdp}
+
+*Authors: Thommy Dassen, Naiwen Hou, Veronika Kronseder*
 
 ## Partial Dependence Plots (PDP)
 

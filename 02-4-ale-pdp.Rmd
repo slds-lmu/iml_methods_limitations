@@ -1,6 +1,8 @@
-# Comparison of ALE and PDP
+# Comparison of ALE and PDP {#ale-pdp}
 
 *Author: Jakob Bodensteiner*
+
+*Supervisor: Christian Scholbeck*
 
 <!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
 

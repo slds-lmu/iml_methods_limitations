@@ -1,6 +1,8 @@
-# PDP and Causal Interpretation
+# PDP and Causal Interpretation {#pdp-causal}
 
 *Author: Thommy Dassen*
+
+*Supervisor: Gunnar König*
 
 ```{r include=FALSE}
 library(dplyr) # for group by

@@ -1,6 +1,8 @@
-# Partial and Individual Permutation Feature Importance
+# Partial and Individual Permutation Feature Importance {#pfi-partial}
 
 *Author: Moritz Wagner*
+
+*Supervisor: Giuseppe Casalicchio*
 
 The introductory chapter discussed the relevance of PFI and LOCO for the interpretability of machine learning models. It was argued that for interpretation purposes, the concept of Feature Importance is an indispensable complement to analyzing Feature Effects. The Feature Importance quantifies the contribution of a specific feature to the prediction power of a model. Yet, it was also remarked that an aggregated, global measure of Feature Importance might be insufficient. It might be the case that within a feature, some single values or subgroups are more important for predictions than others. This heterogeneity, however, could not be captured by a single metric. Besides, it is trivial to understand that with increasing heterogeneity, the global PFI becomes less revealing. By implication, a complementary method that captures such heterogeneity becomes more decisive. 
 

@@ -1,8 +1,8 @@
-# ALE Intervals, Piece-Wise Constant Models and Categorical Features
+# ALE Intervals, Piece-Wise Constant Models and Categorical Features {#ale-misc}
 
 *Author: Nikolas Fritz*
 
-
+*Supervisor: Christian Scholbeck*
 
 As mentioned in the former section the choice of intervals and starting value $z_{0,j}$ have both a certain influence on the estimated ALE - curve. While the main influence of $z_{0,j}$ is canceled out by centering the ALE, the choice of intervals stays crucial. Therefore the next section is dedicated to this topic. 
 
