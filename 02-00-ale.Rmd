@@ -1,5 +1,9 @@
 # Introduction to Accumulated Local Effects (ALE) {#ale}
 
+*Authors: Jakob Bodensteiner, Nikolas Fritz*
+
+*Supervisor: Christian Scholbeck*
+
 ## Motivation
 
 As seen in section 2 PDPs don't work well as soon as two or more features are correlated. This gives rise to the definition of ALEs. Although their definition makes sense for high dimensional feature spaces including categorical features, within this section we only treat a space with two continous features. 
