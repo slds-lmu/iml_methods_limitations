@@ -14,7 +14,14 @@ library(randomForest)
 ```
 
 ## Introduction
-In this chapter an attempt will be made to evaluate the merits of a causal interpretation of Partial Dependance Plots (PDPs). In order to do so, Directed Acyclical Graphs (DAGs) are used to visualize various data generating mechanisms. Judea Pearl's framework of do-calculus is used to intervene on simulated data. The goal is to compare the PDP with the expected value under an intervention. We will see scenarios in which the PDP gives the same result as an intervention and scenarios in which the limitations of the PDP as a tool for causal interpretation become clear.  
+
+Machine learning methods excel at learning associaitons between features and the target. The supervised machine learning model estimates $Y$ using the information provided in the feature set $X$. Partial dependence plots (PDPs) allow us to inspect the learned model. We can analyze how the model prediction changes given a change in the features.
+
+The unexperienced user may be tempted to transfer this insight about the model into an insight in the real world. If our model's prediction changes given a change on some feature $Y_j$, can we change the target variable in the real world by performing an intervention on $Y_j$?
+
+Of course, this is not generally true. Without further assumptions we cannot interpret PDPs causally (like we cannot interpret coefficients of linear models causally). However, curiously, certain assumption sets allow for a causal interpretation.
+
+In this Chapter we will elaborate the necessary assumptions sets for causal interpretation and will empirically evaluate the accuracy of the resulting plots. We therefore assume certain data generating mechanisms, also referred to as structural equation models (SEMs), and use Judea Pearl's do-calculas framework to compute the true distributions under an intervention. Graphs are used to visualize the underlying dependence structure. We will see scenarios in which the PDP gives the same result as an intervention and scenarios in which the limitations of the PDP as a tool for causal interpretation become clear.  
 
 To interpret causally means to interpret one state (the effect) to be the result of another (the cause), with the cause being (partly) responsible for the effect, and the effect being partially dependent on the cause. [@zhaohastie] formulated three elements that are needed to ensure that the PDP coincides with the intervention effect:  
 1. A good predictive model which closely approximates the real relationship.  
@@ -25,7 +32,8 @@ The first condition is an important one, because there is a big difference betwe
 
 ## A brief look at PDP problems  
 
-Before we have a look at various scenarios and settings involving interventions, let's look at two examples of other problems that can occur when using a PDP. The first example shows the need for domain knowledge. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. Intuitively, we know in this case that there will be a relationship between the two: People eat more ice-cream when temperatures are high than when temperatures are low. Just looking at the data, however, the direction of the relationship is not as evident. Below are two PDPs, showing the effect of one variable on the other.
+Before we have a look at various scenarios and settings involving interventions, let's look at two exemplary problems. Let's say we have a dataset containing data on the amount of ice-cream consumption per capita and the temperature outside. The temperature is causal for the ice-cream consupmtion: People eat more ice-cream when temperatures are high than when temperatures are low. Therefore, both quantities are dependent as well. A statistical model learns to use the information in one of the variables to predict the other, as is evident in the plots below.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE ,}
 data("Icecream")
  rf.icecream = randomForest(cons ~ temp
@@ -46,7 +54,9 @@ data("Icecream")
 knitr::include_graphics('images/ice_cream.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-Clearly it would be wrong to interpret the second plot causally. While it would be ok to say that higher consumption of icecream is associated with higher temperatures, no one would ever say that higher icecream consumption *causes* higher temperatures. This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Not all cases are as clear-cut as the one here: Think for instance of the link between smoking and depression. Does smoking cause depression, or depression cause smoking? Potentially they cause and reinforce each other. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
+While the dependence is learned correctly, it would be wrong to interpret the second plot causally. When more ice cream is consumed, it is likely that the temperature is higher. However, consuming more ice cream will not change the amount of ice cream that is being eaten. 
+
+This example illustrates the need for domain knowledge about the causal structure between variables in order to be able to interpret PDPs causally. Blindly plotting a PDP and interpreting it causally is problematic. Not all cases are as clear-cut as the one here: Think for instance of the link between smoking and depression. Does smoking cause depression, or depression cause smoking? Potentially they cause and reinforce each other. Directionality is only one aspect that can be solved by domain knowledge. We will see later domain knowledge is also a necessity in order to determine whether the so-called backdoor criterion is met.
 
 Another problem with PDPs was shown by [@scholbeck]. Assume we have data that is distributed as follows:
 
