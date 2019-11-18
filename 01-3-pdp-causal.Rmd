@@ -143,7 +143,7 @@ $$ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \
 As will be done in all scenarios, both standard deviaton for $\epsilon$ and $N$ were varied across 3 levels leading to 9 settings.  
 
 ```{r  echo=FALSE, Figure4, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 1 of PDPs under various settings with the (yellow) intervention curve on the right"}
-knitr::include_graphics('images/scenario1_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/scenario1_all.jpg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 
@@ -278,7 +278,7 @@ $$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \
 
 
 ```{r  echo=FALSE, Figure6, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 2 of PDPs under various settings with the (yellow) intervention curve on the right"}
-knitr::include_graphics('images/scenario2_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/scenario2_all.jpg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 As can be seen from Figure \@ref(fig:Figure6), the PDP plots do not match the intervention plots well in several cases. In fact, four out of nine settings show a negative slope for the relationship between $X$ and $Y$ in comparison to the overall positive slope for the true intervention. The first row performs best, as expected due to the relatively small error that is used. Interesting is also that in the second and third row, where the error has been increased, the PDP slope goes from positive to negative between the first and second column. PDP accuracy thus suffers in situations where the observation count is low.
@@ -409,7 +409,7 @@ $$ Y \leftarrow Z + X + \epsilon_Y  $$
 $$ \epsilon_Y,\epsilon_Z ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X, \ \ \ \ \ Z \leftarrow X + \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
 
 ```{r  echo=FALSE, Figure8, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 3 of PDPs under various settings with the (yellow) intervention curve on the right"}
-knitr::include_graphics('images/scenario3_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/scenario3_all.jpg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
 The expectation was that the PDP would not show the same results as the true intervention. On first glance in Figure \@ref(fig:Figure8), the PDPs do not seem to be as inaccurate as they were in scenario 2. An overall upward trend seen in the true intervention on the right is also captured by the PDPs in all settings. However, big differences do exist. First of all, the scale of $\hat{Y}$ is off in every setting. This issue gets worse both when the standard deviation of the error increases and when the number of observations is increased. The worst setting is the bottom right, where $N = 10.000$ and the standard deviation of the error is 0.5. The range of $\hat{Y}$ is very small compared to the true intervention next to it and the slope is not steep enough. In fact, the correct slope can only be seen in a very few points: In the top row plot 2 and 3 around $X=0$ and on the second row plot 3, also around $X=0$.
@@ -534,7 +534,7 @@ For the simulation the initial settings look as follows, again increasing both t
 $$ Y \leftarrow X + \epsilon_Y  $$
 $$ \epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_X, \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ X \leftarrow \epsilon_X,\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ N \leftarrow 100 $$
 ```{r  echo=FALSE, Figure10causal, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 4 of PDPs under various settings with the (yellow) intervention curve on the right"}
-knitr::include_graphics('images/scenario4_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/scenario4_all.jpg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 The PDPs in Figure \@ref(fig:Figure10causal) are able to capture the intervention curve well. Only in the cases where $N=100$ is there slight curvature at the extreme ends of $X$. With this low number of observations the model is less accurate. In all other settings a consistent slope is present from $X = -1$ to $X = 1$, with the scale of $\hat{Y}$ matching that of $Y_{intervention}$.
@@ -664,7 +664,7 @@ $$ Y \leftarrow Z + X + \epsilon_Y  $$
 $$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1), \ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 $$
 
 ```{r  echo=FALSE, Figure12causal, out.width='100%', fig.align= 'left', fig.cap="Comparison for scenario 5 of PDPs under various settings with the (yellow) intervention curve on the right"}
-knitr::include_graphics('images/scenario5_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
+knitr::include_graphics('images/scenario5_all.jpg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
 We can see in Figure \@ref(fig:Figure12causal) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs with the highest number of observations are are most accurate and have the lowest standard deviation of errors.
