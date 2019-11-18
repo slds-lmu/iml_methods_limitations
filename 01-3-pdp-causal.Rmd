@@ -113,7 +113,7 @@ These last two formulas are the same, if $C$ is the complement of $S$.
 
 After these two introductory problems of PDPs, the rest of this chapter will look at PDPs through the causal framework of [@pearl1993]. This means we will look at various causal scenarios visualized through DAGs and compare the PDPs created under this structure with the actual effect of interventions. 
 
-In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 1000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The interventions were all run with a thousand observations. Initial tests resulted in a large increase in computation time with a higher number of observations, but with results that hardly differed from those obtained with one thousand observations.
+In each scenario nine settings will be simulated for PDP creation, consisting of three standard deviations for the error term (0.1, 0.3 and 0.5) and three magnitudes of observations (100, 1000, 10000). Furthermore, each setting for the PDP was simulated across twenty runs. Each of the nine plots will therefore show twenty PDPs in order to give a solid view of the relationship the PDPs capture for each setting. In addition to the plots of the PDPs, which will be the first three columns in each figure, the actual effect under intervention will be shown in a fourth column as a single yellow line. The true intervention effects (column 4) were all simulated with a thousand observations. Initial tests resulted in a large increase in computation time with a higher number of observations, but with results that hardly differed from those obtained with one thousand observations.
 
 The process for obtaining the intervention curve was as follows:
 Let $X$ be the predictor variable of interest with possible values $x_{1}, x_{2}, x_{n}$ and $Y$ the response variable of interest.
@@ -125,6 +125,7 @@ for each unique $i \in \{1,2,\dots,n\}$ do
 (5) ($X_i$, $Y_i$) are a single point on the intervention curve.  
 
 **Scenario 1:  **
+
 
 ```{r Figure3, echo=FALSE, fig.height = 3, fig.width = 3.5, fig.cap="Chain DAG where X has a direct impact on Y, but is dependent on Z"}
 set.seed(18)
@@ -172,7 +173,7 @@ pdp_simulation <- function(runs, N, error_std){
     colnames(simulation) <- c("X", "Y_hat", "run_number")
     pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
   }
-  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5) + ylim(-2.0, 2.0)
 }
 # standard deviation eq 0.1
 scen1_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
@@ -301,7 +302,7 @@ pdp_simulation <- function(runs, N, error_std){
     colnames(simulation) <- c("X", "Y_hat", "run_number")
     pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
     }
-  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen2_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
@@ -430,7 +431,7 @@ pdp_simulation <- function(runs, N, error_std){
     colnames(simulation) <- c("X", "Y_hat", "run_number")
     pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
   }
-  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen3_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
@@ -512,6 +513,7 @@ annotate_figure(scenario_3_all,
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                 fig.lab.face = "bold")
 
+plot(scenario_3_all)
 ```
 
 **Scenario 4**
@@ -553,7 +555,7 @@ pdp_simulation <- function(runs, N, error_std){
     colnames(simulation) <- c("X", "Y_hat", "run_number")
     pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
   }
-  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5) + ylim(-2.0, 2.0)
 }
 # standard deviation eq 0.1
 scen4_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
@@ -657,7 +659,7 @@ $$ \epsilon_Y,\epsilon_X ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \
 knitr::include_graphics('images/scenario5_all.jpeg', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
-We can see in Figure \@ref(fig:Figure12causal) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs are most accurate with the highest number of observations and lowest standard deviation of errors.
+We can see in Figure \@ref(fig:Figure12causal) that aside from the extreme regions of $X$ where the slope is flatter, the PDPs are fairly similar to the Intervention Curves on the right. We can see that as the standard deviations of the errors increase, so does the range of $Y_intervention$ from (-1, 1) to (-2,2). This same trend can be observed in the PDPs. As could be expected, the PDPs with the highest number of observations are are most accurate and have the lowest standard deviation of errors.
 
 ```{r eval=FALSE, include=FALSE}
 # pdp
@@ -681,7 +683,7 @@ pdp_simulation <- function(runs, N, error_std){
     colnames(simulation) <- c("X", "Y_hat", "run_number")
     pdp_simulations <- rbind.data.frame(pdp_simulations, simulation)
   }
-  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5)
+  ggplot(data = pdp_simulations) + geom_line(data = pdp_simulations,aes(x = pdp_simulations[,1], y = pdp_simulations[,2], group = pdp_simulations[,3]), alpha = 0.5) + ylim(-2.0, 2.0)
 }
 # standard deviation eq 0.1
 scen5_plot_1 <- pdp_simulation(runs=20, N = 100, error_std=0.1)
