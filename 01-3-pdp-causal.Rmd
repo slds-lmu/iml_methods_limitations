@@ -86,10 +86,10 @@ knitr::include_graphics('images/avg_vs_individual.jpeg', auto_pdf = getOption("k
 
 ## Causal Interpretability: Interventions and Directed Acyclical Graphs
 
-In the rest of this chapter, we will use the concept of interventions and show causal structures visually. When we make an intervention, it means we fix the value of a variable [@pearl1993]. We change every instance of a particular variable to a specific value chosen by us. This can be done to see the effect a variable has when at a specific value. When we intervene, values of a variable no longer vary in response to other variables. This usually means that the values for other variables change as well as a result. 
-The difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
+For the rest of the Chapter we will assume certain data generating mechanisms. This allows us to compute the true effect of interventions with the help of Pearl's do-calculus [@pearl1993]. In the structural equation model this is equivalent to removing all incoming dependencies for the intervened variable and fixing a specified value. As an effect, the distributions of variables that are caused by the intervened variable may change as well.
+It is important to recognize that an intervention is different from conditioning on a variable. Therefore the difference between a variable $X$ taking a value $x$ naturally and having a fixed value $X=x$ is reflected in the notation. The latter is denoted by $do(X=x)$. As such, $P(Y=y|X=x)$ is the probability that $Y=y$ conditional on $X=x$. $P(Y=y|do(X=x))$ is then the population distribution of $Y$ if the value of $X$ was fixed at $x$ for the entire population.
 
-Causal structures will be visualized with the use of Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs are per definition acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing edges from direct parents to the variable.
+In order to avoid complex scenarios (dynamical models, equilibrium computation) we restrict ourselves to causal structures that can be visualized with Direct Acyclical Graphs. A DAG is a representation of relationships between variables in graphical form. Each variable is represented as a *node* and the lines between these nodes, or *edges*, show the direction of the causal relationship through arrowheads. In addition to being directed, these graphs are per definition acyclical. This means that a relationship $X \rightarrow Y \rightarrow Z \rightarrow X$ can not be represented as a DAG. Several examples of DAGs follow in the rest of the chapter, as each scenario starts with on. With regards to interventions, in a graphical sense this simply means removing edges from direct parents to the variable.
 
 In order to know when a causal interpretation makes sense, more is needed than only a representation of a DAG and knowledge of how to do an intervention. An important formula introduced by  [@pearl1993] adresses exactly this problem: The back-door adjustment formula. This formula stipulates that the causal effect of $X_S$ on $Y$ can be identified if the causal relationship between the variables can be visualized in a graph and $X_C$, the complementary set to $X_S$, adheres to what he called the back-door criterion. The back-door adjustment formula is:
 
@@ -107,7 +107,6 @@ These last two formulas are the same, if $C$ is the complement of $S$.
 1. No node in $X_C$ can be a descendant of $X_S$ in the DAG $G$.
 
 2. Every "back-door" path between $X_S$ and $Y$ has to be blocked by $X_C$.
-
 
 
 ## Scenarios
