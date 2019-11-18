@@ -223,7 +223,7 @@ intervention <- function(runs, N, error_std){
     
     arrange(X)
   
-  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen1_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
@@ -247,12 +247,15 @@ scenario_1_all <- ggarrange(scen1_plot_1, # N = 100,  std = 0.1
                             scen1_plot_8, # N = 1000, std = 0.5
                             scen1_plot_9, # N = 2000, std = 0.5
                             scen1_int_plot_8,
-                            
                             nrow= 3, ncol = 4)
+
+
 annotate_figure(scenario_1_all,
                 top = text_grob("Increasing number of observations to the right", color = "black"),
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                  fig.lab.face = "bold")
+
+ggsave('~/data/results/pdp-causal/scenario1_all.jpg')
 
 ```
 
@@ -353,7 +356,7 @@ intervention <- function(runs, N, error_std){
     
     arrange(X)
 
-  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen2_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
@@ -383,6 +386,9 @@ annotate_figure(scenario_2_all,
                 top = text_grob("Increasing number of observations to the right", color = "black"),
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                  fig.lab.face = "bold")
+
+
+ggsave('~/data/results/pdp-causal/scenario2_all.jpg')
 ```
 
 **Scenario 3**
@@ -482,7 +488,7 @@ intervention <- function(runs, N, error_std){
     
     arrange(X)
   
-  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen3_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
@@ -513,7 +519,7 @@ annotate_figure(scenario_3_all,
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                 fig.lab.face = "bold")
 
-plot(scenario_3_all)
+ggsave('~/data/results/pdp-causal/scenario3_all.jpg')
 ```
 
 **Scenario 4**
@@ -605,7 +611,7 @@ intervention <- function(runs, N, error_std){
     
     arrange(X)
   
-  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen4_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
@@ -635,6 +641,8 @@ annotate_figure(scenario_4_all,
                 top = text_grob("Increasing number of observations to the right", color = "black"),
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                 fig.lab.face = "bold")
+
+ggsave('~/data/results/pdp-causal/scenario4_all.jpg')
 
 ```
 
@@ -733,7 +741,7 @@ intervention <- function(runs, N, error_std){
     
     arrange(X)
   
-  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5)
+  ggplot(aes(X, Y_intervention), data = df_intervention_group) + geom_line(colour="gold2", size = 1.5) + ylim(-2, 2)
 }
 # standard deviation eq 0.1
 scen5_int_plot_2 <- intervention(runs=1, N = 1000, error_std=0.1)
@@ -763,6 +771,8 @@ annotate_figure(scenario_5_all,
                 top = text_grob("Increasing number of observations to the right", color = "black"),
                 left = text_grob("Increasing standard deviation of error to the bottom", color = "black", rot = 90),
                 fig.lab.face = "bold")
+
+ggsave('~/data/results/pdp-causal/scenario5_all.jpg')
 ```
 
 ## Theoretical Comparison
