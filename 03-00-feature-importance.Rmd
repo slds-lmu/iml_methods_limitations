@@ -22,7 +22,7 @@ Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $
 
 <br>
 
-In Figure \@ref(fig:PFI) it is illustrated, by a fictional example, how the permutation algorithm alters the original dataset. For each of the $p$ features, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error. 
+In Figure \@ref(fig:PFI) it is illustrated, by a fictional example, how the permutation algorithm alters the original dataset. For each of the $p$ features, the respectively permuted dataset is then used to first predict the outcomes and then calculate the prediction error.
 
 
 
@@ -64,16 +64,16 @@ mod = Predictor$new(rf, data = X, y = y)
   imp.dat[which(imp.dat$feature == "age"),]$feature <- "Age"
   imp.dat[which(imp.dat$feature == "black"),]$feature <- "Blacks"
 
-  
- p1 <- ggplot(data = imp.dat, aes(x = reorder(feature, importance), ymin=importance.05, ymax=importance.95)) + 
-    geom_errorbar(width=0.3, size=1, color="darkblue") + 
+
+ p1 <- ggplot(data = imp.dat, aes(x = reorder(feature, importance), ymin=importance.05, ymax=importance.95)) +
+    geom_errorbar(width=0.3, size=1, color="darkblue") +
     geom_point(mapping=aes(x=feature, y=importance), size=3, shape=21, fill="white") +
     coord_flip() +
     theme(plot.subtitle = element_text(size = 10)) +
-    labs(y = "Feature Importance (ratio MAE)", x= "") + 
+    labs(y = "Feature Importance (ratio MAE)", x= "") +
     theme(text = element_text(size = 16))
-  
-p1 
+
+p1
 ```
 
 </center>
@@ -98,7 +98,7 @@ Input: Trained model $f$, feature matrix $X$, target vector $y$, error measure $
 <br>
 
 
-In Figure \@ref(fig:LOCO) it is shown, how the LOCO algorithm alters the original dataset, whereby it always differs, depending on the respective feature that is left out. Note, that the qualitative and quantitative interpretations correspond to the ones from the PFI method. So do the visualization tools and therefore at this point it is refrained from providing the reader with an additional real data example. 
+In Figure \@ref(fig:LOCO) it is shown, how the LOCO algorithm alters the original dataset, whereby it always differs, depending on the respective feature that is left out. Note, that the qualitative and quantitative interpretations correspond to the ones from the PFI method. So do the visualization tools and therefore at this point it is refrained from providing the reader with an additional real data example.
 
 <br>
 
@@ -112,7 +112,7 @@ knitr::include_graphics("images/LOCO_All.jpeg")
 ## Interpretability of Feature Importance and its Limitations
 
 
-After both methods are presented, it will be now questioned to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models. Reflecting upon these limitations will consitute the main focus in the following chapters. Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g. Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts do consider neither the shape of the relationship between the feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure \@ref(fig:plot), PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter XX will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE [see @casalicchio2018visualizing]. Besides, two general limitations appear when some features in the feature space are correlated. First, correlation makes an isolated analysis of the explanatory power of a feature complicated which results in an erroneous ranking in Feature Importance and hence, in incorrect conclusions. Second, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter XX will focus on this limitations by comparing the performance of PFI and LOCO for different models and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-methods should be computed on training or test data. As answering that depends highly on the research question and data, it is refrained from going into more detail at this point but will be examined and further discussed in chapter XX.
+After both methods are presented, it will be now questioned to what extent these agnostic-methods can contribute to a more comprehensive interpretability of machine learning models. Reflecting upon these limitations will constitute the main focus in the following chapters. Conveniently, both methods are highly adaptable on whether using classification or regression models, as they are non-rigid towards the prediction error metric (e.g. Accuracy, Precision, Recall, AUC, Average Log Loss, Mean Absolute Error, Mean Squared Error etc.). This allows to assess Feature Importance based on different performance measures. Besides, the interpretation can be conducted on a high-level, as both concepts do consider neither the shape of the relationship between the feature and outcome variable nor the direction of the feature effect. However, as illustrated in Figure \@ref(fig:plot), PFI and LOCO only return for each feature a single number and thereby neglect possible variations between subgroups in the data. Chapter \@ref(pfi-partial) will focus on how this limitation can be, at least for PFI, circumvented and introduces the concepts of Partial Importance (PI) and Individual Conditional Importance (ICI) which both avail themselves on the conceptual ideas of PD and ICE [see @casalicchio2018visualizing]. Besides, two general limitations appear when some features in the feature space are correlated. First, correlation makes an isolated analysis of the explanatory power of a feature complicated which results in an erroneous ranking in Feature Importance and hence, in incorrect conclusions. Second, if correlation exists and only in case of applying the PFI method, permuting a feature can result in unrealistic data instances so that the model performance is evaluated based on data which is never observed in reality. This makes comparisons of prediction errors complicated and therefore it should always be checked for this problem, if applying the PFI method. Chapter \@ref(pfi-correlated) will focus on this limitations by comparing the performance of PFI and LOCO for different models and different levels of correlation in the data. Beyond these limitations, it is evident to also question whether these agnostic-methods should be computed on training or test data. As answering that depends highly on the research question and data, it is refrained from going into more detail at this point but will be examined and further discussed in chapter \@ref(pfi-data).
 
 
 
