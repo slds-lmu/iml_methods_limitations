@@ -26,7 +26,7 @@ if [  "$BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ] ; then
   touch .nojekyll
   git add .nojekyll
 
-  git add --all ./*
+  git add -f --all ./*
 
   # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
   git config credential.helper "store --file=.git/credentials"
