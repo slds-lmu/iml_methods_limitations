@@ -85,25 +85,25 @@ This booklet introduces and investigates the limitations of current post-hoc and
 
 To start with, PDP and ALE are methods that enable a better understanding of the relationship between the outcome and feature variables of a machine learning model. 
 Common to both methods is that they reduce the prediction function to a function that depends on only one or two features (@molnar2019). Both methods reduce the function by averaging the effects of the other features, but they differ in how the averages are calculated.  
-PDP, for example, visualizes whether the relationship between the outcome and a feature variable is, for instance, linear, monotonic or nonlinear and hence allow for a straightforward interpretation of the marginal effect of a certain feature on the predicted outcome of a model (@friedman2001greedy).
+PDP, for example, visualizes whether the relationship between the outcome and a feature variable is, for instance, linear, monotonic or nonlinear and hence allows for a straightforward interpretation of the marginal effect of a certain feature on the predicted outcome of a model (@friedman2001greedy).
 However, this holds only true as long as the feature in question is not correlated with any other features of the model. ALE plots are basically a faster and unbiased alternative to PDP, because they can interpret models containing correlated variables correctly (@molnar2019).
-Chapter \@ref(pdp) of the booklet gives a short introduction to PDP. Next, PDP and its limitations when features are correlated is investigated in Chapter \@ref(pdp-correlated), respectively.
+Chapter \@ref(pdp) of the booklet gives a short introduction to PDP. Next, PDP and its limitations when features are correlated are investigated in Chapter \@ref(pdp-correlated), respectively.
 Chapter \@ref(pdp-causal) discusses if PDP allow for causal interpretations.
 Chapter \@ref(ale) gives then a short introduction to ALE.
 ALE and PDP are compared in detail in Chapter \@ref(ale-pdp).
 The choice of intervals, problems with pice-wise constant models and categorial features in the context of ALE are investigated in Chapter \@ref(ale-misc).
 
 Yet, PDP and ALE do not provide any insights to what extent a feature contributes to the predictive power of a model - in the following defined as feature importance.
-PFI and LOCO are two methods that allow to compute and visualize the importance of a certain feature for a machine learning model.
+PFI and LOCO are two methods that allow us to compute and visualize the importance of a certain feature for a machine learning model.
 PFI by @breiman2001random measures the importance of a feature by calculating the increase in the model’s prediction error after permuting the feature.
 Leave-One-Covariate-Out (LOCO) by @lei2018distribution, requires to refit the model as the approach is based on leaving features out instead of permuting them (@casalicchio2018visualizing).
 Chapter \@ref(pfi) gives a short introduction to PFI and LOCO and gives rise to its limitations.
 Chapter \@ref(pfi-correlated) discusses both methods in the case of correlated features.
-Then partial and individual PFI are discussed in Chapter \@ref(pfi-partial) and the issue whether feature importanceshould be computed on training or test data is discussed in Chapter \@ref(pfi-data). 
+Then partial and individual PFI are discussed in Chapter \@ref(pfi-partial) and the issue whether feature importance should be computed on training or test data is discussed in Chapter \@ref(pfi-data). 
 
 Finally, LIME is a method that explains individual predictions of a black box machine learning model by locally approximating the prediction using a less complex and interpretable model (@molnar2019).
 These simplifying models are referred to as surrogate models. Consider for instance a neural network that is used for a classification task.
-The neural network itself is of course not interpretable, but certain decision boundaries could for example be explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
+The neural network itself is of course not interpretable, but certain decision boundaries could, for example, be explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
 To refer to the first paragraph of the introduction, we use the data modeling approach to explain the algorithmic modeling approach in this example.
 Chapter \@ref(lime) gives a short introduction to LIME.
 Chapter \@ref(lime-neighbor) sheds light on the effect of the neighbourhood on LIME's explanantion for tabular data.
