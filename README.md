@@ -38,12 +38,13 @@ install.packages("devtools")
 devtools::install_dev_deps()
 ```
 
-Step 3: Create a new branch in the repository and push it. Please exchange firstname and lastname with your actual name so that you have your personal branch.
+Step 3: Render the book
 
-RStudio: In the 'Git' tab click on 'New Branch' and type the branch name (firstname_lastname scheme). Leave the other settings as is.
-```
-git checkout -b 'firstname_lastname'
-git push -u origin firstname_lastname
+```{r}
+# HTML
+bookdown::render_book('./', 'bookdown::gitbook')
+# PDF
+bookdown::render_book('./', 'bookdown::pdf_book')
 ```
 
 
