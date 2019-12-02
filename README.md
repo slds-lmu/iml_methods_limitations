@@ -38,7 +38,7 @@ install.packages("devtools")
 devtools::install_dev_deps()
 ```
 
-Step 3: Render the book
+Step 3: Render the book (R commands)
 
 ```{r}
 # HTML
