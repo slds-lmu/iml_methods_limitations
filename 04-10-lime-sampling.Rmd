@@ -183,7 +183,7 @@ In the first showcase, the mean data point is compared with an extreme outlier (
 As we can see in figure \@ref(fig:figbostmeanoutlier), the outlier has larger confidence intervals as the mean point.
 This suggests that either the model is behaving roughly in its area, or, more likely, the sample size in the neighborhood has a significant influence on our stability, as our original features have higher density mass around the mean with the kernel density estimation copying that approximately.
 
-```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95% confidence interval across repeated runs"}
+```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, out.width = '99%', fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95\\% confidence interval across repeated runs"}
 
 knitr::include_graphics("images/boston_meanVSmax.png")
 
