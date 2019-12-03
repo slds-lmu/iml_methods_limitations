@@ -8,7 +8,7 @@
 
 As outlined in chapter 2, PDPs and ICE plots are meaningful graphical tools to visualize the impact of individual feature variables. This is particularly true for black box algorithms, where the mechanism of each feature and its influence on the generated predictions may be difficult to retrace [@Goldstein2013].
 
-The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of depencencies between different types of variables, missing values and the associated implications on PDPs.  
+The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of dependencies between different types of variables, missing values and the associated implications on PDPs.  
 
 ### What is the issue with dependent features?
 
@@ -27,7 +27,7 @@ When computing the PDP for feature $x_1$, we take $x_2$ into account by calculat
 ### What is the issue with extrapolation? 
 Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter \@ref(ExtrapolationProblem) we will see an example where this instant leads to a failure of the PDP [@molnar2019].
 
-On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. The resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers [@Goldstein2013].
+On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function $\hat{f}_{x_S}$ is evaluated at each observed $x^{(i)}_{S}$, giving a set of N ordered pairs: $\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N$. The resulting coordinates are plotted against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured $x_S$ values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers [@Goldstein2013].
 
 In figure \@ref(fig:Figure02), a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter \@ref(ExtrapolationProblemEstablished). The shift in observed areas can also be noticed from the marginal distribution of $x_2$.  
 
@@ -143,7 +143,7 @@ For our purposes, the dataset was restricted to the following variables:
 * $x_9$: hum: Normalized humidity.
 * $x_{10}$: windspeed: Normalized wind speed.
 
-For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
+For all machine learning models based on the Bike-Sharing dataset, 'cnt' is used as a target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical ($x_1$ to $x_6$), the rest is measured on a numerical scale ($x_7$ to $x_{10}$). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency: 
 
 1. Dependency between numerical features
 2. Dependency between categorical features
@@ -471,7 +471,7 @@ A major disadvantage of the analysis of PDPs on the basis of real data examples 
 In order to illustrate the isolated impact of dependent variables in the feature space, we have simulated data in different settings, which we will discuss in this chapter.  
 
 ### Simulation Settings: Numerical Features
-For a start, the different settings of simulations used for our investigation shall be introduced. Just like in chapter 2, we are seperately looking at different classes of variables and different machine learning algorithms (LM, RF and SVM). PDPs for independent, correlated and dependent numerical features are computed for each of the following data generating processes (DGP), which describe the true impact of the features on $y$:  
+For a start, the different settings of simulations used for our investigation shall be introduced. Just like in chapter 2, we are separately looking at different classes of variables and different machine learning algorithms (LM, RF and SVM). PDPs for independent, correlated and dependent numerical features are computed for each of the following data generating processes (DGP), which describe the true impact of the features on $y$:  
 
 * Setting 1: Linear Dependence:  
 \begin{equation}
