@@ -52,23 +52,22 @@ This book is licensed under the [Creative Commons Attribution-NonCommercial-Shar
 *Author: Christoph Molnar*
 
 <!-- An experiment -->
-This book is the result of an experiment.
+This book is the result of an experiment in university teaching.
 Each semester, students of the Statistics Master can choose from a selection of seminar topics.
-In the summer of 2019, some Statistics Master students signed up for a seminar entitled "Limitations of Interpretable Machine Learning".
-When they came to the kick-off meeting, they had no idea that they would write a book by the end of the semester.
-Usually every student in the seminar chooses a scientific paper.
-They give a talk about the paper and summarize it in the form of a seminar paper.
+Usually, every student in the seminar chooses a scientific paper, give a talk about the paper and summarize it in the form of a seminar paper.
 The supervisors help the students, they listen to the talks, read the seminar papers, grade the work and then ... hide the seminar papers from the world in (digital) drawers.
-This seemed wasteful to us given the huge amount of effort the students invested in the seminar.
+This seemed wasteful to us, given the huge amount of effort the students usually invest in seminars.
 An idea was born:
 Why not create a book with a website as the outcome of the seminar?
 Something that will last at least a few years after the seminar.
+In the summer term 2019, some Statistics Master students signed up for our seminar entitled "Limitations of Interpretable Machine Learning".
+When they came to the kick-off meeting, they had no idea that they would write a book by the end of the semester.
 
 We were bound by the examination rules for conducting the seminar, but otherwise we could deviate from the traditional format.
 We deviated in several ways:
 
 1. Each student project is part of a book, and not an isolated seminar paper.
-1. We gave challenges to the students, instead of papers. The challenge was to investigate a specific limitation of interpretable machine learning.
+1. We gave challenges to the students, instead of papers. The challenge was to investigate a specific limitation of interpretable machine learning methods.
 1. We designed the seminar work to live beyond the seminar.
 1. We emphasized collaboration. Students wrote some chapters in teams and reviewed each others chapters.
 
