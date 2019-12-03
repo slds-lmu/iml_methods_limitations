@@ -27,79 +27,64 @@ TODO:  COVER
 
 # Preface {-}
 
-This project explains the limitations of current approaches in interpretable machine learning, such as partial dependence plots (PDP, Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
+This book explains limitations of current methods in interpretable machine learning.
+The methods include partial dependence plots (PDP), Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
 All of those methods can be used to explain the behavior and predictions of trained machine learning models.
-The interpretation methods might not work well in the following cases:
+But the interpretation methods might not work well in the following cases:
 
 - if a model models interactions (e.g. when a random forest is used)
 - if features strongly correlate with each other
 - if the model does not correctly model causal relationships
 - if parameters of the interpretation method are not set correctly
 
-TODO: COVER ACK 
+This book is the outcome of the seminar "Limitations of Interpretable Machine Learning" which took place in summer 2019 at the Department of Statistics, LMU Munich.
+
+Cover by [\@YvonneDoinel](https://twitter.com/YvonneDoinel)
 
 # Foreword 
 
 *Author: Christoph Molnar*
 
-<!-- Summary of the seminar -->
-This book and website is the outcome of a Master seminar at the LMU (summer semester 2019).
-The topic was "Limitations of Interpretable Machine Learning".
-We conducted the seminar in two phases, a group phase and an individual phase.
-In the team phase, groups of 2-4 students wrote a chapter on an interpretation method.
-They presented their results mid term.
-In the individual phase each student worked on a specific limitation of an interpretation method.
-Each chapter is written by a student and supervised by a PhD Student / PostDoc.
-
 <!-- An experiment -->
-This seminar was an experiment.
-Usually in a Master seminar, each student gets a scientific paper, presents the contents in a talk and writes a seminar thesis about it.
-They get graded and then the seminar theses are archived.
-Given the huge amount of work students put in, this seems wasteful.
-So an idea was born:
-Why not create a book and with a website as the outcome of the seminar?
-We also deviated from the classic format to read one paper and translate it.
-The students got a challenge:
-Elaborate how machine learning model interpretation can fail and show this with simulations and real data.
+This book is the result of an experiment.
+Each semester, students of the Statistics Master can choose from a selection of seminar topics.
+In the summer of 2019, some Statistics Master students signed up for a seminar entitled "Limitations of Interpretable Machine Learning".
+When they came to the kick-off meeting, they had no idea that they would write a book by the end of the semester.
+Usually every student in the seminar chooses a scientific paper.
+They give a talk about the paper and summarize it in the form of a seminar paper.
+The supervisors help the students, they listen to the talks, read the seminar papers, grade the work and then ... hide the seminar papers from the world in (digital) drawers.
+This seemed wasteful to us given the huge amount of effort the students invested in the seminar.
+An idea was born:
+Why not create a book with a website as the outcome of the seminar?
+Something that will last at least a few years after the seminar.
 
-<!-- Advantages -->
-The students get exposure for their work.
-They can send a link to someone and say, "Hey, I created this".
-The same is true for the supervisors:
-We sometimes put tremendous effort in teaching.
-This pays off by giving students a good education.
-But it's nice to be able to show also outside of the class what we are doing.
+We were bound by the examination rules for conducting the seminar, but otherwise we could deviate from the traditional format.
+We deviated in several ways:
+
+1. Each student project is part of a book, and not an isolated seminar paper.
+1. We gave challenges to the students, instead of papers. The challenge was to investigate a specific limitation of interpretable machine learning.
+1. We designed the seminar work to live beyond the seminar.
+1. We emphasized collaboration. Students wrote some chapters in teams and reviewed each others chapters.
 
 <!-- Our experience -->
-Looking back, the seminar was a lot of fun and successful, especially given that it was an experiment.
-Everyone was highly motivated, and we got great feedback from the students that they liked the format.
-For the students, it was a bit more work than it would have been with the traditional seminar format.
-Also for us supervisors it was a bit more, but also more rewarding since limitations of interpretability is related to our research.
-The initial setup of the git repository with the book took some time.
-But this can be reused and not be an issue when we conduct such a seminar again.
-
-<!-- Focus IML limitations -->
-We in the [computation statistics group](https://www.compstat.statistik.uni-muenchen.de/) at the LMU research methods for interpretable machine learning.
-One of our focuses is to look closer at shortcomings of current methods such as [Partial Dependence Plots](https://christophm.github.io/interpretable-ml-book/pdp.html).
-So to us it made a lot of sense to make the theme about limitations of interpretable machine learning.
-So each student got the task of elaborating on a specific liitations of a specific method.
+Looking back, the seminar was a lot of fun and -- from our perspective -- successful.
+Especially considering that it was an experiment.
+Everyone was highly motivated and we got great feedback from the students that they liked the format.
+For the students it was a more work than a traditional seminar.
+But in the end, my hope is that the effort will pay off by increased visibility of the students.
+It was also more work for us supervisors.
+But the extra effort was worth it, since limitations of interpretability are relevant for our research.
+For me the seminar was an inspiration.
+The students had new ideas and new perspectives to approach the limitations of interpretable machine learning.
 
 <!-- Technical setup -->
 ## Technical Setup
-The book chapters are written in markdown.
+The book chapters are written in the Markdown language.
 The simulations, data examples and visualizations were created with R [@rlang].
-To combine R code and markdown, we used rmarkdown.
+To combine R-code and Markdown, we used rmarkdown.
 The book was compiled with the bookdown package.
 We collaborated using git and github.
-
-<!-- Many thanks -->
-TODO: Move to acknowledgements
-This was only made possible by my colleagues who supervised, by [Bernd Bischl]() who gave us the freedom to conduct this experiment and valuable feedback.
-Thanks to students for engagement.
-Thanks to all supervisors
-Thanks to statistics department for hosting us and the studies
-Thanks to Yihui for bookdown.
-Thanks to Yvonne for logo.
+For details, head over to the [book's repository](https://github.com/compstat-lmu/iml_methods_limitations).
 
 ![Creative Commons License](images/by-nc-sa.png)
 
