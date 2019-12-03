@@ -22,6 +22,9 @@ options(
 
 ```
 
+TODO:  COVER
+
+
 # Preface {-}
 
 This project explains the limitations of current approaches in interpretable machine learning, such as partial dependence plots (PDP, Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
@@ -32,6 +35,71 @@ The interpretation methods might not work well in the following cases:
 - if features strongly correlate with each other
 - if the model does not correctly model causal relationships
 - if parameters of the interpretation method are not set correctly
+
+TODO: COVER ACK 
+
+# Foreword 
+
+*Author: Christoph Molnar*
+
+<!-- Summary of the seminar -->
+This book and website is the outcome of a Master seminar at the LMU (summer semester 2019).
+The topic was "Limitations of Interpretable Machine Learning".
+We conducted the seminar in two phases, a group phase and an individual phase.
+In the team phase, groups of 2-4 students wrote a chapter on an interpretation method.
+They presented their results mid term.
+In the individual phase each student worked on a specific limitation of an interpretation method.
+Each chapter is written by a student and supervised by a PhD Student / PostDoc.
+
+<!-- An experiment -->
+This seminar was an experiment.
+Usually in a Master seminar, each student gets a scientific paper, presents the contents in a talk and writes a seminar thesis about it.
+They get graded and then the seminar theses are archived.
+Given the huge amount of work students put in, this seems wasteful.
+So an idea was born:
+Why not create a book and with a website as the outcome of the seminar?
+We also deviated from the classic format to read one paper and translate it.
+The students got a challenge:
+Elaborate how machine learning model interpretation can fail and show this with simulations and real data.
+
+<!-- Advantages -->
+The students get exposure for their work.
+They can send a link to someone and say, "Hey, I created this".
+The same is true for the supervisors:
+We sometimes put tremendous effort in teaching.
+This pays off by giving students a good education.
+But it's nice to be able to show also outside of the class what we are doing.
+
+<!-- Our experience -->
+Looking back, the seminar was a lot of fun and successful, especially given that it was an experiment.
+Everyone was highly motivated, and we got great feedback from the students that they liked the format.
+For the students, it was a bit more work than it would have been with the traditional seminar format.
+Also for us supervisors it was a bit more, but also more rewarding since limitations of interpretability is related to our research.
+The initial setup of the git repository with the book took some time.
+But this can be reused and not be an issue when we conduct such a seminar again.
+
+<!-- Focus IML limitations -->
+We in the [computation statistics group](https://www.compstat.statistik.uni-muenchen.de/) at the LMU research methods for interpretable machine learning.
+One of our focuses is to look closer at shortcomings of current methods such as [Partial Dependence Plots](https://christophm.github.io/interpretable-ml-book/pdp.html).
+So to us it made a lot of sense to make the theme about limitations of interpretable machine learning.
+So each student got the task of elaborating on a specific liitations of a specific method.
+
+<!-- Technical setup -->
+## Technical Setup
+The book chapters are written in markdown.
+The simulations, data examples and visualizations were created with R [@rlang].
+To combine R code and markdown, we used rmarkdown.
+The book was compiled with the bookdown package.
+We collaborated using git and github.
+
+<!-- Many thanks -->
+TODO: Move to acknowledgements
+This was only made possible by my colleagues who supervised, by [Bernd Bischl]() who gave us the freedom to conduct this experiment and valuable feedback.
+Thanks to students for engagement.
+Thanks to all supervisors
+Thanks to statistics department for hosting us and the studies
+Thanks to Yihui for bookdown.
+Thanks to Yvonne for logo.
 
 ![Creative Commons License](images/by-nc-sa.png)
 
