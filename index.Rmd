@@ -24,6 +24,10 @@ options(
 
 # Preface {-}
 
+```{r cover, cache=FALSE, out.width="100%", fig.align="center", echo=FALSE}
+knitr::include_graphics('images/cover.png')
+```
+
 This book explains limitations of current methods in interpretable machine learning.
 The methods include partial dependence plots (PDP), Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
 All of those methods can be used to explain the behavior and predictions of trained machine learning models.
