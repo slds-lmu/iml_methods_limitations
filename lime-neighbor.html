@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 14 LIME and Neighbourhood | Limitations of Interpretable Machine Learning Methods</title>
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 14 LIME and Neighbourhood | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 14 LIME and Neighbourhood | Limitations of Interpretable Machine Learning Methods" />
+  
+  <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+
+
+<meta name="date" content="2019-12-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="lime.html"/>
+<link rel="next" href="lime-sample.html"/>
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Limitations of ML Interpretability</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="foreword.html"><a href="foreword.html"><i class="fa fa-check"></i><b>1</b> Foreword</a><ul>
+<li class="chapter" data-level="1.1" data-path="foreword.html"><a href="foreword.html#technical-setup"><i class="fa fa-check"></i><b>1.1</b> Technical Setup</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>2.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>2.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>2.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>2.4</b> Outline of the booklet</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pdp.html"><a href="pdp.html"><i class="fa fa-check"></i><b>3</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp.html"><a href="pdp.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>3.1</b> Partial Dependence Plots (PDP)</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>3.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="pdp.html"><a href="pdp.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>3.2</b> Individual Conditional Expectation Curves</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp.html"><a href="pdp.html#centered-ice-plot"><i class="fa fa-check"></i><b>3.2.1</b> Centered ICE Plot</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp.html"><a href="pdp.html#derivative-ice-plot"><i class="fa fa-check"></i><b>3.2.2</b> Derivative ICE Plot</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>3.2.3</b> Advantages and Limitations of ICE Plots</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-correlated.html"><a href="pdp-correlated.html"><i class="fa fa-check"></i><b>4</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ProblemDescription"><i class="fa fa-check"></i><b>4.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>4.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="4.1.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>4.1.2</b> What is the issue with extrapolation?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#RealData"><i class="fa fa-check"></i><b>4.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>4.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="4.2.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>4.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="4.2.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#NumCat"><i class="fa fa-check"></i><b>4.2.3</b> Dependency between Numerical and Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#SimulatedData"><i class="fa fa-check"></i><b>4.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>4.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="4.3.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>4.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="4.3.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>4.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="4.3.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>4.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="4.3.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>4.3.5</b> Simulation Settings: Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>4.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>4.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="4.4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>4.4.2</b> Simulation based on own prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>4.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pdp-causal.html"><a href="pdp-causal.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="5.1" data-path="pdp-causal.html"><a href="pdp-causal.html#introduction-1"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="pdp-causal.html"><a href="pdp-causal.html#motivation"><i class="fa fa-check"></i><b>5.2</b> Motivation</a></li>
+<li class="chapter" data-level="5.3" data-path="pdp-causal.html"><a href="pdp-causal.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>5.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="5.4" data-path="pdp-causal.html"><a href="pdp-causal.html#scenarios"><i class="fa fa-check"></i><b>5.4</b> Scenarios</a></li>
+<li class="chapter" data-level="5.5" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>5.5</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="ale.html"><a href="ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="6.1" data-path="ale.html"><a href="ale.html#motivation-1"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
+<li class="chapter" data-level="6.2" data-path="ale.html"><a href="ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="ale.html"><a href="ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="ale.html"><a href="ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="ale.html"><a href="ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="ale.html"><a href="ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-pdp.html"><a href="ale-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>7.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-pdp.html"><a href="ale-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>7.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-pdp.html"><a href="ale-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>7.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>7.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-pdp.html"><a href="ale-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>7.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="7.2.2" data-path="ale-pdp.html"><a href="ale-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>7.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-pdp.html"><a href="ale-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>7.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-pdp.html"><a href="ale-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>7.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-pdp.html"><a href="ale-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>7.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-pdp.html"><a href="ale-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>7.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>7.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="7.5" data-path="ale-pdp.html"><a href="ale-pdp.html#appendix"><i class="fa fa-check"></i><b>7.5</b> Appendix</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="ale-pdp.html"><a href="ale-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>7.5.1</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ale-misc.html"><a href="ale-misc.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="8.1" data-path="ale-misc.html"><a href="ale-misc.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>8.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="ale-misc.html"><a href="ale-misc.html#state-of-the-art"><i class="fa fa-check"></i><b>8.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="8.1.2" data-path="ale-misc.html"><a href="ale-misc.html#ale-approximations"><i class="fa fa-check"></i><b>8.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="8.1.3" data-path="ale-misc.html"><a href="ale-misc.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>8.1.3</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="8.1.4" data-path="ale-misc.html"><a href="ale-misc.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>8.1.4</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="ale-misc.html"><a href="ale-misc.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>8.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="ale-misc.html"><a href="ale-misc.html#example-4-simple-step-function"><i class="fa fa-check"></i><b>8.2.1</b> Example 4: Simple step function</a></li>
+<li class="chapter" data-level="8.2.2" data-path="ale-misc.html"><a href="ale-misc.html#example-5-two-dimensional-step-functions-and-unluckily-distributed-data"><i class="fa fa-check"></i><b>8.2.2</b> Example 5: Two-dimensional step functions and unluckily distributed data</a></li>
+<li class="chapter" data-level="8.2.3" data-path="ale-misc.html"><a href="ale-misc.html#outlook"><i class="fa fa-check"></i><b>8.2.3</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ale-misc.html"><a href="ale-misc.html#categorical-features"><i class="fa fa-check"></i><b>8.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="ale-misc.html"><a href="ale-misc.html#ordering-the-features"><i class="fa fa-check"></i><b>8.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ale-misc.html"><a href="ale-misc.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>8.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="8.3.3" data-path="ale-misc.html"><a href="ale-misc.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>8.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="8.3.4" data-path="ale-misc.html"><a href="ale-misc.html#interpretation"><i class="fa fa-check"></i><b>8.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="8.3.5" data-path="ale-misc.html"><a href="ale-misc.html#changes-of-the-ale-due-to-different-orders"><i class="fa fa-check"></i><b>8.3.5</b> Changes of the ALE due to different orders</a></li>
+<li class="chapter" data-level="8.3.6" data-path="ale-misc.html"><a href="ale-misc.html#conclusion-1"><i class="fa fa-check"></i><b>8.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi.html"><a href="pfi.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi.html"><a href="pfi.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="9.2" data-path="pfi.html"><a href="pfi.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi.html"><a href="pfi.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="pfi-correlated.html"><a href="pfi-correlated.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="10.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>10.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#simulation"><i class="fa fa-check"></i><b>10.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="10.1.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#real-data"><i class="fa fa-check"></i><b>10.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>10.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="10.3" data-path="pfi-correlated.html"><a href="pfi-correlated.html#summary-1"><i class="fa fa-check"></i><b>10.3</b> Summary</a></li>
+<li class="chapter" data-level="10.4" data-path="pfi-correlated.html"><a href="pfi-correlated.html#note-to-the-reader"><i class="fa fa-check"></i><b>10.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-partial.html"><a href="pfi-partial.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch2"><i class="fa fa-check"></i><b>11.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch3"><i class="fa fa-check"></i><b>11.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch31"><i class="fa fa-check"></i><b>11.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="11.2.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch32"><i class="fa fa-check"></i><b>11.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="11.2.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch323"><i class="fa fa-check"></i><b>11.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch4"><i class="fa fa-check"></i><b>11.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="11.4" data-path="pfi-partial.html"><a href="pfi-partial.html#ch5"><i class="fa fa-check"></i><b>11.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="pfi-data.html"><a href="pfi-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="12.1" data-path="pfi-data.html"><a href="pfi-data.html#introduction-to-test-vs.training-data"><i class="fa fa-check"></i><b>12.1</b> Introduction to Test vs. Training Data</a></li>
+<li class="chapter" data-level="12.2" data-path="pfi-data.html"><a href="pfi-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>12.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="12.3" data-path="pfi-data.html"><a href="pfi-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>12.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="pfi-data.html"><a href="pfi-data.html#gradient-boosting-machines"><i class="fa fa-check"></i><b>12.3.1</b> Gradient Boosting Machines</a></li>
+<li class="chapter" data-level="12.3.2" data-path="pfi-data.html"><a href="pfi-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>12.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="12.3.3" data-path="pfi-data.html"><a href="pfi-data.html#results"><i class="fa fa-check"></i><b>12.3.3</b> Results</a></li>
+<li class="chapter" data-level="12.3.4" data-path="pfi-data.html"><a href="pfi-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>12.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="pfi-data.html"><a href="pfi-data.html#summary-2"><i class="fa fa-check"></i><b>12.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>13.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="13.2" data-path="lime.html"><a href="lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>13.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="lime.html"><a href="lime.html#neighbourhood"><i class="fa fa-check"></i><b>13.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="13.2.2" data-path="lime.html"><a href="lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>13.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="13.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>13.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>13.3</b> Example</a></li>
+<li class="chapter" data-level="13.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>13.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>14.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="14.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>14.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>14.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>14.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id42"><i class="fa fa-check"></i><b>14.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id5"><i class="fa fa-check"></i><b>14.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="14.5" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id6"><i class="fa fa-check"></i><b>14.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="14.5.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id61"><i class="fa fa-check"></i><b>14.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="14.5.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id62"><i class="fa fa-check"></i><b>14.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="lime-sample.html"><a href="lime-sample.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="15.1" data-path="lime-sample.html"><a href="lime-sample.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>15.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="lime-sample.html"><a href="lime-sample.html#formula"><i class="fa fa-check"></i><b>15.1.1</b> Formula</a></li>
+<li class="chapter" data-level="15.1.2" data-path="lime-sample.html"><a href="lime-sample.html#sampling-strategies"><i class="fa fa-check"></i><b>15.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="15.1.3" data-path="lime-sample.html"><a href="lime-sample.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>15.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="lime-sample.html"><a href="lime-sample.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>15.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="15.3" data-path="lime-sample.html"><a href="lime-sample.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>15.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="lime-sample.html"><a href="lime-sample.html#boston-housing-data"><i class="fa fa-check"></i><b>15.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="15.3.2" data-path="lime-sample.html"><a href="lime-sample.html#rental-bikes-data"><i class="fa fa-check"></i><b>15.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="lime-sample.html"><a href="lime-sample.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>15.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>15.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="15.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>15.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="15.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>15.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>15.5</b> Outlook</a></li>
+<li class="chapter" data-level="15.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>15.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>16</b> Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Limitations of Interpretable Machine Learning Methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="lime-neighbor" class="section level1">
+<h1><span class="header-section-number">Chapter 14</span> LIME and Neighbourhood</h1>
+<p><em>Author: Philipp Kopper</em></p>
+<p><em>Supervisor: Christoph Molnar</em></p>
+<p>This section will discuss the effect of the neighbourhood on LIME’s explanations. This is in particular critical for tabular data. Hence, we will limit ourselves to the analysis of tabular data for the remainder of this chapter.</p>
+<p>As described in the previous chapter, LIME aims to create local surrogate models – one for each observation to be explained. These local models operate in the proximity or <em>neighbourhood</em> of the instance to be explained. They are fitted based on weights which indicate their proximity to the observation to be explained. The weights are typically determined using kernels that transform the proximity measure.</p>
+<p>The proper parametrisation of the kernel is obviously important. However, this is true for any approach that uses kernels. Such as kernel density estimations. Figure <a href="lime-neighbor.html#fig:lime-fig1">14.1</a> illustrates kernel densities from a standard normal distribution. We applied different kernel widths for the curve estimation.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig1"></span>
+<img src="images/04-09-01.png" alt="In(appropriate) kernel widths for kernel density estimations. The left panel illustrates an appropriate kernel width. The right one features an inappropriate one." width="99%" />
+<p class="caption">
+FIGURE 14.1: In(appropriate) kernel widths for kernel density estimations. The left panel illustrates an appropriate kernel width. The right one features an inappropriate one.
+</p>
+</div>
+<p>One can easily see that the left panel seems to be appropriate while the right one is too granular. The proper definition of the neighbourhood is very crucial in this case. However, with no prior information, this definition is arbitrary.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> We can only judge on the proper definition of the neighbourhood from our experience and our expectations. This may work in low dimensional problems and descriptive statistics. However, machine learning models operate in multivariate space and mostly tackle complex associations. Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.</p>
+<p>This chapter reviews the neighbourhood issue of the LIME algorithm critically. The objective of this chapter is rather to outline this particular issue and not to suggest solutions for it. First of all, it describes the neighbourhood definition abstractly in greater detail (section <a href="lime-neighbor.html#id2">14.1</a>). Then, it illustrates how problematic the neighbourhood definition can be in a simple one-dimensional example in section <a href="lime-neighbor.html#id3">14.2</a>. Furthermore, we study the effect of altering the kernel size more systematically in more complex contexts in the next section (<a href="lime-neighbor.html#id4">14.3</a>). This section deals with both, simulated (<a href="lime-neighbor.html#id41">14.3.1</a>) and real (<a href="lime-neighbor.html#id42">14.3.2</a>) data. The first subsection of the simulation (<a href="lime-neighbor.html#id411">14.3.1.1</a>) investigates multivariate globally linear relationships. The second one (<a href="lime-neighbor.html#id412">14.3.1.2</a>) researches local coefficients. The third one (<a href="lime-neighbor.html#id413">14.3.1.3</a>) studies non-linear effects. Section <a href="lime-neighbor.html#id42">14.3.2</a> uses the Washington D.C. bicycle data set to study LIME’s neighbourhood in a real-world application. Afterwards, in section <a href="lime-neighbor.html#id5">14.4</a>, we discuss the results and contextualise them with the existing literature. After concluding, we explain how LIME was used and why in section <a href="lime-neighbor.html#id6">14.5</a>.</p>
+<div id="id2" class="section level2">
+<h2><span class="header-section-number">14.1</span> The Neighbourhood in LIME in more detail</h2>
+<p>When obtaining explanations with LIME, the neighbourhood of an observation is determined when fitting the model by applying weights to the data. These weights are chosen w.r.t. the proximity to the observation to be explained. However, there is no natural law stating that local models have to be found this way. Alternatively, <span class="citation">Craven and Shavlik (<a href="#ref-craven1996">1996</a>)</span> show that increasing the density of observations around the instance of interest is very helpful to achieve locally fidele models. Hence, locality could be obtained in many more different ways than weighting observations combined with global sampling as it is in LIME. After sampling, the data points are weighted w.r.t. their proximity to the observation to be explained. One possible alternative to this procedure might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> to a local sampling. This way we would increase the density around the instance already by proper sampling. In fact, <span class="citation">Laugel et al. (<a href="#ref-laugel2018defining">2018</a>)</span> claim that this way should be preferred over the way LIME samples. In this chapter, however, we focus on the explicit implementation of LIME and analyse how the weighting strategy <em>ceteris paribus</em> affects surrogate model accuracy and stability.</p>
+<p>When working with LIME, the weighting of instances is performed using a kernel function over the distances of all other observations to the observation of interest. This leaves us <em>arbitrary</em> (in fact, they may not be <em>that</em> arbitrary) choices on two parameters: the distance and the kernel function. Typical distance functions applicable to statistical data analysis are based on the L0, L1 and L2 norms. For numerical features, one tends to use either Manhattan distance (L1) or Euclidean distance (L2). For categorical features, one would classically apply Hamming distance (L0). For mixed data (data with both categorical and numerical features), one usually combines distances for numerical and categorical features. So does Gower’s distance (<span class="citation">Gower (<a href="#ref-gower1971general">1971</a>)</span>) or the distance proposed by <span class="citation">Huang (<a href="#ref-huang1998kproto">1998</a>)</span>:</p>
+<p><span class="math display">\[ d_H(x_i, x_j) = d_{euc}(x_i, x_j) + \lambda d_{ham}(x_i, x_j) \]</span></p>
+<p>with <span class="math inline">\(d_{euc}\)</span> referring to the Euclidean distance and <span class="math inline">\(d_{ham}\)</span> to the Hamming distance. <span class="math inline">\(d_{euc}\)</span> is only computed for numerical and <span class="math inline">\(d_{ham}\)</span> only for categorical ones. <span class="math inline">\(\lambda\)</span> steers the importance of categorical features relative to numerical ones. <span class="citation">Huang (<a href="#ref-huang1998kproto">1998</a>)</span> recommends setting <span class="math inline">\(\lambda\)</span> equal to the average standard deviation of the numerical features. For scaled numerical features (standard deviation is one) this metric is equivalent to the Euclidean distance. It is important to note that despite these existing measures it may be challenging to properly determine distances for mixed data. For text data, <span class="citation">M. T. Ribeiro, Singh, and Guestrin (<a href="#ref-ribeiro2016should">2016</a><a href="#ref-ribeiro2016should">b</a>)</span> recommend using cosine distance and Euclidean distance for images.</p>
+<p>For the kernel function itself, there are two parameters to be set. First of all, the type of kernel. Second, the kernel width. By default, the R implementation uses an exponential kernel where the kernel width equals the square root of the number of features.</p>
+<p>The choice of the distance measure seems least arbitrary. Furthermore, the choice of the kernel function is not expected to have the most crucial impact on the neighbourhood definition. Thus, we focus on the <strong>kernel width</strong> in our experimental study.</p>
+</div>
+<div id="id3" class="section level2">
+<h2><span class="header-section-number">14.2</span> The problem in a one-dimensional setting</h2>
+<p>How crucial the proper setting of the kernel width can be, is illustrated by a very simple example. We simulate data with one target and two features. One feature is pure noise and the other one has a non-linear sinus-like effect on the target. If we plot the influential feature on the x-axis and the target on the y-axis, we can observe this pattern in figure <a href="lime-neighbor.html#fig:lime-fig2">14.2</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig2"></span>
+<img src="images/04-09-02.png" alt="Simulated data: The non-linear relationship between the feature and the target." width="99%" />
+<p class="caption">
+FIGURE 14.2: Simulated data: The non-linear relationship between the feature and the target.
+</p>
+</div>
+<p>Now we fit a random forest on this data situation which should be able to detect the non-linearity and incorporate it into its predictive surface. We observe that the predictions of the random forest look very accurate in figure <a href="lime-neighbor.html#fig:lime-fig3">14.3</a>. Only on the edges of the covariate (where the density is lower) the random forest turns out to extrapolate not optimally.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig3"></span>
+<img src="images/04-09-03.png" alt="Simulated data: Random forest predictions for non-linear univariate relationship. The solid line represents the true predictive surface." width="99%" />
+<p class="caption">
+FIGURE 14.3: Simulated data: Random forest predictions for non-linear univariate relationship. The solid line represents the true predictive surface.
+</p>
+</div>
+<p>LIME could now be used to explain this random forest locally. “Good” local models would look very different w.r.t. the value of the feature, <code>x1</code>. For example, we could describe the predictions locally well by piece-wise linear models. This is depicted in figure <a href="lime-neighbor.html#fig:lime-fig4">14.4</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig4"></span>
+<img src="images/04-09-04.png" alt="Simulated data: Non-linear univariate relationship explained by a piece-wise linear model." width="99%" />
+<p class="caption">
+FIGURE 14.4: Simulated data: Non-linear univariate relationship explained by a piece-wise linear model.
+</p>
+</div>
+<p>LIME should be able to find these <em>good</em> local explanations – given the right kernel size. Let’s select one instance which we want an explanation for. We illustrate this instance by the green point in figure <a href="lime-neighbor.html#fig:lime-fig5">14.5</a>. This particular instance can be approximately linearly described by a linear regression with intercept <span class="math inline">\(60\)</span> and slope <span class="math inline">\(-4.5\)</span>. If we set the kernel width to <span class="math inline">\(0.08\)</span>, we fit this local model. This is indicated by the red line in figure <a href="lime-neighbor.html#fig:lime-fig5">14.5</a>. However, if we increased the kernel width to <span class="math inline">\(2\)</span>, the coefficients change to <span class="math inline">\(-2.84\)</span> (intercept) and <span class="math inline">\(0.64\)</span> (slope) (on average) which seems drastically distorted as observed by the yellow line in figure <a href="lime-neighbor.html#fig:lime-fig5">14.5</a>. The yellow line does not seem to fit a local linear model but rather a global one.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig5"></span>
+<img src="images/04-09-05.png" alt="Simulated data: Possible local (LIME) models for the non-linear univariate relationship." width="99%" />
+<p class="caption">
+FIGURE 14.5: Simulated data: Possible local (LIME) models for the non-linear univariate relationship.
+</p>
+</div>
+<p>As a next step, we review explanations resulting from altering the kernel size in figure <a href="lime-neighbor.html#fig:lime-fig6">14.6</a> more systematically. We average over many different models to achieve more robust local models. We do that because we observe some coefficient variations resulting from the (random) sampling in the LIME algorithm. In figure <a href="lime-neighbor.html#fig:lime-fig6">14.6</a> (upper panel) we see these averaged models for different kernel sizes. We observe that the larger we set the kernel size, the more we converge to a linear model that operates globally. The largest three kernel sizes (<span class="math inline">\(0.5\)</span>, <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span>) appear very global while <span class="math inline">\(0.05\)</span> and <span class="math inline">\(0.1\)</span> seem to fit good local models. <span class="math inline">\(0.25\)</span> and <span class="math inline">\(0.3\)</span> are neither global nor very local. This is very intuitive and complies with the idea of a weighted local regression.</p>
+<p>Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure <a href="lime-neighbor.html#fig:lime-fig6">14.6</a>. We observe a similar behaviour.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig6"></span>
+<img src="images/04-09-06.png" alt="Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations." width="99%" />
+<p class="caption">
+FIGURE 14.6: Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations.
+</p>
+</div>
+<p>This behaviour is not necessarily a problem but only a property of LIME. However, it can be problematic that the appropriate kernel size is not a priori clear. Additionally, there is no straight forward way to determine a good kernel width for a given observation to be explained. The only generic goodness-of-fit criterion of LIME, model fidelity, is not necessarily representative: If we set the kernel size extremely small there will be many models with an extremely good local fit as local refers only to a single observation. In our examples, it looks as if a very small kernel size should be preferred. A small kernel width indeed grants local fit. But what a small kernel width means, also strongly depends on the dimensionality and complexity of the problem.</p>
+</div>
+<div id="id4" class="section level2">
+<h2><span class="header-section-number">14.3</span> The problem in more complex settings</h2>
+<p>The previous setting was trivial for LIME. The problem was univariate and we could visualise the predictive surface in the first place. This means that interpretability was mostly given. We will study our problem in more complex – non-trivial – settings to show that it persists. We will do so by examining simulated and real data.</p>
+<div id="id41" class="section level3">
+<h3><span class="header-section-number">14.3.1</span> Simulated data</h3>
+<p>We simulate data with multiple numeric features and a numeric target. We assume the features to originate from a multivariate normal distribution where all features are moderately correlated. We simulate three different data sets. In the first one, the true associations are linear (globally linear). In the second one, the true associations are linear but only affect the target within a subinterval of the feature domain (locally linear).<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> In the third one, we simulate globally non-linear associations. For all three data sets, we expect the kernel width to have an impact on the resulting explainer. However, for the global linear relationships, we expect the weakest dependency because the true local model and the true global model are identical. Details on the simulation can be obtained in our R code and section <a href="lime-neighbor.html#id411">14.3.1.1</a>.</p>
+<div id="id411" class="section level4">
+<h4><span class="header-section-number">14.3.1.1</span> Global Linear Relationships</h4>
+<p>We simulate data where the true predictive surface is a hyperplane. <em>Good</em> machine learning models should be able to approximate this hyperplane. This case is – again – somewhat trivial for LIME. The most suitable model for this data would be linear regression which is interpretable in the first place. Thus, LIME can be easily tested in this controlled environment. We know the true local coefficients as they are equal to the global ones. We can evaluate the suitability of the kernel width appropriately.</p>
+<p>The simulated data looks as follows: The feature space consists of three features (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>). All originate from a multivariate Gaussian distribution with mean <span class="math inline">\(\mu\)</span> and covariance <span class="math inline">\(\Sigma\)</span>. <span class="math inline">\(\mu\)</span> is set to be <span class="math inline">\(5\)</span> for all features and <span class="math inline">\(\Sigma\)</span> incorporates moderate correlation. The true relationship of the features on the target <span class="math inline">\(y\)</span> is described by:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon \]</span> We set the true coefficients to be <span class="math inline">\(\beta_1 = 4\)</span>, <span class="math inline">\(\beta_2 = -3\)</span>, <span class="math inline">\(\beta_3 = 5\)</span>.</p>
+<p>We use linear regression (the true model) as a black-box model. Using cross-validation, we confirm that the model has a high predictive capacity – approaching the Bayes error. Not surprisingly, the linear model describes the association very well.</p>
+<p>We choose random observations and compute the local LIME model for each one of them w.r.t. different kernel sizes. We expect that the kernel size may be infinitely large as the global model should equal good local models. However, if the kernel width is set too small we may fit too much noise. Hence, in this case, we may find no good local models.</p>
+<p>The figures below (all four panels of figure <a href="lime-neighbor.html#fig:lime-fig8">14.7</a>) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME. The three vertical lines indicate the true global coefficients. This behaviour is representative of all observations.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig8"></span>
+<img src="images/04-09-08.png" alt="Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation." width="99%" />
+<p class="caption">
+FIGURE 14.7: Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation.
+</p>
+</div>
+<p>We observe that too small kernel widths are not able to reproduce the global predictive surface at all. However, provided the kernel width is not too small, all kinds of kernel widths from small size to very large kernels fit very similar models which are all very close to the <em>true</em> model.</p>
+<p>These results allow concluding that for explaining linear models the kernel width is a non-critical parameter. However, this case may be seen as trivial and tautological for most users of LIME. Still, this result is valuable as it shows that LIME works as expected.</p>
+</div>
+<div id="id412" class="section level4">
+<h4><span class="header-section-number">14.3.1.2</span> Local Linear Relationships</h4>
+<p>For non-linear relationships, we have already seen that the kernel width is more crucial. Thus, we aim to study the behaviour of the explanations w.r.t. the kernel size where the true associations are non-linear or <em>locally</em> different.</p>
+<p>We may induce non-linearity by different means. However, first of all it seems interesting to study how the kernel width affects LIME explanations in a very simple form of non-linearity: The features only affect the target locally linearly, as expressed by:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 1_{x_1&lt;c_1} + \beta_2 x_2 + \beta_3 x_3 + \epsilon + \gamma_0 1_{x_1&gt;c_1} + \epsilon_i\]</span></p>
+<p>where <span class="math inline">\(x_1\)</span> only affects <span class="math inline">\(y\)</span> within the given interval. <span class="math inline">\(\gamma_0\)</span> corrects the predictive surface by another intercept to avoid discontinuities. This time, we fit a MARS (multivariate adaptive regression splines) model (<span class="citation">Friedman and others (<a href="#ref-friedman1991multivariate">1991</a>)</span>) which can deal with this property of local features. In theory, MARS can reproduce the data generating process perfectly and hence is our first choice. Using cross-validation we confirm that the model has a high predictive capacity. However, note that all of our results would be <em>qualitatively</em> (MARS turns out to feature clearer results.) identical between MARS and random forest. Given an appropriate kernel, LIME should succeed in recovering the local predictive surface.</p>
+<p>We set <span class="math inline">\(\beta_1 = 5\)</span>, <span class="math inline">\(\beta_2 = -4\)</span>, <span class="math inline">\(\beta_3 = 3\)</span> and <span class="math inline">\(c_1 = 5\)</span>. This means that the slope of <span class="math inline">\(\beta_1\)</span> equals to <span class="math inline">\(5\)</span> until <span class="math inline">\(x_1 = 5\)</span> and to <span class="math inline">\(0\)</span> afterwards. This results in an average slope of <span class="math inline">\(2.5\)</span> over the whole domain.</p>
+<p>We investigate <em>representative</em> observations, i.e. belonging to each <em>bin</em> of the predictive surface to check if LIME recovers all local coefficients.</p>
+<p>Hence, representative means that we should investigate observations with the following properties:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(x_1 &lt; 5\)</span></p></li>
+<li><p><span class="math inline">\(x_1 &gt; 5\)</span></p></li>
+</ol>
+<p>We think these observations are best explained in areas with reasonable margin to <span class="math inline">\(x_1 = 5\)</span>.</p>
+<p>Below in figure <a href="lime-neighbor.html#fig:lime-fig10">14.8</a>, we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels: <span class="math inline">\(x_1 &lt; 5\)</span>, lower panels: <span class="math inline">\(x_1 &gt; 5\)</span>). The true local coefficients are displayed by solid vertical lines.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig10"></span>
+<img src="images/04-09-10.png" alt="Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation." width="99%" />
+<p class="caption">
+FIGURE 14.8: Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation.
+</p>
+</div>
+<p>We can see that in this case, we <strong>cannot</strong> simply set an arbitrary kernel width. The true local coefficient for <span class="math inline">\(x_1\)</span> is only approximated well within a limited interval of the kernel width. In our scenario, good kernel widths are between <span class="math inline">\(0.1\)</span> and <span class="math inline">\(0.7\)</span> (while the upper bound varies for the observations). As before, we observe that a too-small kernel width (<span class="math inline">\(&lt; 0.1\)</span>) produces non-meaningful coefficients. On the other hand, for large kernel widths (<span class="math inline">\(&gt; 0.7\)</span>) the true coefficient is not approximated, but rather the global (average) linear coefficient: For <span class="math inline">\(x_1\)</span> a large kernel width results in a linear model that averages the local slopes. More formally, one could describe this sort of explanation as a global surrogate model. Additionally, we observe that for smaller kernel widths, the local models are rather volatile. More systematically, <span class="citation">Alvarez-Melis and Jaakkola (<a href="#ref-alvarez2018robustness">2018</a>)</span> investigate this volatility and find that LIME is prone to finding unstable explanations.</p>
+<p>This motivates us to further research the volatility. We display the mean and the confidence intervals of the coefficients of 100 different models for different kernel sizes in figure <a href="lime-neighbor.html#fig:lime-fig11">14.9</a> for <span class="math inline">\(x_1\)</span>. The black lines interpolate averaged coefficient estimates for different kernel sizes. The solid black line indicates the true local coefficient. The grey shaded area represents the (capped) 95% confidence intervals. For very low kernel widths we observe massive volatility. The volatility decreases to an acceptable level only after <span class="math inline">\(0.1\)</span> for all covariates.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig11"></span>
+<img src="images/04-09-11-1.png" alt="Simulated data: For one observation we display the local coefficient and confidence intervals for different kernel widths. The underlying ground truth model is a linear model where x1 only has a local coefficient. Hence, we only investigate x1." width="99%" />
+<p class="caption">
+FIGURE 14.9: Simulated data: For one observation we display the local coefficient and confidence intervals for different kernel widths. The underlying ground truth model is a linear model where x1 only has a local coefficient. Hence, we only investigate x1.
+</p>
+</div>
+<p>Note that we obtain the same picture for every covariate and other representative observations. We observe that there is a trade-off between stable coefficients and locality (expressed by a small kernel width). Our analysis suggests the following. Too large kernel sizes result in explanations biased towards a global surrogate. At the same time, the kernel width must result in stable coefficients. This means we cannot set it infinitissimately small. The resulting trade-off suggests choosing the minimal kernel size with stable coefficients as an optimal solution. Mathematically speaking, we aim minimal kernel size which still satisfies a volatility condition.</p>
+</div>
+<div id="id413" class="section level4">
+<h4><span class="header-section-number">14.3.1.3</span> Global Non-Linearity</h4>
+<p>We further generalise the approach from the previous section and simulate data with the underlying data generating mechanism:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2&lt;c_1} + \beta_{2,2} x_2 1_{c_1 &lt; x_2 &lt; c_2} +  \beta_{2,3} x_2 1_{c_2 &lt; x_2} + \beta_3 x_3 + \epsilon \]</span></p>
+<p>where the slope <span class="math inline">\(\beta_2\)</span> is piece-wise linear and changes over the whole domain of <span class="math inline">\(x_2\)</span>. We set <span class="math inline">\(\beta_1 = 5\)</span>, <span class="math inline">\(\beta_{2,1} = -4\)</span>, <span class="math inline">\(\beta_{2,2} = 3\)</span>, <span class="math inline">\(\beta_{2,3} = -3\)</span> <span class="math inline">\(\beta_3 = 3\)</span>, <span class="math inline">\(c_1 = 4\)</span> and <span class="math inline">\(c_2 = 6\)</span>.</p>
+<p>We omitted the support intercepts <span class="math inline">\(\gamma_0 1_{c_1 &lt; x_1 &lt; c_2} + \gamma_0 1_{x_1 &gt; c_2}\)</span> in the equation above (which guarantee continuity).</p>
+<p>We study three <em>representative</em> observations complying with:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(x_2 &lt; 4\)</span></p></li>
+<li><p><span class="math inline">\(4 &lt; x_2 &lt; 6\)</span></p></li>
+<li><p><span class="math inline">\(6 &lt; x_2\)</span></p></li>
+</ol>
+<p>As before, we use a MARS model as our black box. When explaining the black box with LIME, we observe the same pattern as before. Figures <a href="lime-neighbor.html#fig:lime-fig12">14.10</a> and <a href="lime-neighbor.html#fig:lime-fig13">14.11</a> look very similar to the corresponding figures of the previous section. However, the intervals of “good” solutions are – naturally – much smaller. The more complex the true associations become, the more we observe this trend of decreasing solution intervals. It seems as if the more complex the predictive surface is, the harder it is for LIME to even find a good local model.</p>
+<p>For globally non-linear associations, we also find that we prefer a small kernel which however also produces stable coefficients.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig12"></span>
+<img src="images/04-09-12.png" alt="Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for $x_2$)." width="99%" />
+<p class="caption">
+FIGURE 14.10: Simulated data: Local coefficients for different kernel widths explaining non-linear relationship (for <span class="math inline">\(x_2\)</span>).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig13"></span>
+<img src="images/04-09-13.png" alt="Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for $x_2$)." width="99%" />
+<p class="caption">
+FIGURE 14.11: Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for <span class="math inline">\(x_2\)</span>).
+</p>
+</div>
+<p>Having investigated simulated data where we knew the ground truth, gave us a good intuition on how the kernel size affects the resulting explainer model. The neighbourhood problem can be described briefly by the following. A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model. An optimal kernel size should balance these effects. We may formulate the problem as a minimisation problem w.r.t. the kernel size. However, the minimisation needs to consider the constraint that coefficients need to be stable.</p>
+</div>
+</div>
+<div id="id42" class="section level3">
+<h3><span class="header-section-number">14.3.2</span> Real data</h3>
+<p>Leaving the controlled environment may make things more difficult. Relevant challenges include:</p>
+<ol style="list-style-type: decimal">
+<li><p>High-dimensional data may be an issue for the computation of the kernel width. LIME computes dissimilarities. It is well-known that (some) dissimilarities get increasingly less meaningful as the feature space expands. This is one consequence of the curse of dimensionality.</p></li>
+<li><p>Computing some dissimilarities (e.g. Manhattan or Euclidean) also comes with the problem that the cardinality of the features mainly steers this measure. Thus, LIME should always apply scaling.</p></li>
+<li><p>When working with real data sets with many features, we typically want a sparse explanation. To achieve this, we should let LIME perform feature selection.</p></li>
+</ol>
+<p>Luckily, the latter two are featured in the Python and R implementations.</p>
+<p>Within this section, we study whether we can confirm our simulated data findings for real-world data. We will work with the well-known Washington D.C. bicycle rental data set. This dataset contains daily bicycle hire counts of a Washington D.C. based rental company. The data has been made openly available by the company itself (Capital-Bikeshare). <span class="citation">Fanaee-T and Gama (<a href="#ref-fanaee2014event">2014</a>)</span> added supplementary information on the weather data and season associated with each day. For details on the data set please refer to <span class="citation">Molnar (<a href="#ref-molnar2019">2019</a>)</span> (<a href="https://christophm.github.io/interpretable-ml-book/bike-data.html" class="uri">https://christophm.github.io/interpretable-ml-book/bike-data.html</a>). We select this data set because it is well-known in the machine learning community and this regression problem is easily accessible to most people. Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality of the distance measures. We only make use of a subset of all possible features as some are somewhat colinear.</p>
+<p>Using this data we aim to use a random forest to predict the number of daily bicycle hires. We use LIME to explain the black box.</p>
+<p>When working with LIME in practice, we want to obtain stable explanations. An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples. We evaluate this property with the aid of a modified version of stability paths (<span class="citation">Meinshausen and Bühlmann (<a href="#ref-meinshausen2010stability">2010</a>)</span>). Stability paths are used for sparse (regularised) models and indicate how likely each covariate is part of the model – w.r.t. a given degree of regularisation. Normally, they analyse the association of the regularisation strength and inclusion probabilities of features. On the x-axis, one depicts the regularisation strength and on the y-axis the inclusion probabilities (for all covariates). The probabilities for different regularisations are grouped by feature.</p>
+<p>However, for LIME we rather aim to study how likely a covariate is part of the (sparse) model over a grid of kernel widths. Our motivation to use stability paths is that they are easier to interpret compared to coefficients paths (or similar evaluation methods) in our setting.</p>
+<p>Over a grid of kernel widths (from almost 0 to 20), we compute multiple sparse explanations for the same kernel width. Sparse means that we limit our explainer to only the three most influential local features. We count how frequently each covariate has been part of the explanation model (out of all iterations). We divide by the total number of iterations and achieve estimates for the sampling probability for a given observation, a given number of features and a given kernel width. We search the full (predefined) grid of kernel widths. We can repeat this procedure for any other observation.</p>
+<p>Our <em>pseudo</em> stability paths are stable in areas where we have extreme probabilities, i.e. either probabilities close to 1 or close to 0. Furthermore, they should not change extremely when the kernel width slightly changes.</p>
+<p>Figure <a href="lime-neighbor.html#fig:lime-fig131">14.12</a> displays ideal stability paths with the three distinct areas observed earlier:</p>
+<ol style="list-style-type: decimal">
+<li><p>High variability for small kernels.</p></li>
+<li><p>Local stability for <em>optimal</em> kernels.</p></li>
+<li><p>Convergence to a global surrogate for large kernels.</p></li>
+</ol>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig131"></span>
+<img src="images/04-09-14.png" alt="Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour." width="99%" />
+<p class="caption">
+FIGURE 14.12: Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour.
+</p>
+</div>
+<p>The (toy example) stability paths suggest that temperature, weather situation and holiday are the local features while temperature, humidity and wind speed are deemed as the global ones.</p>
+<p>This figure would help us to clearly identify a stable local model. However, in real life, things mostly are more complex. In figure <a href="lime-neighbor.html#fig:lime-fig14">14.13</a>, we display the stability paths for different selected observations for our random forest.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig14"></span>
+<img src="images/04-09-15.png" alt="Real data: Stability paths for different observations from the bycicle data set explaining a random forest." width="99%" />
+<p class="caption">
+FIGURE 14.13: Real data: Stability paths for different observations from the bycicle data set explaining a random forest.
+</p>
+</div>
+<p>We observe that stability paths converge to a set of covariates if we set the kernel width large. These are the global features. There is one interesting observation about this. Different observations sometimes converge to different global surrogate models. The covariates humidity and temperature are always selected. Then, either the windspeed (e.g. only observation 1) or the season (the remainder observations) is selected as global feature. We believe that this is because both covariates are similarly strong on the global scope. Globally evaluating the feature importance of the random forest suggests that in fact temperature, season, humidity and wind speed are the most relevant features.</p>
+<p>Furthermore, we observe that for small values of the kernel width, we have – like in our simulation – high variation. Here, this variation is expressed by intersecting paths where most covariates are (almost) equally likely to be sampled.</p>
+<p>For some observations, there seems to be a narrow range where there are stable and local explanations. For instance, consider observations 1 and 3. Here, the local models seem quite clear. For observation 1, between kernel widths of <span class="math inline">\(0.5\)</span> and <span class="math inline">\(1\)</span> it seems as if the temperature, the wind speed, and the weather situation are most influential. For observation 3, the selected local features are temperature, wind speed and season. For other observations, such as observations 4 and 8, we may argue that there are local and stable explanations, too. These are, however, by far less convincing than the previous ones. Additionally, we are struggling to identify stable local models for many observations, like observation 2 and 6. For those observations, there is only instability for small kernel widths which transforms immediately to the global surrogate once stabilised. The reasons for this variation of behaviour can be manifold. However, not knowing the ground truth, it is hard to evaluate what is going on here in particular.</p>
+<p>So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations’ goodness. Furthermore, “local” explanations still seem quite global as they seem quite similar for many different observations. Considering our explanations, the sparse models were highly correlated consisting of similar features for different observations. The only truly stable explanations remain essentially global ones with large kernel width. It seems as if the predictive surface is too complex to facilitate local and stable surrogate models properly. The curse of dimensionality affects locality very strongly. As distances in higher-dimensional Euclidean space are increasingly less meaningful, the definition of locality is very poor with an increasing number of features.</p>
+<p>Summarising, we observe both effects being described in the literature also for our real data example: instability (<span class="citation">Alvarez-Melis and Jaakkola (<a href="#ref-alvarez2018robustness">2018</a>)</span>) for small kernel widths and global surrogates (<span class="citation">Laugel et al. (<a href="#ref-laugel2018defining">2018</a>)</span>) for large ones. For simulated data, we can observe these effects as well. At the same time, we can identify local and stable explanations in this controlled environment. For real data, however, it is hard to locate the area which we identified for simulated data where we find a stable <strong>and</strong> local model.</p>
+</div>
+</div>
+<div id="id5" class="section level2">
+<h2><span class="header-section-number">14.4</span> Discussion and outlook</h2>
+<p>LIME is capable of finding local models. We show this using simulated data. The specification of a proper kernel width is crucial to achieving this. A proper locality is expressed by the minimal kernel width producing stable coefficients. However, we see that it is difficult to find these models in practice. We are unable to detect explanations that were both, stable and local, for our real data application – at least with certainty. We largely observe the pattern described by <span class="citation">Laugel et al. (<a href="#ref-laugel2018defining">2018</a>)</span> who claim that LIME explanations are strongly biased towards global features. At the same time, our study agrees with <span class="citation">Alvarez-Melis and Jaakkola (<a href="#ref-alvarez2018robustness">2018</a>)</span> who find that local explanations are highly unstable. We confirm these findings using the bicycle rental data set. Additionally, also for simulated data, it becomes harder to detect a good locality if the predictive surface becomes more complex.</p>
+<p>Similar results can be obtained for alternative data sets. For the practitioner using LIME (for tabular data), this means that LIME should be used with great care. Furthermore, we suggest analysing the resulting explanations’ stability when making use of LIME.</p>
+<p>We think that the global sampling of LIME is responsible for many of the pitfalls identified. Hence, we propose that LIME should be altered in the way proposed by <span class="citation">Laugel et al. (<a href="#ref-laugel2018defining">2018</a>)</span> to LIME-K. Local sampling should replace global sampling to better control for the locality.</p>
+<p>Even though having said this, we think that LIME is one of the most promising recent contributions to the Interpretable Machine Learning community. The problems described in this chapter are mainly associated with tabular data. Domains where LIME has been applied successfully include image data and text data. Within these domains, LIME works differently from tabular data. For example, LIME’s sampling for text data is already very local. It only creates perturbations based on the instance to be explained.</p>
+</div>
+<div id="id6" class="section level2">
+<h2><span class="header-section-number">14.5</span> Note to the reader</h2>
+<div id="id61" class="section level3">
+<h3><span class="header-section-number">14.5.1</span> Packages used</h3>
+<p>For our analysis, we used R (<span class="citation">R Core Team (<a href="#ref-R-base">2017</a>)</span>). For all black-box models, we used the mlr package (<span class="citation">Bischl et al. (<a href="#ref-R-mlr">2019</a>)</span>) and the lime package (<span class="citation">Pedersen and Benesty (<a href="#ref-R-lime">2019</a>)</span>) for the LIME explanations. All plots have been created using ggplot2 (<span class="citation">Wickham et al. (<a href="#ref-R-ggplot2">2019</a>)</span>).</p>
+</div>
+<div id="id62" class="section level3">
+<h3><span class="header-section-number">14.5.2</span> How we used the lime R package and why</h3>
+<p>Using the lime package we heavily deviated from the default package options. We strongly recommend to not bin numerical features. The next chapter will outline in detail why this is not a good idea. In the first place, the main argument for binning has been enhanced interpretability. We suggest, though, that the same interpretability can be obtained by the <strong>absolute contribution</strong> of the feature to the prediction. This means, instead of the local coefficient, LIME should rather print the local coefficient times the feature value within its explanation. This argument makes binning – provided that there is no additional benefit except interpretability (Refer to the next chapter.) – obsolete.</p>
+<p>While we think Gower distance is an interesting approach to deal with mixed data, we explicitly promote not to use it. In the current (July 2019) R implementation, when working with Gower distance there is <strong>no</strong> kernel applied. Explanations do not correspond to altering the kernel width. As we have seen, a proper kernel width may look very different depending on the associated problem. So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result. In figure <a href="lime-neighbor.html#fig:lime-fig15">14.14</a> we analyse this statement by comparing the Gower distance’s local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section <a href="lime-neighbor.html#id413">14.3.1.3</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:lime-fig15"></span>
+<img src="images/04-09-16.png" alt="Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance." width="99%" />
+<p class="caption">
+FIGURE 14.14: Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance.
+</p>
+</div>
+<p>We see that our argument is valid. Gower distance is not able to recover the true coefficients and acts as a global surrogate.</p>
+<p>Even though we think that Gower distance may result in some cases in good local models, its (currently) lacking flexibility most likely causes either instable or global explanations.</p>
+<p>Usually, LASSO is the preferred option for variable selection as it is less seed dependent than, let’s say, step-wise forward selection. However, we do not use LASSO but step-wise forward selection because the current implementation of LASSO has shortcomings and does not deliver results suitable for our analysis.</p>
+<p>All in all, we strongly discourage the user of the lime R package to use the default settings.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-alvarez2018robustness">
+<p>Alvarez-Melis, David, and Tommi S Jaakkola. 2018. “On the Robustness of Interpretability Methods.” <em>arXiv Preprint arXiv:1806.08049</em>.</p>
+</div>
+<div id="ref-R-mlr">
+<p>Bischl, Bernd, Michel Lang, Lars Kotthoff, Julia Schiffner, Jakob Richter, Zachary Jones, Giuseppe Casalicchio, Mason Gallo, and Patrick Schratz. 2019. <em>Mlr: Machine Learning in R</em>. <a href="https://CRAN.R-project.org/package=mlr" class="uri">https://CRAN.R-project.org/package=mlr</a>.</p>
+</div>
+<div id="ref-craven1996">
+<p>Craven, Mark, and Jude W Shavlik. 1996. “Extracting Tree-Structured Representations of Trained Networks.” In <em>Advances in Neural Information Processing Systems</em>, 24–30.</p>
+</div>
+<div id="ref-fanaee2014event">
+<p>Fanaee-T, Hadi, and Joao Gama. 2014. “Event Labeling Combining Ensemble Detectors and Background Knowledge.” <em>Progress in Artificial Intelligence</em> 2 (2-3). Springer: 113–27.</p>
+</div>
+<div id="ref-friedman1991multivariate">
+<p>Friedman, Jerome H, and others. 1991. “Multivariate Adaptive Regression Splines.” <em>The Annals of Statistics</em> 19 (1). Institute of Mathematical Statistics: 1–67.</p>
+</div>
+<div id="ref-gower1971general">
+<p>Gower, John C. 1971. “A General Coefficient of Similarity and Some of Its Properties.” <em>Biometrics</em>. JSTOR, 857–71.</p>
+</div>
+<div id="ref-huang1998kproto">
+<p>Huang, Zhexue. 1998. “Extensions to the K-Means Algorithm for Clustering Large Data Sets with Categorical Values.” <em>Data Mining and Knowledge Discovery</em> 2 (3). Springer: 283–304.</p>
+</div>
+<div id="ref-laugel2018defining">
+<p>Laugel, Thibault, Xavier Renard, Marie-Jeanne Lesot, Christophe Marsala, and Marcin Detyniecki. 2018. “Defining Locality for Surrogates in Post-Hoc Interpretablity.” <em>arXiv Preprint arXiv:1806.07498</em>.</p>
+</div>
+<div id="ref-meinshausen2010stability">
+<p>Meinshausen, Nicolai, and Peter Bühlmann. 2010. “Stability Selection.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 72 (4). Wiley Online Library: 417–73.</p>
+</div>
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
+<div id="ref-R-lime">
+<p>Pedersen, Thomas Lin, and Michaël Benesty. 2019. <em>Lime: Local Interpretable Model-Agnostic Explanations</em>. <a href="https://CRAN.R-project.org/package=lime" class="uri">https://CRAN.R-project.org/package=lime</a>.</p>
+</div>
+<div id="ref-R-base">
+<p>R Core Team. 2017. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+</div>
+<div id="ref-ribeiro2016should">
+<p>Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016b. “Why Should I Trust You?: Explaining the Predictions of Any Classifier.” In <em>Proceedings of the 22nd Acm Sigkdd International Conference on Knowledge Discovery and Data Mining</em>, 1135–44. ACM.</p>
+</div>
+<div id="ref-R-ggplot2">
+<p>Wickham, Hadley, Winston Chang, Lionel Henry, Thomas Lin Pedersen, Kohske Takahashi, Claus Wilke, Kara Woo, and Hiroaki Yutani. 2019. <em>Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2" class="uri">https://CRAN.R-project.org/package=ggplot2</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>Note that heuristics exist, though.<a href="lime-neighbor.html#fnref1">↩</a></p></li>
+<li id="fn2"><p>Refer to the previous chapter.<a href="lime-neighbor.html#fnref2">↩</a></p></li>
+<li id="fn3"><p>This should examine LIME’s ability to assess local features.<a href="lime-neighbor.html#fnref3">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="lime.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="lime-sample.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/compstat-lmu/iml_methods_limitations/edit/master/04-09-lime-neighbourhood.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf", "book.epub", "book.mobi"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 PDP and Correlated Features | Limitations of Interpretable Machine Learning Methods</title>
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 PDP and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 PDP and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
+  
+  <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+
+
+<meta name="date" content="2019-12-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="pdp.html"/>
+<link rel="next" href="pdp-causal.html"/>
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Limitations of ML Interpretability</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="foreword.html"><a href="foreword.html"><i class="fa fa-check"></i><b>1</b> Foreword</a><ul>
+<li class="chapter" data-level="1.1" data-path="foreword.html"><a href="foreword.html#technical-setup"><i class="fa fa-check"></i><b>1.1</b> Technical Setup</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>2.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>2.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>2.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>2.4</b> Outline of the booklet</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pdp.html"><a href="pdp.html"><i class="fa fa-check"></i><b>3</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp.html"><a href="pdp.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>3.1</b> Partial Dependence Plots (PDP)</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>3.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="pdp.html"><a href="pdp.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>3.2</b> Individual Conditional Expectation Curves</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp.html"><a href="pdp.html#centered-ice-plot"><i class="fa fa-check"></i><b>3.2.1</b> Centered ICE Plot</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp.html"><a href="pdp.html#derivative-ice-plot"><i class="fa fa-check"></i><b>3.2.2</b> Derivative ICE Plot</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>3.2.3</b> Advantages and Limitations of ICE Plots</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-correlated.html"><a href="pdp-correlated.html"><i class="fa fa-check"></i><b>4</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ProblemDescription"><i class="fa fa-check"></i><b>4.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>4.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="4.1.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>4.1.2</b> What is the issue with extrapolation?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#RealData"><i class="fa fa-check"></i><b>4.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>4.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="4.2.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>4.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="4.2.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#NumCat"><i class="fa fa-check"></i><b>4.2.3</b> Dependency between Numerical and Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#SimulatedData"><i class="fa fa-check"></i><b>4.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>4.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="4.3.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>4.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="4.3.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>4.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="4.3.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>4.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="4.3.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>4.3.5</b> Simulation Settings: Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>4.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>4.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="4.4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>4.4.2</b> Simulation based on own prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>4.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pdp-causal.html"><a href="pdp-causal.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="5.1" data-path="pdp-causal.html"><a href="pdp-causal.html#introduction-1"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="pdp-causal.html"><a href="pdp-causal.html#motivation"><i class="fa fa-check"></i><b>5.2</b> Motivation</a></li>
+<li class="chapter" data-level="5.3" data-path="pdp-causal.html"><a href="pdp-causal.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>5.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="5.4" data-path="pdp-causal.html"><a href="pdp-causal.html#scenarios"><i class="fa fa-check"></i><b>5.4</b> Scenarios</a></li>
+<li class="chapter" data-level="5.5" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>5.5</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="ale.html"><a href="ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="6.1" data-path="ale.html"><a href="ale.html#motivation-1"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
+<li class="chapter" data-level="6.2" data-path="ale.html"><a href="ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="ale.html"><a href="ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="ale.html"><a href="ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="ale.html"><a href="ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="ale.html"><a href="ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-pdp.html"><a href="ale-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>7.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-pdp.html"><a href="ale-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>7.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-pdp.html"><a href="ale-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>7.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>7.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-pdp.html"><a href="ale-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>7.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="7.2.2" data-path="ale-pdp.html"><a href="ale-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>7.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-pdp.html"><a href="ale-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>7.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-pdp.html"><a href="ale-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>7.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-pdp.html"><a href="ale-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>7.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-pdp.html"><a href="ale-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>7.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>7.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="7.5" data-path="ale-pdp.html"><a href="ale-pdp.html#appendix"><i class="fa fa-check"></i><b>7.5</b> Appendix</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="ale-pdp.html"><a href="ale-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>7.5.1</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ale-misc.html"><a href="ale-misc.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="8.1" data-path="ale-misc.html"><a href="ale-misc.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>8.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="ale-misc.html"><a href="ale-misc.html#state-of-the-art"><i class="fa fa-check"></i><b>8.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="8.1.2" data-path="ale-misc.html"><a href="ale-misc.html#ale-approximations"><i class="fa fa-check"></i><b>8.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="8.1.3" data-path="ale-misc.html"><a href="ale-misc.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>8.1.3</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="8.1.4" data-path="ale-misc.html"><a href="ale-misc.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>8.1.4</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="ale-misc.html"><a href="ale-misc.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>8.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="ale-misc.html"><a href="ale-misc.html#example-4-simple-step-function"><i class="fa fa-check"></i><b>8.2.1</b> Example 4: Simple step function</a></li>
+<li class="chapter" data-level="8.2.2" data-path="ale-misc.html"><a href="ale-misc.html#example-5-two-dimensional-step-functions-and-unluckily-distributed-data"><i class="fa fa-check"></i><b>8.2.2</b> Example 5: Two-dimensional step functions and unluckily distributed data</a></li>
+<li class="chapter" data-level="8.2.3" data-path="ale-misc.html"><a href="ale-misc.html#outlook"><i class="fa fa-check"></i><b>8.2.3</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ale-misc.html"><a href="ale-misc.html#categorical-features"><i class="fa fa-check"></i><b>8.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="ale-misc.html"><a href="ale-misc.html#ordering-the-features"><i class="fa fa-check"></i><b>8.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ale-misc.html"><a href="ale-misc.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>8.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="8.3.3" data-path="ale-misc.html"><a href="ale-misc.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>8.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="8.3.4" data-path="ale-misc.html"><a href="ale-misc.html#interpretation"><i class="fa fa-check"></i><b>8.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="8.3.5" data-path="ale-misc.html"><a href="ale-misc.html#changes-of-the-ale-due-to-different-orders"><i class="fa fa-check"></i><b>8.3.5</b> Changes of the ALE due to different orders</a></li>
+<li class="chapter" data-level="8.3.6" data-path="ale-misc.html"><a href="ale-misc.html#conclusion-1"><i class="fa fa-check"></i><b>8.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi.html"><a href="pfi.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi.html"><a href="pfi.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="9.2" data-path="pfi.html"><a href="pfi.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi.html"><a href="pfi.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="pfi-correlated.html"><a href="pfi-correlated.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="10.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>10.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#simulation"><i class="fa fa-check"></i><b>10.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="10.1.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#real-data"><i class="fa fa-check"></i><b>10.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>10.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="10.3" data-path="pfi-correlated.html"><a href="pfi-correlated.html#summary-1"><i class="fa fa-check"></i><b>10.3</b> Summary</a></li>
+<li class="chapter" data-level="10.4" data-path="pfi-correlated.html"><a href="pfi-correlated.html#note-to-the-reader"><i class="fa fa-check"></i><b>10.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-partial.html"><a href="pfi-partial.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch2"><i class="fa fa-check"></i><b>11.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch3"><i class="fa fa-check"></i><b>11.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch31"><i class="fa fa-check"></i><b>11.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="11.2.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch32"><i class="fa fa-check"></i><b>11.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="11.2.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch323"><i class="fa fa-check"></i><b>11.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch4"><i class="fa fa-check"></i><b>11.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="11.4" data-path="pfi-partial.html"><a href="pfi-partial.html#ch5"><i class="fa fa-check"></i><b>11.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="pfi-data.html"><a href="pfi-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="12.1" data-path="pfi-data.html"><a href="pfi-data.html#introduction-to-test-vs.training-data"><i class="fa fa-check"></i><b>12.1</b> Introduction to Test vs. Training Data</a></li>
+<li class="chapter" data-level="12.2" data-path="pfi-data.html"><a href="pfi-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>12.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="12.3" data-path="pfi-data.html"><a href="pfi-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>12.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="pfi-data.html"><a href="pfi-data.html#gradient-boosting-machines"><i class="fa fa-check"></i><b>12.3.1</b> Gradient Boosting Machines</a></li>
+<li class="chapter" data-level="12.3.2" data-path="pfi-data.html"><a href="pfi-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>12.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="12.3.3" data-path="pfi-data.html"><a href="pfi-data.html#results"><i class="fa fa-check"></i><b>12.3.3</b> Results</a></li>
+<li class="chapter" data-level="12.3.4" data-path="pfi-data.html"><a href="pfi-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>12.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="pfi-data.html"><a href="pfi-data.html#summary-2"><i class="fa fa-check"></i><b>12.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>13.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="13.2" data-path="lime.html"><a href="lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>13.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="lime.html"><a href="lime.html#neighbourhood"><i class="fa fa-check"></i><b>13.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="13.2.2" data-path="lime.html"><a href="lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>13.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="13.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>13.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>13.3</b> Example</a></li>
+<li class="chapter" data-level="13.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>13.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>14.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="14.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>14.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>14.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>14.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id42"><i class="fa fa-check"></i><b>14.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id5"><i class="fa fa-check"></i><b>14.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="14.5" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id6"><i class="fa fa-check"></i><b>14.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="14.5.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id61"><i class="fa fa-check"></i><b>14.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="14.5.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id62"><i class="fa fa-check"></i><b>14.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="lime-sample.html"><a href="lime-sample.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="15.1" data-path="lime-sample.html"><a href="lime-sample.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>15.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="lime-sample.html"><a href="lime-sample.html#formula"><i class="fa fa-check"></i><b>15.1.1</b> Formula</a></li>
+<li class="chapter" data-level="15.1.2" data-path="lime-sample.html"><a href="lime-sample.html#sampling-strategies"><i class="fa fa-check"></i><b>15.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="15.1.3" data-path="lime-sample.html"><a href="lime-sample.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>15.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="lime-sample.html"><a href="lime-sample.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>15.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="15.3" data-path="lime-sample.html"><a href="lime-sample.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>15.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="lime-sample.html"><a href="lime-sample.html#boston-housing-data"><i class="fa fa-check"></i><b>15.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="15.3.2" data-path="lime-sample.html"><a href="lime-sample.html#rental-bikes-data"><i class="fa fa-check"></i><b>15.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="lime-sample.html"><a href="lime-sample.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>15.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>15.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="15.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>15.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="15.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>15.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>15.5</b> Outlook</a></li>
+<li class="chapter" data-level="15.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>15.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>16</b> Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Limitations of Interpretable Machine Learning Methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="pdp-correlated" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> PDP and Correlated Features</h1>
+<p><em>Author: Veronika Kronseder</em></p>
+<p><em>Supervisor: Giuseppe Casalicchio</em></p>
+<div id="ProblemDescription" class="section level2">
+<h2><span class="header-section-number">4.1</span> Problem Description</h2>
+<p>As outlined in chapter 2, PDPs and ICE plots are meaningful graphical tools to visualize the impact of individual feature variables. This is particularly true for black box algorithms, where the mechanism of each feature and its influence on the generated predictions may be difficult to retrace <span class="citation">(Goldstein et al. <a href="#ref-Goldstein2013">2013</a>)</span>.</p>
+<p>The reliability of the produced curves, however, strongly builds on the independence assumption of the features. Furthermore, results can be misleading in areas with no or little observations, where the curve is drawn as a result of extrapolation. In this chapter, we want to illustrate and discuss the issue of depencencies between different types of variables, missing values and the associated implications on PDPs.</p>
+<div id="what-is-the-issue-with-dependent-features" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> What is the issue with dependent features?</h3>
+<p>When looking at PDPs, one should bear in mind that by definition the partial dependence function does not reflect the isolated effect of <span class="math inline">\(x_S\)</span> while the features in <span class="math inline">\(x_C\)</span> are ignored. This approach would correspond to the conditional expectation <span class="math inline">\(\tilde{f}_S(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)|x_S]\)</span>, which is only congruent to the partial dependence function <span class="math inline">\(f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\)</span> in case of <span class="math inline">\(x_S\)</span> and <span class="math inline">\(x_C\)</span> being independent <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-hastie2013elements">2013</a>)</span>.</p>
+<p>Although unlikely in many practical applications, the independence of feature variables is one of the major assumptions to produce meaningful PDPs. Its violation would mean that, by calculating averages of the features in <span class="math inline">\(x_C\)</span>, the estimated partial dependence function <span class="math inline">\(\hat{f}_{x_S}(x_S)\)</span> takes unrealistic data points into consideration <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
+<p>Figure <a href="pdp-correlated.html#fig:Figure01">4.1</a> illustrates the problem by contrasting simulated data with independent features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> on the left with an example where the two features have a strong linear dependency, and thus are highly correlated, on the right.</p>
+<div class="figure"><span id="fig:Figure01"></span>
+<img src="images/VK_PDP_1_Data_ind_dep.png" alt="Simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. The marginal distribution of $x_2$ is displayed on the right side of each plot." width="100%" />
+<p class="caption">
+FIGURE 4.1: Simulated data for independent (left) and strongly correlated (right) features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. The marginal distribution of <span class="math inline">\(x_2\)</span> is displayed on the right side of each plot.
+</p>
+</div>
+<p>When computing the PDP for feature <span class="math inline">\(x_1\)</span>, we take <span class="math inline">\(x_2\)</span> into account by calculating its mean (here: <span class="math inline">\(\overline{x}_2 \approx 0\)</span>) and keeping the value in <span class="math inline">\(\hat{f}_{x_S}(x_1)\)</span> constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure <a href="pdp-correlated.html#fig:Figure01">4.1</a>, the average of <span class="math inline">\(x_2\)</span> is not a realistic value in combination with values of <span class="math inline">\(x_1\)</span> in the very left and the very right part of the feature distribution.</p>
+</div>
+<div id="what-is-the-issue-with-extrapolation" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> What is the issue with extrapolation?</h3>
+<p>Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing ‘weird stuff’ in unobserved areas. In chapter <a href="pdp-correlated.html#ExtrapolationProblem">4.4</a> we will see an example where this instant leads to a failure of the PDP <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
+<p>On the other hand, PDPs are also directly exposed to extrapolation problems due to the fact that the estimated partial dependence function <span class="math inline">\(\hat{f}_{x_S}\)</span> is evaluated at each observed <span class="math inline">\(x^{(i)}_{S}\)</span>, giving a set of N ordered pairs: <span class="math inline">\(\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N\)</span>. The resulting coordinates are plottet against each other and joined by lines. Not only outside the margins of observed values, but also in areas with a larger distance between neighboured <span class="math inline">\(x_S\)</span> values, the indicated relationship with the target variable might be inappropriate and volatile in case of outliers <span class="citation">(Goldstein et al. <a href="#ref-Goldstein2013">2013</a>)</span>.</p>
+<p>In figure <a href="pdp-correlated.html#fig:Figure02">4.2</a>, a part of the previously simulated observations has been deleted from both the independent and the correlated example to visualize a data situation which might have an impact on the PDP in terms of extrapolation. An example is given in chapter <a href="pdp-correlated.html#ExtrapolationProblemEstablished">4.4.1</a>. The shift in observed areas can also be noticed from the marginal distribution of <span class="math inline">\(x_2\)</span>.</p>
+<div class="figure"><span id="fig:Figure02"></span>
+<img src="images/VK_PDP_2_Data_ind_dep_gap.png" alt="Manipulated simulated data for independent (left) and strongly correlated (right) features $x_1$ and $x_2$. Observations where both the value of $x_1$ and $x_2$ lies between 0 and 1.5 have been deleted to artificially produce an extrapolation problem. The marginal distribution of $x_2$, which is displayed on the right side of each plot, is obviously more affected in the correlated case." width="100%" />
+<p class="caption">
+FIGURE 4.2: Manipulated simulated data for independent (left) and strongly correlated (right) features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Observations where both the value of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> lies between 0 and 1.5 have been deleted to artificially produce an extrapolation problem. The marginal distribution of <span class="math inline">\(x_2\)</span>, which is displayed on the right side of each plot, is obviously more affected in the correlated case.
+</p>
+</div>
+<p>The extrapolation problem in PDPs is strongly linked to the aforementioned independence assumption. Independent features are a prerequisite for the computation of meaningful extrapolation results, therefore one could say that both problems go hand in hand. In the following chapters, the failure of PDPs in case of a violation of the independence assumption shall be discussed by means of real data examples (chapter <a href="pdp-correlated.html#RealData">4.2</a>) and based on simulated cases (chapter <a href="pdp-correlated.html#SimulatedData">4.3</a>).</p>
+</div>
+</div>
+<div id="RealData" class="section level2">
+<h2><span class="header-section-number">4.2</span> Dependent Features: Bike Sharing Dataset</h2>
+<p>In order to investigate the impact of dependent features, we are now looking at the Bike-Sharing dataset from the rental company ‘Capital-Bikeshare’, which is available for download via the UCI Machine Learning Repository. Besides the daily count of rental bikes between the year 2011 and 2012 in Washington D.C., the dataset contains the corresponding weather and seasonal information <span class="citation">(Fanaee-T and Gama <a href="#ref-Fanaee-T">2013</a>)</span>.</p>
+<p>For our purposes, the dataset was restricted to the following variables:</p>
+<ul>
+<li><span class="math inline">\(y\)</span>: cnt (count of total rental bikes including both casual and registered)</li>
+<li><span class="math inline">\(x_1\)</span>: season: Season (1:springer, 2:summer, 3:fall, 4:winter)</li>
+<li><span class="math inline">\(x_2\)</span>: yr: Year (0: 2011, 1:2012)</li>
+<li><span class="math inline">\(x_3\)</span>: mnth: Month (1 to 12)</li>
+<li><span class="math inline">\(x_4\)</span>: holiday: weather day is holiday or not</li>
+<li><span class="math inline">\(x_5\)</span>: workingday: If day is neither weekend nor holiday is 1, otherwise is 0.</li>
+<li><span class="math inline">\(x_6\)</span>: weathersit:
+<ul>
+<li>1: Clear, Few clouds, Partly cloudy, Partly cloudy</li>
+<li>2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist</li>
+<li>3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds</li>
+<li>4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog</li>
+</ul></li>
+<li><span class="math inline">\(x_7\)</span>: temp: Normalized temperature in Celsius.</li>
+<li><span class="math inline">\(x_8\)</span>: atemp: Normalized feeling temperature in Celsius.</li>
+<li><span class="math inline">\(x_9\)</span>: hum: Normalized humidity.</li>
+<li><span class="math inline">\(x_{10}\)</span>: windspeed: Normalized wind speed.</li>
+</ul>
+<p>For all machine learning models based on the Bike-Sharing dataset, ‘cnt’ is used as target variable, while the remaining information serves as feature variables. Six out of these ten features are categorical (<span class="math inline">\(x_1\)</span> to <span class="math inline">\(x_6\)</span>), the rest is measured on a numerical scale (<span class="math inline">\(x_7\)</span> to <span class="math inline">\(x_{10}\)</span>). Since the appearance of a PDP depends on the class of the feature(s) of interest, we are looking at three different scenarios of dependency:</p>
+<ol style="list-style-type: decimal">
+<li>Dependency between numerical features</li>
+<li>Dependency between categorical features</li>
+<li>Dependency between numerical and categorical features</li>
+</ol>
+<p>At the same time, for each of those scenarios, three different learning algorithms shall be compared:</p>
+<ul>
+<li>Linear Model (LM)</li>
+<li>Random Forest (RF)</li>
+<li>Support Vector Machines (SVM)</li>
+</ul>
+<div id="dependency-between-numerical-features" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Dependency between Numerical Features</h3>
+<p>The linear dependency between two numerical features can be measured by the Pearson correlation coefficient <span class="citation">(Fahrmeir et al. <a href="#ref-fahrmeir2016statistik">2016</a>)</span>. Figure <a href="pdp-correlated.html#fig:Figure03">4.3</a> shows the correlation matrix of all numerical features used in our analysis. It is striking, but certainly not surprising, that ‘temp’ and ‘atemp’ are strongly correlated, not to say almost perfectly collinear.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure03"></span>
+<img src="images/VK_PDP_3_Num_Correlation_Matrix.png" alt="Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset." width="80%" />
+<p class="caption">
+FIGURE 4.3: Matrix of Pearson correlation coefficients between all numerical variables extracted from the bike-sharing dataset.
+</p>
+</div>
+<p>Due to their strong correlation, ‘temp’ (<span class="math inline">\(x_7\)</span>) and ‘atemp’ (<span class="math inline">\(x_8\)</span>) perfectly qualify for our analysis of the impact of dependent features on PDPs. In order to compare the partial dependence curve with and without the influence of dependent features, we compute PDPs based on the following models:</p>
+<span class="math display" id="eq:1">\[\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}  + x_9 + x_{10} \tag{4.1} 
+\end{equation}\]</span>
+<span class="math display" id="eq:2">\[\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_8}  + x_9 + x_{10} \tag{4.2}
+\end{equation}\]</span>
+<span class="math display" id="eq:3">\[\begin{equation}
+ y \sim x_1 + x_2 + x_4 + x_5 + x_6 \mathbf{+ x_7 + x_8} + x_9 + x_{10} \tag{4.3}
+\end{equation}\]</span>
+<p>Please note that the representation of the different models with the feature variables connected via ‘+’ shall, in this context, not be read as a (linear) regression model where all coefficients are equal to 1, but rather as a combination of applicable feature variables to explain <span class="math inline">\(y\)</span>. The (non-)linear effect of each variable is modelled individually, depending on the observed values and the learner.</p>
+<p>While model <a href="pdp-correlated.html#eq:1">(4.1)</a> and <a href="pdp-correlated.html#eq:2">(4.2)</a> only take one of the two substituting variables into account, <a href="pdp-correlated.html#eq:3">(4.3)</a> considers both ‘temp’ and ‘atemp’ in one and the same model. Figures <a href="pdp-correlated.html#fig:Figure04">4.4</a>, <a href="pdp-correlated.html#fig:Figure05">4.5</a> and <a href="pdp-correlated.html#fig:Figure06">4.6</a> compare the associated PDPs for the different learning algorithms. Note that ‘season’ (<span class="math inline">\(x_1\)</span>) and ‘mnth’ (<span class="math inline">\(x_3\)</span>) are not taken into account in combination with <span class="math inline">\(x_7\)</span> and/or <span class="math inline">\(x_8\)</span>, since there are meaningful associations between those variables, too, as we will show in chapter <a href="pdp-correlated.html#NumCat">4.2.3</a>. At this stage we want to illustrate the isolated effect of the dependence between the two numerical variables.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure04"></span>
+<img src="images/VK_PDP_4_Correlated_numerical_LM.png" alt="PDPs based on Linear Regression learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.4: PDPs based on Linear Regression learner for ‘temp’ in model 3.1 (top left), ‘atemp’ in model 3.2 (top right), ‘temp’ in model in model 3.3 (bottom left) and ‘atemp’ in model 3.3 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure05"></span>
+<img src="images/VK_PDP_5_Correlated_numerical_SVM.png" alt="PDPs based on Support Vector Machines learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.5: PDPs based on Support Vector Machines learner for ‘temp’ in model 3.1 (top left), ‘atemp’ in model 3.2 (top right), ‘temp’ in model in model 3.3 (bottom left) and ‘atemp’ in model 3.3 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure06"></span>
+<img src="images/VK_PDP_6_Correlated_numerical_RF.png" alt="PDPs based on Random Forest learner for 'temp' in model 3.1 (top left), 'atemp' in model 3.2 (top right), 'temp' in model in model 3.3 (bottom left) and 'atemp' in model 3.3 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.6: PDPs based on Random Forest learner for ‘temp’ in model 3.1 (top left), ‘atemp’ in model 3.2 (top right), ‘temp’ in model in model 3.3 (bottom left) and ‘atemp’ in model 3.3 (bottom right).
+</p>
+</div>
+<p>In all cases, we can see that the features’ effect on the prediction is basically the same for <span class="math inline">\(x_7\)</span> and <span class="math inline">\(x_8\)</span>, if only one of the dependent variables is used for modelling (see PDPs in top left and top right corners). If both ‘temp’ and ‘atemp’ are relevant for the prediction of <span class="math inline">\(y\)</span>, each feature’s impact is smoothened and neither the PDP for <span class="math inline">\(x_7\)</span> nor the one for <span class="math inline">\(x_8\)</span> seems to properly reflect the true effect of the temperature on the count of bike rentals.</p>
+</div>
+<div id="dependency-between-categorical-features" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Dependency between Categorical Features</h3>
+<p>In order to measure the association between two categorical features, we calculate the corrected contingency coefficient, which is based on the <span class="math inline">\(\chi^2\)</span>-statistic. Other than the Pearson correlation coefficient, the corrected contingency coefficient is a measure of association <span class="math inline">\(\in [0,1]\)</span> which can only indicate the strength but not the direction of the variables’ relationship <span class="citation">(Fahrmeir et al. <a href="#ref-fahrmeir2016statistik">2016</a>)</span>. For the categorical features in the Bike-Sharing dataset, we observe the values stated in figure <a href="pdp-correlated.html#fig:Figure07">4.7</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure07"></span>
+<img src="images/VK_PDP_7_Cat_Correlation_Matrix.png" alt="Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset." width="80%" />
+<p class="caption">
+FIGURE 4.7: Matrix of corrected contingency coefficients between all categorical variables extracted from the bike-sharing dataset.
+</p>
+</div>
+<p>The only combination of categorical features with an exceptionally high corrected contingency coefficient, is ‘season’ (<span class="math inline">\(x_1\)</span>) and ‘mnth’ (<span class="math inline">\(x_3\)</span>). Also from a content-related point of view, this finding is no surprise, since both variables measure the time of the year. For the computation of the respective PDPs, we use the following models:</p>
+<span class="math display" id="eq:6" id="eq:5" id="eq:4">\[\begin{equation} 
+y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{4.4}
+\end{equation}\begin{equation}
+y \sim x_2 +\mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{4.5}
+\end{equation}\begin{equation}
+y \sim \mathbf{x_1} + x_2 + \mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{4.6}
+\end{equation}\]</span>
+<p>The approach is equivalent to the numeric case, with model <a href="pdp-correlated.html#eq:4">(4.4)</a> containing only ‘season’ and <a href="pdp-correlated.html#eq:5">(4.5)</a> only ‘mnth’, while both dependent features are part of model <a href="pdp-correlated.html#eq:6">(4.6)</a>. The impact on the PDPs for categorical features are shown in figures <a href="pdp-correlated.html#fig:Figure08">4.8</a>, <a href="pdp-correlated.html#fig:Figure09">4.9</a> and <a href="pdp-correlated.html#fig:Figure10">4.10</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure08"></span>
+<img src="images/VK_PDP_8_Correlated_categorical_LM.png" alt="PDPs based on Linear Regression learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.8: PDPs based on Linear Regression learner for ‘season’ in model 3.4 (top left), ‘mnth’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘mnth’ in model 3.6 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure09"></span>
+<img src="images/VK_PDP_9_Correlated_categorical_SVM.png" alt="PDPs based on Support Vector Machines learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.9: PDPs based on Support Vector Machines learner for ‘season’ in model 3.4 (top left), ‘mnth’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘mnth’ in model 3.6 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure10"></span>
+<img src="images/VK_PDP_10_Correlated_categorical_RF.png" alt="PDPs based on Random Forest learner for 'season' in model 3.4 (top left), 'mnth' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'mnth' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.10: PDPs based on Random Forest learner for ‘season’ in model 3.4 (top left), ‘mnth’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘mnth’ in model 3.6 (bottom right).
+</p>
+</div>
+<p>Again, in all PDPs based on the different learning algorithms, the results between models with and without dependent features are diverging. The predicted number of bike rentals between the seasons/months shows a stronger variation when modelled without feature dependencies.</p>
+</div>
+<div id="NumCat" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> Dependency between Numerical and Categorical Features</h3>
+<p>Our third dependency scenario seeks to provide an example for a strong correlation between a numerical and a categorical feature. For this constellation, neither the Pearson correlation nor the contingency coefficient are applicable as such, since both methods are limited to their respective classes of variables.</p>
+<p>We can, however, fit a linear model to explain the numeric variable through the categorical feature. By doing so, we produce another numerical variable, the fitted values. In a next step, we can calculate the Pearson correlation coefficient between the observed and the fitted values of the numerical feature. The resulting measure of association lies within the interval <span class="math inline">\([0,1]\)</span> and is equivalent to the square root of the linear model’s variance explained (<span class="math inline">\(R^2\)</span>) <span class="citation">(Fahrmeir et al. <a href="#ref-fahrmeir2013regression">2013</a>)</span>. For this reason, we refer to the measure as ‘variance-explained measure’.</p>
+<p>When applying this procedure to the categorical feature ‘season’ (<span class="math inline">\(x_1\)</span>) and the numerical feature ‘temp’ (<span class="math inline">\(x_7\)</span>), we find that with a variance-explained value of 0.83, there seems to be a reasonable association between the two features. The PDPs are derived through the following models:</p>
+<span class="math display" id="eq:9" id="eq:8" id="eq:7">\[\begin{equation}
+y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{4.7}
+\end{equation}\begin{equation}
+y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}+ x_9 + x_{10} \tag{4.8}
+\end{equation}\begin{equation}
+y \sim \mathbf{x_1} + x_2  + x_4 + x_5 + x_6 +\mathbf{x_7}+ x_9 + x_{10} \tag{4.9}
+\end{equation}\]</span>
+<p>Figure <a href="pdp-correlated.html#fig:Figure11">4.11</a>, <a href="pdp-correlated.html#fig:Figure12">4.12</a> and <a href="pdp-correlated.html#fig:Figure13">4.13</a> present the partial dependence plots for the three underlying machine learning algorithms (LM, SVM and RF) defined for the purpose of our analysis.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure11"></span>
+<img src="images/VK_PDP_11_Correlated_cat_num_LM.png" alt="PDPs based on Linear Regression learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.11: PDPs based on Linear Regression learner for ‘season’ in model 3.4 (top left), ‘temp’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘temp’ in model 3.6 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure12"></span>
+<img src="images/VK_PDP_12_Correlated_cat_num_SVM.png" alt="PDPs based on Support Vector Machines learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.12: PDPs based on Support Vector Machines learner for ‘season’ in model 3.4 (top left), ‘temp’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘temp’ in model 3.6 (bottom right).
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:Figure13"></span>
+<img src="images/VK_PDP_13_Correlated_cat_num_RF.png" alt="PDPs based on Random Forest learner for 'season' in model 3.4 (top left), 'temp' in model 3.5 (top right), 'season' in model in model 3.6 (bottom left) and 'temp' in model 3.6 (bottom right)." width="80%" />
+<p class="caption">
+FIGURE 4.13: PDPs based on Random Forest learner for ‘season’ in model 3.4 (top left), ‘temp’ in model 3.5 (top right), ‘season’ in model in model 3.6 (bottom left) and ‘temp’ in model 3.6 (bottom right).
+</p>
+</div>
+<p>Compared to the first two scenarios, we observe a more moderate difference between the PDPs when comparing model <a href="pdp-correlated.html#eq:7">(4.7)</a> and <a href="pdp-correlated.html#eq:8">(4.8)</a> containing just one of the dependent features to the full model <a href="pdp-correlated.html#eq:9">(4.9)</a>. The weaker association between the two variables, in contrast to scenario 1 and 2, could be an explanation for this observation. It is, however, evident that the dependency structure between two feature variables, irrespective of their class, does impact the partial dependence plot.</p>
+</div>
+</div>
+<div id="SimulatedData" class="section level2">
+<h2><span class="header-section-number">4.3</span> Dependent Features: Simulated Data</h2>
+<p>A major disadvantage of the analysis of PDPs on the basis of real data examples is, that we cannot exclude other factors to play a role. As an example, underlying interactions could have an impact on the PDP and hide the true effect of a feature on the predicted target variable <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>. In order to illustrate the isolated impact of dependent variables in the feature space, we have simulated data in different settings, which we will discuss in this chapter.</p>
+<div id="simulation-settings-numerical-features" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Simulation Settings: Numerical Features</h3>
+<p>For a start, the different settings of simulations used for our investigation shall be introduced. Just like in chapter 2, we are seperately looking at different classes of variables and different machine learning algorithms (LM, RF and SVM). PDPs for independent, correlated and dependent numerical features are computed for each of the following data generating processes (DGP), which describe the true impact of the features on <span class="math inline">\(y\)</span>:</p>
+<ul>
+<li>Setting 1: Linear Dependence:<br />
+
+<span class="math display" id="eq:10">\[\begin{equation}
+y = x_1 + x_2 + x_3 + \varepsilon \tag{4.10}
+\end{equation}\]</span></li>
+<li>Setting 2: Nonlinear Dependence in <span class="math inline">\(x_1\)</span>:<br />
+
+<span class="math display" id="eq:11">\[\begin{equation}
+y = \sin{( \, 3*x_1 ) \,} + x_2 + x_3 + \varepsilon \tag{4.11}
+\end{equation}\]</span></li>
+<li>Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span><br />
+
+<span class="math display" id="eq:12">\[\begin{equation}
+y = x_1 + x_2 + x_3 + \varepsilon \tag{4.12}
+\end{equation}\]</span>
+with <span class="math inline">\(x_3\)</span> relevant for the DGP but unconsidered in the machine learning model.</li>
+</ul>
+<p>In the independent case, the feature variables <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> have been drawn from a gaussian distribution with <span class="math inline">\(\mu = 0\)</span>, <span class="math inline">\(\sigma^2 = 1\)</span> and a correlation coefficient of <span class="math inline">\(\rho_{ij} = 0\)</span> <span class="math inline">\(\forall\)</span> <span class="math inline">\(i \ne j\)</span>, <span class="math inline">\(i,j \in \{1,2,3\}\)</span>.<br />
+The correlated case is based on the same parameters for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span>, but a correlation coefficient of <span class="math inline">\(\rho_{12} = \rho_{21} = 0.90\)</span>, i.e. a relatively strong linear association between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, and <span class="math inline">\(\rho_{ij} = 0\)</span> otherwise.<br />
+The dependent case describes the event of perfect multicollinearity, where <span class="math inline">\(x_2\)</span> is a duplicate of <span class="math inline">\(x_1\)</span>, based on the data generated in the independent case.<br />
+The target variable <span class="math inline">\(y\)</span> results from the respective DGP with an error term <span class="math inline">\(\varepsilon \sim N(0, \sigma^2_\varepsilon)\)</span> and <span class="math inline">\(\sigma^2_\varepsilon\)</span> depending on the feature values.</p>
+<p>One source of variation in the PDPs is the simulation of the data itself. For this reason, the process has been repeated 20 times for each analysis and the resulting PDP curves are shown as gray lines in the plots below. The thicker, black line represents the average partial dependence curve over these 20 simulations and the error bars indicate their variation. Additionally, a red line represents the true effect of the feature for which the PDP is computed. In all cases, the simulations are based on a number of 500 observations and grid size 50.</p>
+<p>Since in the dependent case, <span class="math inline">\(x_2\)</span> is simply a duplicate of <span class="math inline">\(x_1\)</span>, the DGP could also be written as <span class="math inline">\(y = 2*x_1 + x_3 + \varepsilon\)</span> in setting <a href="pdp-correlated.html#eq:10">(4.10)</a> and <a href="pdp-correlated.html#eq:12">(4.12)</a> and <span class="math inline">\(y = \sin{( \, 3*x_1 ) \,} + x_1 + x_3 + \varepsilon\)</span> in setting <a href="pdp-correlated.html#eq:11">(4.11)</a>. For the purpose of this analysis, we are looking at each of the three features’ PDP separately. However, in order to illustrate the aforementioned, the common effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> on the prediction is added to the plots as dashed blue line.</p>
+</div>
+<div id="simulation-of-setting-1-linear-dependence" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Simulation of Setting 1: Linear Dependence</h3>
+<div id="pdps-based-on-linear-model" class="section level4">
+<h4><span class="header-section-number">4.3.2.1</span> PDPs based on Linear Model</h4>
+<p>The results of our simulations in setting 1 based on the Linear Model are shown in figure <a href="pdp-correlated.html#fig:Figure14">4.14</a>:</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure14"></span>
+<img src="images/VK_PDP_14_Set1_LM.png" alt="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Linear Model as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.14: PDPs for features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> (left to right) in Setting 1, based on multiple simulations with Linear Model as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Across all simulations, there is hardly any variation between the PDPs based on the Linear Model. In the independent case, the PDPs for each feature adequately reflect the linear dependency structure. The effect is equivalent in each PDP, since all features have the same impact and are independent from each other. From the PDPs in the second row of figure <a href="pdp-correlated.html#fig:Figure14">4.14</a> we see that even with a relatively strong correlation of features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, the PDPs adequately reflect the linear dependency structure when predictions are computed from the Linear Model. In the event of perfect multicollinearity, the PDP for one of the dependent features (<span class="math inline">\(x_2\)</span>) fails, while the corresponding PDP for the other feature (<span class="math inline">\(x_1\)</span>) reflects the common effect of both. The PDP for feature <span class="math inline">\(x_3\)</span> adequately reveals its linear effect on <span class="math inline">\(y\)</span>.</p>
+</div>
+<div id="pdps-based-on-random-forest" class="section level4">
+<h4><span class="header-section-number">4.3.2.2</span> PDPs based on Random Forest</h4>
+<p>The results of our simulations in setting 1 based on Random Forest are shown in figure <a href="pdp-correlated.html#fig:Figure15">4.15</a>:</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure15"></span>
+<img src="images/VK_PDP_15_Set1_RF.png" alt="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.15: PDPs for features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> (left to right) in Setting 1, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Compared to the LM, there is a little more variance between the individual PDP curves produced from RF as learner. Furthermore, the partial dependence plots cannot adequately reflect the linear dependency structure, particularly at the margins of the feature’s distribution. Again, there is no visual differentiation between the different features in the first row of figure <a href="pdp-correlated.html#fig:Figure15">4.15</a> due to their independence. Besides, the computation of PDPs based on Random Forest does not produce significantly worse results when two features are correlated and the relationship between all variables and <span class="math inline">\(y\)</span> is linear.<br />
+When comparing the PDPs subject to perfect multicollinearity to those in the correlated case, a slightly increased variation in the individual PDP curves is observed. Other than in the Linear Model, the learner is not able to reveal the true common effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+</div>
+<div id="pdps-based-on-support-vector-machines" class="section level4">
+<h4><span class="header-section-number">4.3.2.3</span> PDPs based on Support Vector Machines</h4>
+<p>The results of our simulations in setting 1 based on Support Vector Machines are shown in figure <a href="pdp-correlated.html#fig:Figure16">4.16</a>:</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure16"></span>
+<img src="images/VK_PDP_16_Set1_SVM.png" alt="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 1, based on multiple simulations with Support Vector Machines as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.16: PDPs for features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> (left to right) in Setting 1, based on multiple simulations with Support Vector Machines as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Support Vector Machines as learning algorithms are able to reproduce the respective feature’s linear effect on the prediction fairly adequate in case of independence. The accuracy decreases in the margins of the feature’s distribution. With two correlated features, the interval of predicted values of both correlated features becomes smaller, while the learner produces the same ‘shape’ of its effect, both for <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. The same observation is made in the event of two identical features (dependent case), but even more evident with PDP curves increasingly deviating from the true effect. Other than in the LM, none of the PDPs for the dependent features reveals the true common effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+</div>
+</div>
+<div id="simulation-of-setting-2-nonlinear-dependence" class="section level3">
+<h3><span class="header-section-number">4.3.3</span> Simulation of Setting 2: Nonlinear Dependence</h3>
+<p>In simulation setting 2 we are looking at a DGP with a nonlinear relationship of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(y\)</span> and a linear impact of <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span>. Due to the nonlinearity in one of the features, it is clear that the LM would not deliver accurate results. For this reason, in this chapter we will restrict our analysis to RF and SVM.</p>
+<div id="pdps-based-on-random-forest-1" class="section level4">
+<h4><span class="header-section-number">4.3.3.1</span> PDPs based on Random Forest</h4>
+<p>The results of our simulations in setting 2 based on Random Forest are shown in figure <a href="pdp-correlated.html#fig:Figure17">4.17</a>:</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure17"></span>
+<img src="images/VK_PDP_17_Set2_RF.png" alt="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.17: PDPs for features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> (left to right) in Setting 2, based on multiple simulations with Random Forest as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>From the PDP of feature <span class="math inline">\(x_1\)</span> in the first row of figure <a href="pdp-correlated.html#fig:Figure17">4.17</a> it is evident that Random Forest as a learner can retrace the nonlinear effect of the variable quite well, except for the margin areas of the feature distribution. The PDPs for feature <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> are equivalent to those in simulation setting <a href="pdp-correlated.html#eq:10">(4.10)</a>.<br />
+With a simulated correlation between features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and a nonlinear relationship of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(y\)</span>, the ability of the respective PDPs to illustrate the feature’s effect degrades with RF as learner. Both the nonlinear effect of <span class="math inline">\(x_1\)</span> and the linear effect of <span class="math inline">\(x_2\)</span> are distorted in the PDPs.<br />
+In the event of perfect multicollinearity, the PDPs for the involved feature variables fail even more. In contrast to the correlated case, we can observe that both curves take on a similar shape, which very roughly approximates the common effect.</p>
+</div>
+<div id="pdps-based-on-support-vector-machines-1" class="section level4">
+<h4><span class="header-section-number">4.3.3.2</span> PDPs based on Support Vector Machines</h4>
+<p>The results of our simulations in setting 2 based on SVM are shown in figure <a href="pdp-correlated.html#fig:Figure18">4.18</a>:</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure18"></span>
+<img src="images/VK_PDP_18_Set2_SVM.png" alt="PDPs for features $x_1$, $x_2$ and $x_3$ (left to right) in Setting 2, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.18: PDPs for features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> (left to right) in Setting 2, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>The findings derived from PDPs based on Random Forest are equivalently applicable to Support Vector Machines as machine learning algorithm. In the event of independent features, the PDPs can fairly well reveal the true feature effects, despite in the margins of the feature distrubutions. With strongly correlated or even dependent features, this ability vanishes and the PDPs of the affected features transform towards the variables’ common effect.</p>
+</div>
+</div>
+<div id="simulation-of-setting-3-missing-informative-feature-x_3" class="section level3">
+<h3><span class="header-section-number">4.3.4</span> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></h3>
+<p>In simulation setting 3, we assume that there are three variables with an impact on the data generating process of <span class="math inline">\(y\)</span>. In the training process of the machine learning model, only two of those are considered. Consequently, when looking at the PDPs, we only compare the independent, the correlated and the dependent case for <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> respectively.</p>
+<div id="pdps-based-on-linear-model-1" class="section level4">
+<h4><span class="header-section-number">4.3.4.1</span> PDPs based on Linear Model</h4>
+The results of our simulations in setting 3 based on the Linear Model are shown in figure <a href="pdp-correlated.html#fig:Figure19">4.19</a>:
+<div class="figure" style="text-align: left"><span id="fig:Figure19"></span>
+<img src="images/VK_PDP_19_Set3_LM.png" alt="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.19: PDPs for features <span class="math inline">\(x_1\)</span> (left) and <span class="math inline">\(x_2\)</span> (right) in Setting 3, based on multiple simulations with LM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Compared to the PDPs of independent features the Linear Model produced in setting <a href="pdp-correlated.html#eq:10">(4.10)</a>, the variation in individual PDPs is slightly higher with missing information from <span class="math inline">\(x_3\)</span>. Overall, the learner can adequately reflect the linear feature effects of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.<br />
+The increase in variablility between the individual PDPs is even more evident in the correlated case. On average, we still obtain the true linear effect of the correlated features, but there are some individual curves which do indicate a steeper or more moderate slope.<br />
+The PDPs drawn on basis of the Linear Model and dependent features indicate that for both individual features, the PDP consistently provides false effects on the predicted outcome. While both effects are actually linear with a slope of 1, the PDP for <span class="math inline">\(x_1\)</span> shows a steeper increase and <span class="math inline">\(x_2\)</span> fails completely. Nonetheless, the PDP for <span class="math inline">\(x_1\)</span> does reflect the common effect of both variables together.</p>
+</div>
+<div id="pdps-based-on-random-forest-2" class="section level4">
+<h4><span class="header-section-number">4.3.4.2</span> PDPs based on Random Forest</h4>
+The results of our simulations in setting 3 based on Random Forest are shown in figure <a href="pdp-correlated.html#fig:Figure20">4.20</a>:
+<div class="figure" style="text-align: left"><span id="fig:Figure20"></span>
+<img src="images/VK_PDP_20_Set3_RF.png" alt="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.20: PDPs for features <span class="math inline">\(x_1\)</span> (left) and <span class="math inline">\(x_2\)</span> (right) in Setting 3, based on multiple simulations with RF as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Compared to setting <a href="pdp-correlated.html#eq:10">(4.10)</a>, where all relevant feature variables were taken into account for the training of the model, the variation in PDP curves in setting <a href="pdp-correlated.html#eq:12">(4.12)</a> is larger. Between features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, which are independent, there is no systematic difference traceable from the PDPs.<br />
+Other than an increased variability between the individual PDP curves and a slightly tighter prediction interval, with correlated features and Random Forest as learner, there is no apparent deviation to the PDPs of independent features.<br />
+In accordance with the observations made in setting <a href="pdp-correlated.html#eq:10">(4.10)</a>, the interval of predicted values for dependent features become even smaller while the PDP curves further deviate from the true effect. Neither the individual effect of each feature, nor their common effect are illustrated adequately.</p>
+</div>
+<div id="pdps-based-on-support-vector-machines-2" class="section level4">
+<h4><span class="header-section-number">4.3.4.3</span> PDPs based on Support Vector Machines</h4>
+The results of our simulations in setting 3 based on Support Vector Machines are shown in figure <a href="pdp-correlated.html#fig:Figure21">4.21</a>:
+<div class="figure" style="text-align: left"><span id="fig:Figure21"></span>
+<img src="images/VK_PDP_21_Set3_SVM.png" alt="PDPs for features $x_1$ (left) and $x_2$  (right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on $y$, the blue dashed line is the true commmon effect of $x_1$ and $x_2$." width="100%" />
+<p class="caption">
+FIGURE 4.21: PDPs for features <span class="math inline">\(x_1\)</span> (left) and <span class="math inline">\(x_2\)</span> (right) in Setting 3, based on multiple simulations with SVM as learning algorithm. Top row shows independent case, second row the correlated case and bottom row the dependent case. The red line represents the true effect of the respective feature on <span class="math inline">\(y\)</span>, the blue dashed line is the true commmon effect of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.
+</p>
+</div>
+<p>Similar to learning based on Random Forest, the SVM learner with missing feature variable <span class="math inline">\(x_3\)</span> produces a higher variability between the simulated PDP curves. The margin areas, where the PDPs cannot adequately reflect the linear dependence, are broader than in setting <a href="pdp-correlated.html#eq:10">(4.10)</a>.<br />
+In the event of the two remaining features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> being strongly correlated, the issue of larger variability between the individual simulations aggravates and the ability to reveal the linear effect ceases.<br />
+With a perfect multicollinearity of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, the variablity of the individual PDP curves becomes smaller, but at the same time the models’ ability to uncover the true linear effect vanishes. The interval of predicted values is remarkably smaller than in the independent case.</p>
+</div>
+</div>
+<div id="simulation-settings-categorical-features" class="section level3">
+<h3><span class="header-section-number">4.3.5</span> Simulation Settings: Categorical Features</h3>
+<p>In this chapter we want to investigate the impact of dependencies between two categorical and between a categorical and a numerical feature. For this purpose, we simulate data with a number of 1000 randomly drawn observations and three feature variables, where:</p>
+<ul>
+<li><span class="math inline">\(x_1\)</span> categorical variable <span class="math inline">\(\in \{0,1\}\)</span>,</li>
+<li><span class="math inline">\(x_2\)</span> categorical variable <span class="math inline">\(\in \{A,B,C\}\)</span>,</li>
+<li><span class="math inline">\(x_3\)</span> numerical variable with <span class="math inline">\(x_3 \sim N(\mu, \sigma^2)\)</span>.</li>
+</ul>
+<p>All features are characterized by their linear relationship with the target variable: <span class="math inline">\(y=x_1+x_2+x_3+\varepsilon\)</span>.</p>
+<p>Again, in order to isolate the individual effects of two dependent features on their respective PDPs, we define three different simulation settings:</p>
+<p><strong>1. Independent Case:</strong> In this setting, the feature variables are drawn independently from each other, i.e. the observations are randomly sampled with the following parameters:</p>
+<ul>
+<li><span class="math inline">\(x_1: P(x_1=1)=P(x_1=0)=0.5\)</span></li>
+<li><span class="math inline">\(x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35\)</span></li>
+<li><span class="math inline">\(x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5\)</span></li>
+</ul>
+<p>The association between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> can be measured by the corrected contingency coefficient, which is rather low with a value of 0.10. In accordance with the approach in chapter <a href="pdp-correlated.html#NumCat">4.2.3</a>, we calculate the association between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_3\)</span> by means of the variance-explained measure. With a value of 0.01 we take the independence assumption as confirmed.</p>
+<p><strong>2. Dependency between two categorical features:</strong> In this setting, <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are depending on each each other, i.e. the observations are randomly sampled with the following parameters:</p>
+<ul>
+<li><span class="math inline">\(x_1: P(x_1=1)=P(x_1=0)=0.5\)</span></li>
+<li><span class="math inline">\(x_2: \begin{cases} P(x_2=A)=0.90, P(x_2=B)=0.10, P(x_2=C)=0), \text{if } x_1=0, \\ P(x_2=A)=0.05, P(x_2=B)=0.25, P(x_2=C)=0.70), \text{if } x_1=1 \end{cases}\)</span></li>
+<li><span class="math inline">\(x_3: P(x_3 \sim N(1,1))=0.5, P(x_3 \sim N(20,2))=0.5\)</span></li>
+</ul>
+<p>The corrected contingency coefficient of 0.94 comfirms a strong association between features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+<p><strong>3. Dependency between categorical and numerical features:</strong> In this setting, <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_3\)</span> are depending on each each other, i.e. the observations are randomly sampled with the following parameters:</p>
+<ul>
+<li><span class="math inline">\(x_1: P(x_1=1)=P(x_1=0)=0.5\)</span></li>
+<li><span class="math inline">\(x_2: P(x_2=A)=0.475, P(x_2=B)=0.175, P(x_2=C)=0.35\)</span></li>
+<li><span class="math inline">\(x_3: \begin{cases} x_3 \sim N(1,1), \text{if } x_1=0 \\ x_3 \sim N(20,2), \text{if } x_1=1 \end{cases}\)</span></li>
+</ul>
+<p>With a value of 0.986, the variance-explained measure indicates a substantial degree of dependency between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_3\)</span>.</p>
+<div id="pdps-based-on-linear-model-2" class="section level4">
+<h4><span class="header-section-number">4.3.5.1</span> PDPs based on Linear Model</h4>
+<p>Figure <a href="pdp-correlated.html#fig:Figure22">4.22</a> shows the PDPs for all feature variables and all simulation settings based on the Linear Model.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure22"></span>
+<img src="images/VK_PDP_22_Set4_LM.png" alt="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and LM as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature." width="100%" />
+<p class="caption">
+FIGURE 4.22: PDPs for categorical features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and numerical feature <span class="math inline">\(x_3\)</span> (left to right), based on simulated data and LM as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.
+</p>
+</div>
+<p>Apparently, the Linear Model is robust against our simulated dependencies, since the PDPs of the correlated and dependent features do not differ significantly from those of independent features.</p>
+</div>
+<div id="pdps-based-on-random-forest-3" class="section level4">
+<h4><span class="header-section-number">4.3.5.2</span> PDPs based on Random Forest</h4>
+<p>Figure <a href="pdp-correlated.html#fig:Figure23">4.23</a> shows the PDPs for all feature variables and all simulation settings based on Random Forest.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure23"></span>
+<img src="images/VK_PDP_23_Set4_RF.png" alt="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature." width="100%" />
+<p class="caption">
+FIGURE 4.23: PDPs for categorical features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and numerical feature <span class="math inline">\(x_3\)</span> (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.
+</p>
+</div>
+<p>Based on Random Forest, the partial dependence function seems to be impacted much stronger by our simulated dependencies, since the PDPs for dependent variables indicate feature effects which differ from those in the independent case. This is particularly true for a strong association between a categorical an a numerical variable (bottom row of figure <a href="pdp-correlated.html#fig:Figure23">4.23</a>).</p>
+</div>
+<div id="pdps-based-on-support-vector-machines-3" class="section level4">
+<h4><span class="header-section-number">4.3.5.3</span> PDPs based on Support Vector Machines</h4>
+<p>Figure <a href="pdp-correlated.html#fig:Figure24">4.24</a> shows the PDPs for all feature variables and all simulation settings based on Support Vector Machines.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure24"></span>
+<img src="images/VK_PDP_24_Set4_SVM.png" alt="PDPs for categorical features $x_1$, $x_2$ and numerical feature $x_3$ (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature." width="100%" />
+<p class="caption">
+FIGURE 4.24: PDPs for categorical features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span> and numerical feature <span class="math inline">\(x_3\)</span> (left to right), based on simulated data and RF as learning algorithm. Top row shows independent case, second row the case of two dependent categorical features and the bottom row the case of a numerical feature depending on a categorical feature.
+</p>
+</div>
+<p>In accordancy with our findings based on the Linear Model, the predicted effects based on SVM seem to be robust against our simulated dependencies, since the PDPs for the individual settings do not differ significantly from the independent case.</p>
+</div>
+</div>
+</div>
+<div id="ExtrapolationProblem" class="section level2">
+<h2><span class="header-section-number">4.4</span> Extrapolation Problem: Simulation</h2>
+<div id="ExtrapolationProblemEstablished" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Simulation based on established learners</h3>
+<p>In the problem description of this chapter we announced that, in addition to the issue with dependent features, we want to investigate the extrapolation problem and its implications for the computation of partial dependence plots. For this purpose, we use the dataset introduced in chapter <a href="pdp-correlated.html#ProblemDescription">4.1</a>, which was simulated once with <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> independent, and once with both features strongly correlated. Remember that in a next step, the observed data was manipulated by cutting out all observations with <span class="math inline">\(x_1 \in [0, 1.5] \wedge x_2 \in [0, 1.5]\)</span>, and thus artificially producing an area with no observations (see figure <a href="pdp-correlated.html#fig:Figure02">4.2</a>).</p>
+<p>Now we are looking at the PDPs resulting from these modifications. Figure <a href="pdp-correlated.html#fig:Figure25">4.25</a> compares the PDP curves derived for both features based on the complete, uncorrelated dataset to its manipulated version with missing values.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure25"></span>
+<img src="images/VK_PDP_25_Extrapol_uncor.png" alt="PDPs for uncorrelated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM)." width="90%" />
+<p class="caption">
+FIGURE 4.25: PDPs for uncorrelated features <span class="math inline">\(x_1\)</span> (left) and <span class="math inline">\(x_2\)</span> (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).
+</p>
+</div>
+<p>The first row of PDPs in figure <a href="pdp-correlated.html#fig:Figure25">4.25</a>, computed on basis of the complete dataset of uncorrelated features, adequately reflects the true effects of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> (red curves). In the presence of an extrapolation problem, the adequacy of the predicted effects decreases. Especially with the more complex, nonlinear effect of <span class="math inline">\(x_1\)</span>, extrapolation causes a clearly visible deviation between the partial dependence curves and the true feature effect, irrespective of the learner.</p>
+<p>In figure <a href="pdp-correlated.html#fig:Figure26">4.26</a> we do the same comparison, but this time based on the dataset with strongly correlated features.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure26"></span>
+<img src="images/VK_PDP_26_Extrapol_cor.png" alt="PDPs for correlated features $x_1$ (left) and $x_2$ (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM)." width="90%" />
+<p class="caption">
+FIGURE 4.26: PDPs for correlated features <span class="math inline">\(x_1\)</span> (left) and <span class="math inline">\(x_2\)</span> (right) based on complete simulated dataset (top row) and based on manipulated dataset with missing observations (bottom row). The red curve represents the true effect of the feature for which the PDP is drawn, while the PDPs derived from the machine learning models are represented by curves drawn in black (Random Forest) and blue (SVM).
+</p>
+</div>
+<p>From the first row of PDPs in figure <a href="pdp-correlated.html#fig:Figure26">4.26</a>, we again discover the difficulty to obtain reliable PDPs when features are dependent. The results in the bottom row of figure <a href="pdp-correlated.html#fig:Figure26">4.26</a> are even more striking: with a combination of dependent features and extrapolation, the PDPs come up with estimated effects which are far from the true effects on the prediction. Those deviations seem to occur irrespective of the learning algorithm.</p>
+</div>
+<div id="ExtrapolationProblemPrediction" class="section level3">
+<h3><span class="header-section-number">4.4.2</span> Simulation based on own prediction function</h3>
+<p>So far, all our analyses were based on the established learning algorithms LM, RF and SVM. We have seen that the choice of the learner does have an impact on the suitability of PDP curves. Obviously there is a countless number of other possibilities to come up with prediction functions other than the ones we have seen. PDPs are prone to fail when this prediction function is doing ‘weird’ stuff in areas outside the feature distribution. This can happen due to the fact that the learner minimizes the loss based on training data while there is no penalization for extrapolation <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
+<p>Let’s illustrate the issue with an example. Assume we want to predict the size of a potato (<span class="math inline">\(\hat{y}\)</span>) by means of the share of maximum amount of soil (<span class="math inline">\(x_1\)</span>) and the share of maximum amount of water (<span class="math inline">\(x_2\)</span>) available during the process of growing the plant. The feature variables are dependent in the sense that when using a larger amount of soil, the farmer would also use a larger amount of water, i.e. <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are positively correlated. Typically, the more ressources the farmer invests, the larger the crops. The corresponding model is basically a simple linear regression which adds up the two components.</p>
+<p>In the event of improper planting, meaning the usage of a too large amount of water in proportion to the soil (and vice versa), the plant would die and the result would be a potato of size 0. This is exactly what our self-constructed prediction function predicts. Luckily, all farmers in our dataset know how to grow potatoes, therefore there are no such zero cases in the underlying observations. Figure <a href="pdp-correlated.html#fig:Figure27">4.27</a> illustrates our observations as points and the prediction function as shaded background colour.</p>
+<div class="figure" style="text-align: center"><span id="fig:Figure27"></span>
+<img src="images/VK_PDP_27_Prediction_Fct.png" alt="Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour." width="60%" />
+<p class="caption">
+FIGURE 4.27: Visualization of the observed data points (n=100) and the self-contructed prediction function. Dark blue background colour indicates a predicted potato size of zero which increases with the brightness of the yellow shaded background colour.
+</p>
+</div>
+<p>In view of the observed data, one would expect to uncover a linear effect of both feature variables when looking at the corresponding PDPs. As we can see in figure <a href="pdp-correlated.html#fig:Figure28">4.28</a>, this is not necessarily the case. While the two-dimensional PDP perfectly depicts the prediction function, the individual PDPs for feature <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> fail in the areas where the prediction function does ‘weird’ stuff compared to what has been observed.</p>
+<div class="figure" style="text-align: left"><span id="fig:Figure28"></span>
+<img src="images/VK_PDP_28_Prediction_Fct_Fail.png" alt="The first plot shows the two-dimensional PDP for features $x_1$ and $x_2$. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature $x_1$ and $x_2$ respectively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger $x_1$- / $x_2$-values." width="110%" />
+<p class="caption">
+FIGURE 4.28: The first plot shows the two-dimensional PDP for features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. The darker the background colour, the smaller the predicted values. The other plots are the PDPs derived for feature <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> respectively. Up to a value of approximately 0.5 both partial dependence curves are mostly linear and bend at larger <span class="math inline">\(x_1\)</span>- / <span class="math inline">\(x_2\)</span>-values.
+</p>
+</div>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2><span class="header-section-number">4.5</span> Summary</h2>
+<p>Our analysis of partial dependence plots in the context of dependent features and missing values has revealed that both a violation of the underlying independence assumption and the presence of areas with no observations can have a significant impact on the marginalized feature effects. As a consequence, there is a risk of misinterpretation of the effect of features in <span class="math inline">\(x_S\)</span>. Hooker and Mentch (2019) propose to make use of local explanation methods in order to avoid extrapolation. ICE plots, as an example, can be restricted to values in line with the distribution of observed data. However, the authors also point out that this approach cannot serve as a global representation of the learned model <span class="citation">(Hooker and Mentch <a href="#ref-2019arXiv190503151H">2019</a>)</span>.</p>
+<p>In our simulations, we have also seen cases where the PDP (or the underlying machine learning algorithm) proved to be relatively robust against the dependency of features. Further to the independence assumtion, there are also other parameters playing a role for the accuracy of PDPs, like the grid size, the number of observations, the learning algorithm, variance in the data, complexity of the data generating process, etc.</p>
+<p>In practical applications it is recommended to analyse the variables used in the model, both by means of correlation and/or association measures and content-wise in liason with experts having domain knowledge. Furthermore, data scientists can apply methods based on the conditional expectation, such as M-plots or ALE plots. The concept and limitations of the latter will be discussed in chapters 6-8 of this book.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-fahrmeir2016statistik">
+<p>Fahrmeir, L., C. Heumann, R. Künstler, I. Pigeot, and G. Tutz. 2016. <em>Statistik: Der Weg Zur Datenanalyse</em>. Springer-Lehrbuch. Springer Berlin Heidelberg. <a href="https://books.google.de/books?id=rKveDAAAQBAJ" class="uri">https://books.google.de/books?id=rKveDAAAQBAJ</a>.</p>
+</div>
+<div id="ref-fahrmeir2013regression">
+<p>Fahrmeir, L., T. Kneib, S. Lang, and B. Marx. 2013. <em>Regression: Models, Methods and Applications</em>. Springer Berlin Heidelberg. <a href="https://books.google.de/books?id=EQxU9iJtipAC" class="uri">https://books.google.de/books?id=EQxU9iJtipAC</a>.</p>
+</div>
+<div id="ref-Fanaee-T">
+<p>Fanaee-T, Hadi, and Joao Gama. 2013. “Event Labeling Combining Ensemble Detectors and Background Knowledge.” <em>Progress in Artificial Intelligence</em>. Springer Berlin Heidelberg, 1–15. doi:<a href="https://doi.org/10.1007/s13748-013-0040-3">10.1007/s13748-013-0040-3</a>.</p>
+</div>
+<div id="ref-Goldstein2013">
+<p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2013. “Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation.” <em>Journal of Computational and Graphical Statistics</em> 24 (September). doi:<a href="https://doi.org/10.1080/10618600.2014.907095">10.1080/10618600.2014.907095</a>.</p>
+</div>
+<div id="ref-hastie2013elements">
+<p>Hastie, T., R. Tibshirani, and J. Friedman. 2013. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. Springer Series in Statistics. Springer New York. <a href="https://books.google.de/books?id=yPfZBwAAQBAJ" class="uri">https://books.google.de/books?id=yPfZBwAAQBAJ</a>.</p>
+</div>
+<div id="ref-2019arXiv190503151H">
+<p>Hooker, Giles, and Lucas Mentch. 2019. “Please Stop Permuting Features: An Explanation and Alternatives.” <em>arXiv E-Prints</em>, May, arXiv:1905.03151.</p>
+</div>
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="pdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="pdp-causal.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/compstat-lmu/iml_methods_limitations/edit/master/01-1-pdp-correlated.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf", "book.epub", "book.mobi"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Comparison of ALE and PDP | Limitations of Interpretable Machine Learning Methods</title>
+  <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Comparison of ALE and PDP | Limitations of Interpretable Machine Learning Methods" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Comparison of ALE and PDP | Limitations of Interpretable Machine Learning Methods" />
+  
+  <meta name="twitter:description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
+  
+
+
+
+<meta name="date" content="2019-12-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="ale.html"/>
+<link rel="next" href="ale-misc.html"/>
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Limitations of ML Interpretability</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="foreword.html"><a href="foreword.html"><i class="fa fa-check"></i><b>1</b> Foreword</a><ul>
+<li class="chapter" data-level="1.1" data-path="foreword.html"><a href="foreword.html#technical-setup"><i class="fa fa-check"></i><b>1.1</b> Technical Setup</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction.html"><a href="introduction.html#statistical-modeling-the-two-approaches"><i class="fa fa-check"></i><b>2.1</b> Statistical Modeling: The Two Approaches</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction.html"><a href="introduction.html#importance-of-interpretability"><i class="fa fa-check"></i><b>2.2</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction.html"><a href="introduction.html#interpretable-machine-learning"><i class="fa fa-check"></i><b>2.3</b> Interpretable Machine Learning</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction.html"><a href="introduction.html#outline-of-the-booklet"><i class="fa fa-check"></i><b>2.4</b> Outline of the booklet</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pdp.html"><a href="pdp.html"><i class="fa fa-check"></i><b>3</b> Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE)</a><ul>
+<li class="chapter" data-level="3.1" data-path="pdp.html"><a href="pdp.html#partial-dependence-plots-pdp"><i class="fa fa-check"></i><b>3.1</b> Partial Dependence Plots (PDP)</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-partial-dependence-plots"><i class="fa fa-check"></i><b>3.1.1</b> Advantages and Limitations of Partial Dependence Plots</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="pdp.html"><a href="pdp.html#individual-conditional-expectation-curves"><i class="fa fa-check"></i><b>3.2</b> Individual Conditional Expectation Curves</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="pdp.html"><a href="pdp.html#centered-ice-plot"><i class="fa fa-check"></i><b>3.2.1</b> Centered ICE Plot</a></li>
+<li class="chapter" data-level="3.2.2" data-path="pdp.html"><a href="pdp.html#derivative-ice-plot"><i class="fa fa-check"></i><b>3.2.2</b> Derivative ICE Plot</a></li>
+<li class="chapter" data-level="3.2.3" data-path="pdp.html"><a href="pdp.html#advantages-and-limitations-of-ice-plots"><i class="fa fa-check"></i><b>3.2.3</b> Advantages and Limitations of ICE Plots</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pdp-correlated.html"><a href="pdp-correlated.html"><i class="fa fa-check"></i><b>4</b> PDP and Correlated Features</a><ul>
+<li class="chapter" data-level="4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ProblemDescription"><i class="fa fa-check"></i><b>4.1</b> Problem Description</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-dependent-features"><i class="fa fa-check"></i><b>4.1.1</b> What is the issue with dependent features?</a></li>
+<li class="chapter" data-level="4.1.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#what-is-the-issue-with-extrapolation"><i class="fa fa-check"></i><b>4.1.2</b> What is the issue with extrapolation?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#RealData"><i class="fa fa-check"></i><b>4.2</b> Dependent Features: Bike Sharing Dataset</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-numerical-features"><i class="fa fa-check"></i><b>4.2.1</b> Dependency between Numerical Features</a></li>
+<li class="chapter" data-level="4.2.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#dependency-between-categorical-features"><i class="fa fa-check"></i><b>4.2.2</b> Dependency between Categorical Features</a></li>
+<li class="chapter" data-level="4.2.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#NumCat"><i class="fa fa-check"></i><b>4.2.3</b> Dependency between Numerical and Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#SimulatedData"><i class="fa fa-check"></i><b>4.3</b> Dependent Features: Simulated Data</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-numerical-features"><i class="fa fa-check"></i><b>4.3.1</b> Simulation Settings: Numerical Features</a></li>
+<li class="chapter" data-level="4.3.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-1-linear-dependence"><i class="fa fa-check"></i><b>4.3.2</b> Simulation of Setting 1: Linear Dependence</a></li>
+<li class="chapter" data-level="4.3.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-2-nonlinear-dependence"><i class="fa fa-check"></i><b>4.3.3</b> Simulation of Setting 2: Nonlinear Dependence</a></li>
+<li class="chapter" data-level="4.3.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-of-setting-3-missing-informative-feature-x_3"><i class="fa fa-check"></i><b>4.3.4</b> Simulation of Setting 3: Missing informative feature <span class="math inline">\(x_3\)</span></a></li>
+<li class="chapter" data-level="4.3.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#simulation-settings-categorical-features"><i class="fa fa-check"></i><b>4.3.5</b> Simulation Settings: Categorical Features</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblem"><i class="fa fa-check"></i><b>4.4</b> Extrapolation Problem: Simulation</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemEstablished"><i class="fa fa-check"></i><b>4.4.1</b> Simulation based on established learners</a></li>
+<li class="chapter" data-level="4.4.2" data-path="pdp-correlated.html"><a href="pdp-correlated.html#ExtrapolationProblemPrediction"><i class="fa fa-check"></i><b>4.4.2</b> Simulation based on own prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>4.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pdp-causal.html"><a href="pdp-causal.html"><i class="fa fa-check"></i><b>5</b> PDP and Causal Interpretation</a><ul>
+<li class="chapter" data-level="5.1" data-path="pdp-causal.html"><a href="pdp-causal.html#introduction-1"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="pdp-causal.html"><a href="pdp-causal.html#motivation"><i class="fa fa-check"></i><b>5.2</b> Motivation</a></li>
+<li class="chapter" data-level="5.3" data-path="pdp-causal.html"><a href="pdp-causal.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>5.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
+<li class="chapter" data-level="5.4" data-path="pdp-causal.html"><a href="pdp-causal.html#scenarios"><i class="fa fa-check"></i><b>5.4</b> Scenarios</a></li>
+<li class="chapter" data-level="5.5" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>5.5</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="ale.html"><a href="ale.html"><i class="fa fa-check"></i><b>6</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
+<li class="chapter" data-level="6.1" data-path="ale.html"><a href="ale.html#motivation-1"><i class="fa fa-check"></i><b>6.1</b> Motivation</a></li>
+<li class="chapter" data-level="6.2" data-path="ale.html"><a href="ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>6.2</b> The Theoretical Formula</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="ale.html"><a href="ale.html#centering"><i class="fa fa-check"></i><b>6.2.1</b> Centering</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="ale.html"><a href="ale.html#estimation-formula"><i class="fa fa-check"></i><b>6.3</b> Estimation Formula</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="ale.html"><a href="ale.html#implementation-formula"><i class="fa fa-check"></i><b>6.3.1</b> Implementation Formula</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="ale.html"><a href="ale.html#ale-intro-interpret"><i class="fa fa-check"></i><b>6.4</b> Intuition and Interpretation</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ale-pdp.html"><a href="ale-pdp.html"><i class="fa fa-check"></i><b>7</b> Comparison of ALE and PDP</a><ul>
+<li class="chapter" data-level="7.1" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-one-feature"><i class="fa fa-check"></i><b>7.1</b> Comparison one feature</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="ale-pdp.html"><a href="ale-pdp.html#example-1-multiplicative-prediction-function"><i class="fa fa-check"></i><b>7.1.1</b> Example 1: Multiplicative prediction function</a></li>
+<li class="chapter" data-level="7.1.2" data-path="ale-pdp.html"><a href="ale-pdp.html#example-2-additive-prediction-function"><i class="fa fa-check"></i><b>7.1.2</b> Example 2: Additive prediction function</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-two-features"><i class="fa fa-check"></i><b>7.2</b> Comparison two features</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ale-pdp.html"><a href="ale-pdp.html#the-2d-ale"><i class="fa fa-check"></i><b>7.2.1</b> The 2D ALE</a></li>
+<li class="chapter" data-level="7.2.2" data-path="ale-pdp.html"><a href="ale-pdp.html#d-ale-vs-2d-pdp"><i class="fa fa-check"></i><b>7.2.2</b> 2D ALE vs 2D PDP</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ale-pdp.html"><a href="ale-pdp.html#runtime-comparison"><i class="fa fa-check"></i><b>7.3</b> Runtime comparison</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="ale-pdp.html"><a href="ale-pdp.html#one-numerical-feature-of-interest"><i class="fa fa-check"></i><b>7.3.1</b> One numerical feature of interest</a></li>
+<li class="chapter" data-level="7.3.2" data-path="ale-pdp.html"><a href="ale-pdp.html#two-numerical-features-of-interest"><i class="fa fa-check"></i><b>7.3.2</b> Two numerical features of interest</a></li>
+<li class="chapter" data-level="7.3.3" data-path="ale-pdp.html"><a href="ale-pdp.html#one-categorial-feature-of-interest"><i class="fa fa-check"></i><b>7.3.3</b> One categorial feature of interest</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="ale-pdp.html"><a href="ale-pdp.html#comparison-for-unevenly-distributed-data---example-4-munich-rents"><i class="fa fa-check"></i><b>7.4</b> Comparison for unevenly distributed data - Example 4: Munich rents</a></li>
+<li class="chapter" data-level="7.5" data-path="ale-pdp.html"><a href="ale-pdp.html#appendix"><i class="fa fa-check"></i><b>7.5</b> Appendix</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="ale-pdp.html"><a href="ale-pdp.html#ale-2d-example-calculation"><i class="fa fa-check"></i><b>7.5.1</b> Calculation of theoretical 2D ALE example</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ale-misc.html"><a href="ale-misc.html"><i class="fa fa-check"></i><b>8</b> ALE Intervals, Piece-Wise Constant Models and Categorical Features</a><ul>
+<li class="chapter" data-level="8.1" data-path="ale-misc.html"><a href="ale-misc.html#how-to-choose-the-number-andor-length-of-the-intervals"><i class="fa fa-check"></i><b>8.1</b> How to choose the number and/or length of the intervals</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="ale-misc.html"><a href="ale-misc.html#state-of-the-art"><i class="fa fa-check"></i><b>8.1.1</b> State of the art</a></li>
+<li class="chapter" data-level="8.1.2" data-path="ale-misc.html"><a href="ale-misc.html#ale-approximations"><i class="fa fa-check"></i><b>8.1.2</b> ALE Approximations</a></li>
+<li class="chapter" data-level="8.1.3" data-path="ale-misc.html"><a href="ale-misc.html#example-2-multiplicative-feature-effects"><i class="fa fa-check"></i><b>8.1.3</b> Example 2: multiplicative feature effects</a></li>
+<li class="chapter" data-level="8.1.4" data-path="ale-misc.html"><a href="ale-misc.html#example-3-unbalanced-datasets-and-shaky-prediction-functions"><i class="fa fa-check"></i><b>8.1.4</b> Example 3: Unbalanced datasets and shaky prediction functions</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="ale-misc.html"><a href="ale-misc.html#problems-with-piece-wise-constant-models"><i class="fa fa-check"></i><b>8.2</b> Problems with piece-wise constant models</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="ale-misc.html"><a href="ale-misc.html#example-4-simple-step-function"><i class="fa fa-check"></i><b>8.2.1</b> Example 4: Simple step function</a></li>
+<li class="chapter" data-level="8.2.2" data-path="ale-misc.html"><a href="ale-misc.html#example-5-two-dimensional-step-functions-and-unluckily-distributed-data"><i class="fa fa-check"></i><b>8.2.2</b> Example 5: Two-dimensional step functions and unluckily distributed data</a></li>
+<li class="chapter" data-level="8.2.3" data-path="ale-misc.html"><a href="ale-misc.html#outlook"><i class="fa fa-check"></i><b>8.2.3</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ale-misc.html"><a href="ale-misc.html#categorical-features"><i class="fa fa-check"></i><b>8.3</b> Categorical Features</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="ale-misc.html"><a href="ale-misc.html#ordering-the-features"><i class="fa fa-check"></i><b>8.3.1</b> Ordering the features</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ale-misc.html"><a href="ale-misc.html#estimation-of-the-ale"><i class="fa fa-check"></i><b>8.3.2</b> Estimation of the ALE</a></li>
+<li class="chapter" data-level="8.3.3" data-path="ale-misc.html"><a href="ale-misc.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>8.3.3</b> Example of ALE with categorical feature</a></li>
+<li class="chapter" data-level="8.3.4" data-path="ale-misc.html"><a href="ale-misc.html#interpretation"><i class="fa fa-check"></i><b>8.3.4</b> Interpretation</a></li>
+<li class="chapter" data-level="8.3.5" data-path="ale-misc.html"><a href="ale-misc.html#changes-of-the-ale-due-to-different-orders"><i class="fa fa-check"></i><b>8.3.5</b> Changes of the ALE due to different orders</a></li>
+<li class="chapter" data-level="8.3.6" data-path="ale-misc.html"><a href="ale-misc.html#conclusion-1"><i class="fa fa-check"></i><b>8.3.6</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="pfi.html"><a href="pfi.html"><i class="fa fa-check"></i><b>9</b> Introduction to Feature Importance</a><ul>
+<li class="chapter" data-level="9.1" data-path="pfi.html"><a href="pfi.html#permutation-feature-importance-pfi"><i class="fa fa-check"></i><b>9.1</b> Permutation Feature Importance (PFI)</a></li>
+<li class="chapter" data-level="9.2" data-path="pfi.html"><a href="pfi.html#leave-one-covariate-out-loco"><i class="fa fa-check"></i><b>9.2</b> Leave-One-Covariate-Out (LOCO)</a></li>
+<li class="chapter" data-level="9.3" data-path="pfi.html"><a href="pfi.html#interpretability-of-feature-importance-and-its-limitations"><i class="fa fa-check"></i><b>9.3</b> Interpretability of Feature Importance and its Limitations</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="pfi-correlated.html"><a href="pfi-correlated.html"><i class="fa fa-check"></i><b>10</b> PFI, LOCO and Correlated Features</a><ul>
+<li class="chapter" data-level="10.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#effect-on-feature-importance-by-adding-correlated-features"><i class="fa fa-check"></i><b>10.1</b> Effect on Feature Importance by Adding Correlated Features</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="pfi-correlated.html"><a href="pfi-correlated.html#simulation"><i class="fa fa-check"></i><b>10.1.1</b> Simulation</a></li>
+<li class="chapter" data-level="10.1.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#real-data"><i class="fa fa-check"></i><b>10.1.2</b> Real Data</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>10.2</b> Alternative Measures Dealing with Correlated Features</a></li>
+<li class="chapter" data-level="10.3" data-path="pfi-correlated.html"><a href="pfi-correlated.html#summary-1"><i class="fa fa-check"></i><b>10.3</b> Summary</a></li>
+<li class="chapter" data-level="10.4" data-path="pfi-correlated.html"><a href="pfi-correlated.html#note-to-the-reader"><i class="fa fa-check"></i><b>10.4</b> Note to the reader</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="pfi-partial.html"><a href="pfi-partial.html"><i class="fa fa-check"></i><b>11</b> Partial and Individual Permutation Feature Importance</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch2"><i class="fa fa-check"></i><b>11.1</b> Preliminaries on Partial and Individual Conditional Importance</a></li>
+<li class="chapter" data-level="11.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch3"><i class="fa fa-check"></i><b>11.2</b> Simulations: A cookbook for using with PI and ICI</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="pfi-partial.html"><a href="pfi-partial.html#ch31"><i class="fa fa-check"></i><b>11.2.1</b> Detect Interactions</a></li>
+<li class="chapter" data-level="11.2.2" data-path="pfi-partial.html"><a href="pfi-partial.html#ch32"><i class="fa fa-check"></i><b>11.2.2</b> Explain Interactions</a></li>
+<li class="chapter" data-level="11.2.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch323"><i class="fa fa-check"></i><b>11.2.3</b> Stress Methods in a Non-Linear Relationship Setting</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch4"><i class="fa fa-check"></i><b>11.3</b> Real Data Application: Boston Housing</a></li>
+<li class="chapter" data-level="11.4" data-path="pfi-partial.html"><a href="pfi-partial.html#ch5"><i class="fa fa-check"></i><b>11.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="pfi-data.html"><a href="pfi-data.html"><i class="fa fa-check"></i><b>12</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="12.1" data-path="pfi-data.html"><a href="pfi-data.html#introduction-to-test-vs.training-data"><i class="fa fa-check"></i><b>12.1</b> Introduction to Test vs. Training Data</a></li>
+<li class="chapter" data-level="12.2" data-path="pfi-data.html"><a href="pfi-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>12.2</b> Theoretical Discussion for Test and Training Data</a></li>
+<li class="chapter" data-level="12.3" data-path="pfi-data.html"><a href="pfi-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>12.3</b> Reaction to model behavior</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="pfi-data.html"><a href="pfi-data.html#gradient-boosting-machines"><i class="fa fa-check"></i><b>12.3.1</b> Gradient Boosting Machines</a></li>
+<li class="chapter" data-level="12.3.2" data-path="pfi-data.html"><a href="pfi-data.html#data-sets-used-for-calculations"><i class="fa fa-check"></i><b>12.3.2</b> Data sets used for calculations</a></li>
+<li class="chapter" data-level="12.3.3" data-path="pfi-data.html"><a href="pfi-data.html#results"><i class="fa fa-check"></i><b>12.3.3</b> Results</a></li>
+<li class="chapter" data-level="12.3.4" data-path="pfi-data.html"><a href="pfi-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>12.3.4</b> Interpretation of the results</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="pfi-data.html"><a href="pfi-data.html#summary-2"><i class="fa fa-check"></i><b>12.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>13</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>13.1</b> Local Surrogate Models and LIME</a></li>
+<li class="chapter" data-level="13.2" data-path="lime.html"><a href="lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>13.2</b> How LIME works in detail</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="lime.html"><a href="lime.html#neighbourhood"><i class="fa fa-check"></i><b>13.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="13.2.2" data-path="lime.html"><a href="lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>13.2.2</b> What makes a good explainer?</a></li>
+<li class="chapter" data-level="13.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>13.2.3</b> Sampling and perturbation</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>13.3</b> Example</a></li>
+<li class="chapter" data-level="13.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>13.4</b> Outlook</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>14</b> LIME and Neighbourhood</a><ul>
+<li class="chapter" data-level="14.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>14.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="14.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>14.2</b> The problem in a one-dimensional setting</a></li>
+<li class="chapter" data-level="14.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>14.3</b> The problem in more complex settings</a><ul>
+<li class="chapter" data-level="14.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>14.3.1</b> Simulated data</a></li>
+<li class="chapter" data-level="14.3.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id42"><i class="fa fa-check"></i><b>14.3.2</b> Real data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id5"><i class="fa fa-check"></i><b>14.4</b> Discussion and outlook</a></li>
+<li class="chapter" data-level="14.5" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id6"><i class="fa fa-check"></i><b>14.5</b> Note to the reader</a><ul>
+<li class="chapter" data-level="14.5.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id61"><i class="fa fa-check"></i><b>14.5.1</b> Packages used</a></li>
+<li class="chapter" data-level="14.5.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id62"><i class="fa fa-check"></i><b>14.5.2</b> How we used the lime R package and why</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="lime-sample.html"><a href="lime-sample.html"><i class="fa fa-check"></i><b>15</b> LIME and Sampling</a><ul>
+<li class="chapter" data-level="15.1" data-path="lime-sample.html"><a href="lime-sample.html#understanding-sampling-in-lime"><i class="fa fa-check"></i><b>15.1</b> Understanding sampling in LIME</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="lime-sample.html"><a href="lime-sample.html#formula"><i class="fa fa-check"></i><b>15.1.1</b> Formula</a></li>
+<li class="chapter" data-level="15.1.2" data-path="lime-sample.html"><a href="lime-sample.html#sampling-strategies"><i class="fa fa-check"></i><b>15.1.2</b> Sampling strategies</a></li>
+<li class="chapter" data-level="15.1.3" data-path="lime-sample.html"><a href="lime-sample.html#visualization-of-a-basic-example"><i class="fa fa-check"></i><b>15.1.3</b> Visualization of a basic example</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="lime-sample.html"><a href="lime-sample.html#sketching-problems-of-sampling"><i class="fa fa-check"></i><b>15.2</b> Sketching Problems of Sampling</a></li>
+<li class="chapter" data-level="15.3" data-path="lime-sample.html"><a href="lime-sample.html#real-world-problems-with-lime"><i class="fa fa-check"></i><b>15.3</b> Real World Problems with LIME</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="lime-sample.html"><a href="lime-sample.html#boston-housing-data"><i class="fa fa-check"></i><b>15.3.1</b> Boston Housing Data</a></li>
+<li class="chapter" data-level="15.3.2" data-path="lime-sample.html"><a href="lime-sample.html#rental-bikes-data"><i class="fa fa-check"></i><b>15.3.2</b> Rental Bikes Data</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="lime-sample.html"><a href="lime-sample.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>15.4</b> Experiments regarding Sampling stability</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>15.4.1</b> Influence of feature dimension</a></li>
+<li class="chapter" data-level="15.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>15.4.2</b> Influence of sample size</a></li>
+<li class="chapter" data-level="15.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>15.4.3</b> Influence of black-box</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>15.5</b> Outlook</a></li>
+<li class="chapter" data-level="15.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>15.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>16</b> Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Limitations of Interpretable Machine Learning Methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="ale-pdp" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Comparison of ALE and PDP</h1>
+<p><em>Author: Jakob Bodensteiner</em></p>
+<p><em>Supervisor: Christian Scholbeck</em></p>
+<!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
+<p>This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots.</p>
+<div id="comparison-one-feature" class="section level2">
+<h2><span class="header-section-number">7.1</span> Comparison one feature</h2>
+<p>So far in this book, one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solution for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP may fail in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation.</p>
+<p>Given a value for the feature of interest …</p>
+<p>…the 1D PDP measures the expected prediction for this value by averaging over the prediction of all observations pretending the feature of interest is that value.</p>
+<p>… the 1D ALE shows the expected and centered first order effect of this feature.</p>
+<p>With these interpretations in mind, the first example with artificial data will be discussed.</p>
+<div id="example-1-multiplicative-prediction-function" class="section level3">
+<h3><span class="header-section-number">7.1.1</span> Example 1: Multiplicative prediction function</h3>
+<p>The following Problem is constructed: There is a data set consisting of 150 observations with three features (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>) and the target variable <span class="math inline">\(y = x_1 x_2 x_3\)</span>. The features of each observation are sampled from the following disrtibutions. <span class="math inline">\(X_1 \sim \mathcal{U}(0,~0.5)\)</span>, <span class="math inline">\(X_2 \sim \mathcal{N}(2,~2)\)</span> and <span class="math inline">\(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\)</span>.</p>
+<p>So features one and two are independent of each other, while <span class="math inline">\(x_3\)</span> is strongly correlated with <span class="math inline">\(x_2\)</span>. It is also not independent from <span class="math inline">\(x_1\)</span>, although there is no influence of <span class="math inline">\(x_1\)</span> on the expected value of <span class="math inline">\(x_3\)</span>.</p>
+<p>In this example (and in all other examples with artificial data in this chapter) the prediction function is not fitted but set as the target variable, here <span class="math inline">\(f(x_1, x_2, x_3) = y = x_1 x_2 x_3\)</span>. By setting the prediction function instead of fitting a learner on the data it is ensured that one can imagine how the ‘real’ influence of each feature would look like. This way one can see clearly if ALE or PDP are making mistakes in the interpretation. If one would fit a random forest one could never be sure if the ALE and PDP plots are making a mistake in explaining the fitted model or if the mistake is made by the learner and the explanation of the learner itself would be fine. This will become clear at the end of the chapter when the real-world example will be discussed.</p>
+<div class="figure"><span id="fig:pdpsx1x2x3"></span>
+<img src="images/ale_1_PDPs_x1x2x3_150_0_0p5_2_2.png" alt="PDPs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2 x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.1: PDPs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span>.
+</p>
+</div>
+
+<div class="figure"><span id="fig:alesx1x2x3"></span>
+<img src="images/ale_1_ALEs_x1x2x3_150_0_0p5_2_2.png" alt="ALEs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2 x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.2: ALEs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span>.
+</p>
+</div>
+
+<p>Plot <a href="ale-pdp.html#fig:pdpsx1x2x3">7.1</a> shows the 1D PDP for each of the three features. One can see that the PDP detects a linear influence on the prediction for all 3 of the features.</p>
+<p>On the other hand, the ALE (figure <a href="ale-pdp.html#fig:alesx1x2x3">7.2</a>) attests the linear influence to the feature <span class="math inline">\(x_1\)</span> only. This plot exposes a weakness of the ALE compared to the PDP straight away. The ALE depends much more on the sampled data than the PDP does. The result is that the ALE can look a bit shaky. In this special case, it is that seriously one almost can’t see the linear influence. If there would be more data or fewer intervals for the estimation, the plot would look more like the PDP for feature <span class="math inline">\(x_1\)</span>. The two other features seem to rather have a quadratic influence on the prediction. And this is the case indeed since it is the ‘true’ link between prediction and the correlated features. Feature <span class="math inline">\(x_3\)</span> has (in expectation) the same value as <span class="math inline">\(x_2\)</span>. Especially if feature <span class="math inline">\(x_1\)</span> has small values the variance of feature <span class="math inline">\(x_2\)</span> around <span class="math inline">\(x_3\)</span> becomes small as well. As consequence the last part of the prediction function ‘<span class="math inline">\(x_2 x_3\)</span>’ can be approximated by ‘<span class="math inline">\(x_2^2\)</span>’ or ‘<span class="math inline">\(x_3^2\)</span>’. This explains the quadratic influence. By changing the prediction formula to <span class="math inline">\(f(x_1, x_2, x_3) = y = x_1 x_2^2\)</span> the figures <a href="ale-pdp.html#fig:pdpsx1x22">7.3</a> and <a href="ale-pdp.html#fig:alesx1x22">7.4</a> for PDP and ALE plots are estimated.</p>
+<div class="figure"><span id="fig:pdpsx1x22"></span>
+<img src="images/ale_1_PDPs_x1x22_150_0_0p5_2_2.png" alt="PDPs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2^2\)." width="100%" />
+<p class="caption">
+FIGURE 7.3: PDPs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2^2\)</span>.
+</p>
+</div>
+
+<div class="figure"><span id="fig:alesx1x22"></span>
+<img src="images/ale_1_ALEs_x1x22_150_0_0p5_2_2.png" alt="ALEs for prediction function \(f(x_1, x_2, x_3) = x_1 x_2^2\)." width="100%" />
+<p class="caption">
+FIGURE 7.4: ALEs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2^2\)</span>.
+</p>
+</div>
+
+<p>Plots <a href="ale-pdp.html#fig:pdpsx1x22">7.3</a> and <a href="ale-pdp.html#fig:alesx1x22">7.4</a> clearly show the linear influence of <span class="math inline">\(x_1\)</span> again. Additionally this time both (ALE and PDP) attest a quadratic influence to feature <span class="math inline">\(x_2\)</span> on the prediction. Since <span class="math inline">\(x_3\)</span> does not have any influence on the prediction function, it is correct, that there is no influence detected. The reason for this behavior lies in the calculation method for the PDP. With the new prediction formula only depending on uncorrelated features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, the PDP works well. Since now the approach of PDP to calculate the mean effect is correct.</p>
+</div>
+<div id="example-2-additive-prediction-function" class="section level3">
+<h3><span class="header-section-number">7.1.2</span> Example 2: Additive prediction function</h3>
+<p>In this example, PDP and ALE will be applied to an additive prediction function.</p>
+<p>A data set consisting of three features (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>) is constructed. In this case the target variable is <span class="math inline">\(y = x_1 + x_2 - x_3\)</span>. Once again the prediction function is not learned but set to exactly the target variable, meaning <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span>. The distributions are similar to the ones from example 1 and again 150 observations are sampled. <span class="math inline">\(X_1 \sim \mathcal{U}(0,~2)\)</span>, <span class="math inline">\(X_2 \sim \mathcal{N}(2,~0.5)\)</span> and <span class="math inline">\(X_3\mid X_2 \sim \mathcal{N}(X_2,~0.5)\)</span></p>
+<div class="figure"><span id="fig:pdpsx1px2mx3"></span>
+<img src="images/ale_1_PDPs_x1_plus_x2_minus_x3_150_0_2_0p5.png" alt="PDPs for prediction function \(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.5: PDPs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span>.
+</p>
+</div>
+
+<div class="figure"><span id="fig:alesx1px2mx3"></span>
+<img src="images/ale_1_ALEs_x1_plus_x2_minus_x3_150_0_2_0p5.png" alt="ALEs for prediction function \(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.6: ALEs for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span>.
+</p>
+</div>
+
+<p>For this example one can see that the ALEs (<a href="ale-pdp.html#fig:alesx1px2mx3">7.6</a>) and PDPs (<a href="ale-pdp.html#fig:pdpsx1px2mx3">7.5</a>) are basically the same. Ignoring the centering both attest the same linear influence for all three features. And since it is an additive model this is actually correct. But neither the ALE nor the PDP recognize the strong correlation between the features <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span>. The real influence of features <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> is in expectation zero, since it is <span class="math inline">\(x_2 - x_3\)</span> and <span class="math inline">\(E[X_3 \mid X_2] = X_2\)</span>. So <span class="math inline">\(E[X_2 - X_3 \mid X_2] = 0\)</span>.</p>
+<p>This shows a few points one has to be aware of when working with these plots. In this example, if one uses the interpretation of the PDP for feature <span class="math inline">\(x_2\)</span> and states ‘If the value of feature <span class="math inline">\(x_2\)</span> is 2.5, then I expect the prediction to be 1.5’ it would be wrong. The problem here is the extrapolation in the estimation of the PDP. So it does not take into account any connection between the features but still works as good as the ALE in this example.</p>
+<p>The general advantage of the ALE is the small chance of extrapolation in the estimation. But this does not mean it would recognize any correlation between the features in each scenario. And it is in general not possible to state something about the prediction with only one 1D ALE. The ALE is just showing the expected and centered main effect of the feature. In this example an interpretation like ‘If feature <span class="math inline">\(x_2\)</span> has value 2.5 then in expectation the prediction will be 0.5 higher than the average prediction’ is wrong. If one needs a statement like that the other strongly correlated features have to be taken into account as well. One has to be aware of higher order effects of the ALE, too.</p>
+<p>To conclude the analysis of this example 2D ALEs are necessary. So it will be continued later this chapter.</p>
+</div>
+</div>
+<div id="comparison-two-features" class="section level2">
+<h2><span class="header-section-number">7.2</span> Comparison two features</h2>
+<p>Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE has to be introduced. In the first place, the theoretical formula will be defined. Thereafter the estimation will be derived and then the comparison to the 2D PDP will be made.</p>
+<div id="the-2d-ale" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> The 2D ALE</h3>
+<div id="theoretical-formula-2d-ale" class="section level4">
+<h4><span class="header-section-number">7.2.1.1</span> Theoretical Formula 2D ALE</h4>
+<p>Similar to one variable of interest there is a theoretical formula for a 2-dimensional ALE. This ALE aims to visualize the 2nd order effect. Meaning one will just see the additional effect of interaction between those two features. The main effects of the features will not be shown in the 2D ALE.</p>
+<p>To explain the formula it will be assumed that <span class="math inline">\(j\)</span> and <span class="math inline">\(l\)</span> are the two features of interest. The rest of the features is represented by <span class="math inline">\(c\)</span>. So in the following variable <span class="math inline">\(x_c\)</span> can be of higher dimension than 1. As for the 1D ALE, there is again a theoretical derivative for the fitted function <span class="math inline">\(\hat{f}\)</span>. But this time it is the derivative in the direction of both features of interest. So in the following, this notation will hold:</p>
+<p><span class="math display">\[ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}\]</span></p>
+<p>The whole formula would be very long, so it is split into 3 parts (compare <span class="citation">(Apley <a href="#ref-Apley2016">2016</a>, 8)</span>):</p>
+<ol style="list-style-type: decimal">
+<li><p>The 2nd order effect <a href="ale-pdp.html#eq:ale2DTheoretical1stLvl">(7.1)</a></p></li>
+<li><p>2nd order effect corrected for both main effects <a href="ale-pdp.html#eq:ale2DTheoreticalCorrection">(7.2)</a></p></li>
+<li><p>The 2D ALE; the corrected 2D ALE centered for its mean overall effect <a href="ale-pdp.html#eq:ale2DTheoretical">(7.3)</a></p></li>
+</ol>
+<p>Equation <a href="ale-pdp.html#eq:ale2DTheoretical1stLvl">(7.1)</a> is the 2nd order effect with no correction for main effects of <span class="math inline">\(x_j\)</span> and <span class="math inline">\(x_l\)</span>. So this is not yet the pure 2nd order effect the 2D ALE is aiming for.</p>
+<span class="math display">\[\begin{equation} 
+\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) = \notag
+\end{equation}\]</span>
+<span class="math display" id="eq:ale2DTheoretical1stLvl">\[\begin{equation}
+\int_{z_{0,j}}^{x_j}  \int_{z_{0,l}}^{x_l} E[\hat{f}^{(j,~l)}(X_j,~X_l,~X_c)\mid X_j = z_j,~X_l = z_l]~dz_l~dz_j 
+  \tag{7.1}
+\end{equation}\]</span>
+<p>Now from the uncorrected 2nd order effect, the two main effects of both features on the uncorrected 2D ALE are subtracted (see equation <a href="ale-pdp.html#eq:ale2DTheoreticalCorrection">(7.2)</a>). In this way the main effects of <span class="math inline">\(x_j\)</span> and <span class="math inline">\(x_l\)</span> on the final <span class="math inline">\(ALE_{\hat{f},~j,~l}(x_j, x_l)\)</span> are both zero <span class="citation">(Apley <a href="#ref-Apley2016">2016</a>, 9)</span>. But be careful, this is not centering by a constant as in the one-dimensional ALE. This is a correction for the also accumulated main effects which of course vary in the directions of the features.</p>
+<span class="math display" id="eq:ale2DTheoreticalCorrection">\[\begin{align}
+\widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) 
+= &amp;\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, x_l) \notag \\ 
+&amp;-  \int_{z_{0,~j}}^{x_j}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_j}\mid X_j = z_j]~dz_j \notag \\
+&amp;- \int_{z_{0,~l}}^{x_l}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, X_l)}{\delta X_l}\mid X_l = z_l]~dz_l
+\tag{7.2}
+\end{align}\]</span>
+<p>Equation <a href="ale-pdp.html#eq:ale2DTheoretical">(7.3)</a> shows the final (centered) 2D ALE. The subtraction in the formula is now the real centering to shift the 2nd order effect (corrected for the main effects) to zero with respect to the marginal distribution of <span class="math inline">\((X_j, ~ X_l)\)</span>.</p>
+<span class="math display" id="eq:ale2DTheoretical">\[\begin{equation} 
+ALE_{\hat{f},~j,~l}(x_j, x_l) = \widetilde{ALE}_{\hat{f},~j,~l}(x_j, x_l) ~ -  E[\widetilde{ALE}_{\hat{f},~j,~l}(X_j, X_l)]
+  \tag{7.3}
+\end{equation}\]</span>
+<p>In the appendix <a href="ale-pdp.html#ale-2d-example-calculation">7.5.1</a> one can find the calculation of the theoretical ALE for Example 1.</p>
+</div>
+<div id="estimation-2d-ale" class="section level4">
+<h4><span class="header-section-number">7.2.1.2</span> Estimation 2D ALE</h4>
+<p>Analogously to the 1D ALE in most cases, it is not possible to calculate the 2D ALE. It has to be estimated. These estimation formulas are pretty long and might be confusing, especially the indices. But there will be an explenation including a visualization as well to clarify the estimation method.</p>
+<p>First, all variables have to be defined. The two features of interest are <span class="math inline">\(x_j\)</span> and <span class="math inline">\(x_l\)</span>. The prediction function is <span class="math inline">\(\hat{f}(x_j, x_l, x_{\setminus\{j,~l\}})\)</span>, while <span class="math inline">\(x_{\setminus\{j,~l\}}\)</span> represents all the rest of the features, so it can be of higher dimension than 1. The areas including data for feature <span class="math inline">\(x_j\)</span> and <span class="math inline">\(x_l\)</span> are divided into the same number of intervals, namely K. The intervals in <span class="math inline">\(x_j\)</span> direction are separated by <span class="math inline">\(z_{k,j}\)</span> for <span class="math inline">\(k \in \{0,...,K\}\)</span>. <span class="math inline">\(k_j(x_j)\)</span> returns the interval number in which <span class="math inline">\(x_j\)</span> lies. This holds for <span class="math inline">\(z_{m,l}\)</span> and <span class="math inline">\(k_l(x_l)\)</span> respectively in direction of <span class="math inline">\(x_l\)</span>. <span class="math inline">\(N_{\{j,~l\}}(k,m)\)</span> is the crossproduct of the k-th and m-th interval (in <span class="math inline">\(x_j\)</span> and <span class="math inline">\(x_l\)</span> direction), so it is defined as <span class="math inline">\((z_{k-1,j}, z_{k,j}] \times (z_{m-1,j}, z_{m,j}]\)</span>. <span class="math inline">\(n_{\{j,~l\}}(k,m)\)</span> is the number of observations lying in this <span class="math inline">\(N_{\{j,~l\}}(k,m)\)</span> cell. The parameter i represents the i-th observation <span class="citation">(Apley <a href="#ref-Apley2016">2016</a>)</span>. With this variables in mind, the definition of the 2D ALE estimation can begin.</p>
+<p>The estimation equvalent to Formula <a href="ale-pdp.html#eq:ale2DTheoretical1stLvl">(7.1)</a> is:</p>
+<span class="math display">\[\begin{equation} 
+\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) = \notag
+\end{equation}\]</span>
+<span class="math display" id="eq:ale2DEst1stLvl">\[\begin{equation}
+\sum_{k=1}^{k_j(x_j)} \sum_{m=1}^{k_l(x_l)}   \frac{1}{n_{\{j,~l\}}(k,m)}\sum_{i:~x_{\{j,~l\}}^{(i)}\in N_{\{j,~l\}}(k,m)} ~ \Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}),
+  \tag{7.4}
+\end{equation}\]</span>
+<p>while the <span class="math inline">\(\Delta\)</span> function is:</p>
+<span class="math display">\[\begin{equation}
+\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}}^{(i)}) = \notag
+\end{equation}\]</span>
+<span class="math display">\[\begin{equation}
+[\hat f(z_{k,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m,~l}, ~x_{\setminus\{j,~l\}}^{(i)})] \notag
+\end{equation}\]</span>
+<span class="math display" id="eq:ale2DEstDelta">\[\begin{equation}
+- [\hat f(z_{k,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)}) - \hat f(z_{k-1,~j},~ z_{m-1,~l}, ~x_{\setminus\{j,~l\}}^{(i)})]
+\tag{7.5} 
+\end{equation}\]</span>
+<p>Now the correction for the main effects (equation <a href="ale-pdp.html#eq:ale2DEstCorrection">(7.6)</a> corresponding to theoretical formula <a href="ale-pdp.html#eq:ale2DTheoreticalCorrection">(7.2)</a>) is estimated:</p>
+<span class="math display" id="eq:ale2DEstCorrection">\[\begin{align}
+\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) = 
+&amp;\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(x_j, ~x_l) \notag \\
+&amp;-  \sum_{k=1}^{k_j(x_j)} \frac{1}{n_j(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) \notag \\
+&amp;~~~~~~~~~~~~~~~~~~~~~~~
+- \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k-1,~j}, ~z_{m,~l})]\notag \\
+&amp;- \sum_{k=1}^{k_l(x_l)} \frac{1}{n_l(k)} \sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) [\widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) \notag \\
+&amp;~~~~~~~~~~~~~~~~~~~~~~~ 
+- \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m-1,~l})]
+\tag{7.6}
+\end{align}\]</span>
+<p>Equation @ref(eq:ale2DEstCorrection is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of subtracting a constant value. Now it will be centered for its estimation <span class="math inline">\(E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]\)</span> and this is a constant, so there will be no effect on the general shape of the ALE plot. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula <a href="ale-pdp.html#eq:ale2DTheoretical">(7.3)</a>.</p>
+<span class="math display">\[\begin{equation}  
+\widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = \notag
+\end{equation}\]</span>
+<span class="math display" id="eq:ale2DEst">\[\begin{equation}
+\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(x_j, ~x_l) -
+\sum_{k=1}^{K}\sum_{m=1}^{K} ~ n_{\{j,~l\}}(k,m) ~ \widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(z_{k,~j}, ~z_{m,~l}) 
+ \tag{7.7}
+\end{equation}\]</span>
+<p>In contrast to the ALE for one feature of interest, the 2D ALE (<a href="ale-pdp.html#eq:ale2DEst">(7.7)</a> is a two-dimensional step function, so there is no smoothing or something similar to make it a continuous function.</p>
+<p>These formulas are pretty long, so to get an intuition of the estimation figure <a href="ale-pdp.html#fig:ale2DEstimation">7.7</a> will be helpful.</p>
+<div class="figure"><span id="fig:ale2DEstimation"></span>
+<img src="images/ale_1_ALE_2D_estimation.PNG" alt="Visualization of the absolut differences for the 2nd order effect (Apley 2016, 13) and (Molnar 2019)." width="100%" />
+<p class="caption">
+FIGURE 7.7: Visualization of the absolut differences for the 2nd order effect <span class="citation">(Apley <a href="#ref-Apley2016">2016</a>, 13)</span> and <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.
+</p>
+</div>
+
+<p>To calculate the delta <a href="ale-pdp.html#eq:ale2DEstDelta">(7.5)</a> for the uncorrected and uncentered ALE estimation in each cell the predictions for the data points in that cell will be calculated pretending the <span class="math inline">\(x_l\)</span> and <span class="math inline">\(x_j\)</span> values are the corner values of the cell they are in. In the case of figure <a href="ale-pdp.html#fig:ale2DEstimation">7.7</a>, these 2-dimensional corner values would be a, b, c, d. The delta for point x in this example would be calculated like this:</p>
+<span class="math display">\[\begin{align}
+\Delta_{\hat f}^{{\{j,~l\}}, ~4,~3} (x_{\setminus\{j,~l\}}) = 
+&amp; [\hat f(b, ~x_{\setminus\{j,~l\}}) - \hat f(a, ~x_{\setminus\{j,~l\}})] \notag \\
+&amp;- [\hat f(d, ~x_{\setminus\{j,~l\}}) - \hat f(c, ~x_{\setminus\{j,~l\}})] \notag
+\end{align}\]</span>
+<p>The same would be done for point y. Thereafter the deltas would be averaged to get the mean delta for cell <span class="math inline">\(N_{\{j,~l\}}(4,3)\)</span>. This would then be accumulated over all cells left or beneath this cell to get the uncorrected and uncentered ALE for the values in <span class="math inline">\(N_{\{j,~l\}}(4,3)\)</span>.</p>
+<p>The correction for the main effects extracts the pure 2nd order effect for the two features of interest by subtracting the main effect of the single features on the ALE (equation <a href="ale-pdp.html#eq:ale2DEstCorrection">(7.6)</a>). To stick with this example the correction for the main effect of feature <span class="math inline">\(x_j\)</span> for values in <span class="math inline">\(N_j(4)\)</span> takes into account all cells in the first 4 columns and aggregates the first order effect. In cell <span class="math inline">\(N_{\{j,~l\}}(4,3)\)</span> this would look like this:</p>
+<p><span class="math display">\[ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(a)\]</span></p>
+<p>The correction for <span class="math inline">\(x_l\)</span> looks pretty much the same just from the other direction. It takes into account the first 3 rows. So in cell <span class="math inline">\(N_{\{j,~l\}}(4,3)\)</span> the first order effect in direction of <span class="math inline">\(x_l\)</span> would be</p>
+<p><span class="math display">\[ \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(b) - \widehat{\widetilde{\widetilde{ALE}}}_{\hat{f},~j,~l}(d). \]</span></p>
+<p>Thereafter the corrected ALE is centered for its mean (equation <a href="ale-pdp.html#eq:ale2DEst">(7.7)</a>), pretty much the same way as is done for one dimension. But this time the aggregation is not just over a line but over a grid.</p>
+<p>There are a few questions that might arise.</p>
+<p>First, how is the grid for the estimation defined? In the iml package, the cells are the cross products of the intervals used for the 1D estimation. It would be very hard to make a grid of rectangles which all include roughly the same amount of data points.</p>
+<p>Another question is: How does the estimation treat empty cells, which include no data points? There are two options, they can either be ignored and greyed out or they receive the value of their nearest neighbor rectangle, which is determined using the center of the cells. The last method is implemented in the iml package. This happens right after averaging over the <span class="math inline">\(\Delta_{\hat f}^{{\{j,~l\}}, ~k,~m} (x_{\setminus\{j,~l\}})\)</span>s before the correction for the 1st order effects is done.</p>
+</div>
+<div id="example-1-continued---theoretical-and-estimated-2d-ale" class="section level4">
+<h4><span class="header-section-number">7.2.1.3</span> Example 1 continued - Theoretical and estimated 2D ALE</h4>
+<p>Before ALE and PDP will be compared for two features of interest, the analysis of example 1 will be continued in two dimensions, to get a first glance at the 2D ALE.</p>
+<p>The data set is basically the same, just for sake of clearness in the 2D ALE example the distributions are a bit different. A data set consisting of 150 observations with three features (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>) and the prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span> is considered. But this time the three features are sampled from these disrtibutions: <span class="math inline">\(X_1 \sim \mathcal{U}(0,~0.5)\)</span>, <span class="math inline">\(X_2 \sim \mathcal{N}(5,~1)\)</span> and <span class="math inline">\(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\)</span>. So feature <span class="math inline">\(x_2\)</span> is expected to be 5 and has a lower variance than it has in example 1. The rest stays the same.</p>
+<p>With the formulas in the appendix <a href="ale-pdp.html#ale-2d-example-calculation">7.5.1</a> it is possible to calculate the theoretical 2D ALE.</p>
+<div class="figure"><span id="fig:theo2Dale"></span>
+<img src="images/ale_1_ALE_2D_theo_vs_estim_x1x2x3_150_0_0p5_5_1.png" alt="Theoretical 2D ALE (left) and estimated ALE (right)." width="100%" />
+<p class="caption">
+FIGURE 7.8: Theoretical 2D ALE (left) and estimated ALE (right).
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:theo2Dale">7.8</a> shows the theoretical ALE compared to the estimated one. In this example, it looks pretty similar. The interpretation is a bit hard. Since one can only see the 2nd order effects, isolated from the 1st order effects, it is hardly possible to state something reasonable about the prediction with just this plot. But this problem will be discussed in the coming up chapter.</p>
+</div>
+</div>
+<div id="d-ale-vs-2d-pdp" class="section level3">
+<h3><span class="header-section-number">7.2.2</span> 2D ALE vs 2D PDP</h3>
+<p>In this Chapter, only 2D plots for artificially constructed examples will be analyzed. To show the statement, that there are no main effects in the 2D ALE example 2 will be discussed again.</p>
+<div id="example-2---2d-comparison" class="section level4">
+<h4><span class="header-section-number">7.2.2.1</span> Example 2 - 2D comparison</h4>
+<p>Just a short reminder of example 2: the prediction function here is <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span> and <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> are strongly positive correlated (they even share the same expected value).</p>
+<div class="figure"><span id="fig:x1px2mx3ale2D"></span>
+<img src="images/ale_1_2d_comp_x1_plus_x2_minus_x3_150_0_2_0p5.png" alt="2D PDP (left) vs. 2D ALE (right) for prediction function \(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.9: 2D PDP (left) vs. 2D ALE (right) for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span>.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:x1px2mx3ale2D">7.9</a> shows the direct comparison of 2D PDP and 2D ALE. The ALE is almost completely zero as expected. In this additive example, there are main effects only and since the 2D ALE is corrected for the main effects of the features, there is no pure 2nd order effect. The PDP in comparison shows the mean prediction. So, of course, there are the main effects estimated within the 2D PDP as well. Obviously, it is hard to compare those two interpretation algorithms just like this.</p>
+<p>To get a better comparison the main effects (1D ALEs) of the two features of interest can be added to the 2D ALE.</p>
+<div class="figure"><span id="fig:ale2DaddedUp"></span>
+<img src="images/ale_1_2d_ale_plus_x1_plus_x2_minus_x3_150_0_2_0p5.png" alt="2D ALE added up with 1st order effects of features \(x_2\) and \(x_3\) for prediction function \(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\). In the right plot the underlying 2 dimensional data points are included." width="100%" />
+<p class="caption">
+FIGURE 7.10: 2D ALE added up with 1st order effects of features <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 + x_2 - x_3\)</span>. In the right plot the underlying 2 dimensional data points are included.
+</p>
+</div>
+
+<p>Plot <a href="ale-pdp.html#fig:ale2DaddedUp">7.10</a> shows the ALE added up with the corresponding 1st order effects of the features. And now it seems pretty much the same as the PDP in figure <a href="ale-pdp.html#fig:x1px2mx3ale2D">7.9</a>. On the right side, the same plot can be seen. This one additionally includes the underlying data points regarding features <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span>. Furthermore these two features are independent of feature <span class="math inline">\(x_1\)</span>, so the PDP and ALE yield the same correct interpretation, namely for realistic data points the influence of these two features is close to zero because of their strong positive correlation and their opposing first order effects (figures <a href="ale-pdp.html#fig:alesx1px2mx3">7.6</a> and <a href="ale-pdp.html#fig:pdpsx1px2mx3">7.5</a>).</p>
+<p>With this in mind, example 1 deserves another look regarding the 2nd order effect in comparison to the PDP.</p>
+</div>
+<div id="example-1---2d-comparison" class="section level4">
+<h4><span class="header-section-number">7.2.2.2</span> Example 1 - 2D comparison</h4>
+<p>To be able to compare the 2D ALE from the last chapter for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span> with the 2D PDP one also should add up the 1st order effects to the 2D ALE.</p>
+<div class="figure"><span id="fig:ale2DaddedUpx1x2x3"></span>
+<img src="images/ale_1_comp_2d_1st_orders_added_x1x2x3_150_0_0p5_5_1.png" alt="2D PDP vs 2D ALE with added up 1st order effects of features \(x_1\) and \(x_2\) for prediction function \(f(x_1, x_2, x_3) = x_1 x_2 x_3\)." width="100%" />
+<p class="caption">
+FIGURE 7.11: 2D PDP vs 2D ALE with added up 1st order effects of features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> for prediction function <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span>.
+</p>
+</div>
+
+<p>This plot <a href="ale-pdp.html#fig:ale2DaddedUpx1x2x3">7.11</a> shows exactly what happens in this case, when the 1st order effects of the ALE are added up to the 2nd order effects. One can see that although the connection between <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> has been detected by the 1st order ALEs (figure <a href="ale-pdp.html#fig:alesx1x2x3">7.2</a>) and has not been by the 1D PDPs (figure <a href="ale-pdp.html#fig:pdpsx1x2x3">7.1</a>), the comparable 2D plots look pretty much the same.</p>
+<p>In these two examples, it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.</p>
+</div>
+<div id="example-1-modified---2d-comparison" class="section level4">
+<h4><span class="header-section-number">7.2.2.3</span> Example 1 modified - 2D comparison</h4>
+<p>The setting of the problem stays basically the same. Just a small - for the real prediction actually irrelavant - change is made for the prediction function. It is not anymore <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span> but</p>
+<p><span class="math display">\[
+f(x_1, x_2, x_3) =  
+     \begin{cases}
+       x_3^3, \quad\quad\quad\quad\quad~~\text{if}~x_3\ge6 ~~, ~~x_2\le4\\
+       x_1 x_2 x_3, \quad\text{else}\\
+     \end{cases}
+\]</span> This seems a bit unrealistic but especially tree-based predictors tend to do ‘strange’ things in areas without data.</p>
+<p>The result of the 2D PDP compared to the ALE (figure <a href="ale-pdp.html#fig:pdp2Ddamaged">7.12</a>) shows the problem. In the area where <span class="math inline">\(x_2 &lt; 4\)</span> the values of the PDP are huge, since the big values for <span class="math inline">\(x_3^3\)</span> if <span class="math inline">\(x_3 &gt; 6\)</span> increase the average drastically. These values are very unlikely for the underlying distribution but the PDP pretends them to be possible. This is the problem of the extrapolation in the PDP estimation. This is not a problem for the ALE. Here one can not recognise any difference to figure <a href="ale-pdp.html#fig:ale2DaddedUpx1x2x3">7.11</a>, where the prediction function is just <span class="math inline">\(f(x_1, x_2, x_3) = x_1 x_2 x_3\)</span>.</p>
+<div class="figure"><span id="fig:pdp2Ddamaged"></span>
+<img src="images/ale_1_comp_2d_1st_orders_added_and_smaller3_bigger6_x1x2x3_150_0_0p5_5_1.png" alt="2D PDP vs 2D ALE with added up 1st order effects of features \(x_1\) and \(x_2\) for stepwise prediction function." width="100%" />
+<p class="caption">
+FIGURE 7.12: 2D PDP vs 2D ALE with added up 1st order effects of features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> for stepwise prediction function.
+</p>
+</div>
+
+<p>One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black-box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.</p>
+</div>
+</div>
+</div>
+<div id="runtime-comparison" class="section level2">
+<h2><span class="header-section-number">7.3</span> Runtime comparison</h2>
+<p>In this chapter, the runtime of ALE and PDP will be compared. Therefore three general sizes of data sets have been sampled. One small with 100, a bigger one with 1,000 and the biggest with 10,000 observations. The number of features varies between 5 and 40, while there are always 2 categorial features and the others are numeric, as is the target variable. The predictor applied to these datasets is a regular SVM. It is way faster than the random forest, where the PDP estimation can easily take half a minute for just 1,000 observations.</p>
+<p>To compare the runtime, the package ‘microbenchmark’ has been used. So the discussed results will all have the same structure, which will be explained with the first example. The comparison will cover the runtime for…</p>
+<ol style="list-style-type: decimal">
+<li>…one numerical feature of interest</li>
+<li>…two numerical features of interest</li>
+<li>…one categorial feature of interest.</li>
+</ol>
+<p>Each of these three will be compared for the different numbers of observations of course but also for different grid sizes (number of intervals the ALE and PDP are estimated on) and varying feature numbers.</p>
+<div id="one-numerical-feature-of-interest" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> One numerical feature of interest</h3>
+<div class="figure"><span id="fig:runtime1DnumColAndSize"></span>
+<img src="images/ale_1_one_numeric_cols_and_gridsize.PNG" alt="Runtime comparison ALE vs. PDP for one numeric feature. Differences for the number of features and grid size." width="100%" />
+<p class="caption">
+FIGURE 7.13: Runtime comparison ALE vs. PDP for one numeric feature. Differences for the number of features and grid size.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:runtime1DnumColAndSize">7.13</a> shows the runtimes for different configurations in milliseconds. The microbenchmark output shows the compared expressions (here the calculation of ALE and PDP) in the first column. The other columns are the measured runtime for 10 different runs. From left to right it is the minimum runtime, the lower quantile of the runtimes, the mean, the median, the upper quantile, and the maximal runtime. The main attention usually lies in the mean. In the expression, there are also configurations for the sampled dataset integrated. For example ‘ale_one_numeric(svm.regr_100_5, grid.size = 20)’ represents the following estimation: An ALE for one numeric feature of interest has been estimated. The prediction function was an SVM, fitted and evaluated on a sample of 100 observations with 5 features. The grid size, in this case, was 20, so the plots are estimated on 20 intervals.</p>
+<p>Plot <a href="ale-pdp.html#fig:runtime1DnumColAndSize">7.13</a> shows the comparison for a change in grid size and number of features for one numeric feature of interest. It seems like the number of features does barely influence the runtime. Additionally for the ALE the grid size is not significantly changing the runtime.</p>
+<p>That is completely different for the PDP. Here a factor 5 for the number of intervals increases the runtime by the same factor. This can be derived from the estimation. The ALE does the same number of predictions for any number of intervals, namely #observaions <span class="math inline">\(\times\)</span> 2. It just averages more often for more intervals. But that happens without the prediction function and is just a simple mean calculation, so it barely needs time. The PDP, on the other hand, estimates the mean prediction for each interval border. So here (#intervals + 1) <span class="math inline">\(\times\)</span> #observations predictions have to be calculated. So the runtime grows linearly with the grid size and factor #observations. This is also the explanation for the next comparison (figure <a href="ale-pdp.html#fig:runtime1DnumNrow">7.14</a>). Here again, one can see a way faster increase of runtime for PDPs than for ALEs when increasing the number of observations</p>
+<div class="figure"><span id="fig:runtime1DnumNrow"></span>
+<img src="images/ale_1_one_numeric_nrows.PNG" alt="Runtime comparison ALE vs. PDP for one numeric feature. Differences for the number of observations." width="100%" />
+<p class="caption">
+FIGURE 7.14: Runtime comparison ALE vs. PDP for one numeric feature. Differences for the number of observations.
+</p>
+</div>
+
+</div>
+<div id="two-numerical-features-of-interest" class="section level3">
+<h3><span class="header-section-number">7.3.2</span> Two numerical features of interest</h3>
+<div class="figure"><span id="fig:runtime2DnumColAndSize"></span>
+<img src="images/ale_1_two_numeric_cols_and_gridsize.PNG" alt="Runtime comparison ALE vs. PDP for two numeric features. Differences for number of features and grid size." width="100%" />
+<p class="caption">
+FIGURE 7.15: Runtime comparison ALE vs. PDP for two numeric features. Differences for number of features and grid size.
+</p>
+</div>
+
+<p>In figure <a href="ale-pdp.html#fig:runtime2DnumColAndSize">7.15</a> the runtimes for different 2D ALE and PDP configurations can be seen. Again the number of features is not a great deal for both algorithms. The ALE has no huge increase in runtime when the grid size is higher but the PDP has. The issue here is that the estimation for 2D PDP requires <span class="math inline">\((grid.size + 1)^2 \times \#observations\)</span> predictions, while the ALE just needs <span class="math inline">\(4 \times \#observations\)</span> predictions calculated for the estimation. This especially can be seen when increasing the number of observations.</p>
+<div class="figure"><span id="fig:runtime2DnumNrow"></span>
+<img src="images/ale_1_two_numeric_nrows.PNG" alt="Runtime comparison ALE vs. PDP for two numeric features. Differences for the number of observations." width="100%" />
+<p class="caption">
+FIGURE 7.16: Runtime comparison ALE vs. PDP for two numeric features. Differences for the number of observations.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:runtime2DnumNrow">7.16</a> shows such an increase in observations. One can see that factor 100 in observations becomes almost factor 1,000 for the runtime of PDP while it is just a bit more than 10 for ALE.</p>
+</div>
+<div id="one-categorial-feature-of-interest" class="section level3">
+<h3><span class="header-section-number">7.3.3</span> One categorial feature of interest</h3>
+<p>Lastly, a look at the estimation for 1D categorial PDP and ALE will be taken.</p>
+<div class="figure"><span id="fig:runtime1DcatColAndSize"></span>
+<img src="images/ale_1_one_cat_cols_and_gridsize.PNG" alt="Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of features only, since there is no grid size for categorial features." width="100%" />
+<p class="caption">
+FIGURE 7.17: Runtime comparison ALE vs. PDP for one categorial feature. Differences for number of features only, since there is no grid size for categorial features.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:runtime1DcatColAndSize">7.17</a> shows the runtimes of PDP and ALE for a categorial feature of interest. Analyzing categorial features does not require a grid size since the number of categories already defines the number of different evaluations. This time one recognizes that it is the other way around. The calculation time stays the same for the PDP with a growing number of features, while ALE shows a significant growth. This is clearly caused by the reordering of the features for their category (will be explained in the next chapter). The reordering is based on the kind of nearest neighbors (depends on implementation). The calculation of these neighbors takes longer the more features have to be taken into account.</p>
+<div class="figure"><span id="fig:runtime1DcatNrow"></span>
+<img src="images/ale_1_one_cat_nrows.PNG" alt="Runtime comparison ALE vs. PDP for one categorical feature. Differences for the number of observations." width="100%" />
+<p class="caption">
+FIGURE 7.18: Runtime comparison ALE vs. PDP for one categorical feature. Differences for the number of observations.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:runtime1DcatNrow">7.18</a> shows a similar picture as can be seen in figure <a href="ale-pdp.html#fig:runtime1DnumColAndSize">7.13</a>. Just this time compared to the estimation for one numeric feature the ALE is way slower for the categorial feature, while the PDP is twice as fast as for the numeric feature. That might come from the fact that the grid size here (<a href="ale-pdp.html#fig:runtime1DnumColAndSize">7.13</a>) was 20 and in this case, there are just 10 classes for the feature of interest. Meaning that half as many calculations for the estimation are required. So it might be the same speed for the PDP from numeric to categorial (at least with comparable parameters). The ALE will always be slower for categorical features since the reordering of the categories is necessary.</p>
+<p>In general, one can state that ALE is by far faster. For an SVM that might not be that much of a problem. But with ensemble predictors like a random forest it can be very slow to calculate a PDP for a high grid size and 10,000+ observations.</p>
+</div>
+</div>
+<div id="comparison-for-unevenly-distributed-data---example-4-munich-rents" class="section level2">
+<h2><span class="header-section-number">7.4</span> Comparison for unevenly distributed data - Example 4: Munich rents</h2>
+<p>To conclude this chapter a real-world problem with a fitted learner will be analyzed with ICE, PDP, and ALE, to see them in action.</p>
+<p>This is an example with data for rents in Munich from 2003. The target variable ‘nm’ is the rent per month per flat. To predict the rent a random forest has been fitted. The features in this example are ‘wfl’ (size in square meters) and ‘rooms’ (number of rooms) of the flat. These two variables are clearly positively correlated since there will not be an apartment with 15 square meters and 5 rooms. The other features are not that strongly correlated as one can see in figure <a href="ale-pdp.html#fig:correlationMatrixRents">7.19</a>. To fit the random forest only ‘wfl’ and ‘rooms’ were used.</p>
+<div class="figure"><span id="fig:correlationMatrixRents"></span>
+<img src="images/ale_1_correlation_munich_rents.png" alt="Correlation matrix for rents in Munich." width="100%" />
+<p class="caption">
+FIGURE 7.19: Correlation matrix for rents in Munich.
+</p>
+</div>
+
+<div class="figure"><span id="fig:pdpaleRents"></span>
+<img src="images/ale_1_rf_rent_for_rooms_and_wfl.png" alt="PDP and ALE plots for the influence of space on rents in Munich." width="100%" />
+<p class="caption">
+FIGURE 7.20: PDP and ALE plots for the influence of space on rents in Munich.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:pdpaleRents">7.20</a> shows a more or less expected influence of space on the rent. The bigger the apartment the more expensive it is. In the area with a lot of data between 0 and 100, the PDP looks more smooth than the ALE which is a bit shaky. In the area with not that many observations, it is the other way around. The PDP suddenly breaks down what seems quite unrealistic, while the ALE has a pretty straight trend. Since the ALE shows a more expected behavior for the prediction of rents one could tend to state that the ALE outperforms the PDP. One could think that some unrealistic feature combinations in the estimation of the PDP caused this strange drop. But a look at the ICE plot reveals something else.</p>
+<div class="figure"><span id="fig:aleIceRents"></span>
+<img src="images/ale_1_rf_rent_for_rooms_and_wfl_ALE_vs_ICE.png" alt="ICE, ALE and PDP plots for influence of space on rents in Munich." width="100%" />
+<p class="caption">
+FIGURE 7.21: ICE, ALE and PDP plots for influence of space on rents in Munich.
+</p>
+</div>
+
+<p>Figure <a href="ale-pdp.html#fig:aleIceRents">7.21</a> additionally shows the ICE curves for this example. Since the only other feature used for the fit was ‘rooms’ and in the data set are just flats with 6 or fewer rooms, there are just 6 graphs. Now one could argue, maybe the apartments with less than 4 rooms (which are way more in this data set than those with 4 or more rooms) somehow cause the strange drop for the PDP. But figure <a href="ale-pdp.html#fig:iceZoomedRents">7.22</a> shows that almost all rooms have this drop, especially the apartments with 4 and 5 rooms.</p>
+<div class="figure"><span id="fig:iceZoomedRents"></span>
+<img src="images/ale_1_ice_zoomed.PNG" alt="ICE for rents in Munich zoomed in for the critical area." width="100%" />
+<p class="caption">
+FIGURE 7.22: ICE for rents in Munich zoomed in for the critical area.
+</p>
+</div>
+
+<p>The issue here is that rooms don’t have a strong influence on the prediction at all. In return, the PDP does not get problems with the correlation between the two features. And the PDP in the iml implementation generates an equidistant grid on the area with observations for feature ‘wfl’. On the other hand, the ALE divides this area aiming for equally many observations in each interval. This results in very small intervals for apartments with less than 109 square meters of space. But the flats with 109 or more square meters are evaluated in one interval only. This simply yields to this ALE plot, where it just ignores/skips this drop. And as one can see this can be dangerous when interpreting the prediction function. In this special situation, the ALE might get better the true link between the rent and the size of the apartments but that is not what one is interested in. The goal is always to interpret the predictor and not the data.</p>
+<p>This example demonstrated a crucial weakness of the ALE regarding the size of the intervals, which will be discussed in the next chapter. It also shows that ICE and PDP might still be worth a look despite their issues with correlated features and runtime. In general, if one needs to get a deep understanding of the prediction function it might be clever to use as many interpretation algorithms as possible. By being aware of their strengths and weaknesses and combining the results of those algorithms one can get a detailed look at the influence of each variable which should also be reliable.</p>
+</div>
+<div id="appendix" class="section level2">
+<h2><span class="header-section-number">7.5</span> Appendix</h2>
+<div id="ale-2d-example-calculation" class="section level3">
+<h3><span class="header-section-number">7.5.1</span> Calculation of theoretical 2D ALE example</h3>
+<p>Features <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span> and the prediction function <span class="math inline">\(\hat{f}(x_1, x_2, x_3) = x_1 x_2 x_3\)</span> are given. The features are sampled from the these disrtibutions: <span class="math inline">\(X_1 \sim \mathcal{U}(a,~b)\)</span>, <span class="math inline">\(X_2 \sim \mathcal{N}(\mu,~\sigma)\)</span> and <span class="math inline">\(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\)</span>.</p>
+<p>The theoretical 2D ALE for features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> will be calculated.</p>
+<p>First is the calculation of uncorrected and uncentered 2nd order effect:</p>
+<span class="math display">\[\begin{align} 
+\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}&amp;(x_1, x_2) = \notag \\
+&amp;= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} E[\hat{f}^{(1,~2)}(X_1,~X_2,~X_3)\mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
+&amp;= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} E[X_3 \mid X_1 = z_1,~X_2 = z_2]~dz_2~dz_1 \notag \\
+&amp;= \int_{z_{0,1}}^{x_1}  \int_{z_{0,2}}^{x_2} z_2 ~dz_2~dz_1 \notag \\
+&amp;= \int_{z_{0,1}}^{x_1}  \frac{1}{2} (x_2^2 - z_{0,~2}) ~dz_1 \notag \\
+&amp;= \frac{1}{2} (x_2^2 - z_{0,~2})~(x_1 - z_{0,~1}) 
+\end{align}\]</span>
+<p>Next is the calculation of the corrected pure 2nd order effect:</p>
+<span class="math display" id="eq:ale2DExampleCorrection">\[\begin{align}
+\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) = ~
+&amp;\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) \notag \\
+&amp; ~ -  \int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}\mid X_1 = z_1]~dz_1 \notag \\
+&amp; ~ - \int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2}\mid X_2 = z_2]~dz_2
+\tag{7.8}
+\end{align}\]</span>
+<p>The two terms which are correcting for the main effect of the two features will be calculated seperately:</p>
+<span class="math display" id="eq:ale2DExampleCorrection1">\[\begin{align}
+\int_{z_{0,~1}}^{x_1}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_1}
+&amp; \mid X_1 = z_1]~dz_1 = \notag \\
+&amp;= \int_{z_{0,~1}}^{x_1}  E[\frac{1}{2}(X_2^2 - z_{0, ~2}^2)\mid X_1 = z_1]~dz_1 \notag \\
+&amp;= \int_{z_{0,~1}}^{x_1}  \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2) ~dz_1 \notag \\
+&amp;= \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1})
+  \tag{7.9}
+\end{align}\]</span>
+<span class="math display" id="eq:ale2DExampleCorrection2">\[\begin{align}
+\int_{z_{0,~2}}^{x_2}  E[\frac{\delta\widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(X_1, X_2)}{\delta X_2} 
+&amp;\mid X_2 = z_2]~dz_2 = \notag \\
+&amp;= \int_{z_{0,~2}}^{x_2}  E[X_2 (X_1 - z_{0, ~1})\mid X_2 = z_2]~dz_2 \notag \\
+&amp;= \int_{z_{0,~2}}^{x_2}  z_2(\frac{a+b}{2} - z_{0, ~1}) ~dz_2 \notag \\
+&amp;= \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2)
+  \tag{7.10}
+\end{align}\]</span>
+<p>Combining <a href="ale-pdp.html#eq:ale2DExampleCorrection1">(7.9)</a> and <a href="ale-pdp.html#eq:ale2DExampleCorrection2">(7.10)</a> with <a href="ale-pdp.html#eq:ale2DExampleCorrection">(7.8)</a> yields:</p>
+<span class="math display">\[\begin{align} 
+\widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) 
+&amp;= \widetilde{\widetilde{ALE}}_{\hat{f},~1,~2}(x_1, x_2) - \frac{1}{2}(\mu^2 + \sigma^2 - z_{0,~2}^2)~(x_1 - z_{0,~1}) \notag \\
+&amp; ~~~ - \frac{1}{2}(\frac{a+b}{2} - z_{0, ~1})(x_2^2 - z_{0, ~2}^2) \notag \\
+&amp;= x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2)
+\end{align}\]</span>
+<p>The last part is the centering for the mean:</p>
+<span class="math display">\[\begin{align} 
+ALE_{\hat{f},~1,~2}(x_1, x_2) &amp;= \widetilde{ALE}_{\hat{f},~1,~2}(x_1, x_2) ~ -  E[\widetilde{ALE}_{\hat{f},~1,~2}(X_1, X_2)] \notag \\
+&amp;= \frac{1}{2} (x_2^2~x_1 + (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
+&amp; ~~ - E[X_2^2~x_1 + (X_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(X_2^2-z_{0,~2}^2)] ) \notag \\
+&amp;= \frac{1}{2} [x_2^2~x_1 - (x_1 - z_{0,1})(\mu^2+\sigma^2) - \frac{a + b}{2}(x_2^2-z_{0,~2}^2) \notag \\
+&amp; ~~ - (z_{0,1}(\mu^2+\sigma^2) + z_{0,~2}^2 \frac{a + b}{2} - (\mu^2+\sigma^2) \frac{a + b}{2}) ] \notag \\
+&amp;= \frac{1}{2} [x_2^2~x_1 - x_1(\mu^2+\sigma^2) - x_2^2 \frac{a + b}{2} + (\mu^2+\sigma^2) \frac{a + b}{2} ]
+\end{align}\]</span>
+<p>This formula was used to calculate the theoretical plot in figure <a href="ale-pdp.html#fig:theo2Dale">7.8</a>.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Apley2016">
+<p>Apley, Daniel W. 2016. <em>Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models</em>. <a href="https://arxiv.org/ftp/arxiv/papers/1612/1612.08468.pdf" class="uri">https://arxiv.org/ftp/arxiv/papers/1612/1612.08468.pdf</a>.</p>
+</div>
+<div id="ref-molnar2019">
+<p>Molnar, Christoph. 2019. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="ale.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="ale-misc.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/compstat-lmu/iml_methods_limitations/edit/master/02-4-ale-pdp.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf", "book.epub", "book.mobi"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
