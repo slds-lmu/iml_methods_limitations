@@ -12,7 +12,7 @@ lof: yes
 site: bookdown::bookdown_site
 description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
 graphics: yes
-#cover-image: images/cover.jpg
+cover-image: images/cover.png
 ---
 
 ```{r setup, include=FALSE}
@@ -21,9 +21,6 @@ options(
 )
 
 ```
-
-TODO:  COVER
-
 
 # Preface {-}
 
