@@ -37,6 +37,7 @@ But the interpretation methods might not work well in the following cases:
 This book is the outcome of the seminar "Limitations of Interpretable Machine Learning" which took place in summer 2019 at the Department of Statistics, LMU Munich.
 
 Cover by [\@YvonneDoinel](https://twitter.com/YvonneDoinel)
+
 ![Creative Commons License](images/by-nc-sa.png)
 
 This book is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
