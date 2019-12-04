@@ -1,5 +1,13 @@
 # Acknowledgements
 
+The most important contributions are from the students themselves.
+The success of such projects highly depends on the students.
+And this book is a success, so thanks a lot to all the authors!
+The other important role is the supervisor.
+Thanks to all the supervisors who participated!
+Special thanks to [Bernd Bischl](https://www.compstat.statistik.uni-muenchen.de/people/bischl/) who enabled us to conduct the seminar in such an experimental way, supported us and gave valuable feedback for the seminar structure.
+Thanks a lot as well to the entire [Department of Statistics](https://www.statistik.uni-muenchen.de/) and the [LMU Munich](http://www.en.uni-muenchen.de/index.html) for the infrastructure.
+
 This work has been partially supported by the Bavarian State Ministry of Science and the Arts in the framework of the Centre Digitisation.Bavaria (ZD.B) and by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
 The authors of this work take full responsibilities for its content.
 

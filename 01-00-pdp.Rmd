@@ -49,7 +49,7 @@ knitr::include_graphics('images/PDP_Plot_3.jpeg')
 knitr::include_graphics('images/PDP_Plot_4.jpeg')
 ```
 
-Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions [@molnar2019].
+Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, a correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions [@molnar2019].
 
 
 ## Individual Conditional Expectation Curves
@@ -65,7 +65,7 @@ knitr::include_graphics('images/PDP_Plot_5.jpeg')
 
 
 ### Centered ICE Plot
-If the curves of an ICE plot are stacked or have a wide range of intercepts it can be difficult to observe heterogeneity in the model. The so called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point [@molnar2019].
+If the curves of an ICE plot are stacked or have a wide range of intercepts it can be difficult to observe heterogeneity in the model. The so-called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point [@molnar2019].
 After anchoring a location $x^a$ in the range of $x_s$ and connecting all prediction lines at that point, the new curves are defined as:
 
 $$\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)$$
