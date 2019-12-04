@@ -7,8 +7,8 @@ bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: yes
-lot: yes
-lof: yes
+lot: False 
+lof: False
 site: bookdown::bookdown_site
 description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
 graphics: yes
