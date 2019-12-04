@@ -25,7 +25,7 @@ if [  "$BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ] ; then
   echo "Deploying master to gh-pages."
   # Clone the existing gh-pages for this repo into out/
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deply)
-  git clone -b $TARGET_BRANCH https://${GHITHUB_PAT}@github.com/${TRAVIS_REPO_SLUG}.git out
+  git clone -b $TARGET_BRANCH https://${GITHUB_PAT}@github.com/${TRAVIS_REPO_SLUG}.git out
   cd out
   git rm -rf ./*
   cp -r ../_book/* ./
