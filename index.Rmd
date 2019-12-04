@@ -44,7 +44,7 @@ This book is licensed under the [Creative Commons Attribution-NonCommercial-Shar
 
 \mainmatter
 
-# Foreword 
+# Foreword {-}
 
 *Author: Christoph Molnar*
 
@@ -80,7 +80,7 @@ For me the seminar was an inspiration.
 The students had new ideas and new perspectives to approach the limitations of interpretable machine learning.
 
 <!-- Technical setup -->
-## Technical Setup
+## Technical Setup {-}
 The book chapters are written in the Markdown language.
 The simulations, data examples and visualizations were created with R [@rlang].
 To combine R-code and Markdown, we used rmarkdown.
