@@ -19,12 +19,13 @@ cover-image: images/cover.png
 options(
   htmltools.dir.version = FALSE, formatR.indent = 2, width = 55, digits = 4
 )
-
+output <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+is.html = !is.null(output) && output == "html"
 ```
 
 # Preface {-}
 
-```{r cover, cache=FALSE, out.width="500", fig.align="center", echo=FALSE}
+```{r cover, cache=FALSE, out.width="500", fig.align="center", echo=FALSE, eval = is.html}
 knitr::include_graphics('images/cover.png')
 ```
 
