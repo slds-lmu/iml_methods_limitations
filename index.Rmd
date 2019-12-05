@@ -7,12 +7,12 @@ bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: yes
-lot: yes
-lof: yes
+lot: False 
+lof: False
 site: bookdown::bookdown_site
 description: "Situations in which PDP, ALE, LIME, LOCO and feature importance fail."
 graphics: yes
-#cover-image: images/cover.jpg
+cover-image: images/cover.png
 ---
 
 ```{r setup, include=FALSE}
@@ -22,10 +22,11 @@ options(
 
 ```
 
-TODO:  COVER
-
-
 # Preface {-}
+
+```{r cover, cache=FALSE, out.width="500", fig.align="center", echo=FALSE}
+knitr::include_graphics('images/cover.png')
+```
 
 This book explains limitations of current methods in interpretable machine learning.
 The methods include partial dependence plots (PDP), Accumulated Local Effects (ALE), permutation feature importance, leave-one-covariate out (LOCO) and local interpretable model-agnostic explanations (LIME).
@@ -40,6 +41,7 @@ But the interpretation methods might not work well in the following cases:
 This book is the outcome of the seminar "Limitations of Interpretable Machine Learning" which took place in summer 2019 at the Department of Statistics, LMU Munich.
 
 Cover by [\@YvonneDoinel](https://twitter.com/YvonneDoinel)
+
 ![Creative Commons License](images/by-nc-sa.png)
 
 This book is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
@@ -47,7 +49,7 @@ This book is licensed under the [Creative Commons Attribution-NonCommercial-Shar
 
 \mainmatter
 
-# Foreword 
+# Foreword {-}
 
 *Author: Christoph Molnar*
 
@@ -83,7 +85,7 @@ For me the seminar was an inspiration.
 The students had new ideas and new perspectives to approach the limitations of interpretable machine learning.
 
 <!-- Technical setup -->
-## Technical Setup
+## Technical Setup {-}
 The book chapters are written in the Markdown language.
 The simulations, data examples and visualizations were created with R [@rlang].
 To combine R-code and Markdown, we used rmarkdown.
