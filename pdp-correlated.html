@@ -425,11 +425,13 @@ FIGURE 3.7: Matrix of corrected contingency coefficients between all categorical
 </p>
 </div>
 <p>The only combination of categorical features with an exceptionally high corrected contingency coefficient, is ‘season’ (<span class="math inline">\(x_1\)</span>) and ‘mnth’ (<span class="math inline">\(x_3\)</span>). Also from a content-related point of view, this finding is no surprise, since both variables measure the time of the year. For the computation of the respective PDPs, we use the following models:</p>
-<span class="math display" id="eq:6" id="eq:5" id="eq:4">\[\begin{equation} 
+<span class="math display" id="eq:4">\[\begin{equation} 
 y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{3.4}
-\end{equation}\begin{equation}
+\end{equation}\]</span>
+<span class="math display" id="eq:5">\[\begin{equation}
 y \sim x_2 +\mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{3.5}
-\end{equation}\begin{equation}
+\end{equation}\]</span>
+<span class="math display" id="eq:6">\[\begin{equation}
 y \sim \mathbf{x_1} + x_2 + \mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{3.6}
 \end{equation}\]</span>
 <p>The approach is equivalent to the numeric case, with model <a href="pdp-correlated.html#eq:4">(3.4)</a> containing only ‘season’ and <a href="pdp-correlated.html#eq:5">(3.5)</a> only ‘mnth’, while both dependent features are part of model <a href="pdp-correlated.html#eq:6">(3.6)</a>. The impact on the PDPs for categorical features are shown in figures <a href="pdp-correlated.html#fig:Figure08">3.8</a>, <a href="pdp-correlated.html#fig:Figure09">3.9</a> and <a href="pdp-correlated.html#fig:Figure10">3.10</a>.</p>
@@ -458,11 +460,13 @@ FIGURE 3.10: PDPs based on Random Forest learner for ‘season’ in model 3.4 (
 <p>Our third dependency scenario seeks to provide an example for a strong correlation between a numerical and a categorical feature. For this constellation, neither the Pearson correlation nor the contingency coefficient are applicable as such, since both methods are limited to their respective classes of variables.</p>
 <p>We can, however, fit a linear model to explain the numeric variable through the categorical feature. By doing so, we produce another numerical variable, the fitted values. In a next step, we can calculate the Pearson correlation coefficient between the observed and the fitted values of the numerical feature. The resulting measure of association lies within the interval <span class="math inline">\([0,1]\)</span> and is equivalent to the square root of the linear model’s variance explained (<span class="math inline">\(R^2\)</span>) <span class="citation">(Fahrmeir et al. <a href="#ref-fahrmeir2013regression">2013</a>)</span>. For this reason, we refer to the measure as ‘variance-explained measure’.</p>
 <p>When applying this procedure to the categorical feature ‘season’ (<span class="math inline">\(x_1\)</span>) and the numerical feature ‘temp’ (<span class="math inline">\(x_7\)</span>), we find that with a variance-explained value of 0.83, there seems to be a reasonable association between the two features. The PDPs are derived through the following models:</p>
-<span class="math display" id="eq:9" id="eq:8" id="eq:7">\[\begin{equation}
+<span class="math display" id="eq:7">\[\begin{equation}
 y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} \tag{3.7}
-\end{equation}\begin{equation}
+\end{equation}\]</span>
+<span class="math display" id="eq:8">\[\begin{equation}
 y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}+ x_9 + x_{10} \tag{3.8}
-\end{equation}\begin{equation}
+\end{equation}\]</span>
+<span class="math display" id="eq:9">\[\begin{equation}
 y \sim \mathbf{x_1} + x_2  + x_4 + x_5 + x_6 +\mathbf{x_7}+ x_9 + x_{10} \tag{3.9}
 \end{equation}\]</span>
 <p>Figure <a href="pdp-correlated.html#fig:Figure11">3.11</a>, <a href="pdp-correlated.html#fig:Figure12">3.12</a> and <a href="pdp-correlated.html#fig:Figure13">3.13</a> present the partial dependence plots for the three underlying machine learning algorithms (LM, SVM and RF) defined for the purpose of our analysis.</p>
