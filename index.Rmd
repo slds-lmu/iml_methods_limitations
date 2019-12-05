@@ -24,7 +24,7 @@ options(
 
 # Preface {-}
 
-```{r cover, cache=FALSE, out.width="100%", fig.align="center", echo=FALSE}
+```{r cover, cache=FALSE, out.width="500", fig.align="center", echo=FALSE}
 knitr::include_graphics('images/cover.png')
 ```
 
