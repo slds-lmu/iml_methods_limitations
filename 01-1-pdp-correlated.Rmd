@@ -208,9 +208,11 @@ The only combination of categorical features with an exceptionally high correcte
 \begin{equation} 
 y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:4)
 \end{equation}
+
 \begin{equation}
 y \sim x_2 +\mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:5)
 \end{equation}
+
 \begin{equation}
 y \sim \mathbf{x_1} + x_2 + \mathbf{x_3} + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:6)
 \end{equation}
@@ -242,9 +244,11 @@ When applying this procedure to the categorical feature 'season' ($x_1$) and the
 \begin{equation}
 y \sim \mathbf{x_1} + x_2 + x_4 + x_5 + x_6 + x_9 + x_{10} (\#eq:7)
 \end{equation}
+
 \begin{equation}
 y \sim x_1 + x_2 + x_4 + x_5 + x_6 + \mathbf{x_7}+ x_9 + x_{10} (\#eq:8)
 \end{equation}
+
 \begin{equation}
 y \sim \mathbf{x_1} + x_2  + x_4 + x_5 + x_6 +\mathbf{x_7}+ x_9 + x_{10} (\#eq:9)
 \end{equation}
