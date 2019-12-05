@@ -164,7 +164,7 @@
 \frontmatter
 
 \title{Limitations of Interpretable Machine Learning Methods}
-\date{2019-12-04}
+\date{2019-12-05}
 
 \begin{document}
 \maketitle
@@ -189,8 +189,6 @@
 }
 \chapter*{Preface}\label{preface}
 
-
-\begin{center}\includegraphics[width=1\linewidth]{images/cover} \end{center}
 
 This book explains limitations of current methods in interpretable
 machine learning. The methods include partial dependence plots (PDP),
@@ -812,7 +810,7 @@ The reliability of the produced curves, however, strongly builds on the
 independence assumption of the features. Furthermore, results can be
 misleading in areas with no or little observations, where the curve is
 drawn as a result of extrapolation. In this chapter, we want to
-illustrate and discuss the issue of depencencies between different types
+illustrate and discuss the issue of dependencies between different types
 of variables, missing values and the associated implications on PDPs.
 
 \subsection{What is the issue with dependent
@@ -867,7 +865,7 @@ problems due to the fact that the estimated partial dependence function
 \(\hat{f}_{x_S}\) is evaluated at each observed \(x^{(i)}_{S}\), giving
 a set of N ordered pairs:
 \(\{(x^{(i)}_{S}, \hat{f}_{x^{(i)}_{S}})\}_{i=1}^N\). The resulting
-coordinates are plottet against each other and joined by lines. Not only
+coordinates are plotted against each other and joined by lines. Not only
 outside the margins of observed values, but also in areas with a larger
 distance between neighboured \(x_S\) values, the indicated relationship
 with the target variable might be inappropriate and volatile in case of
@@ -946,7 +944,7 @@ For our purposes, the dataset was restricted to the following variables:
 \end{itemize}
 
 For all machine learning models based on the Bike-Sharing dataset, `cnt'
-is used as target variable, while the remaining information serves as
+is used as a target variable, while the remaining information serves as
 feature variables. Six out of these ten features are categorical
 (\(x_1\) to \(x_6\)), the rest is measured on a numerical scale (\(x_7\)
 to \(x_{10}\)). Since the appearance of a PDP depends on the class of
@@ -1230,7 +1228,7 @@ Features}\label{simulation-settings-numerical-features}
 
 For a start, the different settings of simulations used for our
 investigation shall be introduced. Just like in chapter 2, we are
-seperately looking at different classes of variables and different
+separately looking at different classes of variables and different
 machine learning algorithms (LM, RF and SVM). PDPs for independent,
 correlated and dependent numerical features are computed for each of the
 following data generating processes (DGP), which describe the true
