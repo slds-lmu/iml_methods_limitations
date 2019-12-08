@@ -1,6 +1,8 @@
-# LIME and Neighbourhood {#id1}
+# LIME and Neighbourhood {#lime-neighbor}
 
 *Author: Philipp Kopper*
+
+*Supervisor: Christoph Molnar*
 
 This section will discuss the effect of the neighbourhood on LIME's explanations.
 This is in particular critical for tabular data.

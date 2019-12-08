@@ -1,9 +1,8 @@
-# Introduction to Accumulated Local Effects (ALE) 
+# Introduction to Accumulated Local Effects (ALE) {#ale}
 
+*Authors: Jakob Bodensteiner, Nikolas Fritz*
 
-
-
-
+*Supervisor: Christian Scholbeck*
 
 ## Motivation
 

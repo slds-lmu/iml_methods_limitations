@@ -1,12 +1,8 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
-
-# LIME and Sampling
+# LIME and Sampling {#lime-sample}
 
 *Author: Sebastian Gruber*
+
+*Supervisor: Christoph Molnar*
 
 This chapter will deal with the sampling step in LIME and the resulting side effects in terms of feature weight stability of the surrogate model.
 Due to the randomness of sampling, the resulting feature weights may suffer from high discrepancies between repeated evaluations.
@@ -99,7 +95,7 @@ The black dots are the sampled values dealing as training data set for the surro
 The vertical bars are an indicator of the kernel width.
 This color scheme is kept from now on in all further graphics.
 
-```{r, figbasic, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled", warning=FALSE}
+```{r, figbasic, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled", warning=FALSE}
 
 knitr::include_graphics("images/convex_samples_1vs2.png")
 ```
@@ -118,7 +114,7 @@ Do certain settings influence these and is there a tendency?
 To give an idea of the potential problems, a few artificial showcases are presented in the following.
 In figure \@ref(fig:figbad) a sinus shaped black-box model is tried to be explained twice again with a different seed.
 
-```{r, figbad, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
+```{r, figbad, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
 
 knitr::include_graphics("images/nonconvex_samples_1vs2.png")
 
@@ -132,16 +128,16 @@ The most obvious step is increasing the sample size.
 As it is depicted in figure \@ref(fig:figgood), this indeed shrinks the problem to irrelevancy, restoring some of the lost trust in our explanation.
 But the problem with this solution is its heavy computational burden, so it would be good to know in which cases the additional computational effort is necessary.
 
-```{r, figgood, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied twice on a non-convex function with increased sample size but different sample seed", warning=FALSE}
+```{r, figgood, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME applied twice on a non-convex function with increased sample size but different sample seed", warning=FALSE}
 
 knitr::include_graphics("images/nonconvex_samples_size100_1vs2.png")
   
 ```
 
 Another possible step would be to increase the kernel width as seen in figure \@ref(fig:figkernel), making the explanations again more similar, but also greatly losing the locality of the explanation.
-Since chapter \@ref(id1) already gave a thorough overview of this and because we assume we do not want to lose any locality, we focus on the default kernel width in the following and investigate the influence of further options on the weight stability of the LIME explanations.
+Since chapter \@ref(lime-neighbor) already gave a thorough overview of this and because we assume we do not want to lose any locality, we focus on the default kernel width in the following and investigate the influence of further options on the weight stability of the LIME explanations.
 
-```{r, figkernel, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width and two different sample seeds in each plot", warning=FALSE}
+```{r, figkernel, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME applied on a non-convex function with increased kernel width and two different sample seeds in each plot", warning=FALSE}
 
 knitr::include_graphics("images/nonconvex_samples_width81000_1vs2.png")
   
@@ -162,7 +158,7 @@ Boston Housing dataset is a well-known data set, so a deeper description of its 
 It is offering a good amount of numerical features ($p = 12$) and can be seen as a typical case of a numerical regression task.
 A quick overview of each of its features versus the target -- the median housing price -- is depicted in figure \@ref(fig:figboston).
 
-```{r, figboston, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to the target 'medv' in the Boston Housing dataset"}
+```{r, figboston, eval = TRUE, echo = FALSE, out.width = '99%', fig.align = 'center', fig.cap = "Overview of the normalized numerical features compared to the target 'medv' in the Boston Housing dataset"}
 
 knitr::include_graphics("images/boston_prezi.png")
 
@@ -187,7 +183,7 @@ In the first showcase, the mean data point is compared with an extreme outlier (
 As we can see in figure \@ref(fig:figbostmeanoutlier), the outlier has larger confidence intervals as the mean point.
 This suggests that either the model is behaving roughly in its area, or, more likely, the sample size in the neighborhood has a significant influence on our stability, as our original features have higher density mass around the mean with the kernel density estimation copying that approximately.
 
-```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95% confidence interval across repeated runs"}
+```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, out.width = '99%', fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95\\% confidence interval across repeated runs"}
 
 knitr::include_graphics("images/boston_meanVSmax.png")
 
@@ -201,7 +197,7 @@ This scenario compares two different black-box models.
 The left plot in figure \@ref(fig:figbosttreelm) shows the weights explaining a decision tree, while the right one shows the case for a linear regression model.
 It is kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black-box model could have a huge influence on weight stability.
 
-```{r, figbosttreelm, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
+```{r, figbosttreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
 
 knitr::include_graphics("images/boston_treeVSlm.png")
 
@@ -216,7 +212,7 @@ Binning is the default setting in the R LIME package (@thomasp85lime).
 Due to sampling via normal distribution acting very similar to the kernel density estimation in the experiments further down, this option is left out here.
 The differences in figure \@ref(fig:figbostkdebin) are clearly visible, leading to the question if there are strict ranks of the sampling options concerning weight stability.
 
-```{r, figbostkdebin, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of the mean data point with kernel density estimation as sampling strategy versus binning"}
+```{r, figbostkdebin, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of the mean data point with kernel density estimation as sampling strategy versus binning"}
 
 knitr::include_graphics("images/boston_kdeVSbins.png")
 
@@ -233,7 +229,7 @@ In figure \@ref(fig:figbike), boxplots of the classes in each feature with respe
 This means we are forced to use the Gower distance (@gower1971general), a binary distance measure for the categorical case.
 The purpose of this short section is: Do we get similar results as for numerical features?
 
-```{r, figbike, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Overview of the categorical features compared to the target 'cnt' in the Rental Bikes dataset"}
+```{r, figbike, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Overview of the categorical features compared to the target 'cnt' in the Rental Bikes dataset"}
 
 knitr::include_graphics("images/bikes_prezi.png")
 
@@ -249,7 +245,7 @@ As we cannot calculate the mean and maximum of a categorical variable, we switch
 In figure \@ref(fig:figmajorminor), the majority data point is compared to the minority data point.
 The differences are a lot more subtle than in the Boston Housing case, almost not visible.
 
-```{r, figmajorminor, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the majority data point versus the minority data point"}
+```{r, figmajorminor, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the majority data point versus the minority data point"}
 
 knitr::include_graphics("images/bikes_majVSmin.png")
 
@@ -263,7 +259,7 @@ Again, we are comparing a decision tree with a linear regression model as the bl
 The differences are visible, but by far not as much as in the numerical case.
 This suggests we include this categorical data set in our experiments further down but expect the results will not be as clear cut as in the numerical case.
 
-```{r, figbiketreelm, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
+```{r, figbiketreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
 
 knitr::include_graphics("images/bikes_treeVSlm.png")
 
@@ -317,7 +313,7 @@ If the curse of dimensionality would apply for our case, we definitely would not
 Thus, a curse of dimensionality can not be identified in our case and a high feature amount should not necessarily concern the user.
 As a further thought, since LIME models the black-box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.
 
-```{r, figsdp, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation of the resulting LIME weights regarding the feature dimension of the Boston Housing and Rental Bikes dataset. Each line shows a different sampling option."}
+```{r, figsdp, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the resulting LIME weights regarding the feature dimension of the Boston Housing and Rental Bikes dataset. Each line shows a different sampling option."}
 
 knitr::include_graphics("images/sd_p_presi3.png")
 
@@ -340,7 +336,7 @@ As can be seen in figure \@ref(fig:figsdnfeat), weight stability is remarkably c
 If the experiment was only evaluated for small amounts of selected features, a clear recommendation of sticking to less explained features could be given, but unfortunately, no real rule of thumb can be suggested in this case. 
 The inverted 'U' shape of the graph may result due to globally linear predictions for the least important features.
 
-```{r, figsdnfeat, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the number of features selected for the explainer."}
+```{r, figsdnfeat, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before but with full feature size. The x-axis plots the number of features selected for the explainer."}
 
 knitr::include_graphics("images/sd_nfeat_presi3.png")
 
@@ -365,7 +361,7 @@ These are depicted in figure \@ref(fig:fignperm) and show a clear and monotonous
 Additionally, binning seems to be consistently dominated by other sampling options.
 
 
-```{r, fignperm, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before but increasing sample size. A clear trend can be seen here: Increasing the amount of samples (which is acting as train data for our surrogate model) has remarkable influence on weight stability."}
+```{r, fignperm, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before but increasing sample size. A clear trend can be seen here: Increasing the amount of samples (which is acting as train data for our surrogate model) has remarkable influence on weight stability."}
 knitr::include_graphics("images/sd_npermutations_presi2.png")
 ```
 
@@ -382,7 +378,7 @@ The simulations already presented in figure \@ref(fig:figbasic) and figure \@ref
 Demonstrating the problem through a slightly adjusted real case problem, we are using sampled Boston Housing data of sample size 20, and modeling only $medv \sim lstat$.
 Because LIME does not know the original data, the resulting black-box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in figure \@ref(fig:figverybad).
 
-```{r, figverybad, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "LIME trying to explain an extremely volatily prediction surface. The prediction surface is an extreme overfit of a small subset of the Boston Housing data."}
+```{r, figverybad, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME trying to explain an extremely volatily prediction surface. The prediction surface is an extreme overfit of a small subset of the Boston Housing data."}
 knitr::include_graphics("images/boston_sampled_tree_presi3.png")
 ```
 
@@ -414,7 +410,7 @@ The results in figure \@ref(fig:figsmooth) are unambiguous: It is shown clearly 
 Keep in mind the model was fitted on two very specific datasets, which means if we would pick more complex data, the line could take much longer to flatten out, and vice versa for less complex data.
 As a small sidenote, binning is again consistently inferior.
 
-```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
+```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
 
 knitr::include_graphics("images/sd_smoothness_presi2.png")
 
@@ -448,7 +444,7 @@ It becomes more volatile.
 And this volatility kills our weight stability.
 
 
-```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor."}
+```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor."}
 
 knitr::include_graphics("images/sd_overfitting_presi2.png")
 
@@ -466,7 +462,7 @@ In short, the weighting based on a distance measure can be removed while we only
 Thus, points having a higher distance are sampled less likely or not at all, making the weights redundant and hugely increasing sampling efficiency.
 Because we only focused on regression tasks in our work so far, the figure \@ref(fig:figlocalsampling) will also only show this case -- for more details about classification please have a look into @laugel2018defining.
 
-```{r, figlocalsampling, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', fig.cap = "By sampling locally around our target point we can catch the plateau the point sits on as seen on the left plot. Indeed, the samples are too close to the explained point to be visible. As a local sampling strategy, a normal distribution was used with variance equal to the kernel width of the distance measure in the usual procedure. Achieving the same with global sampling in the right plot is a game of luck since the plateau is very narrow and hard to hit. In this case, our explanation even fails drastically as all the samples receive zero weight due to the small kernel width."}
+```{r, figlocalsampling, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "By sampling locally around our target point we can catch the plateau the point sits on as seen on the left plot. Indeed, the samples are too close to the explained point to be visible. As a local sampling strategy, a normal distribution was used with variance equal to the kernel width of the distance measure in the usual procedure. Achieving the same with global sampling in the right plot is a game of luck since the plateau is very narrow and hard to hit. In this case, our explanation even fails drastically as all the samples receive zero weight due to the small kernel width."}
 knitr::include_graphics("images/boston_betterVSlime_slim.png")
 ```
 
