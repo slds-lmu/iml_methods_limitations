@@ -444,7 +444,7 @@ It becomes more volatile.
 And this volatility kills our weight stability.
 
 
-```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor."}
+```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries."}
 
 knitr::include_graphics("images/sd_overfitting_presi2.png")
 
