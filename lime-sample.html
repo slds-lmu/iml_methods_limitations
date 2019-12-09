@@ -545,9 +545,9 @@ FIGURE 14.16: Average standard deviation of the same settings as before versus t
 <h4><span class="header-section-number">14.4.3.4</span> Black-box overfit – results</h4>
 <p>As we can see in figure <a href="lime-sample.html#fig:figoverfit">14.17</a>, as long as the XGBoost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer. Let’s try to dissect why this is happening in such a dependent fashion: What makes the training error get smaller? Reducing the residuals. What consequence has reducing the residuals on the prediction surface assuming a certain level of Gaussian noise? It becomes more volatile. And this volatility kills our weight stability.</p>
 <div class="figure" style="text-align: center"><span id="fig:figoverfit"></span>
-<img src="images/sd_overfitting_presi2.png" alt="Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor." width="99%" />
+<img src="images/sd_overfitting_presi2.png" alt="Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries." width="99%" />
 <p class="caption">
-FIGURE 14.17: Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor.
+FIGURE 14.17: Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.
 </p>
 </div>
 </div>
