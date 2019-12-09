@@ -16,6 +16,8 @@ git config --global user.name "Christoph Molnar"
 
 # Compile html version of book for gh-pages
 make -B pdf
+# Compile html version of book for gh-pages
+make -B epub
 # Compile html version 
 make -B html
 
