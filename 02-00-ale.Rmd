@@ -21,7 +21,7 @@ The ALE (centered ALE) is defined as
 
 $$  ALE_{\hat{f},~j}(x) = \widetilde{ALE}_{\hat{f},~j}(x) - E_{X_j}[\widetilde{ALE}_{\hat{f},~j}(X_j)]$$ 
 
-The centering makes sense as it helps interpreting the ALE in a reasonable way. This will be explained in section \@ref(ale-intro-interpret).
+The centering makes sense as it helps to interpret the ALE in a reasonable way. This will be explained in section \@ref(ale-intro-interpret).
 
 
 ## Estimation Formula 
@@ -43,7 +43,7 @@ $$ \widehat{ALE}_{\hat{f},~j}(x) = \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) - \
 
 ### Implementation Formula
 
-As both the centered and the uncentered ALE estimations are piecewise linear functions (integration over a step function), one can first calculate the ALE at the interval boundaries and interpolate in a second step. Therefore the following formula proposed by [@Apley2016, page 11] , with slightly changed notation will be useful. The definitions of its components are as above. Additionally $k_j(x)$ is defined as the number of the interval that contains $x$, i.e. $x \in ~]z_{k_j(x)-1,~j},~z_{k_j(x),~j}]$.  
+As both the centered and the uncentered ALE estimations are piecewise linear functions (integration over a step function), one can first calculate the ALE at the interval boundaries and interpolate in a second step. Therefore the following formula proposed by [@Apley2016, page 11] with slightly changed notation will be useful. The definitions of its components are as above. Additionally $k_j(x)$ is defined as the number of the interval that contains $x$, i.e. $x \in ~]z_{k_j(x)-1,~j},~z_{k_j(x),~j}]$.  
 
 $$  \widehat{\widetilde{ALE}}_{steps,~\hat{f},~j}(x) =  \sum_{k=1}^{k_j(x)}   \frac{1}{n_j(k)}\sum_{i:~x_j^{(i)}\in N_j(k)} [\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j},~x_{\setminus j}^{(i)})].  $$
 This formula returns a step function. The values in each interval are the accumulated values of the averaged total differences in each interval. To transfer this formula into the correct estimator of the uncentered ALE one has to linearely interpolate the points $(z_{k-1,~j},~\widehat{\widetilde{ALE}}_{steps,~\hat{f},~j}(z_{k-1,~j}))$ with $( z_{k,~j},\widehat{\widetilde{ALE}}_{steps,~ \hat{f},~j}(z_{k,~j}))$ for $k \in \{1, ..., K \}$ and $\widehat{\widetilde{ALE}}_{steps, \hat{f},j}(z_{0,~j}) = 0$.
