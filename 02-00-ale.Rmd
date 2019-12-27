@@ -26,7 +26,7 @@ The centering makes sense as it helps interpreting the ALE in a reasonable way. 
 
 ## Estimation Formula 
 
-Since this theoretical formula is of no use for a blackbox model with unknown or even non existing gradients, an approximative approach will be used.
+Since this theoretical formula is of no use for a black box model with unknown or even non-existing gradients, an approximative approach will be used.
 The uncentered ALE can be approximated by the formula 
 
 $$ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}    \frac{1_{I_k}(x_j)}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  $$
