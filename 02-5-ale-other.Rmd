@@ -2448,7 +2448,7 @@ knitr::include_graphics("images/ALE_2_cat_different_orders_.PNG")
 (ref:ALE2catdifford) Two ALE-plots for different orders of the category area
 
  
-Although the underlying model is exactly the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example, we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity-based order. This underlines how careful one should be when interpreting ALE-plots for categorical features.
+Although the underlying model is the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example, we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity-based order. This underlines how careful one should be when interpreting ALE-plots for categorical features.
  
 ### Conclusion
 
