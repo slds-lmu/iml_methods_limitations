@@ -2189,7 +2189,7 @@ knitr::include_graphics("images/ALE_2_pwc_example5_critical_points2_.PNG")
 ```
 (ref:ALE2pwcexample5criticalpoints2) Points that are used to estimate the step at grid size 20
 
-For grid size 20, 5 data points are used to estimate the total change in prediction. As figure \@ref(fig:ALE2pwcexample5criticalpoints2)  shows, coincidencially 5 data points with $x_2$-values between $\frac{10}{3}$ and $\frac{20}{3}$ fall into the step interval. This is why the mean difference of the prediction is estimated to be 3. 
+For grid size 20, 5 data points are used to estimate the total change in prediction. As figure \@ref(fig:ALE2pwcexample5criticalpoints2)  shows, coincidentally 5 data points with $x_2$-values between $\frac{10}{3}$ and $\frac{20}{3}$ fall into the step interval. This is why the mean difference of the prediction is estimated to be 3. 
 
 
 ``` {r eval = FALSE, include = FALSE}
