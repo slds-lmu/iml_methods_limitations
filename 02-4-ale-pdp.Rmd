@@ -24,12 +24,12 @@ With these interpretations in mind, the first example with artificial data will 
 ### Example 1: Multiplicative prediction function
 
 The following Problem is constructed: There is a data set consisting of 150 observations with three features ($x_1$, $x_2$, $x_3$) and the target variable $y = x_1  x_2  x_3$.
-The features of each observation are sampled from the following disrtibutions.
+The features of each observation are sampled from the following disrtibutions:
 $X_1 \sim \mathcal{U}(0,~0.5)$, $X_2 \sim \mathcal{N}(2,~2)$ and $X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)$.
 
 So features one and two are independent of each other, while $x_3$ is strongly correlated with $x_2$. It is also not independent from $x_1$, although there is no influence of $x_1$ on the expected value of $x_3$. 
 
-In this example (and in all other examples with artificial data in this chapter) the prediction function is not fitted but set as the target variable, here $f(x_1, x_2, x_3) = y = x_1 x_2 x_3$. By setting the prediction function instead of fitting a learner on the data it is ensured that one can imagine how the 'real' influence of each feature would look like. This way one can see clearly if ALE or PDP are making mistakes in the interpretation. If one would fit a random forest one could never be sure if the ALE and PDP plots are making a mistake in explaining the fitted model or if the mistake is made by the learner and the explanation of the learner itself would be fine. This will become clear at the end of the chapter when the real-world example will be discussed.
+In this example (and in all other examples with artificial data in this chapter) the prediction function is not fitted but sets as the target variable, here $f(x_1, x_2, x_3) = y = x_1 x_2 x_3$. By setting the prediction function instead of fitting a learner on the data it is ensured that one can imagine how the 'real' influence of each feature would look like. This way one can see clearly if ALE or PDP are making mistakes in the interpretation. If one would fit a random forest one could never be sure if the ALE and PDP plots are making a mistake in explaining the fitted model or if the mistake is made by the learner and the explanation of the learner itself would be fine. This will become clear at the end of the chapter when the real-world example will be discussed.
 
 ```{r eval = FALSE, echo=FALSE}
 library(crs)
@@ -292,7 +292,7 @@ Before the 2D ALE and PDP will be applied to the same predictors, the 2D ALE has
 
 Similar to one variable of interest there is a theoretical formula for a 2-dimensional ALE. This ALE aims to visualize the 2nd order effect. Meaning one will just see the additional effect of interaction between those two features. The main effects of the features will not be shown in the 2D ALE.
 
-To explain the formula it will be assumed that $j$ and $l$ are the two features of interest. The rest of the features is represented by $c$. So in the following variable $x_c$ can be of higher dimension than 1. As for the 1D ALE, there is again a theoretical derivative for the fitted function $\hat{f}$. But this time it is the derivative in the direction of both features of interest. So in the following, this notation will hold:
+To explain the formula it will be assumed that $x_j$ and $x_l$ are the two features of interest. The rest of the features is represented by $x_c$. So in the following variable $x_c$ can be of higher dimension than 1. As for the 1D ALE, there is again a theoretical derivative for the fitted function $\hat{f}$. But this time it is the derivative in the direction of both features of interest. So in the following, this notation will hold:
 
 $$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}$$
 
@@ -381,7 +381,7 @@ Now the correction for the main effects (equation \@ref(eq:ale2DEstCorrection) c
 (\#eq:ale2DEstCorrection)
 \end{align} 
 
-Equation \@ref(eq:ale2DEstCorrection is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of subtracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the general shape of the ALE plot. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula \@ref(eq:ale2DTheoretical). 
+Equation \@ref(eq:ale2DEstCorrection) is the uncentered 2D ALE since it is just corrected for its main effects. And this is not a real centering in the sense of subtracting a constant value. Now it will be centered for its estimation $E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]$ and this is a constant, so there will be no effect on the general shape of the ALE plot. Again this expected value has to be estimated, to complete the 2D ALE as is calculated in theoretical formula \@ref(eq:ale2DTheoretical). 
 
 \begin{equation}  
 \widehat{ALE}_{\hat{f},~j,~l}(x_j, ~x_l) = \notag
