@@ -294,7 +294,7 @@ Similar to one variable of interest there is a theoretical formula for a 2-dimen
 
 To explain the formula it will be assumed that $x_j$ and $x_l$ are the two features of interest. The rest of the features is represented by $x_c$. So in the following variable $x_c$ can be of higher dimension than 1. As for the 1D ALE, there is again a theoretical derivative for the fitted function $\hat{f}$. But this time it is the derivative in the direction of both features of interest. So in the following, this notation will hold:
 
-$$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}$$
+$$ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta x_l}$$
 
 The whole formula would be very long, so it is split into 3 parts (compare [@Apley2016, page 8]):
 
