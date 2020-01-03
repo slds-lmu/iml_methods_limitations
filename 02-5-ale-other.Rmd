@@ -25,6 +25,7 @@ In the following section, some examples with artificial data sets are provided, 
 ### ALE Approximations 
 
 In the following section, we only consider two-dimensional data sets, of continuous features $x_1$ and $x_2$ with a certain correlation. Furthermore, we use some exemplary prediction functions which are differentiable such that we can calculate the theoretical ALE (see section \@ref(ale-intro-formula)) and use it to evaluate the goodness of the estimated ALE - curve. As we want to isolate some of the above mentioned influential factors, we start with some easy examples adding step by step more complexity to the problem. 
+
 ### Example 1: additive feature effects
 
 In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e.
