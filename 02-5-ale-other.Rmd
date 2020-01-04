@@ -1360,7 +1360,7 @@ As the following examples will show, problems can occur due to "wrong" interval 
 
 ###Example 4: Simple step function
 
-Throughout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as $X_2$ given $X_1$ uniformily on the interval $[max(x_1 - 3, 0),~min( x_1 + 3, 10]$,   
+Throughout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as $X_2$ given $X_1$ uniformily on the interval $[max(x_1 - 3, 0),~min( x_1 + 3, 10]]$,   
 i.e. $X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),~min( x_1 + 3, 10) )$. That means all the data is distributed within the 10 times 10 square.
 In the first example, we take a look at a simple prediction function to get a good understanding of the basic problem with piece-wise constant models. We assume a prediction function that independently of $x_2$ predicts 0, except if $x_1$ falls into a certain small interval around 5. In this case, it predicts 10. Concretely $f(x_1, x_2) =    1_{[4.9,~5.1]}(x_1) * 10$.   
 
