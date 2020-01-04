@@ -2123,7 +2123,7 @@ knitr::include_graphics("images/ALE_2_pwc_example5_gs20_50_.PNG")
 ```
 (ref:pwcexample5gs2050) Behaviour of ALE estimations for prediction function 2 (leftside) and 3 (rightside)
 
-Increasing the grid size first to 20 and then to 50 reveals the whole danger of this situation. While prediction function 2 seems to be estimated quite stable (the absolute changes stay to be 1 and -2, while the steps become steeper and steeper), the estimation for prediction function 3 changes its behavior. At grid size 20 the left step grows to be 3, at grid size 50 the second step to be -3. Centering leads to quite radical upwards and downwards shifts of the whole plot. 
+Increasing the grid size first to 20 and then to 50 reveals the whole danger of this situation. While prediction function 2 seems to be estimated quite stable (the absolute changes stay to be -1 and 2, while the steps become steeper and steeper), the estimation for prediction function 3 changes its behavior. At grid size 20 the left step grows to be 3, at grid size 50 the second step to be -3. Centering leads to quite radical upwards and downwards shifts of the whole plot. 
 To understand this we'll have a look at the data points that are used to estimate the steps. 
 ``` {r eval = FALSE, include = FALSE}
 prediction_function_4_1 <- function(x_1, x_2){
