@@ -26,7 +26,7 @@ Figure \@ref(fig:Figure01) illustrates the problem by contrasting simulated data
 knitr::include_graphics('images/VK_PDP_1_Data_ind_dep.png', auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating its mean (here: $\overline{x}_2 \approx 0$) and keeping the value in $\hat{f}_{x_S}(x_1)$ constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average of $x_2$ is not a realistic value in combination with values of  $x_1$ in the very left and the very right part of the feature distribution.  
+When computing the PDP for feature $x_1$, we take $x_2$ into account by calculating the mean predictions at observed $x_2$ values in the training data, while the values of $x_1$ are given. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure \@ref(fig:Figure01), the average is not a realistic value in combination with certain values of $x_1$, e.g. in the very left and the very right part of the feature distribution.  
 
 ### What is the issue with extrapolation? 
 Generally speaking, extrapolation means leaving the distribution of observed data. On the one hand, this can affect the predictions, namely in the event of the prediction function doing 'weird stuff' in unobserved areas. In chapter \@ref(ExtrapolationProblem) we will see an example where this instant leads to a failure of the PDP.\citep{molnar2019}  
