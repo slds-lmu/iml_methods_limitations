@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2019-12-09" />
+<meta name="date" content="2020-01-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -323,7 +323,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 FIGURE 3.1: Simulated data for independent (left) and strongly correlated (right) features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. The marginal distribution of <span class="math inline">\(x_2\)</span> is displayed on the right side of each plot.
 </p>
 </div>
-<p>When computing the PDP for feature <span class="math inline">\(x_1\)</span>, we take <span class="math inline">\(x_2\)</span> into account by calculating its mean (here: <span class="math inline">\(\overline{x}_2 \approx 0\)</span>) and keeping the value in <span class="math inline">\(\hat{f}_{x_S}(x_1)\)</span> constant at any point on the x-axis. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure <a href="pdp-correlated.html#fig:Figure01">3.1</a>, the average of <span class="math inline">\(x_2\)</span> is not a realistic value in combination with values of <span class="math inline">\(x_1\)</span> in the very left and the very right part of the feature distribution.</p>
+<p>When computing the PDP for feature <span class="math inline">\(x_1\)</span>, we take <span class="math inline">\(x_2\)</span> into account by calculating the mean predictions at observed <span class="math inline">\(x_2\)</span> values in the training data, while the values of <span class="math inline">\(x_1\)</span> are given. This makes sense in the independent case, where observations are randomly scattered. However, when looking at the correlated features in the right part of figure <a href="pdp-correlated.html#fig:Figure01">3.1</a>, the average is not a realistic value in combination with certain values of <span class="math inline">\(x_1\)</span>, e.g. in the very left and the very right part of the feature distribution.</p>
 </div>
 <div id="what-is-the-issue-with-extrapolation" class="section level3">
 <h3><span class="header-section-number">3.1.2</span> What is the issue with extrapolation?</h3>

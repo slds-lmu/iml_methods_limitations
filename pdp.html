@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2019-12-09" />
+<meta name="date" content="2020-01-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -314,7 +314,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The underlying function can be described as follows:</p>
 <p>Let <span class="math inline">\(x_S\)</span> be the set of features of interest for the PDP and <span class="math inline">\(x_C\)</span> the complement set which contains all other features. While the general model function <span class="math inline">\(f(x) = f(x_S, x_C)\)</span> depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-hastie2013elements">2013</a>)</span>:</p>
 <p><span class="math display">\[f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\]</span></p>
-<p>The partial dependence function can be estimated by averaging the actual feature values of <span class="math inline">\(x_C\)</span> in the training data at given values of <span class="math inline">\(x_S\)</span> or, in other words, it computes the marginal effect of <span class="math inline">\(x_S\)</span> on the prediction. In order to obtain realistic results, a major assumption of the PDP is that the features in <span class="math inline">\(x_S\)</span> and <span class="math inline">\(x_C\)</span> are independent and thus uncorrelated <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-hastie2013elements">2013</a>)</span>.</p>
+<p>The partial dependence function can be estimated by averaging predictions with actual feature values of <span class="math inline">\(x_C\)</span> in the training data at given values of <span class="math inline">\(x_S\)</span> or, in other words, it computes the marginal effect of <span class="math inline">\(x_S\)</span> on the prediction. In order to obtain realistic results, a major assumption of the PDP is that the features in <span class="math inline">\(x_S\)</span> and <span class="math inline">\(x_C\)</span> are independent and thus uncorrelated.</p>
 <p><span class="math display">\[\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})\]</span></p>
 <p>An example of a PDP based on the ‘Titanic’ data set, which contains information on the fate of 2224 passengers and crew members during the Titanic’s maiden voyage, is given in figure <a href="pdp.html#fig:plot1">2.1</a>.</p>
 <div class="figure" style="text-align: center"><span id="fig:plot1"></span>

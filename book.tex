@@ -164,7 +164,8 @@
 \frontmatter
 
 \title{Limitations of Interpretable Machine Learning Methods}
-\date{2019-12-09}
+\author{}
+\date{\vspace{-2.5em}2020-01-08}
 
 \begin{document}
 \maketitle
@@ -613,12 +614,13 @@ distribution in set C \citep{hastie2013elements}:
 
 \[f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\]
 
-The partial dependence function can be estimated by averaging the actual
-feature values of \(x_C\) in the training data at given values of
-\(x_S\) or, in other words, it computes the marginal effect of \(x_S\)
-on the prediction. In order to obtain realistic results, a major
-assumption of the PDP is that the features in \(x_S\) and \(x_C\) are
-independent and thus uncorrelated \citep{hastie2013elements}.
+The partial dependence function can be estimated by averaging
+predictions with actual feature values of \(x_C\) in the training data
+at given values of \(x_S\) or, in other words, it computes the marginal
+effect of \(x_S\) on the prediction. In order to obtain realistic
+results, a major assumption of the PDP is that the features in \(x_S\)
+and \(x_C\) are independent and thus
+uncorrelated.\citep{hastie2013elements}
 
 \[\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})\]
 
@@ -842,13 +844,13 @@ and thus are highly correlated, on the right.
 \end{figure}
 
 When computing the PDP for feature \(x_1\), we take \(x_2\) into account
-by calculating its mean (here: \(\overline{x}_2 \approx 0\)) and keeping
-the value in \(\hat{f}_{x_S}(x_1)\) constant at any point on the x-axis.
-This makes sense in the independent case, where observations are
-randomly scattered. However, when looking at the correlated features in
-the right part of figure \ref{fig:Figure01}, the average of \(x_2\) is
-not a realistic value in combination with values of \(x_1\) in the very
-left and the very right part of the feature distribution.
+by calculating the mean predictions at observed \(x_2\) values in the
+training data, while the values of \(x_1\) are given. This makes sense
+in the independent case, where observations are randomly scattered.
+However, when looking at the correlated features in the right part of
+figure \ref{fig:Figure01}, the average is not a realistic value in
+combination with certain values of \(x_1\), e.g.~in the very left and
+the very right part of the feature distribution.
 
 \subsection{What is the issue with
 extrapolation?}\label{what-is-the-issue-with-extrapolation}
