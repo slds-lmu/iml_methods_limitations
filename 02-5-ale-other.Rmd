@@ -25,6 +25,7 @@ In the following section, some examples with artificial data sets are provided, 
 ### ALE Approximations 
 
 In the following section, we only consider two-dimensional data sets, of continuous features $x_1$ and $x_2$ with a certain correlation. Furthermore, we use some exemplary prediction functions which are differentiable such that we can calculate the theoretical ALE (see section \@ref(ale-intro-formula)) and use it to evaluate the goodness of the estimated ALE - curve. As we want to isolate some of the above mentioned influential factors, we start with some easy examples adding step by step more complexity to the problem. 
+
 ### Example 1: additive feature effects
 
 In the first example we assume a uniform distribution for the feature $x_1$ on the interval $[0, 10]$, i.e.
@@ -1359,7 +1360,7 @@ As the following examples will show, problems can occur due to "wrong" interval 
 
 ###Example 4: Simple step function
 
-Throughout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as $X_2$ given $X_1$ uniformily on the interval $[max(x_1 - 3, 0),~min( x_1 + 3, 10]$,   
+Throughout this section we assume $X_1$ to be uniformily distributed on the interval $[0,10]$, i.e. $X_1 \sim U(0,10)$ as well as $X_2$ given $X_1$ uniformily on the interval $[max(x_1 - 3, 0),~min( x_1 + 3, 10]]$,   
 i.e. $X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),~min( x_1 + 3, 10) )$. That means all the data is distributed within the 10 times 10 square.
 In the first example, we take a look at a simple prediction function to get a good understanding of the basic problem with piece-wise constant models. We assume a prediction function that independently of $x_2$ predicts 0, except if $x_1$ falls into a certain small interval around 5. In this case, it predicts 10. Concretely $f(x_1, x_2) =    1_{[4.9,~5.1]}(x_1) * 10$.   
 
@@ -2189,7 +2190,7 @@ knitr::include_graphics("images/ALE_2_pwc_example5_critical_points2_.PNG")
 ```
 (ref:ALE2pwcexample5criticalpoints2) Points that are used to estimate the step at grid size 20
 
-For grid size 20, 5 data points are used to estimate the total change in prediction. As figure \@ref(fig:ALE2pwcexample5criticalpoints2)  shows, coincidencially 5 data points with $x_2$-values between $\frac{10}{3}$ and $\frac{20}{3}$ fall into the step interval. This is why the mean difference of the prediction is estimated to be 3. 
+For grid size 20, 5 data points are used to estimate the total change in prediction. As figure \@ref(fig:ALE2pwcexample5criticalpoints2)  shows, coincidentally 5 data points with $x_2$-values between $\frac{10}{3}$ and $\frac{20}{3}$ fall into the step interval. This is why the mean difference of the prediction is estimated to be 3. 
 
 
 ``` {r eval = FALSE, include = FALSE}
@@ -2448,7 +2449,7 @@ knitr::include_graphics("images/ALE_2_cat_different_orders_.PNG")
 (ref:ALE2catdifford) Two ALE-plots for different orders of the category area
 
  
-Although the underlying model is exactly the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example, we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity-based order. This underlines how careful one should be when interpreting ALE-plots for categorical features.
+Although the underlying model is the same, the ALE changes completely. Not only the order of the features changed but also the delta between some not adjacent categories. For example, we see a decrease from category 1 to 12 instead of an increase, as in the ALE-plot with similarity-based order. This underlines how careful one should be when interpreting ALE-plots for categorical features.
  
 ### Conclusion
 

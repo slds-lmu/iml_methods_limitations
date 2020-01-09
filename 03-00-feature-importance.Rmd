@@ -27,7 +27,7 @@ In Figure \@ref(fig:PFI) it is illustrated, by a fictional example, how the perm
 
 
 <br>
-```{r PFI,out.width="65%", echo = FALSE, message = FALSE, fig.align='center', fig.cap="Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the feature of interest and the target value. Based on the formular underneath the tables, the PFI is calculated."}
+```{r PFI,out.width="65%", echo = FALSE, message = FALSE, fig.align='center', fig.cap="Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffled. This breaks the association between the feature of interest and the target value. Based on the formula underneath the tables, the PFI is calculated."}
 knitr::include_graphics("images/Permutation_All.jpeg")
 ```
 
