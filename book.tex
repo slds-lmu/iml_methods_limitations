@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-01-08}
+\date{\vspace{-2.5em}2020-01-09}
 
 \begin{document}
 \maketitle
@@ -2283,7 +2283,7 @@ As seen in section 2 PDPs don't work well as soon as two or more
 features are correlated. This gives rise to the definition of ALEs.
 Although their definition makes sense for high dimensional feature
 spaces including categorical features, within this section we only treat
-a space with two continous features.
+a space with two continuous features.
 
 \section{The Theoretical Formula}\label{ale-intro-formula}
 
@@ -2301,14 +2301,14 @@ The ALE (centered ALE) is defined as
 
 \[  ALE_{\hat{f},~j}(x) = \widetilde{ALE}_{\hat{f},~j}(x) - E_{X_j}[\widetilde{ALE}_{\hat{f},~j}(X_j)]\]
 
-The centering makes sense as it helps interpreting the ALE in a
+The centering makes sense as it helps to interpret the ALE in a
 reasonable way. This will be explained in section
 \ref{ale-intro-interpret}.
 
 \section{Estimation Formula}\label{estimation-formula}
 
-Since this theoretical formula is of no use for a blackbox model with
-unknown or even non existing gradients, an approximative approach will
+Since this theoretical formula is of no use for a black box model with
+unknown or even non-existing gradients, an approximative approach will
 be used. The uncentered ALE can be approximated by the formula
 
 \[ \widehat{\widetilde{ALE}}_{\hat{f},~j}(x) = \int_{z_{0,~j}}^{x} \sum_{k=1}^{K}    \frac{1_{I_k}(x_j)}{n_j(k)}\sum_{i:x_j^{(i)}\in N_j(k)} \frac{[\hat{f}(z_{k,~j}, x_{\setminus j}^{(i)})-\hat{f}(z_{k-1,~j}, x_{\setminus j}^{(i)})]}{z_{k,~j}-z_{k-1,~j}}~dx_j~.  \]
@@ -2318,7 +2318,7 @@ into K intervals beginning with the starting point \(z_{0, j}\). As it
 is not clear how to exactly divide the feature space, section 3.x deals
 with that question. The upper boundary of the k-th interval is denoted
 by \(z_{k, ~j}\) as well as the lower boundary by \(z_{k-1, ~j}\). The
-half open interval \(]z_{k-1,~j},~z_{k,~j}]\) is defined as \(I_k\).
+half-open interval \(]z_{k-1,~j},~z_{k,~j}]\) is defined as \(I_k\).
 \(N_j(k)\) denotes the k-th interval, i.e. \(]z_{k-1,~j}, z_{k,~j}]\)
 and \(n_j(k)\) the total number of observations having the j-value
 within this interval. \(x_j^{(i)}\) is the j-value of the i-th
@@ -2326,15 +2326,15 @@ observation and correspondingly \(x_{\setminus j}^{(i)}\) the values of
 the other features. The term on the right approximates the expected
 partial derivative within each interval. Therefore each instance within
 an interval is shifted to the upper and lower limit of the interval and
-the total difference of the prediction is calculated. Devided by the
+the total difference of the prediction is calculated. Divided by the
 length of the interval this is a reasonable approximation for the
 ``local'' effect on the prediction, if the feature of interest changes
 (cet. par.). By averaging these approximations over all observations
-within the k-th interval, we recieve a rough estimator for the term
+within the k-th interval, we receive a rough estimator for the term
 \(E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j \in N_j(k)]\), which we
 take as constant effect for the k-th interval. By integrating over this
 step function, which represents the locally estimated derivatives, the
-(local) changes are accumulated. Thats why the name Accumulated Local
+(local) changes are accumulated. That's why the name Accumulated Local
 Effects is quite reasonable. The approximative formula for the centered
 ALE follows directly as
 
@@ -2346,8 +2346,8 @@ ALE follows directly as
 As both the centered and the uncentered ALE estimations are piecewise
 linear functions (integration over a step function), one can first
 calculate the ALE at the interval boundaries and interpolate in a second
-step. Therefore the folowing formula proposed by \citep[page
-11]{Apley2016} , with slightly changed notation will be useful. The
+step. Therefore the following formula proposed by \citep[page
+11]{Apley2016} with slightly changed notation will be useful. The
 definitions of its components are as above. Additionally \(k_j(x)\) is
 defined as the number of the interval that contains \(x\), i.e.
 \(x \in ~]z_{k_j(x)-1,~j},~z_{k_j(x),~j}]\).
@@ -2389,10 +2389,10 @@ case \(x_1\)) to intervals of suitable size.\\
 For each interval the contained data points are moved to the interval
 boundaries. One gets twice as much ``simulated'' new data points as
 originally contained in each interval. The prediction function is now
-evaluated at this simulated points and the total difference of the
+evaluated at these simulated points and the total difference of the
 prediction (for the given interval) is estimated as the mean change.
 Divided by the length of the interval one gets an estimation for the
-partial derivative within this interval. Theoretically one recieves the
+partial derivative within this interval. Theoretically one receives the
 uncentered ALE by integration over this step function. Technically in a
 first step the total change per interval is accumulated. In a second
 step linear interpolation at the interval boundaries simulates a
@@ -2417,7 +2417,7 @@ situtaion of Figure \ref{fig:dataALE}.
 
 
 
-To understand the interpretation of the ALE it can be usefull to first
+To understand the interpretation of the ALE it can be useful to first
 have a look at the intuition behind the uncentered ALE. If the value of
 the uncentered ALE at \(x_1 = 2\) equals \(1\), this means that if one
 samples a data point from the joint distribution of both features but
@@ -2428,7 +2428,7 @@ distribution at \(x_1 = z_{0,1}\)). This expectation strongly depends on
 the reference point \(z_{0,1}\), which per definition is smaller than
 the smallest \(x_1\)-value of the data. By substracting the expectation
 of the uncentered ALE - which is the mean difference of the prediction
-of a data point from the joint distibution to the prediction of a
+of a data point from the joint distribution to the prediction of a
 realistic data point(i.e.~from the conditional distribution) at
 \(x_1 = z_{0,1}\) - the interpretation becomes a lot easier. If the
 value of the (centered) ALE at \(x_1 = 2\) equals for example \(2\),
@@ -2485,7 +2485,7 @@ function}\label{example-1-multiplicative-prediction-function}
 The following Problem is constructed: There is a data set consisting of
 150 observations with three features (\(x_1\), \(x_2\), \(x_3\)) and the
 target variable \(y = x_1 x_2 x_3\). The features of each observation
-are sampled from the following disrtibutions.
+are sampled from the following disrtibutions:
 \(X_1 \sim \mathcal{U}(0,~0.5)\), \(X_2 \sim \mathcal{N}(2,~2)\) and
 \(X_3\mid X_2, X_1 \sim \mathcal{N}(X_2,X_1)\).
 
@@ -2495,7 +2495,7 @@ strongly correlated with \(x_2\). It is also not independent from
 of \(x_3\).
 
 In this example (and in all other examples with artificial data in this
-chapter) the prediction function is not fitted but set as the target
+chapter) the prediction function is not fitted but sets as the target
 variable, here \(f(x_1, x_2, x_3) = y = x_1 x_2 x_3\). By setting the
 prediction function instead of fitting a learner on the data it is
 ensured that one can imagine how the `real' influence of each feature
@@ -2629,7 +2629,7 @@ the feature. In this example an interpretation like `If feature \(x_2\)
 has value 2.5 then in expectation the prediction will be 0.5 higher than
 the average prediction' is wrong. If one needs a statement like that the
 other strongly correlated features have to be taken into account as
-well. One has to be aware of higher order effects of the ALE, too.
+well. One has to be aware of the higher order effects of the ALE, too.
 
 To conclude the analysis of this example 2D ALEs are necessary. So it
 will be continued later this chapter.
@@ -2652,15 +2652,15 @@ Meaning one will just see the additional effect of interaction between
 those two features. The main effects of the features will not be shown
 in the 2D ALE.
 
-To explain the formula it will be assumed that \(j\) and \(l\) are the
-two features of interest. The rest of the features is represented by
-\(c\). So in the following variable \(x_c\) can be of higher dimension
+To explain the formula it will be assumed that \(x_j\) and \(x_l\) are
+the two features of interest. The rest of the features is represented by
+\(x_c\). So in the following variable \(x_c\) can be of higher dimension
 than 1. As for the 1D ALE, there is again a theoretical derivative for
 the fitted function \(\hat{f}\). But this time it is the derivative in
 the direction of both features of interest. So in the following, this
 notation will hold:
 
-\[ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta xl}\]
+\[ \hat{f}^{(j,~l)}(x_j,~x_l,~x_c) = \frac{\delta\hat{f}(x_j,~x_l,~x_c)}{\delta x_j~ \delta x_l}\]
 
 The whole formula would be very long, so it is split into 3 parts
 (compare \citep[page 8]{Apley2016}):
@@ -2725,7 +2725,7 @@ calculation of the theoretical ALE for Example 1.
 Analogously to the 1D ALE in most cases, it is not possible to calculate
 the 2D ALE. It has to be estimated. These estimation formulas are pretty
 long and might be confusing, especially the indices. But there will be
-an explenation including a visualization as well to clarify the
+an explanation including a visualization as well to clarify the
 estimation method.
 
 First, all variables have to be defined. The two features of interest
@@ -2743,7 +2743,7 @@ is the crossproduct of the k-th and m-th interval (in \(x_j\) and
 \((z_{k-1,j}, z_{k,j}] \times (z_{m-1,j}, z_{m,j}]\).
 \(n_{\{j,~l\}}(k,m)\) is the number of observations lying in this
 \(N_{\{j,~l\}}(k,m)\) cell. The parameter i represents the i-th
-observation \citep{Apley2016}. With this variables in mind, the
+observation \citep{Apley2016}. With these variables in mind, the
 definition of the 2D ALE estimation can begin.
 
 The estimation equvalent to Formula \eqref{eq:ale2DTheoretical1stLvl} is:
@@ -2788,10 +2788,10 @@ Now the correction for the main effects (equation
 \label{eq:ale2DEstCorrection}
 \end{align}
 
-Equation @ref(eq:ale2DEstCorrection is the uncentered 2D ALE since it is
-just corrected for its main effects. And this is not a real centering in
-the sense of subtracting a constant value. Now it will be centered for
-its estimation
+Equation \eqref{eq:ale2DEstCorrection} is the uncentered 2D ALE since it
+is just corrected for its main effects. And this is not a real centering
+in the sense of subtracting a constant value. Now it will be centered
+for its estimation
 \(E[\widehat{\widetilde{ALE}}_{\hat{f},~j,~l}(X_j, ~X_l)]\) and this is
 a constant, so there will be no effect on the general shape of the ALE
 plot. Again this expected value has to be estimated, to complete the 2D
@@ -3462,8 +3462,10 @@ differentiable such that we can calculate the theoretical ALE (see
 section \ref{ale-intro-formula}) and use it to evaluate the goodness of
 the estimated ALE - curve. As we want to isolate some of the above
 mentioned influential factors, we start with some easy examples adding
-step by step more complexity to the problem. \#\#\# Example 1: additive
-feature effects
+step by step more complexity to the problem.
+
+\subsection{Example 1: additive feature
+effects}\label{example-1-additive-feature-effects}
 
 In the first example we assume a uniform distribution for the feature
 \(x_1\) on the interval \([0, 10]\), i.e. \(X_1 \sim U(0,10)\).
@@ -3750,7 +3752,7 @@ function}\label{example-4-simple-step-function}
 Throughout this section we assume \(X_1\) to be uniformily distributed
 on the interval \([0,10]\), i.e. \(X_1 \sim U(0,10)\) as well as \(X_2\)
 given \(X_1\) uniformily on the interval
-\([max(x_1 - 3, 0),~min( x_1 + 3, 10]\),\\
+\([max(x_1 - 3, 0),~min( x_1 + 3, 10]]\),\\
 i.e.
 \(X_2 \vert X_1 = x_1 \sim U(max(x_1 - 3, 0),~min( x_1 + 3, 10) )\).
 That means all the data is distributed within the 10 times 10 square. In
@@ -3887,7 +3889,7 @@ the step at grid size 20}\label{fig:ALE2pwcexample5criticalpoints2}
 
 For grid size 20, 5 data points are used to estimate the total change in
 prediction. As figure \ref{fig:ALE2pwcexample5criticalpoints2} shows,
-coincidencially 5 data points with \(x_2\)-values between
+coincidentally 5 data points with \(x_2\)-values between
 \(\frac{10}{3}\) and \(\frac{20}{3}\) fall into the step interval. This
 is why the mean difference of the prediction is estimated to be 3.
 
@@ -4084,12 +4086,12 @@ area}\label{fig:ALE2catdifford}
 
 
 
-Although the underlying model is exactly the same, the ALE changes
-completely. Not only the order of the features changed but also the
-delta between some not adjacent categories. For example, we see a
-decrease from category 1 to 12 instead of an increase, as in the
-ALE-plot with similarity-based order. This underlines how careful one
-should be when interpreting ALE-plots for categorical features.
+Although the underlying model is the same, the ALE changes completely.
+Not only the order of the features changed but also the delta between
+some not adjacent categories. For example, we see a decrease from
+category 1 to 12 instead of an increase, as in the ALE-plot with
+similarity-based order. This underlines how careful one should be when
+interpreting ALE-plots for categorical features.
 
 \subsection{Conclusion}\label{conclusion-1}
 
@@ -4199,7 +4201,7 @@ predict the outcomes and then calculate the prediction error.
 
 }
 
-\caption{Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffeled. This breaks the association between the feature of interest and the target value. Based on the formular underneath the tables, the PFI is calculated.}\label{fig:PFI}
+\caption{Example for Permutation Feature Importance. The tables illustrate the second step of the algorithm of PFI, in particular the permutation of the features $x_{1}$ and $x_{p}$. As shown, the respective columns in dark grey are the ones which were shuffled. This breaks the association between the feature of interest and the target value. Based on the formula underneath the tables, the PFI is calculated.}\label{fig:PFI}
 \end{figure}
 
 To show, how the PFI for all features of a model can be visualized and
@@ -4342,7 +4344,7 @@ and further discussed in chapter \ref{pfi-data}.
 \emph{Supervisor: Giuseppe Casalicchio}
 
 The method of Feature Importance is a powerful tool in gaining insights
-into black box models under the assumption that there in no correlation
+into black box models under the assumption that there is no correlation
 between features of the given data set. However, this fundamental
 assumption can often be rejected in reality. As mentioned in chapter 3,
 PDPs may suffer in their interpretability, if this assumption is
@@ -4361,9 +4363,9 @@ crucial issue is the misleading ranking of correlated features. Adding a
 correlated feature to the data set can lead to a decrease in Feature
 Importance. Imagine you want to predict the risk of a heart attack by
 looking at the weight of a person had yesterday as well as other
-uncorrelated features. For instances, you choose a random forest model
+uncorrelated features. For instance, you choose a random forest model
 and calculate the corresponding PFI. It is well known that overweight
-can have an significant influence on the likelihood of heart attacks.
+can have a significant influence on the likelihood of heart attacks.
 Thus, the PFI indicates that weight is the most important feature. What
 happens if you also add the weight of the person of today which is
 highly correlated to yesterday's weight of a person? Usually, one big
@@ -4375,8 +4377,9 @@ Feature Importance can make an interpretation more difficult. This is
 due to the fact that the PFI can now split between both features. During
 the training of the random forest some of the decision trees will choose
 the weight today, the weight yesterday, both or none of these as a split
-point. Eventually, both features will selected equally, because they are
-equally beneficial for the performance of the model. \citep{molnar2019}
+point. Eventually, both features will be selected equally, because they
+are equally beneficial for the performance of the model.
+\citep{molnar2019}
 
 The second issue arises only when the PFI is conducted. During the
 shuffling step of a feature not only the association to the target
@@ -5232,22 +5235,23 @@ were declared as more important than the other features. The SVM showed
 similar results as for the random forest, but the effects were less
 strong. In contrast, the linear model was more or less robust against
 correlations. In the literature the random forest calculated by the
-out-of bag observations or other learning algorithms, like neural
+out-of-bag observations or other learning algorithms, like neural
 networks, showed similar results \citep{hooker2019}. Furthermore, the
 real data application supported the theses, we saw in the simulation
-section. The results makes us even more aware that the correlation
+section. The results make us even more aware that the correlation
 intensity is critical for the importance ranking of the features.
 
 Aside of the present simulations, further options are possible. For
-instance, we limited ourself to numerical features and regression tasks.
-However, in reality you often have correlated categorical features and
-classification tasks as well. Even an adjustment of the hyperparameters
-of the models used here is an option. This goes to show that, despite
-all of the used methods in this chapter, there are even more interesting
-effects to discover when it comes to Feature Importance and correlation.
-Yet, this goes beyond the scope of this chapter and deviates from our
-aim to raise the reader's awareness of afore-mentioned issues with
-regards to correlation in order to avoid mistakes in the future.
+instance, we limited ourselves to numerical features and regression
+tasks. However, in reality you often have correlated categorical
+features and classification tasks as well. Even an adjustment of the
+hyperparameters of the models used here is an option. This goes to show
+that, despite all of the used methods in this chapter, there are even
+more interesting effects to discover when it comes to Feature Importance
+and correlation. Yet, this goes beyond the scope of this chapter and
+deviates from our aim to raise the reader's awareness of afore-mentioned
+issues with regards to correlation in order to avoid mistakes in the
+future.
 
 All in all, PFI and LOCO can have misleading effects in case of
 correlated features. This holds especially true as evaluating the
