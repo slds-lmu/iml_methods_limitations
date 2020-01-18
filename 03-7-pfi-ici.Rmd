@@ -221,7 +221,7 @@ knitr::include_graphics("images/03-7-6.jpeg")
 
 ```
 
-Finally plotting the conditional Feature Importance (see figure \@ref(fig:fig6)) indeed confirms the interaction effect and its impact on the Feature Importance. Besides, to get there, some additional interesting insights were obtained. Now, it is known between which features and where in the feature's range of values the interaction effect takes place. With the conditional Feature Importance, one can even quantify the difference and therefore measure the impact of the interaction effect. Concluding, that that the initially observed heterogeneity is understood to its full extent. 
+Finally plotting the conditional Feature Importance (see figure \@ref(fig:fig6)) indeed confirms the interaction effect and its impact on the Feature Importance. Besides, to get there, some additional interesting insights were obtained. Now, it is known between which features and where in the feature's range of values the interaction effect takes place. With the conditional Feature Importance, one can even quantify the difference and therefore measure the impact of the interaction effect. Concluding, that the initially observed heterogeneity is understood to its full extent. 
 
 Applying this on a real data application would then allow a more meaningful, contextual interpretation. 
 
