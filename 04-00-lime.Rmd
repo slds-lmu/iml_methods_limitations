@@ -22,7 +22,7 @@ In this chapter, we will focus on the latter ones.
 
 The concept of local surrogate models is heavily tied to @ribeiro2016should, who propose local interpretable model-agnostic explanations (LIME). 
 Different from global surrogate models, local ones aim to rather explain single predictions by interpretable models than the whole black box model at once.
-These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regression or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
+These surrogate models, also referred to as explainers, need to be easily interpretable (like linear regressions or decision trees) and thus may of course not have the adaptability and flexibility of the original black box model which they aim to explain.
 However, we actually don't care about a __global__ fit in this case.
 We only want to have a very __local__ fit of the surrogate model in the proximity of the instance whose prediction is explained. 
 
@@ -49,7 +49,7 @@ We do not perturb the data in this case.
 We will more formally discuss perturbation later on.)
 Now, we choose the data point, which we want an explanation for.
 It is coloured in yellow.
-With respect to this point, we weight our data by giving close observations higher weights.
+With respect to this point, we weight our data by giving closer observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
 This yields an interpretable linear decision boundary -- depicted by the purple line. 
@@ -103,7 +103,7 @@ Neighbourhood is a very vague term.
 This is for good reason because a priori it is not clear how to specify a neighbourhood properly.
 Technically, there are many different options to deal with this issue.
 Weighting the observations w.r.t. their distance to the observation being explained seems like a good idea.
-This may possibly be implemented as an arbitrarily parametrised kernel.
+This may be implemented as an arbitrarily parametrised kernel.
 However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
 This neighbourhood issue will be discussed in more detail in the next chapter.
 
