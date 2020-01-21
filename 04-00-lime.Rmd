@@ -49,7 +49,7 @@ We do not perturb the data in this case.
 We will more formally discuss perturbation later on.)
 Now, we choose the data point, which we want an explanation for.
 It is coloured in yellow.
-With respect to this point, we weight our data by giving closer observations higher weights.
+With respect to this point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
 This yields an interpretable linear decision boundary -- depicted by the purple line. 
