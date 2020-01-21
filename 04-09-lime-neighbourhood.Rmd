@@ -1,21 +1,20 @@
-# LIME and Neighbourhood {#lime-neighbor}
+# LIME and Neighborhood {#lime-neighbor}
 
 *Author: Philipp Kopper*
 
 *Supervisor: Christoph Molnar*
 
-This section will discuss the effect of the neighbourhood on LIME's explanations.
+This section will discuss the effect of the neighborhood on LIME's explanations.
 This is in particular critical for tabular data.
 Hence, we will limit ourselves to the analysis of tabular data for the remainder of this chapter.
 
 As described in the previous chapter, LIME aims to create local surrogate models -- one for each observation to be explained.
-These local models operate in the proximity or _neighbourhood_ of the instance to be explained.
+These local models operate in the proximity or _neighborhood_ of the instance to be explained.
 They are fitted based on weights which indicate their proximity to the observation to be explained.
 The weights are typically determined using kernels that transform the proximity measure.
 
-The proper parametrisation of the kernel is obviously important.
-However, this is true for any approach that uses kernels.
-Such as kernel density estimations.
+The proper parametrization of the kernel is obviously important.
+However, this is true for any approach that uses kernels, such as kernel density estimations.
 Figure \@ref(fig:lime-fig1) illustrates kernel densities from a standard normal distribution.
 We applied different kernel widths for the curve estimation.
 
@@ -24,32 +23,32 @@ knitr::include_graphics("images/04-09-01.png")
 ```
 
 One can easily see that the left panel seems to be appropriate while the right one is too granular.
-The proper definition of the neighbourhood is very crucial in this case.
+The proper definition of the neighborhood is very crucial in this case.
 However, with no prior information, this definition is arbitrary. 
 ^[Note that heuristics exist, though.]
-We can only judge on the proper definition of the neighbourhood from our experience and our expectations.
+We can only judge on the proper definition of the neighborhood from our experience and our expectations.
 This may work in low dimensional problems and descriptive statistics.
 However, machine learning models operate in multivariate space and mostly tackle complex associations.
-Thus, it seems much harder to argue on the proper neighbourhood definition when working with LIME.
+Thus, it seems much harder to argue on the proper neighborhood definition when working with LIME.
 
-This chapter reviews the neighbourhood issue of the LIME algorithm critically.
+This chapter reviews the neighborhood issue of the LIME algorithm critically.
 The objective of this chapter is rather to outline this particular issue and not to suggest solutions for it.
-First of all, it describes the neighbourhood definition abstractly in greater detail (section \@ref(id2)). 
-Then, it illustrates how problematic the neighbourhood definition can be in a simple one-dimensional example in section \@ref(id3). 
+First of all, it describes the neighborhood definition abstractly in greater detail (section \@ref(id2)). 
+Then, it illustrates how problematic the neighborhood definition can be in a simple one-dimensional example in section \@ref(id3). 
 Furthermore, we study the effect of altering the kernel size more systematically in more complex contexts in the next section (\@ref(id4)). 
 This section deals with both, simulated (\@ref(id41)) and real (\@ref(id42)) data.
 The first subsection of the simulation (\@ref(id411)) investigates multivariate globally linear relationships.
 The second one (\@ref(id412)) researches local coefficients.
 The third one (\@ref(id413)) studies non-linear effects.
-Section \@ref(id42) uses the Washington D.C. bicycle data set to study LIME's neighbourhood in a real-world application.
-Afterwards, in section \@ref(id5), we discuss the results and contextualise them with the existing literature.
+Section \@ref(id42) uses the Washington D.C. bicycle data set to study LIME's neighborhood in a real-world application.
+Afterwards, in section \@ref(id5), we discuss the results and contextualize them with the existing literature.
 After concluding, we explain how LIME was used and why in section \@ref(id6).
 
 
-## The Neighbourhood in LIME in more detail {#id2}
+## The Neighborhood in LIME in more detail {#id2}
 
 
-When obtaining explanations with LIME, the neighbourhood of an observation is determined when fitting the model by applying weights to the data.
+When obtaining explanations with LIME, the neighborhood of an observation is determined when fitting the model by applying weights to the data.
 These weights are chosen w.r.t. the proximity to the observation to be explained.
 However, there is no natural law stating that local models have to be found this way.
 Alternatively, @craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve locally fidele models.
@@ -58,7 +57,7 @@ After sampling, the data points are weighted w.r.t. their proximity to the obser
 One possible alternative to this procedure might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm ^[Refer to the previous chapter.] to a local sampling.
 This way we would increase the density around the instance already by proper sampling. 
 In fact, @laugel2018defining claim that this way should be preferred over the way LIME samples.
-In this chapter, however, we focus on the explicit implementation of LIME and analyse how the weighting strategy _ceteris paribus_ affects surrogate model accuracy and stability.
+In this chapter, however, we focus on the explicit implementation of LIME and analyze how the weighting strategy _ceteris paribus_ affects surrogate model accuracy and stability.
 
 When working with LIME, the weighting of instances is performed using a kernel function over the distances of all other observations to the observation of interest.
 This leaves us _arbitrary_ (in fact, they may not be _that_ arbitrary) choices on two parameters:
@@ -85,7 +84,7 @@ Second, the kernel width.
 By default, the R implementation uses an exponential kernel where the kernel width equals the square root of the number of features.
 
 The choice of the distance measure seems least arbitrary.
-Furthermore, the choice of the kernel function is not expected to have the most crucial impact on the neighbourhood definition.
+Furthermore, the choice of the kernel function is not expected to have the most crucial impact on the neighborhood definition.
 Thus, we focus on the __kernel width__ in our experimental study.
 
 
@@ -140,14 +139,14 @@ The largest three kernel sizes ($0.5$, $1$ and $2$) appear very global while $0.
 $0.25$ and $0.3$ are neither global nor very local.
 This is very intuitive and complies with the idea of a weighted local regression.
 
-Additionally, we analyse the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure \@ref(fig:lime-fig6).
-We observe a similar behaviour.
+Additionally, we analyze the same alteration of the kernel size for an observation where a good local approximation would be a linear model with a positive slope in the lower panel of figure \@ref(fig:lime-fig6).
+We observe a similar behavior.
 
 ```{r, lime-fig6, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations."}
 knitr::include_graphics("images/04-09-06.png")
 ```
 
-This behaviour is not necessarily a problem but only a property of LIME.
+This behavior is not necessarily a problem but only a property of LIME.
 However, it can be problematic that the appropriate kernel size is not a priori clear.
 Additionally, there is no straight forward way to determine a good kernel width for a given observation to be explained.
 The only generic goodness-of-fit criterion of LIME, model fidelity, is not necessarily representative:
@@ -161,7 +160,7 @@ But what a small kernel width means, also strongly depends on the dimensionality
 
 
 The previous setting was trivial for LIME.
-The problem was univariate and we could visualise the predictive surface in the first place.
+The problem was univariate and we could visualize the predictive surface in the first place.
 This means that interpretability was mostly given.
 We will study our problem in more complex -- non-trivial -- settings to show that it persists.
 We will do so by examining simulated and real data.
@@ -212,9 +211,9 @@ Hence, in this case, we may find no good local models.
 
 The figures below (all four panels of figure \@ref(fig:lime-fig8)) indicate the local parameters for one of the selected observations for different kernel sizes which have been determined by LIME.
 The three vertical lines indicate the true global coefficients.
-This behaviour is representative of all observations.
+This behavior is representative of all observations.
 
-```{r lime-fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r lime-fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-08.png")
 ```
 
@@ -230,7 +229,7 @@ Still, this result is valuable as it shows that LIME works as expected.
 
 
 For non-linear relationships, we have already seen that the kernel width is more crucial.
-Thus, we aim to study the behaviour of the explanations w.r.t. the kernel size where the true associations are non-linear or _locally_ different.
+Thus, we aim to study the behavior of the explanations w.r.t. the kernel size where the true associations are non-linear or _locally_ different.
 
 We may induce non-linearity by different means.
 However, first of all it seems interesting to study how the kernel width affects LIME explanations in a very simple form of non-linearity:
@@ -263,7 +262,7 @@ We think these observations are best explained in areas with reasonable margin t
 Below in figure \@ref(fig:lime-fig10), we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels: $x_1 < 5$, lower panels: $x_1 > 5$).
 The true local coefficients are displayed by solid vertical lines.
 
-```{r, lime-fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r, lime-fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-10.png")
 ```
 
@@ -291,7 +290,7 @@ knitr::include_graphics("images/04-09-11-1.png")
 
 Note that we obtain the same picture for every covariate and other representative observations.
 We observe that there is a trade-off between stable coefficients and locality (expressed by a small kernel width).
-Our analysis suggests the following.
+Our analysis suggests the following:
 Too large kernel sizes result in explanations biased towards a global surrogate.
 At the same time, the kernel width must result in stable coefficients.
 This means we cannot set it infinitissimately small.
@@ -302,7 +301,7 @@ Mathematically speaking, we aim minimal kernel size which still satisfies a vola
 #### Global Non-Linearity {#id413}
 
 
-We further generalise the approach from the previous section and simulate data with the underlying data generating mechanism:
+We further generalize the approach from the previous section and simulate data with the underlying data generating mechanism:
 
 $$ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2<c_1} + \beta_{2,2} x_2 1_{c_1 < x_2 < c_2} +  \beta_{2,3} x_2 1_{c_2 < x_2} + \beta_3 x_3 + \epsilon $$
 
@@ -337,11 +336,11 @@ knitr::include_graphics("images/04-09-13.png")
 ```
 
 Having investigated simulated data where we knew the ground truth, gave us a good intuition on how the kernel size affects the resulting explainer model.
-The neighbourhood problem can be described briefly by the following.
+The neighborhood problem can be described briefly by the following.
 A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model.
 An optimal kernel size should balance these effects.
-We may formulate the problem as a minimisation problem w.r.t. the kernel size.
-However, the minimisation needs to consider the constraint that coefficients need to be stable.
+We may formulate the problem as a minimization problem w.r.t. the kernel size.
+However, the minimization needs to consider the constraint that coefficients need to be stable.
 
 
 ### Real data {#id42}
@@ -379,7 +378,7 @@ When working with LIME in practice, we want to obtain stable explanations.
 An explanation is stable if the surrogate model does not change much when altering the randomly drawn samples.
 We evaluate this property with the aid of a modified version of stability paths (@meinshausen2010stability).
 Stability paths are used for sparse (regularised) models and indicate how likely each covariate is part of the model -- w.r.t. a given degree of regularisation.
-Normally, they analyse the association of the regularisation strength and inclusion probabilities of features.
+Normally, they analyze the association of the regularisation strength and inclusion probabilities of features.
 On the x-axis, one depicts the regularisation strength and on the y-axis the inclusion probabilities (for all covariates). 
 The probabilities for different regularisations are grouped by feature.
 
@@ -438,8 +437,8 @@ For observation 3, the selected local features are temperature, wind speed and s
 For other observations, such as observations 4 and 8, we may argue that there are local and stable explanations, too.
 These are, however, by far less convincing than the previous ones.
 Additionally, we are struggling to identify stable local models for many observations, like observation 2 and 6.
-For those observations, there is only instability for small kernel widths which transforms immediately to the global surrogate once stabilised.
-The reasons for this variation of behaviour can be manifold.
+For those observations, there is only instability for small kernel widths which transforms immediately to the global surrogate once stabilized.
+The reasons for this variation of behavior can be manifold.
 However, not knowing the ground truth, it is hard to evaluate what is going on here in particular.
 
 So even though we may find meaningful explanations from case to case, there is too much clutter to be finally sure about the explanations' goodness.
@@ -473,7 +472,7 @@ Additionally, also for simulated data, it becomes harder to detect a good locali
 
 Similar results can be obtained for alternative data sets.
 For the practitioner using LIME (for tabular data), this means that LIME should be used with great care.
-Furthermore, we suggest analysing the resulting explanations' stability when making use of LIME.
+Furthermore, we suggest analyzing the resulting explanations' stability when making use of LIME.
 
 We think that the global sampling of LIME is responsible for many of the pitfalls identified.
 Hence, we propose that LIME should be altered in the way proposed by @laugel2018defining to LIME-K.
@@ -513,7 +512,7 @@ In the current (July 2019) R implementation, when working with Gower distance th
 Explanations do not correspond to altering the kernel width.
 As we have seen, a proper kernel width may look very different depending on the associated problem.
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result.
-In figure \@ref(fig:lime-fig15) we analyse this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
+In figure \@ref(fig:lime-fig15) we analyze this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
 ```{r lime-fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
 knitr::include_graphics("images/04-09-16.png")
