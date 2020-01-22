@@ -213,7 +213,7 @@ The figures below (all four panels of figure \@ref(fig:lime-fig8)) indicate the 
 The three vertical lines indicate the true global coefficients.
 This behavior is representative of all observations.
 
-```{r lime-fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r lime-fig8, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widths. The underlying ground truth model is a linear model. Each feature is depicted in a different color. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-08.png")
 ```
 
@@ -262,7 +262,7 @@ We think these observations are best explained in areas with reasonable margin t
 Below in figure \@ref(fig:lime-fig10), we depict the coefficient paths for four representative observations, two belonging to each bin (upper panels: $x_1 < 5$, lower panels: $x_1 > 5$).
 The true local coefficients are displayed by solid vertical lines.
 
-```{r, lime-fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation."}
+```{r, lime-fig10, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widthss. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different color. The solid vertical lines represent the true coefficient of the LIME explanation."}
 knitr::include_graphics("images/04-09-10.png")
 ```
 
@@ -293,7 +293,7 @@ We observe that there is a trade-off between stable coefficients and locality (e
 Our analysis suggests the following:
 Too large kernel sizes result in explanations biased towards a global surrogate.
 At the same time, the kernel width must result in stable coefficients.
-This means we cannot set it infinitissimately small.
+This means we cannot set it infinitesimally small.
 The resulting trade-off suggests choosing the minimal kernel size with stable coefficients as an optimal solution.
 Mathematically speaking, we aim minimal kernel size which still satisfies a volatility condition.
 
@@ -369,7 +369,7 @@ This dataset contains daily bicycle hire counts of a Washington D.C. based renta
 For details on the data set please refer to @molnar2019 (https://christophm.github.io/interpretable-ml-book/bike-data.html).
 We select this data set because it is well-known in the machine learning community and this regression problem is easily accessible to most people.
 Furthermore, it has a reasonable feature space making it not highly prone to the curse of dimensionality of the distance measures.
-We only make use of a subset of all possible features as some are somewhat colinear.
+We only make use of a subset of all possible features as some are somewhat collinear.
 
 Using this data we aim to use a random forest to predict the number of daily bicycle hires. 
 We use LIME to explain the black box.
@@ -403,7 +403,7 @@ Figure \@ref(fig:lime-fig131) displays ideal stability paths with the three dist
 
 3. Convergence to a global surrogate for large kernels.
 
-```{r lime-fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour."}
+```{r lime-fig131, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by color."}
 knitr::include_graphics("images/04-09-14.png")
 ```
 
@@ -514,7 +514,7 @@ As we have seen, a proper kernel width may look very different depending on the 
 So it is highly unlikely that a one-size-fits-all implicit kernel width always results in a proper result.
 In figure \@ref(fig:lime-fig15) we analyze this statement by comparing the Gower distance's local coefficient to the true coefficient and the local estimates of the non-linear data simulation from section \@ref(id413).
 
-```{r lime-fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
+```{r lime-fig15, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Simulated data: Gower distance vs. Euclidean distance (non-linear relationship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance."}
 knitr::include_graphics("images/04-09-16.png")
 ```
 
