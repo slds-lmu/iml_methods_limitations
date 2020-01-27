@@ -25,7 +25,7 @@ In this chapter, we focus on answering the following three questions:
 
 1. When should I use test or training data to compute feature importance?
 
-2. How is the permutation feature importance of test or training data affected by over and underfitting?
+2. How is the permutation feature importance of test or training data affected by over- and underfitting?
 
 3. Does correlation influence the decision what kind of data to use?
 
@@ -99,7 +99,7 @@ In this case, the test data would be used.
 
 **What happens to the PFI when the model over/underfits?**
 
-In this section we want to deal with the PFIs behavior regarding over and underfitting.
+In this section we want to deal with the PFIs behavior regarding over- and underfitting.
 The basic idea is that the PFI will change depending on the fit of the model.
 
 In order to examine this thesis we have decided to proceed as follows:
@@ -153,7 +153,7 @@ $F(x)=F_1(x)\mapsto F_2(x)=F_1(x)+h_1(x) ... \mapsto F_M(x)=F_{M-1}(x)+h_{M-1}(x
 knitr::include_graphics("images/ExampleGBM2.jpg",auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ```
 
-The over and underfitting behavior of gradient boosting machines can be controlled via several *regularization* hyperparameters.
+The over- and underfitting behavior of gradient boosting machines can be controlled via several *regularization* hyperparameters.
 An *overfitting* model can be trained by setting e.g. a high *max_depth*, i.e. the depth of trees fitted in each iteration, or a low
 *min_bucket*, i.e a low minimum of samples that need to be present in each leaf in order to allow for further splitting.
  Vice-versa, an underfitting can be created by adjusting the hyper-parameters in the opposite direction.
@@ -728,7 +728,7 @@ The noticeable features are highlighted in green.
 As with the previous well fitted GBM, the range is very comparable - the order has also remained the same, at least in parts.
 (Overtime is the most important variable in both cases)
 
-Also here we want to have a look at the behavior at over and underfitting.
+Also here we want to have a look at the behavior at over- and underfitting.
 
 **We start again with the plots for overfitting:**
 
@@ -752,7 +752,7 @@ In addition, the order has changed extremely (work life balance has changed from
 
 ### Interpretation of the results
 
-At the end of this sub-chapter we want to answer the question how the permutation feature importance behaves with regard to over and underfitting.
+At the end of this sub-chapter we want to answer the question how the permutation feature importance behaves with regard to over- and underfitting.
 First, it can be said that in the case of a well fit GBM there are only slight differences in feature importance.
 The results on test and training data are in any case comparable.
 But now we come to the problems regarding the meaningfulness of feature importance:
@@ -786,9 +786,9 @@ or
   * How much the model relies for prediction?
 
 
-It was shown that PFI reacts strongly to over and underfitting:
+It was shown that PFI reacts strongly to over- and underfitting:
 
-  * PFI on both can be a proxy identifying over or underfitting
+  * PFI on both can be a proxy identifying over- or underfitting
 
 Correlated features have a big influence on the results of feature importance, but not on the question whether to use test or training data - therefore they are negligible in this question.
 Nevertheless, correlations have been shown to lead to major feature importance problems, as discussed in previous chapters.
