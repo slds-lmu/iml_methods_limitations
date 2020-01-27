@@ -4,7 +4,7 @@
 
 *Supervisor: Giuseppe Casalicchio*
 
-The method of Feature Importance is a powerful tool in gaining insights into black box models under the assumption that there is no correlation between features of the given data set. However, this fundamental assumption can often be rejected in reality. As mentioned in chapter 3, PDPs may suffer in their interpretability, if this assumption is violated. Not only the interpretability of PDPs can be affected, but also the interpretability of Feature Importance can strongly depend on the correlations between the input features. In case of correlated features in the data, which are very likely to occur in reality, the results of the Feature Importance method do not reflect the individual true Feature Importance anymore. This can lead to a misleading importance ranking of the features and hence to incorrect interpretations of a feature’s relevance in a model. 
+The method of Feature Importance is a powerful tool in gaining insights into black box models under the assumption that there is no correlation between features of the given data set. However, this fundamental assumption can often be rejected in reality. As mentioned in chapter 3, PDPs may suffer in their interpretability, if this assumption is violated. Not only the interpretability of PDPs can be affected, but also the interpretability of Feature Importance can strongly depend on the correlations between the input features. In the case of correlated features in the data, which are very likely to occur in reality, the results of the Feature Importance method do not reflect the individual true Feature Importance anymore. This can lead to a misleading importance ranking of the features and hence to incorrect interpretations of a feature’s relevance in a model. 
 
 There are two main issues when it comes to correlated features, which will be illustrated in the following two examples. The first and most crucial issue is the misleading ranking of correlated features. Adding a correlated feature to the data set can lead to a decrease in Feature Importance. Imagine you want to predict the risk of a heart attack by looking at the weight of a person had yesterday as well as other uncorrelated features. For instance, you choose a random forest model and calculate the corresponding PFI. It is well known that overweight can have a significant influence on the likelihood of heart attacks. Thus, the PFI indicates that weight is the most important feature. What happens if you also add the weight of the person of today which is highly correlated to yesterday’s weight of a person? Usually, one big advantage of a random forest model is the application and predictive accuracy of high dimensional data sets [@strobl2008]. This also holds for cases of correlated features or interaction effects. Hence, adding a new component should cause no issues. Yet, some effects of the Feature Importance can make an interpretation more difficult. This is due to the fact that the PFI can now split between both features. During the training of the random forest some of the decision trees will choose the weight today, the weight yesterday, both or none of these as a split point. Eventually, both features will be selected equally, because they are equally beneficial for the performance of the model. [@molnar2019]
 
@@ -28,7 +28,7 @@ A major part of this chapter will pay attention to the problem of interpreting F
 
 ### Simulation 
 
-A good way to visualize the effects of correlated features on the Feature Importance measures is to simulate some data with the desired dependencies of the features. This allows us to show the effects on the PFI and LOCO Feature Importance more precisely than looking on a real data set where additional dependencies between each features exist and may falsify the results. To filter out the real effect, it is necessary to hold the influence of other features as small as possible to prevent misinterpretations. For the complete R Code of these simulations please refer to the R file attached to this chapter. Our simulation design resembles the one from @strobl2008 or @archer2008.
+A good way to visualize the effects of correlated features on the Feature Importance measures is to simulate some data with the desired dependencies of the features. This allows us to show the effects on the PFI and LOCO Feature Importance more precisely than looking on a real data set where additional dependencies between each feature exist and may falsify the results. To filter out the real effect, it is necessary to hold the influence of other features as small as possible to prevent misinterpretations. For the complete R Code of these simulations please refer to the R file attached to this chapter. Our simulation design resembles the one from @strobl2008 or @archer2008.
 
 In total, there will be three different scenario settings to investigate the influence of correlated features on  the PFI and LOCO. The following setup is used as a general baseline for the scenarios: 
 
@@ -57,9 +57,9 @@ y_{i} = x_{i1}+x_{i2}+x_{i3}+x_{i4}+\epsilon_{i}
 $$
 
 
-In order to get meaningful results, one has to first check, whether the underlying model was proved to be accurate. In case your model does not generalize accurately, the Feature Importance can vary greatly when rerunning the algorithms. Therefore, the resulting effects cannot be seen as significant [@parr2018]. Figure \@ref(fig:bmr01) shows the benchmark result for the learning algorithms used on the simulated data sets with independence, medium and high correlation. As a performance measures we decided showing two. On the one hand, the mean squared error (MSE), since it is also used as a loss measure for evaluating the Feature Importance. On the other hand $R^2$, because it is a common measure for linear models and we have a linear dependence of the features on the target value. $R^2 = 1$ implies that all residuals are zero, so a perfect prediction. Whereas $R^2 = 0$ means that we predict as badly as a constant. As you can see, all learning algorithms have very good up to perfect results, or in other words are accurate for our further investigations. The random forest is considered as the worst of the models at hand. That is not surprising as the random forest learns multiple step function trying to fit a linear prediction function. The linear model is by far the best model to predict this linear dependence on the target value.
+In order to get meaningful results, one has to first check, whether the underlying model was proved to be accurate. In case your model does not generalize accurately, the Feature Importance can vary greatly when rerunning the algorithms. Therefore, the resulting effects cannot be seen as significant [@parr2018]. Figure \@ref(fig:bmr01) shows the benchmark result for the learning algorithms used on the simulated data sets with independence, medium and high correlation. As performance measures we decided showing two. On the one hand, the mean squared error (MSE), since it is also used as a loss measure for evaluating the Feature Importance. On the other hand $R^2$, because it is a common measure for linear models and we have a linear dependence of the features on the target value. $R^2 = 1$ implies that all residuals are zero, so a perfect prediction. Whereas $R^2 = 0$ means that we predict as badly as a constant. As you can see, all learning algorithms have very good up to perfect results, or in other words are accurate for our further investigations. The random forest is considered as the worst of the models at hand. That is not surprising as the random forest learns multiple step function trying to fit a linear prediction function. The linear model is by far the best model to predict this linear dependence on the target value.
 
-```{r bmr01, echo=FALSE, out.width="100%", fig.cap="Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model."}
+```{r bmr01, echo=FALSE, out.width="100%", fig.cap="Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The color represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model."}
 knitr::include_graphics("images/bmr01b.png", auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -68,12 +68,12 @@ knitr::include_graphics("images/bmr01b.png", auto_pdf = getOption("knitr.graphic
 library(ggplot2)
 load("data/drfPFI.RData")
 
-prferr <- ggplot(data = drfPFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+prferr <- ggplot(data = drfPFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size = 0, shape = 21, 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -88,11 +88,11 @@ prferr <- ggplot(data = drfPFI, aes(x = features, y = importance, colour = Corr,
 library(ggplot2)
 load("data/drfPFI.RData")
 
-prfrank01 <- ggplot(drfPFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+prfrank01 <- ggplot(drfPFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype = "dashed")+
@@ -108,7 +108,7 @@ library(ggpubr)
 ggarrange(prferr, prfrank01 , ncol = 2, legend = "bottom", widths = c(2, 1))
 ```
 
-Figure \@ref(fig:arrange01) shows the result of applying the PFI on the random forest model. The plot on the left-hand side shows the average importance values (in the graph shown as a dot). Moreover, it presents the 0.05- and 0.95-quantiles over the 10 subsampling iterations, respectively. In addition, the plot on the right-hand side shows the average importance rank based on the ten subsampling iterations. It is important to mention that typically the Feature Importance is interpreted in a rank order. One can see that, in case of independence, the PFI of all features are approximately the same except for the uninformative one. Since the uninformative indicated a complete random effect, one can suggest that all features have an influence on the performance of the model. Overall, the PFI of the correlated features $X1$ and $X2$ tend to increase more in comparison to the uncorrelated features as $\rho$ increases. Moreover, the span of the quantile bands increases with higher $\rho$. This effect can also be seen in the right plot. For independence, all points are near the average rank of 2.5. The small fluctuations or deviations can be explained by the underlying stochastic. However, for a correlation higher than 0.5 we see a gap between the correlated features in red colour and the uncorrelated in green colour. The correlated features settle down at an average rank of about 1.5 and the uncorrelated ones at about 3.5. Although all features have the same influence on the target value, one can see that PFI can be misleading as it shows a higher PFI rank the higher the correlation between two features.
+Figure \@ref(fig:arrange01) shows the result of applying the PFI on the random forest model. The plot on the left-hand side shows the average importance values (in the graph shown as a dot). Moreover, it presents the 0.05- and 0.95-quantiles over the 10 subsampling iterations, respectively. In addition, the plot on the right-hand side shows the average importance rank based on the ten subsampling iterations. It is important to mention that typically the Feature Importance is interpreted in a rank order. One can see that, in case of independence, the PFI of all features are approximately the same except for the uninformative one. Since the uninformative indicated a complete random effect, one can suggest that all features have an influence on the performance of the model. Overall, the PFI of the correlated features $X1$ and $X2$ tend to increase more in comparison to the uncorrelated features as $\rho$ increases. Moreover, the span of the quantile bands increases with higher $\rho$. This effect can also be seen in the right plot. For independence, all points are near the average rank of 2.5. The small fluctuations or deviations can be explained by the underlying stochastic. However, for a correlation higher than 0.5 we see a gap between the correlated features in red color and the uncorrelated in green color. The correlated features settle down at an average rank of about 1.5 and the uncorrelated ones at about 3.5. Although all features have the same influence on the target value, one can see that PFI can be misleading as it shows a higher PFI rank the higher the correlation between two features.
 
 
 ```{r exp, message = FALSE, echo = FALSE , fig.height = 6, fig.width = 12}
@@ -120,7 +120,7 @@ load("data/exptask.RData")
 exp <- plotLearnerPrediction(rf_learner, extrapolation_task)+
         geom_segment(aes(x = -2, y = -2, xend = 2.3, yend = -2), color = "white", size = 1.2,
                      arrow = arrow(length = unit(0.5, "cm")))+
-        geom_point(aes(x = 2.5, y = -2), colour = "blue")+
+        geom_point(aes(x = 2.5, y = -2), color = "blue")+
         ggtitle("Random Forest on Correlated Data Set")+
         labs(fill = "y")+
         theme(legend.title = element_text(size = 15))
@@ -136,7 +136,7 @@ load("data/exptask01.RData")
 exp01 <- plotLearnerPrediction(rf_learner01, extrapolation_task01)+
           geom_segment(aes(x = -2, y = -2, xend = 2.3, yend = -2),color = "white", size = 1.2,
                        arrow = arrow(length = unit(0.5, "cm")))+
-          geom_point(aes(x = 2.5, y = -2), colour = "blue")+
+          geom_point(aes(x = 2.5, y = -2), color = "blue")+
           ggtitle("Random Forest on Independent Data Set")+
           labs(fill = "y")+
           theme(legend.title = element_text(size = 15))
@@ -148,19 +148,19 @@ library(ggpubr)
 ggarrange(exp01, exp, ncol = 2, legend = "bottom")
 ```
 
-One possible explanation for this effect is given by @hooker2019. They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure \@ref(fig:arrangeexp) shows on the left the random forest applied on the simulated data set with independent features $X1$ and $X2$. On the right it is applied on the data set where both are highly correlated. At first sight you cannot see a structure in the data distribution for the independent case. Furthermore, the data points fill out much more space in comparison to the correlated case. Here one can see a clear positive correlation between $X1$ and $X2$. For instance, if you permute one observation of $X1$ represented by the white arrow, the permuted observation point is still near the data distribution in the independent case. However, in the correlated case there are absolute no other data points nearby. The data distribution of the training data lies on the diagonal (bisector). The region outside of the point cloud was not learned well enough by the random forest which becomes evident through the less rectangle lines in this area. As a consequence of permuting, the random forest also evaluates points which are far away from training data. Thus, the prediction can be far away from the true value which leads to a large drop in performance. Although the feature is equally important in comparison to the others, it gets indicated as more important. The larger span of the quantile bands can be explained by the random permuting of the data points. If the observation is still close to the data distribution after permuting it, the error made is less severe as in the example shown in the plot. For example, the point is still in the blue shaded are. Hence, the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up, the extrapolation problem of the random forest is associated with the correlation intensity.
+One possible explanation for this effect is given by @hooker2019. They state that the main reason behind this effect is caused by extrapolation which we already mentioned in the context of problems with PDPs. A small recap, extrapolation is the process of estimating beyond the distribution of our original data set. Figure \@ref(fig:arrangeexp) shows on the left the random forest applied on the simulated data set with independent features $X1$ and $X2$. On the right it is applied on the data set where both are highly correlated. At first sight you cannot see a structure in the data distribution for the independent case. Furthermore, the data points fill out much more space in comparison to the correlated case. Here one can see a clear positive correlation between $X1$ and $X2$. For instance, if you permute one observation of $X1$ represented by the white arrow, the permuted observation point is still near the data distribution in the independent case. However, in the correlated case there are absolute no other data points nearby. The data distribution of the training data lies on the diagonal (bisector). The region outside of the point cloud was not learned well enough by the random forest which becomes evident through the less rectangle lines in this area. As a consequence of permuting, the random forest also evaluates points which are far away from training data. Thus, the prediction can be far away from the true value which leads to a large drop in performance. Although the feature is equally important in comparison to the others, it gets indicated as more important. The larger span of the quantile bands can be explained by the random permuting of the data points. If the observation is still close to the data distribution after permuting it, the error made is less severe as in the example shown in the plot. For example, the point is still in the blue shaded area. Hence, the change in error strongly depends on how far away the permuted data is from the real underlying data distribution. To sum up, the extrapolation problem of the random forest is associated with the correlation intensity.
 
 
 ```{r PFI02, message = FALSE, echo = FALSE, fig.height = 6, fig.width = 12}
 library(ggplot2)
 load("data/dsvmPFI.RData")
 
-psvmerr <- ggplot(data = dsvmPFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp))+
+psvmerr <- ggplot(data = dsvmPFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp))+
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -173,11 +173,11 @@ psvmerr <- ggplot(data = dsvmPFI, aes(x = features, y = importance, colour = Cor
 library(ggplot2)
 load("data/drfPFI.RData")
 
-psvmrank01 <- ggplot(dsvmPFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+psvmrank01 <- ggplot(dsvmPFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype="dashed")+
@@ -201,12 +201,12 @@ The next Figure \@ref(fig:arrange02) demonstrates the application of the support
 library(ggplot2)
 load("data/dlmPFI.RData")
 
-plmerr <- ggplot(data = dlmPFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+plmerr <- ggplot(data = dlmPFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values =c ("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -220,11 +220,11 @@ plmerr <- ggplot(data = dlmPFI, aes(x = features, y = importance, colour = Corr,
 library(ggplot2)
 load("data/dlmPFI.RData")
 
-plmrank01 <- ggplot(dlmPFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plmrank01 <- ggplot(dlmPFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype = "dashed")+
@@ -240,19 +240,19 @@ library(ggpubr)
 ggarrange(plmerr, plmrank01 , ncol = 2, legend = "bottom", widths = c(2, 1))
 ```
 
-When applying the linear model and calculating the PFI, the ranking of the features varies a lot. The underlying reason is that the importance values for each correlation intensity are very close to each other. The ranking seems to be very random and thus can be explained by stochastic. One interesting effect is that, the higher the correlation, the lower the Feature Importance values get. Figure \@ref(fig:arrange03) shows that the values of PFI are quite large. As mentioned before (see Figure \@ref(fig:bmr01)), the MSE values of the linear model are close to zero. The linear model performs unsurprisingly very well. For the calculation of PFI we take the ratio $e_{perm}/e_{orig}$. Here the numerator’s value is very small, and the value of denominator is even smaller (close to zero) which results in a very large value for PFI. Increasing the error term $\epsilon_{i}$ would lower the PFI value, since the MSE would be higher. All in all, it looks like the PFI of a linear model is quite robust against changes in the correlation intensity. By assigning all features almost the same importance value, it reflects the true theoretical rank quite well.
+When applying the linear model and calculating the PFI, the ranking of the features varies a lot. The underlying reason is that the importance values for each correlation intensity are very close to each other. The ranking seems to be very random and thus can be explained by stochastic. One interesting effect is that the higher the correlation, the lower the Feature Importance values get. Figure \@ref(fig:arrange03) shows that the values of PFI are quite large. As mentioned before (see Figure \@ref(fig:bmr01)), the MSE values of the linear model are close to zero. The linear model performs unsurprisingly very well. For the calculation of PFI we take the ratio $e_{perm}/e_{orig}$. Here the numerator’s value is very small, and the value of denominator is even smaller (close to zero) which results in a very large value for PFI. Increasing the error term $\epsilon_{i}$ would lower the PFI value, since the MSE would be higher. All in all, it looks like the PFI of a linear model is quite robust against changes in the correlation intensity. By assigning all features almost the same importance value, it reflects the true theoretical rank quite well.
 
 
 ```{r LOCO01, message = FALSE, echo = FALSE, fig.height = 6, fig.width = 12}
 library(ggplot2)
 load("data/drfLOCO.RData")
 
-plocoerr <- ggplot(drfLOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp))+ 
+plocoerr <- ggplot(drfLOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp))+ 
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -266,11 +266,11 @@ plocoerr <- ggplot(drfLOCO, aes(x = features, y = importance, colour = Corr, ymi
 library(ggplot2)
 load("data/drfLOCO.RData")
 
-plocorank01 <- ggplot(drfLOCO, aes(x = averagerank , y = Corr, colour = features, group = features))+
+plocorank01 <- ggplot(drfLOCO, aes(x = averagerank , y = Corr, color = features, group = features))+
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype = "dashed")+
@@ -293,11 +293,11 @@ In contrast to the PFI, there is a drop in LOCO Feature Importance of the two fe
 library(ggplot2)
 load("data/dsvmLOCO.RData")
 
-plocosvmerr <- ggplot(dsvmLOCO, aes(x = features, y = importance, colour = Corr, ymin= minimp, ymax=maximp)) +      geom_point(fill = "white", size = 0, shape = 21 , 
+plocosvmerr <- ggplot(dsvmLOCO, aes(x = features, y = importance, color = Corr, ymin= minimp, ymax=maximp)) +      geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -310,11 +310,11 @@ plocosvmerr <- ggplot(dsvmLOCO, aes(x = features, y = importance, colour = Corr,
 library(ggplot2)
 load("data/dsvmLOCO.RData")
 
-plocorank02 <- ggplot(dsvmLOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank02 <- ggplot(dsvmLOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype = "dashed")+
@@ -330,19 +330,19 @@ library(ggpubr)
 ggarrange(plocosvmerr, plocorank02 , ncol = 2, legend = "bottom", widths = c(2, 1))
 ```
 
-Figure \@ref(fig:arrange05) presents the LOCO Feature Importance on the simulated data sets within the SVM model. Once again, we can observe a drop in importance of $X1$ and $X2$ the higher the correlation. In comparison to the random forest, you cannot recognize a compensation effect of the uncorrelated features. The plot on the left reveals that under independence the quantile bands for $X1$ and $X2$ are very large whereas under high correlation they are getting smaller and even hardly discernible. In addition to that, for $\rho=0.99$ you can recognize that the average importance rank for the uninformative feature increases, because $X1$ and $X2$ are also considered as unimportant.
+Figure \@ref(fig:arrange05) presents the LOCO Feature Importance on the simulated data sets within the SVM model. Once again, we can observe a drop in the importance of $X1$ and $X2$ the higher the correlation. In comparison to the random forest, you cannot recognize a compensation effect of the uncorrelated features. The plot on the left reveals that under independence the quantile bands for $X1$ and $X2$ are very large whereas under high correlation they are getting smaller and even hardly discernible. In addition to that, for $\rho=0.99$ you can recognize that the average importance rank for the uninformative feature increases, because $X1$ and $X2$ are also considered as unimportant.
 
 
 ```{r LOCOlm, message = FALSE, echo = FALSE , fig.height = 6, fig.width = 12}
 library(ggplot2)
 load("data/dlmLOCO.RData")
 
-plocolmerr <- ggplot(dlmLOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) +
+plocolmerr <- ggplot(dlmLOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) +
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -356,11 +356,11 @@ plocolmerr <- ggplot(dlmLOCO, aes(x = features, y = importance, colour = Corr, y
 library(ggplot2)
 load("data/dlmLOCO.RData")
 
-plocorank03 <- ggplot(dlmLOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank03 <- ggplot(dlmLOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 2.5, linetype = "dashed")+
@@ -392,12 +392,12 @@ $$
 library(ggplot2)
 load("data/drf2PFI.RData")
 
-prf2err <- ggplot(drf2PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+prf2err <- ggplot(drf2PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -413,11 +413,11 @@ prf2err <- ggplot(drf2PFI, aes(x = features, y = importance, colour = Corr, ymin
 library(ggplot2)
 load("data/drf2PFI.RData")
 
-prfrank04 <- ggplot(drf2PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+prfrank04 <- ggplot(drf2PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size=  2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -440,12 +440,12 @@ Figure \@ref(fig:arrange07) underlines the common problem of PFI and random fore
 library(ggplot2)
 load("data/dsvm2PFI.RData")
 
-psvm2err <- ggplot(dsvm2PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+psvm2err <- ggplot(dsvm2PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -458,11 +458,11 @@ psvm2err <- ggplot(dsvm2PFI, aes(x = features, y = importance, colour = Corr, ym
 library(ggplot2)
 load("data/dsvm2PFI.RData")
 
-psvmrank05 <- ggplot(dsvm2PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+psvmrank05 <- ggplot(dsvm2PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -487,12 +487,12 @@ Figure \@ref(fig:arrange08) and Figure \@ref(fig:arrange09) depict that there ar
 library(ggplot2)
 load("data/dlm2PFI.RData")
 
-plm2err <- ggplot(dlm2PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+plm2err <- ggplot(dlm2PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -506,11 +506,11 @@ plm2err <- ggplot(dlm2PFI, aes(x = features, y = importance, colour = Corr, ymin
 library(ggplot2)
 load("data/dlm2PFI.RData")
 
-plmrank06 <- ggplot(dlm2PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plmrank06 <- ggplot(dlm2PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -532,12 +532,12 @@ ggarrange(plm2err, plmrank06 , ncol = 2, legend = "bottom", widths = c(2, 1))
 library(ggplot2)
 load("data/drf2LOCO.RData")
 
-ploco2err <- ggplot(drf2LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+ploco2err <- ggplot(drf2LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -551,11 +551,11 @@ ploco2err <- ggplot(drf2LOCO, aes(x = features, y = importance, colour = Corr, y
 library(ggplot2)
 load("data/drf2LOCO.RData")
 
-plocorank04 <- ggplot(drf2LOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank04 <- ggplot(drf2LOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -581,11 +581,11 @@ The impact of LOCO on the SVM and the linear model are visualized in Figure \@re
 library(ggplot2)
 load("data/dsvm2LOCO.RData")
 
-plocosvm2err <- ggplot(dsvm2LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp))+   geom_point(fill = "white", size = 0, shape = 21 , 
+plocosvm2err <- ggplot(dsvm2LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp))+   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -598,11 +598,11 @@ plocosvm2err <- ggplot(dsvm2LOCO, aes(x = features, y = importance, colour = Cor
 library(ggplot2)
 load("data/dsvm2LOCO.RData")
 
-plocorank05 <- ggplot(dsvm2LOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank05 <- ggplot(dsvm2LOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -624,12 +624,12 @@ ggarrange(plocosvm2err, plocorank05 , ncol = 2, legend = "bottom", widths = c(2,
 library(ggplot2)
 load("data/dlm2LOCO.RData")
 
-plocolm2err <- ggplot(dlm2LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) +
+plocolm2err <- ggplot(dlm2LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) +
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke= 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                                "0.75"="navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -643,11 +643,11 @@ plocolm2err <- ggplot(dlm2LOCO, aes(x = features, y = importance, colour = Corr,
 library(ggplot2)
 load("data/dlm2LOCO.RData")
 
-plocorank06 <- ggplot(dlm2LOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank06 <- ggplot(dlm2LOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 3, linetype = "dashed")+
@@ -677,7 +677,7 @@ $$
 In Figure \@ref(fig:bmr04) the benchmark result of the third scenario is illustrated. Here we can observe that the linear connection to the target value is broken. Since, one consequence of this break is that the linear model is no longer identified as the best model. The benchmark results present the SVM as the best performing model instead. Still the random forest is performing worst in comparison to the others. All in all, we have accurate models at hand again. Hence, we can investigate this scenario with regards to correlation effects on the Feature Importance as well.
 
 
-```{r bmr04, echo=FALSE, out.width = "100%", fig.cap = "Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model. ", fig.align = "center"}
+```{r bmr04, echo=FALSE, out.width = "100%", fig.cap = "Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The color representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model. ", fig.align = "center"}
 knitr::include_graphics("images/bmr04.png", auto_pdf = getOption("knitr.graphics.auto_pdf", TRUE))
 ``` 
 
@@ -687,12 +687,12 @@ knitr::include_graphics("images/bmr04.png", auto_pdf = getOption("knitr.graphics
 library(ggplot2)
 load("data/drf3PFI.RData")
 
-prf3err <- ggplot(drf3PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+prf3err <- ggplot(drf3PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size=0, shape=21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -708,11 +708,11 @@ prf3err <- ggplot(drf3PFI, aes(x = features, y = importance, colour = Corr, ymin
 library(ggplot2)
 load("data/drf3PFI.RData")
 
-prfrank07 <- ggplot(drf3PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+prfrank07 <- ggplot(drf3PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group=features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
@@ -737,12 +737,12 @@ Figure \@ref(fig:arrange13) displays the effects of PFI for the application of t
 library(ggplot2)
 load("data/dsvm3PFI.RData")
 
-psvm3err <- ggplot(dsvm3PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+psvm3err <- ggplot(dsvm3PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values=c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -755,11 +755,11 @@ psvm3err <- ggplot(dsvm3PFI, aes(x = features, y = importance, colour = Corr, ym
 library(ggplot2)
 load("data/dsvm3PFI.RData")
 
-psvmrank08 <- ggplot(dsvm3PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+psvmrank08 <- ggplot(dsvm3PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group=features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
@@ -785,12 +785,12 @@ random forest the features within the sine function are classified as less impor
 library(ggplot2)
 load("data/dlm3PFI.RData")
 
-plm3err <- ggplot(dlm3PFI, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+plm3err <- ggplot(dlm3PFI, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width  =0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -804,11 +804,11 @@ plm3err <- ggplot(dlm3PFI, aes(x = features, y = importance, colour = Corr, ymin
 library(ggplot2)
 load("data/dlm3PFI.RData")
 
-plmrank09 <- ggplot(dlm3PFI, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plmrank09 <- ggplot(dlm3PFI, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group=features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
@@ -833,12 +833,12 @@ ggarrange(plm3err, plmrank09 , ncol = 2, legend = "bottom", widths = c(2, 1))
 library(ggplot2)
 load("data/drf3LOCO.RData")
 
-ploco3err <- ggplot(drf3LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) + 
+ploco3err <- ggplot(drf3LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) + 
   geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -852,11 +852,11 @@ ploco3err <- ggplot(drf3LOCO, aes(x = features, y = importance, colour = Corr, y
 library(ggplot2)
 load("data/drf3LOCO.RData")
 
-plocorank07 <- ggplot(drf3LOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank07 <- ggplot(drf3LOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group=features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
@@ -882,11 +882,11 @@ The impacts of LOCO on the different models are visualized in Figure \@ref(fig:a
 library(ggplot2)
 load("data/dsvm3LOCO.RData")
 
-plocosvm3err <- ggplot(dsvm3LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax=maximp))+    geom_point(fill = "white", size = 0, shape = 21 , 
+plocosvm3err <- ggplot(dsvm3LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax=maximp))+    geom_point(fill = "white", size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -899,11 +899,11 @@ plocosvm3err <- ggplot(dsvm3LOCO, aes(x = features, y = importance, colour = Cor
 library(ggplot2)
 load("data/dsvm3LOCO.RData")
 
-plocorank08 <- ggplot(dsvm3LOCO, aes(x=averagerank , y=Corr, colour = features, group= features)) +
+plocorank08 <- ggplot(dsvm3LOCO, aes(x=averagerank , y=Corr, color = features, group= features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
@@ -929,12 +929,12 @@ ggarrange(plocosvm3err, plocorank08 , ncol = 2, legend = "bottom", widths = c(2,
 library(ggplot2)
 load("data/dlm3LOCO.RData")
 
-plocolm3err <- ggplot(dlm3LOCO, aes(x = features, y = importance, colour = Corr, ymin = minimp, ymax = maximp)) +
+plocolm3err <- ggplot(dlm3LOCO, aes(x = features, y = importance, color = Corr, ymin = minimp, ymax = maximp)) +
   geom_point(fill = "white",size = 0, shape = 21 , 
              stroke = 2.5, show.legend = TRUE, position = position_dodge(width = 0.7)) +
   geom_errorbar(width = 0.5, size = 1, position = position_dodge(width = 0.7)) + 
   coord_flip() +
-  scale_colour_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
+  scale_color_manual(values = c("0" = "skyblue", "0.25" = "royalblue", "0.5" = "blue",
                                "0.75" = "navy", "0.99" = "black"))+
   scale_fill_manual(values =c ("0" = "skyblue", "0.25" = "royalblue", "0.5"= "blue",
                              "0.75" = "navy", "0.99" = "black"))+
@@ -948,11 +948,11 @@ plocolm3err <- ggplot(dlm3LOCO, aes(x = features, y = importance, colour = Corr,
 library(ggplot2)
 load("data/dlm3LOCO.RData")
 
-plocorank09 <- ggplot(dlm3LOCO, aes(x = averagerank , y = Corr, colour = features, group = features)) +
+plocorank09 <- ggplot(dlm3LOCO, aes(x = averagerank , y = Corr, color = features, group = features)) +
   geom_point(size = 2)+
   geom_path(aes(group = features), size = 1)+
   coord_flip() +
-  scale_colour_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
+  scale_color_manual(values = c("Uninf" = "#999999", "X1" = "darkred", "X2" = "red",
                                "X3" = "#006600", "X4" = "#33CC33"))+
   scale_x_reverse()+
   geom_vline(xintercept = 1.5, linetype = "dashed")+
