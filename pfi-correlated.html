@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 9 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 9 PFI, LOCO and Correlated Features | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-01-09" />
+<meta name="date" content="2020-01-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -251,8 +251,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
 <li class="chapter" data-level="12.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
-<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighborhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighborhood in LIME in more detail</a></li>
 <li class="chapter" data-level="13.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
 <li class="chapter" data-level="13.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
 <li class="chapter" data-level="13.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
@@ -544,7 +544,7 @@ FIGURE 9.25: LOCO on the original data set (left), on the data set including a d
 </div>
 <div id="note-to-the-reader" class="section level2">
 <h2><span class="header-section-number">9.4</span> Note to the reader</h2>
-<p>For our analysis, we used R <span class="citation">(R Core Team <a href="#ref-R-base">2017</a>)</span>. For all the models and Feature Importance measures, we used the mlr package <span class="citation">(Bischl et al. <a href="#ref-R-mlr">2019</a>)</span> as well as the iml package <span class="citation">(Molnar, Casalicchio, and Bischl <a href="#ref-molnar2018iml">2018</a>)</span>. All plots have been created using ggplot2 <span class="citation">(Wickham et al. <a href="#ref-R-ggplot2">2019</a>)</span>.</p>
+<p>For our analysis, we used R <span class="citation">(R Core Team <a href="#ref-R-base">2017</a>)</span>. For all the models and Feature Importance measures, we used the mlr package <span class="citation">(Bischl et al. <a href="#ref-R-mlr">2020</a>)</span> as well as the iml package <span class="citation">(Molnar, Casalicchio, and Bischl <a href="#ref-molnar2018iml">2018</a>)</span>. All plots have been created using ggplot2 <span class="citation">(Wickham et al. <a href="#ref-R-ggplot2">2019</a>)</span>.</p>
 
 </div>
 </div>
@@ -554,7 +554,7 @@ FIGURE 9.25: LOCO on the original data set (left), on the data set including a d
 <p>Archer, Kellie J., and Ryan V. Kimes. 2008. “Empirical Characterization of Random Forest Variable Importance Measures.” <em>Computational Statistics and Data Analysis</em> 52: 2249–60.</p>
 </div>
 <div id="ref-R-mlr">
-<p>Bischl, Bernd, Michel Lang, Lars Kotthoff, Julia Schiffner, Jakob Richter, Zachary Jones, Giuseppe Casalicchio, Mason Gallo, and Patrick Schratz. 2019. <em>Mlr: Machine Learning in R</em>. <a href="https://CRAN.R-project.org/package=mlr" class="uri">https://CRAN.R-project.org/package=mlr</a>.</p>
+<p>Bischl, Bernd, Michel Lang, Lars Kotthoff, Julia Schiffner, Jakob Richter, Zachary Jones, Giuseppe Casalicchio, Mason Gallo, and Patrick Schratz. 2020. <em>Mlr: Machine Learning in R</em>. <a href="https://CRAN.R-project.org/package=mlr" class="uri">https://CRAN.R-project.org/package=mlr</a>.</p>
 </div>
 <div id="ref-breiman2001random">
 <p>Breiman, Leo. 2001a. “Random Forests.” <em>Machine Learning</em> 45 (1). Springer: 5–32.</p>

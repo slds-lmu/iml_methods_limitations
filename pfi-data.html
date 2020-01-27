@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 11 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 11 PFI: Training vs. Test Data | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-01-09" />
+<meta name="date" content="2020-01-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -251,8 +251,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
 <li class="chapter" data-level="12.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
-<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighborhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighborhood in LIME in more detail</a></li>
 <li class="chapter" data-level="13.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
 <li class="chapter" data-level="13.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
 <li class="chapter" data-level="13.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
@@ -321,7 +321,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>In this chapter, we focus on answering the following three questions:</p>
 <ol style="list-style-type: decimal">
 <li><p>When should I use test or training data to compute feature importance?</p></li>
-<li><p>How is the permutation feature importance of test or training data affected by over and underfitting?</p></li>
+<li><p>How is the permutation feature importance of test or training data affected by over- and underfitting?</p></li>
 <li><p>Does correlation influence the decision what kind of data to use?</p></li>
 </ol>
 <div id="introduction-to-test-vs.training-data" class="section level2">
@@ -357,7 +357,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="reaction-to-model-behavior" class="section level2">
 <h2><span class="header-section-number">11.3</span> Reaction to model behavior</h2>
 <p><strong>What happens to the PFI when the model over/underfits?</strong></p>
-<p>In this section we want to deal with the PFIs behavior regarding over and underfitting. The basic idea is that the PFI will change depending on the fit of the model.</p>
+<p>In this section we want to deal with the PFIs behavior regarding over- and underfitting. The basic idea is that the PFI will change depending on the fit of the model.</p>
 <p>In order to examine this thesis we have decided to proceed as follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>Choose a model that is able to overfit and underfit</p></li>
@@ -406,7 +406,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 FIGURE 11.1: Simplified visualization of a gradient boosting machine. One trains a model based on the data. Then you fit a model to the resulting residuals. The result is then used to create a new model. This process is repeated until the desired result is achieved.
 </p>
 </div>
-<p>The over and underfitting behavior of gradient boosting machines can be controlled via several <em>regularization</em> hyperparameters. An <em>overfitting</em> model can be trained by setting e.g. a high <em>max_depth</em>, i.e. the depth of trees fitted in each iteration, or a low <em>min_bucket</em>, i.e a low minimum of samples that need to be present in each leaf in order to allow for further splitting. Vice-versa, an underfitting can be created by adjusting the hyper-parameters in the opposite direction. This results in a very flexible algorithm, that allows us to cover various situations between underfitting, good fit and overfitting.</p>
+<p>The over- and underfitting behavior of gradient boosting machines can be controlled via several <em>regularization</em> hyperparameters. An <em>overfitting</em> model can be trained by setting e.g. a high <em>max_depth</em>, i.e. the depth of trees fitted in each iteration, or a low <em>min_bucket</em>, i.e a low minimum of samples that need to be present in each leaf in order to allow for further splitting. Vice-versa, an underfitting can be created by adjusting the hyper-parameters in the opposite direction. This results in a very flexible algorithm, that allows us to cover various situations between underfitting, good fit and overfitting.</p>
 </div>
 <div id="data-sets-used-for-calculations" class="section level3">
 <h3><span class="header-section-number">11.3.2</span> Data sets used for calculations</h3>
@@ -529,7 +529,7 @@ FIGURE 11.11: For both data sets Overtime is the most important feature. Further
 </p>
 </div>
 <p>The noticeable features are highlighted in green. As with the previous well fitted GBM, the range is very comparable - the order has also remained the same, at least in parts. (Overtime is the most important variable in both cases)</p>
-<p>Also here we want to have a look at the behavior at over and underfitting.</p>
+<p>Also here we want to have a look at the behavior at over- and underfitting.</p>
 <p><strong>We start again with the plots for overfitting:</strong></p>
 <div class="figure"><span id="fig:unnamed-chunk-58"></span>
 <img src="images/IBM_over.jpg" alt="For the test data based on an overfitting GBM, DistanceFromHome is the most important variable. For the training data it is only the fourth most important one, wheras Overtime is most important. It can be stated that the order changed a lot" width="1444" />
@@ -549,7 +549,7 @@ FIGURE 11.13: In this Figure it is quite interesting that the order changed comp
 </div>
 <div id="interpretation-of-the-results" class="section level3">
 <h3><span class="header-section-number">11.3.4</span> Interpretation of the results</h3>
-<p>At the end of this sub-chapter we want to answer the question how the permutation feature importance behaves with regard to over and underfitting. First, it can be said that in the case of a well fit GBM there are only slight differences in feature importance. The results on test and training data are in any case comparable. But now we come to the problems regarding the meaningfulness of feature importance:</p>
+<p>At the end of this sub-chapter we want to answer the question how the permutation feature importance behaves with regard to over- and underfitting. First, it can be said that in the case of a well fit GBM there are only slight differences in feature importance. The results on test and training data are in any case comparable. But now we come to the problems regarding the meaningfulness of feature importance:</p>
 <p><strong>Problems with overfitting:</strong></p>
 <ul>
 <li>Overfitting results in a very strong effect on the MSE only on the training data</li>
@@ -580,9 +580,9 @@ FIGURE 11.14: Visualisation of the impact of correlation on the feature importan
 <ul>
 <li>How much the model relies for prediction?</li>
 </ul>
-<p>It was shown that PFI reacts strongly to over and underfitting:</p>
+<p>It was shown that PFI reacts strongly to over- and underfitting:</p>
 <ul>
-<li>PFI on both can be a proxy identifying over or underfitting</li>
+<li>PFI on both can be a proxy identifying over- or underfitting</li>
 </ul>
 <p>Correlated features have a big influence on the results of feature importance, but not on the question whether to use test or training data - therefore they are negligible in this question. Nevertheless, correlations have been shown to lead to major feature importance problems, as discussed in previous chapters.</p>
 <p>Basically it can be said that it has been shown that the model behavior (overfitting or underfitting) greatly distorts the interpretation of the feature importance. Therefore it is important to set up your model well, because it was shown that the differences for a well calibrated model are only small and the question of choice doesn’t play a big role anymore.</p>

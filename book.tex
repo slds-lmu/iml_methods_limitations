@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-01-09}
+\date{\vspace{-2.5em}2020-01-27}
 
 \begin{document}
 \maketitle
@@ -5304,14 +5304,14 @@ shape.
 
 Following the objective of visualization, one can make use of the
 concepts of Partial Dependence and Individual Conditional Expectation,
-as these methods allow to detect heterogeneity in the context of Feature
-Effects. \citet{casalicchio2018visualizing} avail themselves from these
-concepts and transfer them to the concept of Feature Importance, by
-introducing the metrics Partial Importance (PI) and Individual
-Conditional Importance (ICI) (see \citet{Goldstein2013}). They show that
-these methods enable to detect subgroups with differing levels of
-Feature Importance and are, therefore when striving for a complete
-picture, non-negligible complements to the global PFI metric.
+as these methods allow us to detect heterogeneity in the context of
+Feature Effects. \citet{casalicchio2018visualizing} avail themselves
+from these concepts and transfer them to the concept of Feature
+Importance, by introducing the metrics Partial Importance (PI) and
+Individual Conditional Importance (ICI) (see \citet{Goldstein2013}).
+They show that these methods enable to detect subgroups with differing
+levels of Feature Importance and are, therefore when striving for a
+complete picture, non-negligible complements to the global PFI metric.
 
 However, it might be of interest to not only reliably detect
 heterogeneity but to also better understand its drivers. In general, it
@@ -5825,7 +5825,7 @@ interesting insights were obtained. Now, it is known between which
 features and where in the feature's range of values the interaction
 effect takes place. With the conditional Feature Importance, one can
 even quantify the difference and therefore measure the impact of the
-interaction effect. Concluding, that that the initially observed
+interaction effect. Concluding, that the initially observed
 heterogeneity is understood to its full extent.
 
 Applying this on a real data application would then allow a more
@@ -6087,7 +6087,7 @@ In this chapter, we focus on answering the following three questions:
   When should I use test or training data to compute feature importance?
 \item
   How is the permutation feature importance of test or training data
-  affected by over and underfitting?
+  affected by over- and underfitting?
 \item
   Does correlation influence the decision what kind of data to use?
 \end{enumerate}
@@ -6211,7 +6211,7 @@ performance on unknown data? In this case, the test data would be used.
 
 \textbf{What happens to the PFI when the model over/underfits?}
 
-In this section we want to deal with the PFIs behavior regarding over
+In this section we want to deal with the PFIs behavior regarding over-
 and underfitting. The basic idea is that the PFI will change depending
 on the fit of the model.
 
@@ -6326,7 +6326,7 @@ Generalize this idea:
 \caption{Simplified visualization of a gradient boosting machine. One trains a model based on the data. Then you fit a model to the resulting residuals. The result is then used to create a new model. This process is repeated until the desired result is achieved.}\label{fig:unnamed-chunk-46}
 \end{figure}
 
-The over and underfitting behavior of gradient boosting machines can be
+The over- and underfitting behavior of gradient boosting machines can be
 controlled via several \emph{regularization} hyperparameters. An
 \emph{overfitting} model can be trained by setting e.g.~a high
 \emph{max\_depth}, i.e.~the depth of trees fitted in each iteration, or
@@ -6554,7 +6554,7 @@ well fitted GBM, the range is very comparable - the order has also
 remained the same, at least in parts. (Overtime is the most important
 variable in both cases)
 
-Also here we want to have a look at the behavior at over and
+Also here we want to have a look at the behavior at over- and
 underfitting.
 
 \textbf{We start again with the plots for overfitting:}
@@ -6584,7 +6584,7 @@ the training data).
 results}\label{interpretation-of-the-results}
 
 At the end of this sub-chapter we want to answer the question how the
-permutation feature importance behaves with regard to over and
+permutation feature importance behaves with regard to over- and
 underfitting. First, it can be said that in the case of a well fit GBM
 there are only slight differences in feature importance. The results on
 test and training data are in any case comparable. But now we come to
@@ -6646,12 +6646,12 @@ or
   How much the model relies for prediction?
 \end{itemize}
 
-It was shown that PFI reacts strongly to over and underfitting:
+It was shown that PFI reacts strongly to over- and underfitting:
 
 \begin{itemize}
 \tightlist
 \item
-  PFI on both can be a proxy identifying over or underfitting
+  PFI on both can be a proxy identifying over- or underfitting
 \end{itemize}
 
 Correlated features have a big influence on the results of feature
@@ -6700,11 +6700,11 @@ model-agnostic explanations (LIME). Different from global surrogate
 models, local ones aim to rather explain single predictions by
 interpretable models than the whole black box model at once. These
 surrogate models, also referred to as explainers, need to be easily
-interpretable (like linear regression or decision trees) and thus may of
-course not have the adaptability and flexibility of the original black
-box model which they aim to explain. However, we actually don't care
-about a \textbf{global} fit in this case. We only want to have a very
-\textbf{local} fit of the surrogate model in the proximity of the
+interpretable (like linear regressions or decision trees) and thus may
+of course not have the adaptability and flexibility of the original
+black box model which they aim to explain. However, we actually don't
+care about a \textbf{global} fit in this case. We only want to have a
+very \textbf{local} fit of the surrogate model in the proximity of the
 instance whose prediction is explained.
 
 A LIME explanation could be retrieved by the following algorithm:
@@ -6796,11 +6796,11 @@ to? Neighbourhood is a very vague term. This is for good reason because
 a priori it is not clear how to specify a neighbourhood properly.
 Technically, there are many different options to deal with this issue.
 Weighting the observations w.r.t. their distance to the observation
-being explained seems like a good idea. This may possibly be implemented
-as an arbitrarily parametrised kernel. However, this leaves in total
-many scientific degrees of freedom which makes the neighbourhood
-definition somewhat problematic. This neighbourhood issue will be
-discussed in more detail in the next chapter.
+being explained seems like a good idea. This may be implemented as an
+arbitrarily parametrised kernel. However, this leaves in total many
+scientific degrees of freedom which makes the neighbourhood definition
+somewhat problematic. This neighbourhood issue will be discussed in more
+detail in the next chapter.
 
 \subsection{What makes a good
 explainer?}\label{what-makes-a-good-explainer}
@@ -6933,27 +6933,27 @@ their interpretability. We will emphasise the coefficient stability of
 LIME explainers in order to illustrate the trustworthiness of the
 results.
 
-\chapter{LIME and Neighbourhood}\label{lime-neighbor}
+\chapter{LIME and Neighborhood}\label{lime-neighbor}
 
 \emph{Author: Philipp Kopper}
 
 \emph{Supervisor: Christoph Molnar}
 
-This section will discuss the effect of the neighbourhood on LIME's
+This section will discuss the effect of the neighborhood on LIME's
 explanations. This is in particular critical for tabular data. Hence, we
 will limit ourselves to the analysis of tabular data for the remainder
 of this chapter.
 
 As described in the previous chapter, LIME aims to create local
 surrogate models -- one for each observation to be explained. These
-local models operate in the proximity or \emph{neighbourhood} of the
+local models operate in the proximity or \emph{neighborhood} of the
 instance to be explained. They are fitted based on weights which
 indicate their proximity to the observation to be explained. The weights
 are typically determined using kernels that transform the proximity
 measure.
 
-The proper parametrisation of the kernel is obviously important.
-However, this is true for any approach that uses kernels. Such as kernel
+The proper parametrization of the kernel is obviously important.
+However, this is true for any approach that uses kernels, such as kernel
 density estimations. Figure \ref{fig:lime-fig1} illustrates kernel
 densities from a standard normal distribution. We applied different
 kernel widths for the curve estimation.
@@ -6968,22 +6968,22 @@ kernel widths for the curve estimation.
 \end{figure}
 
 One can easily see that the left panel seems to be appropriate while the
-right one is too granular. The proper definition of the neighbourhood is
+right one is too granular. The proper definition of the neighborhood is
 very crucial in this case. However, with no prior information, this
 definition is arbitrary. \footnote{Note that heuristics exist, though.}
-We can only judge on the proper definition of the neighbourhood from our
+We can only judge on the proper definition of the neighborhood from our
 experience and our expectations. This may work in low dimensional
 problems and descriptive statistics. However, machine learning models
 operate in multivariate space and mostly tackle complex associations.
-Thus, it seems much harder to argue on the proper neighbourhood
+Thus, it seems much harder to argue on the proper neighborhood
 definition when working with LIME.
 
-This chapter reviews the neighbourhood issue of the LIME algorithm
+This chapter reviews the neighborhood issue of the LIME algorithm
 critically. The objective of this chapter is rather to outline this
 particular issue and not to suggest solutions for it. First of all, it
-describes the neighbourhood definition abstractly in greater detail
+describes the neighborhood definition abstractly in greater detail
 (section \ref{id2}). Then, it illustrates how problematic the
-neighbourhood definition can be in a simple one-dimensional example in
+neighborhood definition can be in a simple one-dimensional example in
 section \ref{id3}. Furthermore, we study the effect of altering the
 kernel size more systematically in more complex contexts in the next
 section (\ref{id4}). This section deals with both, simulated
@@ -6992,14 +6992,14 @@ simulation (\ref{id411}) investigates multivariate globally linear
 relationships. The second one (\ref{id412}) researches local
 coefficients. The third one (\ref{id413}) studies non-linear effects.
 Section \ref{id42} uses the Washington D.C. bicycle data set to study
-LIME's neighbourhood in a real-world application. Afterwards, in section
-\ref{id5}, we discuss the results and contextualise them with the
+LIME's neighborhood in a real-world application. Afterwards, in section
+\ref{id5}, we discuss the results and contextualize them with the
 existing literature. After concluding, we explain how LIME was used and
 why in section \ref{id6}.
 
-\section{The Neighbourhood in LIME in more detail}\label{id2}
+\section{The Neighborhood in LIME in more detail}\label{id2}
 
-When obtaining explanations with LIME, the neighbourhood of an
+When obtaining explanations with LIME, the neighborhood of an
 observation is determined when fitting the model by applying weights to
 the data. These weights are chosen w.r.t. the proximity to the
 observation to be explained. However, there is no natural law stating
@@ -7016,7 +7016,7 @@ to this procedure might be to combine steps 2 (sampling) and 4
 around the instance already by proper sampling. In fact,
 \citet{laugel2018defining} claim that this way should be preferred over
 the way LIME samples. In this chapter, however, we focus on the explicit
-implementation of LIME and analyse how the weighting strategy
+implementation of LIME and analyze how the weighting strategy
 \emph{ceteris paribus} affects surrogate model accuracy and stability.
 
 When working with LIME, the weighting of instances is performed using a
@@ -7054,7 +7054,7 @@ equals the square root of the number of features.
 
 The choice of the distance measure seems least arbitrary. Furthermore,
 the choice of the kernel function is not expected to have the most
-crucial impact on the neighbourhood definition. Thus, we focus on the
+crucial impact on the neighborhood definition. Thus, we focus on the
 \textbf{kernel width} in our experimental study.
 
 \section{The problem in a one-dimensional setting}\label{id3}
@@ -7141,10 +7141,10 @@ while \(0.05\) and \(0.1\) seem to fit good local models. \(0.25\) and
 \(0.3\) are neither global nor very local. This is very intuitive and
 complies with the idea of a weighted local regression.
 
-Additionally, we analyse the same alteration of the kernel size for an
+Additionally, we analyze the same alteration of the kernel size for an
 observation where a good local approximation would be a linear model
 with a positive slope in the lower panel of figure \ref{fig:lime-fig6}.
-We observe a similar behaviour.
+We observe a similar behavior.
 
 \begin{figure}
 
@@ -7155,7 +7155,7 @@ We observe a similar behaviour.
 \caption{Simulated data: Local (LIME) models for non-linear univariate relationship with different kernel sizes for different observations.}\label{fig:lime-fig6}
 \end{figure}
 
-This behaviour is not necessarily a problem but only a property of LIME.
+This behavior is not necessarily a problem but only a property of LIME.
 However, it can be problematic that the appropriate kernel size is not a
 priori clear. Additionally, there is no straight forward way to
 determine a good kernel width for a given observation to be explained.
@@ -7170,7 +7170,7 @@ strongly depends on the dimensionality and complexity of the problem.
 \section{The problem in more complex settings}\label{id4}
 
 The previous setting was trivial for LIME. The problem was univariate
-and we could visualise the predictive surface in the first place. This
+and we could visualize the predictive surface in the first place. This
 means that interpretability was mostly given. We will study our problem
 in more complex -- non-trivial -- settings to show that it persists. We
 will do so by examining simulated and real data.
@@ -7227,7 +7227,7 @@ much noise. Hence, in this case, we may find no good local models.
 The figures below (all four panels of figure \ref{fig:lime-fig8})
 indicate the local parameters for one of the selected observations for
 different kernel sizes which have been determined by LIME. The three
-vertical lines indicate the true global coefficients. This behaviour is
+vertical lines indicate the true global coefficients. This behavior is
 representative of all observations.
 
 \begin{figure}
@@ -7236,7 +7236,7 @@ representative of all observations.
 
 }
 
-\caption{Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation.}\label{fig:lime-fig8}
+\caption{Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widths. The underlying ground truth model is a linear model. Each feature is depicted in a different color. The solid vertical lines represent the true coefficient of the LIME explanation.}\label{fig:lime-fig8}
 \end{figure}
 
 We observe that too small kernel widths are not able to reproduce the
@@ -7253,7 +7253,7 @@ is valuable as it shows that LIME works as expected.
 \subsubsection{Local Linear Relationships}\label{id412}
 
 For non-linear relationships, we have already seen that the kernel width
-is more crucial. Thus, we aim to study the behaviour of the explanations
+is more crucial. Thus, we aim to study the behavior of the explanations
 w.r.t. the kernel size where the true associations are non-linear or
 \emph{locally} different.
 
@@ -7310,7 +7310,7 @@ coefficients are displayed by solid vertical lines.
 
 }
 
-\caption{Simulated data: Each panel represents a single (representative) observation. For each observation we analyse the LIME coefficients for different kernel widhts. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different colour. The solid vertical lines represent the true coefficient of the LIME explanation.}\label{fig:lime-fig10}
+\caption{Simulated data: Each panel represents a single (representative) observation. For each observation we analyze the LIME coefficients for different kernel widthss. The underlying ground truth model is a linear model where x1 only has a local coefficient. Each feature is depicted in a different color. The solid vertical lines represent the true coefficient of the LIME explanation.}\label{fig:lime-fig10}
 \end{figure}
 
 We can see that in this case, we \textbf{cannot} simply set an arbitrary
@@ -7351,17 +7351,17 @@ volatility. The volatility decreases to an acceptable level only after
 Note that we obtain the same picture for every covariate and other
 representative observations. We observe that there is a trade-off
 between stable coefficients and locality (expressed by a small kernel
-width). Our analysis suggests the following. Too large kernel sizes
+width). Our analysis suggests the following: Too large kernel sizes
 result in explanations biased towards a global surrogate. At the same
 time, the kernel width must result in stable coefficients. This means we
-cannot set it infinitissimately small. The resulting trade-off suggests
+cannot set it infinitesimally small. The resulting trade-off suggests
 choosing the minimal kernel size with stable coefficients as an optimal
 solution. Mathematically speaking, we aim minimal kernel size which
 still satisfies a volatility condition.
 
 \subsubsection{Global Non-Linearity}\label{id413}
 
-We further generalise the approach from the previous section and
+We further generalize the approach from the previous section and
 simulate data with the underlying data generating mechanism:
 
 \[ y = \beta_0 + \beta_1 x_1 + \beta_{2,1} x_2 1_{x_2<c_1} + \beta_{2,2} x_2 1_{c_1 < x_2 < c_2} +  \beta_{2,3} x_2 1_{c_2 < x_2} + \beta_3 x_3 + \epsilon \]
@@ -7420,12 +7420,12 @@ small kernel which however also produces stable coefficients.
 
 Having investigated simulated data where we knew the ground truth, gave
 us a good intuition on how the kernel size affects the resulting
-explainer model. The neighbourhood problem can be described briefly by
+explainer model. The neighborhood problem can be described briefly by
 the following. A (too) small kernel width creates unstable coefficients
 whilst a too large kernel width fits a global surrogate model. An
 optimal kernel size should balance these effects. We may formulate the
-problem as a minimisation problem w.r.t. the kernel size. However, the
-minimisation needs to consider the constraint that coefficients need to
+problem as a minimization problem w.r.t. the kernel size. However, the
+minimization needs to consider the constraint that coefficients need to
 be stable.
 
 \subsection{Real data}\label{id42}
@@ -7467,7 +7467,7 @@ community and this regression problem is easily accessible to most
 people. Furthermore, it has a reasonable feature space making it not
 highly prone to the curse of dimensionality of the distance measures. We
 only make use of a subset of all possible features as some are somewhat
-colinear.
+collinear.
 
 Using this data we aim to use a random forest to predict the number of
 daily bicycle hires. We use LIME to explain the black box.
@@ -7479,7 +7479,7 @@ property with the aid of a modified version of stability paths
 (\citet{meinshausen2010stability}). Stability paths are used for sparse
 (regularised) models and indicate how likely each covariate is part of
 the model -- w.r.t. a given degree of regularisation. Normally, they
-analyse the association of the regularisation strength and inclusion
+analyze the association of the regularisation strength and inclusion
 probabilities of features. On the x-axis, one depicts the regularisation
 strength and on the y-axis the inclusion probabilities (for all
 covariates). The probabilities for different regularisations are grouped
@@ -7524,7 +7524,7 @@ three distinct areas observed earlier:
 
 }
 
-\caption{Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by colour.}\label{fig:lime-fig131}
+\caption{Real data: Example for ideal stability paths with three distinct areas. The x-axis displays different kernel widths. The y-axis indicates the respective inclusion probability of each variable. The variables are grouped by color.}\label{fig:lime-fig131}
 \end{figure}
 
 The (toy example) stability paths suggest that temperature, weather
@@ -7574,8 +7574,8 @@ however, by far less convincing than the previous ones. Additionally, we
 are struggling to identify stable local models for many observations,
 like observation 2 and 6. For those observations, there is only
 instability for small kernel widths which transforms immediately to the
-global surrogate once stabilised. The reasons for this variation of
-behaviour can be manifold. However, not knowing the ground truth, it is
+global surrogate once stabilized. The reasons for this variation of
+behavior can be manifold. However, not knowing the ground truth, it is
 hard to evaluate what is going on here in particular.
 
 So even though we may find meaningful explanations from case to case,
@@ -7619,7 +7619,7 @@ a good locality if the predictive surface becomes more complex.
 
 Similar results can be obtained for alternative data sets. For the
 practitioner using LIME (for tabular data), this means that LIME should
-be used with great care. Furthermore, we suggest analysing the resulting
+be used with great care. Furthermore, we suggest analyzing the resulting
 explanations' stability when making use of LIME.
 
 We think that the global sampling of LIME is responsible for many of the
@@ -7666,7 +7666,7 @@ mixed data, we explicitly promote not to use it. In the current (July
 the kernel width. As we have seen, a proper kernel width may look very
 different depending on the associated problem. So it is highly unlikely
 that a one-size-fits-all implicit kernel width always results in a
-proper result. In figure \ref{fig:lime-fig15} we analyse this statement
+proper result. In figure \ref{fig:lime-fig15} we analyze this statement
 by comparing the Gower distance's local coefficient to the true
 coefficient and the local estimates of the non-linear data simulation
 from section \ref{id413}.
@@ -7677,7 +7677,7 @@ from section \ref{id413}.
 
 }
 
-\caption{Simulated data: Gower distance vs. Euclidean distance (non-linear realtionship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance.}\label{fig:lime-fig15}
+\caption{Simulated data: Gower distance vs. Euclidean distance (non-linear relationship). The blue line is the true coefficient. The interpolated curve represents the LIME coefficient estimates for different kernel widths when using Euclidean distance. The green line represents to estimate resulting from LIME when using Gower distance.}\label{fig:lime-fig15}
 \end{figure}
 
 We see that our argument is valid. Gower distance is not able to recover
@@ -8341,7 +8341,7 @@ distribution representing the whole space of each feature. This global
 sampling disregards the covariance structure and results in a lot of
 samples drawn in areas so far away in distance from the point to
 explain, that their weight for the fitting process is essentially zero.
-(Just to not spark any confusion: `Weight' in this subchapter revers to
+(Just to not spark any confusion: `Weight' in this subchapter refers to
 the weights in the loss function and not the weights of the explanation,
 as we have used so far.) These samples are a huge computational burden
 while having almost no influence at all on the fit. A solution to this

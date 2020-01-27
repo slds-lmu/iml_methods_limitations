@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 10 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.16 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 10 Partial and Individual Permutation Feature Importance | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-01-09" />
+<meta name="date" content="2020-01-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -251,8 +251,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
 <li class="chapter" data-level="12.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighbourhood</a><ul>
-<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighbourhood in LIME in more detail</a></li>
+<li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighborhood</a><ul>
+<li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighborhood in LIME in more detail</a></li>
 <li class="chapter" data-level="13.2" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id3"><i class="fa fa-check"></i><b>13.2</b> The problem in a one-dimensional setting</a></li>
 <li class="chapter" data-level="13.3" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id4"><i class="fa fa-check"></i><b>13.3</b> The problem in more complex settings</a><ul>
 <li class="chapter" data-level="13.3.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id41"><i class="fa fa-check"></i><b>13.3.1</b> Simulated data</a></li>
@@ -311,7 +311,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><em>Supervisor: Giuseppe Casalicchio</em></p>
 <p>The introductory chapter discussed the relevance of PFI and LOCO for the interpretability of machine learning models. It was argued that for interpretation purposes, the concept of Feature Importance is an indispensable complement to analyzing Feature Effects. The Feature Importance quantifies the contribution of a specific feature to the prediction power of a model. Yet, it was also remarked that an aggregated, global measure of Feature Importance might be insufficient. It might be the case that within a feature, some single values or subgroups are more important for predictions than others. This heterogeneity, however, could not be captured by a single metric. Besides, it is trivial to understand that with increasing heterogeneity, the global PFI becomes less revealing. By implication, a complementary method that captures such heterogeneity becomes more decisive.</p>
 <p>To identify whether such heterogeneity exists, an algorithm is required that calculates the Feature Importance for each value of the respective feature. Briefly, a measure that indicates the contribution of an individual value to the global Feature Importance. However, as the range of values can be rather large, a tabular description seems to be cluttered. Therefore, a visualization tool that allows gaining meaningful and concise insights on how the Feature Importance varies, should be derived. One would then plot the respective values of the feature against its local Feature Importance measures. In the case of heterogeneity, the plotted curve should then deviate from a constant shape.</p>
-<p>Following the objective of visualization, one can make use of the concepts of Partial Dependence and Individual Conditional Expectation, as these methods allow to detect heterogeneity in the context of Feature Effects. <span class="citation">Casalicchio, Molnar, and Bischl (<a href="#ref-casalicchio2018visualizing">2018</a>)</span> avail themselves from these concepts and transfer them to the concept of Feature Importance, by introducing the metrics Partial Importance (PI) and Individual Conditional Importance (ICI) (see <span class="citation">Goldstein et al. (<a href="#ref-Goldstein2013">2013</a>)</span>). They show that these methods enable to detect subgroups with differing levels of Feature Importance and are, therefore when striving for a complete picture, non-negligible complements to the global PFI metric.</p>
+<p>Following the objective of visualization, one can make use of the concepts of Partial Dependence and Individual Conditional Expectation, as these methods allow us to detect heterogeneity in the context of Feature Effects. <span class="citation">Casalicchio, Molnar, and Bischl (<a href="#ref-casalicchio2018visualizing">2018</a>)</span> avail themselves from these concepts and transfer them to the concept of Feature Importance, by introducing the metrics Partial Importance (PI) and Individual Conditional Importance (ICI) (see <span class="citation">Goldstein et al. (<a href="#ref-Goldstein2013">2013</a>)</span>). They show that these methods enable to detect subgroups with differing levels of Feature Importance and are, therefore when striving for a complete picture, non-negligible complements to the global PFI metric.</p>
 <p>However, it might be of interest to not only reliably detect heterogeneity but to also better understand its drivers. In general, it can be distinguished between three different sources for heterogeneity. First, if the relationship between a feature and the response is non-linear. Secondly, if features are correlated and third if interaction effects between features are existent. In what follows, it will be focused on the latter as the first represents no actual concern and the second was already discussed in the previous chapter.</p>
 <p>As will be seen, uncovering interaction effects is not as straightforward, as the structural relationship between covariates and the outcome variables is unknown. Hence, from first glance, it is unclear whether there is just a non-linear relationship or whether indeed interactions between covariates exist. But if the PI or ICI method does not enable us to distinguish between these sources, the applicant does not gain a better understanding. If heterogeneity is not understood, one can hardly interpret the results and if so, the methods failed to a certain extent.</p>
 <p>Hence, the motivation is clear. If interaction effects between covariates are existent, it should be, for the sake of the interpretability of a machine learning model, of major interest to detect them. Detecting them is an indispensable objective to be enabled to then explain them. And only if they can be explained, the heterogeneity in Feature Importance can be understood and the results can be interpreted accordingly.</p>
@@ -455,7 +455,7 @@ FIGURE 10.6: Simulated data (simulation 2): The decision stump reveals the inter
 FIGURE 10.7: Simulated data (simulation 2): The conditional Feature Importance plot visualizes the impact of the interaction effect on the heterogeneity in Feature Importance.
 </p>
 </div>
-<p>Finally plotting the conditional Feature Importance (see figure <a href="pfi-partial.html#fig:fig6">10.7</a>) indeed confirms the interaction effect and its impact on the Feature Importance. Besides, to get there, some additional interesting insights were obtained. Now, it is known between which features and where in the feature’s range of values the interaction effect takes place. With the conditional Feature Importance, one can even quantify the difference and therefore measure the impact of the interaction effect. Concluding, that that the initially observed heterogeneity is understood to its full extent.</p>
+<p>Finally plotting the conditional Feature Importance (see figure <a href="pfi-partial.html#fig:fig6">10.7</a>) indeed confirms the interaction effect and its impact on the Feature Importance. Besides, to get there, some additional interesting insights were obtained. Now, it is known between which features and where in the feature’s range of values the interaction effect takes place. With the conditional Feature Importance, one can even quantify the difference and therefore measure the impact of the interaction effect. Concluding, that the initially observed heterogeneity is understood to its full extent.</p>
 <p>Applying this on a real data application would then allow a more meaningful, contextual interpretation.</p>
 </div>
 </div>
