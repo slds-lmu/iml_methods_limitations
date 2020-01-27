@@ -102,7 +102,7 @@ In Figure \@ref(fig:LOCO) it is shown, how the LOCO algorithm alters the origina
 
 <br>
 
-```{r LOCO,out.width="65%", fig.align='center',echo = FALSE, message = FALSE,fig.cap="Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formular underneath the tables, the Feature Importance of LOCO is calculated."}
+```{r LOCO,out.width="65%", fig.align='center',echo = FALSE, message = FALSE,fig.cap="Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formula underneath the tables, the Feature Importance of LOCO is calculated."}
 knitr::include_graphics("images/LOCO_All.jpeg")
 ```
 
