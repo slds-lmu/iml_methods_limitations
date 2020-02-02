@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-01-27}
+\date{\vspace{-2.5em}2020-02-02}
 
 \begin{document}
 \maketitle
@@ -2057,7 +2057,7 @@ scenario are as follows:
 \[ Y \leftarrow X + \epsilon_Y  \]
 \[ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 \]
 
-As will be done in all scenarios, both standard deviaton for
+As will be done in all scenarios, both standard deviation for
 \(\epsilon\) and \(N\) were varied across 3 levels leading to 9
 settings.
 
@@ -2266,8 +2266,8 @@ more difficult to verify, especially based on only the data. Here a
 certain amount of domain knowledge is needed to ensure the assumption is
 met. Still, it is a hard assumption to verify which could limit the
 confidence people have in a causal interpretation of a PDP. In the two
-variable case we may already have difficulty finding a causal
-interepretation. As we saw with the ice-cream example, the direction of
+variables case we may already have difficulty finding a causal
+interpretation. As we saw with the ice-cream example, the direction of
 the dependency already makes a large difference. In many cases, the
 necessary domain knowledge may be hard to attain.
 
@@ -2369,12 +2369,12 @@ Since in this formula there is no integral, it is easier to implement.
 
 As the former sections introduced the theoretical basics for the ALE,
 this section shall provide an intuition as well for the calculation
-method as for the interpretation. As described above, the local
-behaviour of the model with respect to the variable of interest is
-estimated by moving the existing data points to the boundaries of their
-interval and evaluating the total difference of the prediction for the
-``new'' data points. Figure \ref{fig:dataALE} first offered by
-\citep{molnar2019} gives a good intuition for this procedure.
+method as for the interpretation. As described above, the local behavior
+of the model with respect to the variable of interest is estimated by
+moving the existing data points to the boundaries of their interval and
+evaluating the total difference of the prediction for the ``new'' data
+points. Figure \ref{fig:dataALE} first offered by \citep{molnar2019}
+gives a good intuition for this procedure.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_estimation_intuition} \caption{The data points within the 4-th interval are shifted
@@ -2400,16 +2400,16 @@ constant change within each interval. Both variants lead to the same
 result.
 
 As the evaluation is ideally done on relatively small intervals, on the
-one hand the local behaviour of the model is estimated. On the other
-hand the covariance structure of the features is taken into account, as
-only ``realistic'' data points are simulated. This is in accordance with
+one hand the local behavior of the model is estimated. On the other hand
+the covariance structure of the features is taken into account, as only
+``realistic'' data points are simulated. This is in accordance with
 sampling from the conditional distribution.
 
 In a last step the uncentered ALE is centered, i.e.~shifted by a
 constant such that the expectation of the centered ALE is zero.
 
 Figure \ref{fig:aleEx} shows an example ALE which could match the data
-situtaion of Figure \ref{fig:dataALE}.
+situation of Figure \ref{fig:dataALE}.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{images/ale_example} \caption{ALE on basis of 5 intervals}\label{fig:aleEx}
@@ -2426,7 +2426,7 @@ higher than the average prediction for realistic data points at
 \(x_1 = z_{0,1}\) (i.e.~data points sampled from the conditional
 distribution at \(x_1 = z_{0,1}\)). This expectation strongly depends on
 the reference point \(z_{0,1}\), which per definition is smaller than
-the smallest \(x_1\)-value of the data. By substracting the expectation
+the smallest \(x_1\)-value of the data. By subtracting the expectation
 of the uncentered ALE - which is the mean difference of the prediction
 of a data point from the joint distribution to the prediction of a
 realistic data point(i.e.~from the conditional distribution) at
@@ -4293,7 +4293,7 @@ providing the reader with an additional real data example.
 
 }
 
-\caption{Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formular underneath the tables, the Feature Importance of LOCO is calculated.}\label{fig:LOCO}
+\caption{Example for Leave-One-Covariate-Out Feature Importance. The tables illustrate the second step of the algorithm of LOCO in particular the drop of $x_{1}$ and $x_{p}$. The dark grey columns of the original dataset mark the variables that will be dropped and therefore ignored when refitting the model. This breaks the relationship between the feature of interest and the target value. Based on the formula underneath the tables, the Feature Importance of LOCO is calculated.}\label{fig:LOCO}
 \end{figure}
 
 \section{Interpretability of Feature Importance and its

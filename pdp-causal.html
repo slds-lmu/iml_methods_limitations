@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-01-27" />
+<meta name="date" content="2020-02-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -373,7 +373,7 @@ FIGURE 4.3: Chain DAG where X has a direct impact on Y, but is dependent on Z
 </div>
 <p>In the first scenario, we have a chain DAG, seen in Figure <a href="pdp-causal.html#fig:Figure3">4.3</a>. Our variable <span class="math inline">\(X\)</span> is impacted by <span class="math inline">\(Z\)</span> and has a direct effect on <span class="math inline">\(Y\)</span>. <span class="math inline">\(Z\)</span>, however, does not. <span class="math inline">\(X_C\)</span> consists of <span class="math inline">\(Z\)</span>, which is not a descendant of <span class="math inline">\(X\)</span>. There is also no backdoor path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. The backdoor criterion is met. In this scenario the expectation is thus that the PDPs should be overall equal to the true intervention. The initial simulation settings for this scenario are as follows:</p>
 <p><span class="math display">\[ Y \leftarrow X + \epsilon_Y  \]</span> <span class="math display">\[ \epsilon_X,\epsilon_Y ~ \sim \mathcal{N}(0, 0.1), \ \ \ \ \ \epsilon_Z \sim \mathcal{U}(-1,1),\ \ \ \ \ Z \leftarrow \epsilon_Z, \ \ \ \ \ X \leftarrow Z + \epsilon_X, \ \ \ \ \ N \leftarrow 100 \]</span></p>
-<p>As will be done in all scenarios, both standard deviaton for <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(N\)</span> were varied across 3 levels leading to 9 settings.</p>
+<p>As will be done in all scenarios, both standard deviation for <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(N\)</span> were varied across 3 levels leading to 9 settings.</p>
 <div class="figure" style="text-align: left"><span id="fig:Figure4"></span>
 <img src="images/scenario1_all.jpg" alt="Comparison for scenario 1 of PDPs under various settings with the (yellow) intervention curve on the right" width="100%" />
 <p class="caption">
@@ -451,7 +451,7 @@ FIGURE 4.12: Comparison for scenario 5 of PDPs under various settings with the (
 <div id="conclusion" class="section level2">
 <h2><span class="header-section-number">4.5</span> Conclusion</h2>
 <p>Causal interpretability of a PDP is dependent on several things: (1) The backdoor criterion being met. We have seen that if the backdoor criterion is met, meaning no variable in the complement set <span class="math inline">\(C\)</span> is a descendant of our variable of interest, the PDP should be the same as the intervention curve. We say should, because in practice it will also depend on: (2) The model fit. Even when the backdoor criterion is met, the PDP might not fully capture the exact same relationship as the intervention curve. Especially in extreme regions, where data is potentially sparse, the PDP can be deceptive. Same in scenarios with a higher(er) error and low number of observations.</p>
-<p>Point (2) can be estimated with the standard goodness of fit measures that are pervasive in the statistics literature. It may be noted that models may show a good fit, but do not learn the patterns that we would expect them to learn from a theoretical point of view. Point (1) is even more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met. Still, it is a hard assumption to verify which could limit the confidence people have in a causal interpretation of a PDP. In the two variable case we may already have difficulty finding a causal interepretation. As we saw with the ice-cream example, the direction of the dependency already makes a large difference. In many cases, the necessary domain knowledge may be hard to attain.</p>
+<p>Point (2) can be estimated with the standard goodness of fit measures that are pervasive in the statistics literature. It may be noted that models may show a good fit, but do not learn the patterns that we would expect them to learn from a theoretical point of view. Point (1) is even more difficult to verify, especially based on only the data. Here a certain amount of domain knowledge is needed to ensure the assumption is met. Still, it is a hard assumption to verify which could limit the confidence people have in a causal interpretation of a PDP. In the two variables case we may already have difficulty finding a causal interpretation. As we saw with the ice-cream example, the direction of the dependency already makes a large difference. In many cases, the necessary domain knowledge may be hard to attain.</p>
 
 </div>
 </div>
