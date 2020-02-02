@@ -455,7 +455,7 @@ knitr::include_graphics("images/sd_overfitting_presi2.png")
 ## Outlook
 So far all the sampling methods have been about drawing out of a distribution representing the whole space of each feature. 
 This global sampling disregards the covariance structure and results in a lot of samples drawn in areas so far away in distance from the point to explain, that their weight for the fitting process is essentially zero.
-(Just to not spark any confusion: 'Weight' in this subchapter revers to the weights in the loss function and not the weights of the explanation, as we have used so far.)
+(Just to not spark any confusion: 'Weight' in this subchapter refers to the weights in the loss function and not the weights of the explanation, as we have used so far.)
 These samples are a huge computational burden while having almost no influence at all on the fit.
 A solution to this problem is not implemented in the R and Python LIME packages (@thomasp85lime and @marcotcrlime) but @laugel2018defining gives a thorough overview of how local sampling tackles exactly that for the classification case.
 In short, the weighting based on a distance measure can be removed while we only sample in the area around the point to explain.
