@@ -449,7 +449,7 @@ It seems as if the predictive surface is too complex to facilitate local and sta
 The curse of dimensionality affects locality very strongly.
 As distances in higher-dimensional Euclidean space are increasingly less meaningful, the definition of locality is very poor with an increasing number of features.
 
-summarizing, we observe both effects being described in the literature also for our real data example: 
+Summarizing, we observe both effects being described in the literature also for our real data example: 
 instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for large ones.
 For simulated data, we can observe these effects as well.
 At the same time, we can identify local and stable explanations in this controlled environment.
