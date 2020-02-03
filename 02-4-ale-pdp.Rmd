@@ -7,7 +7,7 @@
 <!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
 
 
-This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots. 
+This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to 2D PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots. 
 
 ## Comparison one feature
 
@@ -820,7 +820,7 @@ knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_x1x2x3_150_0_0p5_
 
 This plot \@ref(fig:ale2DaddedUpx1x2x3) shows exactly what happens in this case, when the 1st order effects of the ALE are added up to the 2nd order effects. One can see that although the connection between $x_2$ and $x_3$ has been detected by the 1st order ALEs (figure \@ref(fig:alesx1x2x3)) and has not been by the 1D PDPs (figure \@ref(fig:pdpsx1x2x3)), the comparable 2D plots look pretty much the same.
 
-In these two examples, it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.
+In these two examples, it seems like the 2D ALE is not much better than the 2D PDP. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.
 
 #### Example 1 modified - 2D comparison
 
@@ -967,7 +967,7 @@ knitr::include_graphics("images/ale_1_comp_2d_1st_orders_added_and_smaller3_bigg
 (ref:pdp2DdamagedCap) 2D PDP vs 2D ALE with added up 1st order effects of features $x_1$ and $x_2$ for stepwise prediction function.
 
 
-One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black-box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
+One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.
 
 ## Runtime comparison 
 In this chapter, the runtime of ALE and PDP will be compared. Therefore three general sizes of data sets have been sampled. One small with 100, a bigger one with 1,000 and the biggest with 10,000 observations. The number of features varies between 5 and 40, while there are always 2 categorial features and the others are numeric, as is the target variable. The predictor applied to these datasets is a regular SVM. It is way faster than the random forest, where the PDP estimation can easily take half a minute for just 1,000 observations.

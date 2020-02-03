@@ -200,7 +200,7 @@ The true relationship of the features on the target $y$ is described by:
 $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon $$
 We set the true coefficients to be $\beta_1 = 4$, $\beta_2 = -3$, $\beta_3 = 5$.
 
-We use linear regression (the true model) as a black-box model.
+We use linear regression (the true model) as a black box model.
 Using cross-validation, we confirm that the model has a high predictive capacity -- approaching the Bayes error.
 Not surprisingly, the linear model describes the association very well. 
 
@@ -449,7 +449,7 @@ It seems as if the predictive surface is too complex to facilitate local and sta
 The curse of dimensionality affects locality very strongly.
 As distances in higher-dimensional Euclidean space are increasingly less meaningful, the definition of locality is very poor with an increasing number of features.
 
-Summarising, we observe both effects being described in the literature also for our real data example: 
+Summarizing, we observe both effects being described in the literature also for our real data example: 
 instability (@alvarez2018robustness) for small kernel widths and global surrogates (@laugel2018defining) for large ones.
 For simulated data, we can observe these effects as well.
 At the same time, we can identify local and stable explanations in this controlled environment.
@@ -493,7 +493,7 @@ It only creates perturbations based on the instance to be explained.
 
 
 For our analysis, we used R (@R-base).
-For all black-box models, we used the mlr package (@R-mlr) and the lime package (@R-lime) for the LIME explanations.
+For all black box models, we used the mlr package (@R-mlr) and the lime package (@R-lime) for the LIME explanations.
 All plots have been created using ggplot2 (@R-ggplot2).
 
 

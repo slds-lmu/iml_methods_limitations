@@ -10,7 +10,7 @@ Even if the predictive power of a model may be very strong, it will still only b
 However, models with high predictive capacity do most of the time not seem simple to a human as seen throughout this book.
 In order to simplify a complex model we could use another model.
 These simplifying models are referred to as surrogate models.
-They imitate the black box prediction behaviour of a machine learning model subject to a specific and important constraint: 
+They imitate the black box prediction behavior of a machine learning model subject to a specific and important constraint: 
 surrogate models are interpretable.
 For example, we may use a neural network to solve a classification task.
 While a neural network is anything but interpretable, we may find that some of the decision boundaries are explained reasonably well by a logistic regression which in fact yields interpretable coefficients.
@@ -34,13 +34,13 @@ A LIME explanation could be retrieved by the following algorithm:
 
 3. Retrieve predictions $\hat{y}_{Z}$ for $Z$ using the black box model $f$.
 
-4. Weight $Z$ w.r.t. the proximity/neighbourhood to $x$.
+4. Weight $Z$ w.r.t. the proximity/neighborhood to $x$.
 
 5. Train an explainable weighted model $g$ on $Z$ and the associated predictions $\hat{y}_{Z}$.
 
 Return: An explanation for the interpretable model $g$.
 
-The visualisation below nicely depicts the described algorithm for a two-dimensional classification problem based on simulated data.
+The visualization below nicely depicts the described algorithm for a two-dimensional classification problem based on simulated data.
 We start only with our data split into two classes: 1 and 0.
 Then, we fit a model that can perfectly distinguish between the two classes.
 This is indicated by the sinus-shaped function drawn as a black curve.
@@ -48,7 +48,7 @@ We do not perturb the data in this case.
 (However, we may argue that our perturbation strategy is to use the original data.
 We will more formally discuss perturbation later on.)
 Now, we choose the data point, which we want an explanation for.
-It is coloured in yellow.
+It is colored in yellow.
 With respect to this point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points.
 Afterwards, we fit a classification model based on these weighted instances.
@@ -76,7 +76,7 @@ However, the model as a whole can be examined and validated by multiple (represe
 
 So far so good. 
 However, the previous outline was not very specific and leaves (at least) three questions.
-First, what does neighbourhood refer to?
+First, what does neighborhood refer to?
 Second, what properties should suitable explainers have?
 Third, what data do we use, why and how do we perturb this data?
 
@@ -91,26 +91,26 @@ $x$ can be an instance that is entirely new to us as long as it can be represent
 The final explanation for $x$ results from the maximisation of the loss-like fidelity term $\mathcal{L}\left(f, g, \pi_x \right)$ and a complexity term $\Omega\left(g\right)$.
 $f$ refers to the black box model we want to explain and $g$ to the explainer. 
 $G$ represents the complete hypothesis space of a given interpretable learner.
-The explanation has to deal with two trade-off terms when minimising: 
+The explanation has to deal with two trade-off terms when minimizing: 
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
-The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighbourhood of $x$.
+The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighborhood of $x$.
 
-### Neighbourhood
+### Neighborhood
 
 This leads us to the first open question:
-What does neighbourhood refer to?
-Neighbourhood is a very vague term.
-This is for good reason because a priori it is not clear how to specify a neighbourhood properly.
+What does neighborhood refer to?
+neighborhood is a very vague term.
+This is for good reason because a priori it is not clear how to specify a neighborhood properly.
 Technically, there are many different options to deal with this issue.
 Weighting the observations w.r.t. their distance to the observation being explained seems like a good idea.
-This may be implemented as an arbitrarily parametrised kernel.
-However, this leaves in total many scientific degrees of freedom which makes the neighbourhood definition somewhat problematic.
-This neighbourhood issue will be discussed in more detail in the next chapter.
+This may be implemented as an arbitrarily parametrized kernel.
+However, this leaves in total many scientific degrees of freedom which makes the neighborhood definition somewhat problematic.
+This neighborhood issue will be discussed in more detail in the next chapter.
 
 ### What makes a good explainer?
 
 We already answered the second open question -- what properties suitable explainers should have -- in parts.
-We mentioned the interpretability property and outlined generalised linear models or decision trees as examples.
+We mentioned the interpretability property and outlined generalized linear models or decision trees as examples.
 However, we did not discuss further desired properties of these models.
 Since they have strong assumptions, it is unlikely that they are capable of maintaining an optimal fit to the original black box model. 
 Recall our formula.
@@ -128,14 +128,14 @@ However, some data representations (e.g. word embeddings) are not human-interpre
 The function modeled by the black box model operates in the complete feature space. 
 It can even yield predictions for instances not seen in the training data.
 This means that the original data does not sufficiently explore the feature space.
-Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations so that we can better study the behaviour of the black box model.
+Hence, we want to create a more complete _grid_ of the data and fill the feature space with new observations so that we can better study the behavior of the black box model.
 Still, the data for the explainer should be related to the original data.
 Otherwise the explainer may be ill-placed in space having nothing in common with the original problem anymore.
 This is why we perturb the original data.
 But how does perturbation work?
 This is a priori not clear at all.
-For categorical features, perturbation may be realised by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
-Numerical features may be drawn from a properly parametrised (normal) distribution.
+For categorical features, perturbation may be realized by randomly changing the categories of a random amount of features, or even recombining all possible levels of these. 
+Numerical features may be drawn from a properly parametrized (normal) distribution.
 The perturbed data set, which is used to train the explainer, should be much larger than the original one and supposed to better represent the (possible) feature space, giving the surrogate model more anchor points -- especially in sparse areas.
 Further details on this topic will be studied in the next chapters.
 
@@ -188,11 +188,11 @@ This leaves us many scientific degrees of freedom when implementing it -- for th
 For example, we see that the model $f$ can be any machine learning model that exists.
 This gives us the opportunity to drastically change the underlying predictive model while keeping the same explainer $g$ with the same complexity constraints. 
 
-On the other hand, LIME being a very generic approach also means that many "hyperparameters", like the neighbourhood definition or the sampling/perturbation strategy, are arbitrary.
+On the other hand, LIME being a very generic approach also means that many "hyperparameters", like the neighborhood definition or the sampling/perturbation strategy, are arbitrary.
 Hence, it is likely that in some use cases LIME explanations heavily depend on changing the hyperparameters.
 In these cases, the explanations can hardly be trusted and should be treated with great care.
 
 The following two chapters will focus on two very significant hyperparameters: 
-the neighbourhood definition and the sampling strategy.
+the neighborhood definition and the sampling strategy.
 They will investigate how these affect the results of the method and their interpretability.
-We will emphasise the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 
+We will emphasize the coefficient stability of LIME explainers in order to illustrate the trustworthiness of the results. 

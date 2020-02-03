@@ -90,7 +90,7 @@ Thus -- and after gathering empirical evidence supporting this --, we choose to 
 
 To give more substance to the introduction, in figure \@ref(fig:figbasic) one can see two LIME results of a simple numerical example.
 Both use the same settings except one uses a different sample seed than the other.
- The black-box model in blue is tried to be explained by the surrogate model as the red line.
+ The black box model in blue is tried to be explained by the surrogate model as the red line.
 The black dots are the sampled values dealing as training data set for the surrogate model, which tries to explain our target point, the dot in yellow.
 The vertical bars are an indicator of the kernel width.
 This color scheme is kept from now on in all further graphics.
@@ -112,7 +112,7 @@ Do certain settings influence these and is there a tendency?
 ## Sketching Problems of Sampling
 
 To give an idea of the potential problems, a few artificial showcases are presented in the following.
-In figure \@ref(fig:figbad) a sinus shaped black-box model is tried to be explained twice again with a different seed.
+In figure \@ref(fig:figbad) a sinus shaped black box model is tried to be explained twice again with a different seed.
 
 ```{r, figbad, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled", warning=FALSE}
 
@@ -167,7 +167,7 @@ knitr::include_graphics("images/boston_prezi.png")
 In the following, weight stability is explored by resampling an explanation 100 times for a specific setting.
 Of the 100 weights of each feature in the explanations, the mean and the empirical 2.5% and 97.5% quantiles are calculated and depicted in the figures.
 Based on the quantiles we then plot the empirical 95% confidence interval.
-As the black-box model, a random forest model with default parameters is used.
+As the black box model, a random forest model with default parameters is used.
 The reasoning here is, that random forests are very common in practice and their default parameters usually perform well without tuning.
 For the sampling, we choose to use kernel density estimation.
 The reason is the results of later experiments, showing kernel density estimation as a benefactor for weight stability compared to the other methods.
@@ -183,7 +183,7 @@ In the first showcase, the mean data point is compared with an extreme outlier (
 As we can see in figure \@ref(fig:figbostmeanoutlier), the outlier has larger confidence intervals as the mean point.
 This suggests that either the model is behaving roughly in its area, or, more likely, the sample size in the neighborhood has a significant influence on our stability, as our original features have higher density mass around the mean with the kernel density estimation copying that approximately.
 
-```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, out.width = '99%', fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95\\% confidence interval across repeated runs"}
+```{r, figbostmeanoutlier, eval = TRUE, echo = FALSE, out.width = '99%', fig.show='hold', fig.align = 'center', fig.cap = "Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- error bars indicating the empirical 95\\% confidence interval across repeated runs"}
 
 knitr::include_graphics("images/boston_meanVSmax.png")
 
@@ -193,11 +193,11 @@ knitr::include_graphics("images/boston_meanVSmax.png")
 
 #### Decision tree versus linear regression model
 
-This scenario compares two different black-box models. 
+This scenario compares two different black box models. 
 The left plot in figure \@ref(fig:figbosttreelm) shows the weights explaining a decision tree, while the right one shows the case for a linear regression model.
-It is kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black-box model could have a huge influence on weight stability.
+It is kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black box model could have a huge influence on weight stability.
 
-```{r, figbosttreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
+```{r, figbosttreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black box model versus a linear regression model"}
 
 knitr::include_graphics("images/boston_treeVSlm.png")
 
@@ -255,11 +255,11 @@ knitr::include_graphics("images/bikes_majVSmin.png")
 
 #### Decision tree versus linear regression model
 
-Again, we are comparing a decision tree with a linear regression model as the black-box model in figure \@ref(fig:figbiketreelm).
+Again, we are comparing a decision tree with a linear regression model as the black box model in figure \@ref(fig:figbiketreelm).
 The differences are visible, but by far not as much as in the numerical case.
 This suggests we include this categorical data set in our experiments further down but expect the results will not be as clear cut as in the numerical case.
 
-```{r, figbiketreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black-box model versus a linear regression model"}
+```{r, figbiketreelm, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME weights of a decision tree as black box model versus a linear regression model"}
 
 knitr::include_graphics("images/bikes_treeVSlm.png")
 
@@ -274,7 +274,7 @@ We have observed:
 
 - a target point in an area with higher sample denseness is more stable than an extreme outlier
 
-- different black-box models have highly different stableness
+- different black box models have highly different stableness
 
 - different sampling options and numerical features compared to categorical ones also show different behavior
 
@@ -295,7 +295,7 @@ The experiment is designed as given by this algorithm:
 
 1) Start with only two features of the original data as the training data.
 
-2) Train a black-box model (random forest with default parameters).
+2) Train a black box model (random forest with default parameters).
 
 3) Ten randomly sampled data points of the original data set are explained repeatedly ten times.
 
@@ -311,7 +311,7 @@ This procedure is executed for all the sampling options possible for the Boston 
 The results are shown in figure \@ref(fig:figsdp) and as can be seen, it is hard to spot a clear tendency.
 If the curse of dimensionality would apply for our case, we definitely would not expect improving stability by adding new features.
 Thus, a curse of dimensionality can not be identified in our case and a high feature amount should not necessarily concern the user.
-As a further thought, since LIME models the black-box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.
+As a further thought, since LIME models the black box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.
 
 ```{r, figsdp, eval = TRUE, echo = FALSE, fig.show='hold', fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the resulting LIME weights regarding the feature dimension of the Boston Housing and Rental Bikes dataset. Each line shows a different sampling option."}
 
@@ -356,7 +356,7 @@ Here, the setup is basically the same as in the case for the experiment about th
 #### Sample size -- results
 
 Again, we run the modified algorithm of the experiment for all the possible sampling options at the Boston Housing and Rental Bike dataset.
-As a result, we receive the averaged standard deviation of all weights per sample size and sampling option.
+As a result, we receive the average standard deviation of all weights per sample size and sampling option.
 These are depicted in figure \@ref(fig:fignperm) and show a clear and monotonous trend of more samples having a huge positive impact on the stability.
 Additionally, binning seems to be consistently dominated by other sampling options.
 
@@ -367,16 +367,16 @@ knitr::include_graphics("images/sd_npermutations_presi2.png")
 
 We have seen before in figure \@ref(fig:figsdp) feature dimension being relatively unrelated to weight stability, while the sample size is the total opposite -- does this make sense?
 After all if not the feature dimension, what else may cause a high sample requirement?
-As we have already seen in figure \@ref(fig:figbosttreelm) the black-box model may be the phantom we are hunting.
+As we have already seen in figure \@ref(fig:figbosttreelm) the black box model may be the phantom we are hunting.
 This motivates the last two experiments in this chapter.
 
 
 
-### Influence of black-box
+### Influence of black box
 
 The simulations already presented in figure \@ref(fig:figbasic) and figure \@ref(fig:figbad) suggest more volatility and less smoothness of the prediction surface may influence weight stability.
 Demonstrating the problem through a slightly adjusted real case problem, we are using sampled Boston Housing data of sample size 20, and modeling only $medv \sim lstat$.
-Because LIME does not know the original data, the resulting black-box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in figure \@ref(fig:figverybad).
+Because LIME does not know the original data, the resulting black box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in figure \@ref(fig:figverybad).
 
 ```{r, figverybad, eval = TRUE, echo = FALSE, fig.show='hold', out.width = '99%', fig.align = 'center', fig.cap = "LIME trying to explain an extremely volatily prediction surface. The prediction surface is an extreme overfit of a small subset of the Boston Housing data."}
 knitr::include_graphics("images/boston_sampled_tree_presi3.png")
@@ -384,7 +384,7 @@ knitr::include_graphics("images/boston_sampled_tree_presi3.png")
 
 
 
-#### Black-box -- setup
+#### Black box -- setup
 
 To receive meaningful results, we need comparable models.
 For this, we choose to pick a random forest as the model class and iterate over the two parameters being the most responsible for a smooth fit.
@@ -404,13 +404,13 @@ Here is a slightly modified algorithm as the framework for our experiment:
 
 
 
-#### Black-box -- results
+#### Black box -- results
 
 The results in figure \@ref(fig:figsmooth) are unambiguous: It is shown clearly how important the smoothness of the model is for weight stability. 
 Keep in mind the model was fitted on two very specific datasets, which means if we would pick more complex data, the line could take much longer to flatten out, and vice versa for less complex data.
 As a small sidenote, binning is again consistently inferior.
 
-```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
+```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
 
 knitr::include_graphics("images/sd_smoothness_presi2.png")
 
@@ -423,7 +423,7 @@ This leads us to the last experiment.
 
 
 
-#### Black-box overfit -- setup
+#### Black box overfit -- setup
 
 Before, we started with a very unsmooth model and gradually added more regularisation (more trees and higher minimum node size).
 But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure by increasing only a single hyperparameter: Extreme Gradient Boosting (@XGBoost).
@@ -433,7 +433,7 @@ Additionally, we are also interested in the training error as it is a good indic
 
 
 
-#### Black-box overfit -- results
+#### Black box overfit -- results
 
 As we can see in  figure \@ref(fig:figoverfit), as long as the XGBoost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer.
 Let's try to dissect why this is happening in such a dependent fashion:
@@ -444,7 +444,7 @@ It becomes more volatile.
 And this volatility kills our weight stability.
 
 
-```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries."}
+```{r, figoverfit, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries."}
 
 knitr::include_graphics("images/sd_overfitting_presi2.png")
 
