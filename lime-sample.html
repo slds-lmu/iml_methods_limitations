@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-02-02" />
+<meta name="date" content="2020-02-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -244,7 +244,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
 <li class="chapter" data-level="12.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
 <li class="chapter" data-level="12.2" data-path="lime.html"><a href="lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="lime.html"><a href="lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.1" data-path="lime.html"><a href="lime.html#neighborhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighborhood</a></li>
 <li class="chapter" data-level="12.2.2" data-path="lime.html"><a href="lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
 <li class="chapter" data-level="12.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
 </ul></li>
@@ -278,7 +278,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.4" data-path="lime-sample.html"><a href="lime-sample.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
 <li class="chapter" data-level="14.4.1" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
 <li class="chapter" data-level="14.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
-<li class="chapter" data-level="14.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black box</a></li>
 </ul></li>
 <li class="chapter" data-level="14.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
 <li class="chapter" data-level="14.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
@@ -333,7 +333,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="visualization-of-a-basic-example" class="section level3">
 <h3><span class="header-section-number">14.1.3</span> Visualization of a basic example</h3>
-<p>To give more substance to the introduction, in figure <a href="lime-sample.html#fig:figbasic">14.1</a> one can see two LIME results of a simple numerical example. Both use the same settings except one uses a different sample seed than the other. The black-box model in blue is tried to be explained by the surrogate model as the red line. The black dots are the sampled values dealing as training data set for the surrogate model, which tries to explain our target point, the dot in yellow. The vertical bars are an indicator of the kernel width. This color scheme is kept from now on in all further graphics.</p>
+<p>To give more substance to the introduction, in figure <a href="lime-sample.html#fig:figbasic">14.1</a> one can see two LIME results of a simple numerical example. Both use the same settings except one uses a different sample seed than the other. The black box model in blue is tried to be explained by the surrogate model as the red line. The black dots are the sampled values dealing as training data set for the surrogate model, which tries to explain our target point, the dot in yellow. The vertical bars are an indicator of the kernel width. This color scheme is kept from now on in all further graphics.</p>
 <div class="figure" style="text-align: center"><span id="fig:figbasic"></span>
 <img src="images/convex_samples_1vs2.png" alt="Visulization of LIME applied on a non-linear function - the right plot uses the same settings but is resampled" width="99%" />
 <p class="caption">
@@ -345,7 +345,7 @@ FIGURE 14.1: Visulization of LIME applied on a non-linear function - the right p
 </div>
 <div id="sketching-problems-of-sampling" class="section level2">
 <h2><span class="header-section-number">14.2</span> Sketching Problems of Sampling</h2>
-<p>To give an idea of the potential problems, a few artificial showcases are presented in the following. In figure <a href="lime-sample.html#fig:figbad">14.2</a> a sinus shaped black-box model is tried to be explained twice again with a different seed.</p>
+<p>To give an idea of the potential problems, a few artificial showcases are presented in the following. In figure <a href="lime-sample.html#fig:figbad">14.2</a> a sinus shaped black box model is tried to be explained twice again with a different seed.</p>
 <div class="figure" style="text-align: center"><span id="fig:figbad"></span>
 <img src="images/nonconvex_samples_1vs2.png" alt="LIME applied on a non-convex function - again, the right plot uses the same settings but is resampled" width="99%" />
 <p class="caption">
@@ -380,24 +380,24 @@ FIGURE 14.4: LIME applied on a non-convex function with increased kernel width a
 FIGURE 14.5: Overview of the normalized numerical features compared to the target ‘medv’ in the Boston Housing dataset
 </p>
 </div>
-<p>In the following, weight stability is explored by resampling an explanation 100 times for a specific setting. Of the 100 weights of each feature in the explanations, the mean and the empirical 2.5% and 97.5% quantiles are calculated and depicted in the figures. Based on the quantiles we then plot the empirical 95% confidence interval. As the black-box model, a random forest model with default parameters is used. The reasoning here is, that random forests are very common in practice and their default parameters usually perform well without tuning. For the sampling, we choose to use kernel density estimation. The reason is the results of later experiments, showing kernel density estimation as a benefactor for weight stability compared to the other methods. The target point to explain is the mean of the original dataset. In each of the following scenarios, only one of the above-described settings is changed. Not all possible scenarios are shown, but only a cherry-picked selection supposed to spark interest in the experiments further down.</p>
+<p>In the following, weight stability is explored by resampling an explanation 100 times for a specific setting. Of the 100 weights of each feature in the explanations, the mean and the empirical 2.5% and 97.5% quantiles are calculated and depicted in the figures. Based on the quantiles we then plot the empirical 95% confidence interval. As the black box model, a random forest model with default parameters is used. The reasoning here is, that random forests are very common in practice and their default parameters usually perform well without tuning. For the sampling, we choose to use kernel density estimation. The reason is the results of later experiments, showing kernel density estimation as a benefactor for weight stability compared to the other methods. The target point to explain is the mean of the original dataset. In each of the following scenarios, only one of the above-described settings is changed. Not all possible scenarios are shown, but only a cherry-picked selection supposed to spark interest in the experiments further down.</p>
 <div id="mean-point-versus-outlying-point" class="section level4">
 <h4><span class="header-section-number">14.3.1.1</span> Mean point versus outlying point</h4>
 <p>In the first showcase, the mean data point is compared with an extreme outlier (having the maximum appearing value of each feature). As we can see in figure <a href="lime-sample.html#fig:figbostmeanoutlier">14.6</a>, the outlier has larger confidence intervals as the mean point. This suggests that either the model is behaving roughly in its area, or, more likely, the sample size in the neighborhood has a significant influence on our stability, as our original features have higher density mass around the mean with the kernel density estimation copying that approximately.</p>
 <div class="figure" style="text-align: center"><span id="fig:figbostmeanoutlier"></span>
-<img src="images/boston_meanVSmax.png" alt="Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95\% confidence interval across repeated runs" width="99%" />
+<img src="images/boston_meanVSmax.png" alt="Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- error bars indicating the empirical 95\% confidence interval across repeated runs" width="99%" />
 <p class="caption">
-FIGURE 14.6: Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot – errorbars indicating the empirical 95% confidence interval across repeated runs
+FIGURE 14.6: Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot – error bars indicating the empirical 95% confidence interval across repeated runs
 </p>
 </div>
 </div>
 <div id="decision-tree-versus-linear-regression-model" class="section level4">
 <h4><span class="header-section-number">14.3.1.2</span> Decision tree versus linear regression model</h4>
-<p>This scenario compares two different black-box models. The left plot in figure <a href="lime-sample.html#fig:figbosttreelm">14.7</a> shows the weights explaining a decision tree, while the right one shows the case for a linear regression model. It is kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black-box model could have a huge influence on weight stability.</p>
+<p>This scenario compares two different black box models. The left plot in figure <a href="lime-sample.html#fig:figbosttreelm">14.7</a> shows the weights explaining a decision tree, while the right one shows the case for a linear regression model. It is kind of expected of the linear model to have very stable weights, but the differences to the decision tree are still striking, suggesting the black box model could have a huge influence on weight stability.</p>
 <div class="figure" style="text-align: center"><span id="fig:figbosttreelm"></span>
-<img src="images/boston_treeVSlm.png" alt="LIME weights of a decision tree as black-box model versus a linear regression model" width="99%" />
+<img src="images/boston_treeVSlm.png" alt="LIME weights of a decision tree as black box model versus a linear regression model" width="99%" />
 <p class="caption">
-FIGURE 14.7: LIME weights of a decision tree as black-box model versus a linear regression model
+FIGURE 14.7: LIME weights of a decision tree as black box model versus a linear regression model
 </p>
 </div>
 </div>
@@ -434,11 +434,11 @@ FIGURE 14.10: Weight coefficients of LIME applied to the majority data point ver
 </div>
 <div id="decision-tree-versus-linear-regression-model-1" class="section level4">
 <h4><span class="header-section-number">14.3.2.2</span> Decision tree versus linear regression model</h4>
-<p>Again, we are comparing a decision tree with a linear regression model as the black-box model in figure <a href="lime-sample.html#fig:figbiketreelm">14.11</a>. The differences are visible, but by far not as much as in the numerical case. This suggests we include this categorical data set in our experiments further down but expect the results will not be as clear cut as in the numerical case.</p>
+<p>Again, we are comparing a decision tree with a linear regression model as the black box model in figure <a href="lime-sample.html#fig:figbiketreelm">14.11</a>. The differences are visible, but by far not as much as in the numerical case. This suggests we include this categorical data set in our experiments further down but expect the results will not be as clear cut as in the numerical case.</p>
 <div class="figure" style="text-align: center"><span id="fig:figbiketreelm"></span>
-<img src="images/bikes_treeVSlm.png" alt="LIME weights of a decision tree as black-box model versus a linear regression model" width="99%" />
+<img src="images/bikes_treeVSlm.png" alt="LIME weights of a decision tree as black box model versus a linear regression model" width="99%" />
 <p class="caption">
-FIGURE 14.11: LIME weights of a decision tree as black-box model versus a linear regression model
+FIGURE 14.11: LIME weights of a decision tree as black box model versus a linear regression model
 </p>
 </div>
 </div>
@@ -449,7 +449,7 @@ FIGURE 14.11: LIME weights of a decision tree as black-box model versus a linear
 <p>All the different scenarios we have encountered so far show more or less discrepancy in weight stability between certain settings. We have observed:</p>
 <ul>
 <li><p>a target point in an area with higher sample denseness is more stable than an extreme outlier</p></li>
-<li><p>different black-box models have highly different stableness</p></li>
+<li><p>different black box models have highly different stableness</p></li>
 <li><p>different sampling options and numerical features compared to categorical ones also show different behavior</p></li>
 </ul>
 <p>Based on these findings, we construct several experiments to investigate each point and to see, if we receive results showing a clear, monotonous tendency for weight stability concerning available parameters.</p>
@@ -461,7 +461,7 @@ FIGURE 14.11: LIME weights of a decision tree as black-box model versus a linear
 <p>The experiment is designed as given by this algorithm:</p>
 <ol style="list-style-type: decimal">
 <li><p>Start with only two features of the original data as the training data.</p></li>
-<li><p>Train a black-box model (random forest with default parameters).</p></li>
+<li><p>Train a black box model (random forest with default parameters).</p></li>
 <li><p>Ten randomly sampled data points of the original data set are explained repeatedly ten times.</p></li>
 <li><p>The standard deviation of the ten weights of each feature and each explained point is calculated, and then all the standard deviations are averaged to a single value.</p></li>
 <li><p>If there are unused features left, add a new feature to the existing feature set and continue from step 2), else stop.</p></li>
@@ -469,7 +469,7 @@ FIGURE 14.11: LIME weights of a decision tree as black-box model versus a linear
 </div>
 <div id="feature-dimension---results" class="section level4">
 <h4><span class="header-section-number">14.4.1.2</span> Feature dimension - results</h4>
-<p>This procedure is executed for all the sampling options possible for the Boston Housing and the Rental Bikes dataset. The results are shown in figure <a href="lime-sample.html#fig:figsdp">14.12</a> and as can be seen, it is hard to spot a clear tendency. If the curse of dimensionality would apply for our case, we definitely would not expect improving stability by adding new features. Thus, a curse of dimensionality can not be identified in our case and a high feature amount should not necessarily concern the user. As a further thought, since LIME models the black-box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.</p>
+<p>This procedure is executed for all the sampling options possible for the Boston Housing and the Rental Bikes dataset. The results are shown in figure <a href="lime-sample.html#fig:figsdp">14.12</a> and as can be seen, it is hard to spot a clear tendency. If the curse of dimensionality would apply for our case, we definitely would not expect improving stability by adding new features. Thus, a curse of dimensionality can not be identified in our case and a high feature amount should not necessarily concern the user. As a further thought, since LIME models the black box and not the original data, dimensionality in the dataset has only an indirect impact as what matters is how the model fits interactions between features.</p>
 <div class="figure" style="text-align: center"><span id="fig:figsdp"></span>
 <img src="images/sd_p_presi3.png" alt="Average standard deviation of the resulting LIME weights regarding the feature dimension of the Boston Housing and Rental Bikes dataset. Each line shows a different sampling option." width="99%" />
 <p class="caption">
@@ -497,19 +497,19 @@ FIGURE 14.13: Average standard deviation with the same settings as before but wi
 <p>The next experiment is about the influence of the sample size. The difference between an explained point in a high-density region compared to one sitting in a low-density area was easily recognizable in figure <a href="lime-sample.html#fig:figbostmeanoutlier">14.6</a>. The question is how this relates to an increased global sampling size, which we try to answer in the following. Here, the setup is basically the same as in the case for the experiment about the number of features selected, except we iterate over different sample sizes.</p>
 <div id="sample-size-results" class="section level4">
 <h4><span class="header-section-number">14.4.2.1</span> Sample size – results</h4>
-<p>Again, we run the modified algorithm of the experiment for all the possible sampling options at the Boston Housing and Rental Bike dataset. As a result, we receive the averaged standard deviation of all weights per sample size and sampling option. These are depicted in figure <a href="lime-sample.html#fig:fignperm">14.14</a> and show a clear and monotonous trend of more samples having a huge positive impact on the stability. Additionally, binning seems to be consistently dominated by other sampling options.</p>
+<p>Again, we run the modified algorithm of the experiment for all the possible sampling options at the Boston Housing and Rental Bike dataset. As a result, we receive the average standard deviation of all weights per sample size and sampling option. These are depicted in figure <a href="lime-sample.html#fig:fignperm">14.14</a> and show a clear and monotonous trend of more samples having a huge positive impact on the stability. Additionally, binning seems to be consistently dominated by other sampling options.</p>
 <div class="figure" style="text-align: center"><span id="fig:fignperm"></span>
 <img src="images/sd_npermutations_presi2.png" alt="Average standard deviation with the same settings as before but increasing sample size. A clear trend can be seen here: Increasing the amount of samples (which is acting as train data for our surrogate model) has remarkable influence on weight stability." width="99%" />
 <p class="caption">
 FIGURE 14.14: Average standard deviation with the same settings as before but increasing sample size. A clear trend can be seen here: Increasing the amount of samples (which is acting as train data for our surrogate model) has remarkable influence on weight stability.
 </p>
 </div>
-<p>We have seen before in figure <a href="lime-sample.html#fig:figsdp">14.12</a> feature dimension being relatively unrelated to weight stability, while the sample size is the total opposite – does this make sense? After all if not the feature dimension, what else may cause a high sample requirement? As we have already seen in figure <a href="lime-sample.html#fig:figbosttreelm">14.7</a> the black-box model may be the phantom we are hunting. This motivates the last two experiments in this chapter.</p>
+<p>We have seen before in figure <a href="lime-sample.html#fig:figsdp">14.12</a> feature dimension being relatively unrelated to weight stability, while the sample size is the total opposite – does this make sense? After all if not the feature dimension, what else may cause a high sample requirement? As we have already seen in figure <a href="lime-sample.html#fig:figbosttreelm">14.7</a> the black box model may be the phantom we are hunting. This motivates the last two experiments in this chapter.</p>
 </div>
 </div>
 <div id="influence-of-black-box" class="section level3">
-<h3><span class="header-section-number">14.4.3</span> Influence of black-box</h3>
-<p>The simulations already presented in figure <a href="lime-sample.html#fig:figbasic">14.1</a> and figure <a href="lime-sample.html#fig:figbad">14.2</a> suggest more volatility and less smoothness of the prediction surface may influence weight stability. Demonstrating the problem through a slightly adjusted real case problem, we are using sampled Boston Housing data of sample size 20, and modeling only <span class="math inline">\(medv \sim lstat\)</span>. Because LIME does not know the original data, the resulting black-box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in figure <a href="lime-sample.html#fig:figverybad">14.15</a>.</p>
+<h3><span class="header-section-number">14.4.3</span> Influence of black box</h3>
+<p>The simulations already presented in figure <a href="lime-sample.html#fig:figbasic">14.1</a> and figure <a href="lime-sample.html#fig:figbad">14.2</a> suggest more volatility and less smoothness of the prediction surface may influence weight stability. Demonstrating the problem through a slightly adjusted real case problem, we are using sampled Boston Housing data of sample size 20, and modeling only <span class="math inline">\(medv \sim lstat\)</span>. Because LIME does not know the original data, the resulting black box fit seems like an impossible task to approximate linearly in an appropriate manner with only small samples as seen in figure <a href="lime-sample.html#fig:figverybad">14.15</a>.</p>
 <div class="figure" style="text-align: center"><span id="fig:figverybad"></span>
 <img src="images/boston_sampled_tree_presi3.png" alt="LIME trying to explain an extremely volatily prediction surface. The prediction surface is an extreme overfit of a small subset of the Boston Housing data." width="99%" />
 <p class="caption">
@@ -517,7 +517,7 @@ FIGURE 14.15: LIME trying to explain an extremely volatily prediction surface. T
 </p>
 </div>
 <div id="black-box-setup" class="section level4">
-<h4><span class="header-section-number">14.4.3.1</span> Black-box – setup</h4>
+<h4><span class="header-section-number">14.4.3.1</span> Black box – setup</h4>
 <p>To receive meaningful results, we need comparable models. For this, we choose to pick a random forest as the model class and iterate over the two parameters being the most responsible for a smooth fit. These are the tree amount and the minimum node size. A higher tree amount gives the prediction surface more smoothness (by reducing the average step size of each step in the prediction function), while a higher minimum node size reduces overfitting (by making predictions dependent on more train data points) and as consequence reducing the volatility of the prediction surface. Here is a slightly modified algorithm as the framework for our experiment:</p>
 <ol style="list-style-type: decimal">
 <li><p>Start with a tree amount of one and a minimum node size of one.</p></li>
@@ -528,27 +528,27 @@ FIGURE 14.15: LIME trying to explain an extremely volatily prediction surface. T
 </ol>
 </div>
 <div id="black-box-results" class="section level4">
-<h4><span class="header-section-number">14.4.3.2</span> Black-box – results</h4>
+<h4><span class="header-section-number">14.4.3.2</span> Black box – results</h4>
 <p>The results in figure <a href="lime-sample.html#fig:figsmooth">14.16</a> are unambiguous: It is shown clearly how important the smoothness of the model is for weight stability. Keep in mind the model was fitted on two very specific datasets, which means if we would pick more complex data, the line could take much longer to flatten out, and vice versa for less complex data. As a small sidenote, binning is again consistently inferior.</p>
 <div class="figure" style="text-align: center"><span id="fig:figsmooth"></span>
-<img src="images/sd_smoothness_presi2.png" alt="Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10." width="99%" />
+<img src="images/sd_smoothness_presi2.png" alt="Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10." width="99%" />
 <p class="caption">
-FIGURE 14.16: Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10.
+FIGURE 14.16: Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10.
 </p>
 </div>
 <p>We have just seen how important the smoothness is, but this would mean we can expect the inverted effect for more overfitting. After all, our data case could be misleading as there are more complicated tasks in the real world requiring a much more volatile fit. A certain level of smoothness is then often not given, so it would be nice to know of how much worse the stability can get in the case of extreme overfitting. This leads us to the last experiment.</p>
 </div>
 <div id="black-box-overfit-setup" class="section level4">
-<h4><span class="header-section-number">14.4.3.3</span> Black-box overfit – setup</h4>
+<h4><span class="header-section-number">14.4.3.3</span> Black box overfit – setup</h4>
 <p>Before, we started with a very unsmooth model and gradually added more regularisation (more trees and higher minimum node size). But now, we are doing the opposite with a model class being able to fit an arbitrarily complex data structure by increasing only a single hyperparameter: Extreme Gradient Boosting (<span class="citation">Chen and Guestrin (<a href="#ref-XGBoost">2016</a>)</span>). For this, we start with only two trees and double the amount with each iteration. All the other settings and the algorithm for receiving the results are kept the same. Additionally, we are also interested in the training error as it is a good indicator of when our boosting algorithm stops overfitting more (due to its nature of fitting residuals the test error cannot get worse after the training data is fitted perfectly).</p>
 </div>
 <div id="black-box-overfit-results" class="section level4">
-<h4><span class="header-section-number">14.4.3.4</span> Black-box overfit – results</h4>
+<h4><span class="header-section-number">14.4.3.4</span> Black box overfit – results</h4>
 <p>As we can see in figure <a href="lime-sample.html#fig:figoverfit">14.17</a>, as long as the XGBoost learner is able to reduce the training error, the weight stability gets consistently worse, but not any longer. Let’s try to dissect why this is happening in such a dependent fashion: What makes the training error get smaller? Reducing the residuals. What consequence has reducing the residuals on the prediction surface assuming a certain level of Gaussian noise? It becomes more volatile. And this volatility kills our weight stability.</p>
 <div class="figure" style="text-align: center"><span id="fig:figoverfit"></span>
-<img src="images/sd_overfitting_presi2.png" alt="Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries." width="99%" />
+<img src="images/sd_overfitting_presi2.png" alt="Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries." width="99%" />
 <p class="caption">
-FIGURE 14.17: Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.
+FIGURE 14.17: Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.
 </p>
 </div>
 </div>

@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-02-02}
+\date{\vspace{-2.5em}2020-02-03}
 
 \begin{document}
 \maketitle
@@ -2310,22 +2310,23 @@ be used. The uncentered ALE can be approximated by the formula
 
 In a first step the relevant dimension of the feature space is divided
 into K intervals beginning with the starting point \(z_{0, j}\). As it
-is not clear how to exactly divide the feature space, section 3.x deals
-with that question. The upper boundary of the k-th interval is denoted
-by \(z_{k, ~j}\) as well as the lower boundary by \(z_{k-1, ~j}\). The
-half-open interval \(]z_{k-1,~j},~z_{k,~j}]\) is defined as \(I_k\).
-\(N_j(k)\) denotes the k-th interval, i.e. \(]z_{k-1,~j}, z_{k,~j}]\)
-and \(n_j(k)\) the total number of observations having the j-value
-within this interval. \(x_j^{(i)}\) is the j-value of the i-th
-observation and correspondingly \(x_{\setminus j}^{(i)}\) the values of
-the other features. The term on the right approximates the expected
-partial derivative within each interval. Therefore each instance within
-an interval is shifted to the upper and lower limit of the interval and
-the total difference of the prediction is calculated. Divided by the
-length of the interval this is a reasonable approximation for the
-``local'' effect on the prediction, if the feature of interest changes
-(cet. par.). By averaging these approximations over all observations
-within the k-th interval, we receive a rough estimator for the term
+is not clear how to exactly divide the feature space, section
+\ref{ale-misc} deals with that question. The upper boundary of the k-th
+interval is denoted by \(z_{k, ~j}\) as well as the lower boundary by
+\(z_{k-1, ~j}\). The half-open interval \(]z_{k-1,~j},~z_{k,~j}]\) is
+defined as \(I_k\). \(N_j(k)\) denotes the k-th interval, i.e.
+\(]z_{k-1,~j}, z_{k,~j}]\) and \(n_j(k)\) the total number of
+observations having the j-value within this interval. \(x_j^{(i)}\) is
+the j-value of the i-th observation and correspondingly
+\(x_{\setminus j}^{(i)}\) the values of the other features. The term on
+the right approximates the expected partial derivative within each
+interval. Therefore each instance within an interval is shifted to the
+upper and lower limit of the interval and the total difference of the
+prediction is calculated. Divided by the length of the interval this is
+a reasonable approximation for the ``local'' effect on the prediction,
+if the feature of interest changes (cet. par.). By averaging these
+approximations over all observations within the k-th interval, we
+receive a rough estimator for the term
 \(E_{X_c \mid X_j} [\hat{f}^j(X_j,~X_c)\mid X_j \in N_j(k)]\), which we
 take as constant effect for the k-th interval. By integrating over this
 step function, which represents the locally estimated derivatives, the
@@ -2449,9 +2450,10 @@ This subchapter of ALE will focus on the comparison of ALE and PDP,
 especially on the influence of correlation in the underlying datasets.
 At first, the interpretation for the regular one dimensional (or 1D) ALE
 to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be
-introduced and their difference to PDPs will be explained. Additionally,
-a runtime comparison will be shown and to conclude this chapter a
-real-world example will be analyzed with ALE, PDP and ICE plots.
+introduced and their difference to 2D PDPs will be explained.
+Additionally, a runtime comparison will be shown and to conclude this
+chapter a real-world example will be analyzed with ALE, PDP and ICE
+plots.
 
 \section{Comparison one feature}\label{comparison-one-feature}
 
@@ -2993,8 +2995,8 @@ and \(x_3\) has been detected by the 1st order ALEs (figure
 \ref{fig:pdpsx1x2x3}), the comparable 2D plots look pretty much the
 same.
 
-In these two examples, it seems like the 2D ALE is not that much better
-than the ALE. But making just a small change to the prediction function
+In these two examples, it seems like the 2D ALE is not much better than
+the 2D PDP. But making just a small change to the prediction function
 for unrealistic values (regarding the underlying data) exposes the
 sensitivity of the PDP estimation for extrapolation.
 
@@ -3036,10 +3038,10 @@ of features \(x_1\) and \(x_2\) for stepwise prediction function.}\label{fig:pdp
 One big advantage of the ALE in general over the PDP is, that it hardly
 extrapolates in the estimation, which is usually the case for the PDP
 with correlated features. And one can take a look at separated 1st and
-2nd order effects, which can be very helpful, especially for real
-black-box models with complicated links. Furthermore, in the next
-chapter, the runtime will turn out to be a strong advocate for the ALE,
-especially for bigger datasets.
+2nd order effects, which can be very helpful, especially for real black
+box models with complicated links. Furthermore, in the next chapter, the
+runtime will turn out to be a strong advocate for the ALE, especially
+for bigger datasets.
 
 \section{Runtime comparison}\label{runtime-comparison}
 
@@ -4112,7 +4114,7 @@ existing, any heterogeneous relationship. Yet, these methods do not
 provide any insights to what extent a feature contributes to the
 predictive power of a model - in the following defined as Feature
 Importance. This perspective becomes interesting when recalling that
-black-box machine learning models aim for predictive accuracy rather
+black box machine learning models aim for predictive accuracy rather
 than for inference. Hence, it is persuasive to also establish
 agnostic-methods that focus on the performance dimension. In the
 following, the two most common approaches, Permutation Feature
@@ -4345,7 +4347,7 @@ assumption can often be rejected in reality. As mentioned in chapter 3,
 PDPs may suffer in their interpretability, if this assumption is
 violated. Not only the interpretability of PDPs can be affected, but
 also the interpretability of Feature Importance can strongly depend on
-the correlations between the input features. In case of correlated
+the correlations between the input features. In the case of correlated
 features in the data, which are very likely to occur in reality, the
 results of the Feature Importance method do not reflect the individual
 true Feature Importance anymore. This can lead to a misleading
@@ -4429,7 +4431,7 @@ A good way to visualize the effects of correlated features on the
 Feature Importance measures is to simulate some data with the desired
 dependencies of the features. This allows us to show the effects on the
 PFI and LOCO Feature Importance more precisely than looking on a real
-data set where additional dependencies between each features exist and
+data set where additional dependencies between each feature exist and
 may falsify the results. To filter out the real effect, it is necessary
 to hold the influence of other features as small as possible to prevent
 misinterpretations. For the complete R Code of these simulations please
@@ -4526,7 +4528,7 @@ generalize accurately, the Feature Importance can vary greatly when
 rerunning the algorithms. Therefore, the resulting effects cannot be
 seen as significant \citep{parr2018}. Figure \ref{fig:bmr01} shows the
 benchmark result for the learning algorithms used on the simulated data
-sets with independence, medium and high correlation. As a performance
+sets with independence, medium and high correlation. As performance
 measures we decided showing two. On the one hand, the mean squared error
 (MSE), since it is also used as a loss measure for evaluating the
 Feature Importance. On the other hand \(R^2\), because it is a common
@@ -4542,7 +4544,7 @@ linear model is by far the best model to predict this linear dependence
 on the target value.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{images/bmr01b} \caption{Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model.}\label{fig:bmr01}
+\includegraphics[width=1\linewidth]{images/bmr01b} \caption{Benchmark results of scenario 1 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The color represents the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model.}\label{fig:bmr01}
 \end{figure}
 
 \begin{figure}
@@ -4577,7 +4579,7 @@ seen in the right plot. For independence, all points are near the
 average rank of 2.5. The small fluctuations or deviations can be
 explained by the underlying stochastic. However, for a correlation
 higher than 0.5 we see a gap between the correlated features in red
-colour and the uncorrelated in green colour. The correlated features
+color and the uncorrelated in green color. The correlated features
 settle down at an average rank of about 1.5 and the uncorrelated ones at
 about 3.5. Although all features have the same influence on the target
 value, one can see that PFI can be misleading as it shows a higher PFI
@@ -4620,7 +4622,7 @@ important. The larger span of the quantile bands can be explained by the
 random permuting of the data points. If the observation is still close
 to the data distribution after permuting it, the error made is less
 severe as in the example shown in the plot. For example, the point is
-still in the blue shaded are. Hence, the change in error strongly
+still in the blue shaded area. Hence, the change in error strongly
 depends on how far away the permuted data is from the real underlying
 data distribution. To sum up, the extrapolation problem of the random
 forest is associated with the correlation intensity.
@@ -4740,8 +4742,8 @@ importance rank.}
 
 Figure \ref{fig:arrange05} presents the LOCO Feature Importance on the
 simulated data sets within the SVM model. Once again, we can observe a
-drop in importance of \(X1\) and \(X2\) the higher the correlation. In
-comparison to the random forest, you cannot recognize a compensation
+drop in the importance of \(X1\) and \(X2\) the higher the correlation.
+In comparison to the random forest, you cannot recognize a compensation
 effect of the uncorrelated features. The plot on the left reveals that
 under independence the quantile bands for \(X1\) and \(X2\) are very
 large whereas under high correlation they are getting smaller and even
@@ -4920,7 +4922,7 @@ Importance as well.
 
 }
 
-\caption{Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The colour representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model. }\label{fig:bmr04}
+\caption{Benchmark results of scenario 3 for data sets with p = 0, p = 0.5 and p = 0.99 (from left to right). On top the performance measure is the MSE, at the bottom $R^2$. The color representing the learning algorithm. Red: Random Forest, green: SVM and blue: Linear Model. }\label{fig:bmr04}
 \end{figure}
 
 \begin{figure}
@@ -6675,7 +6677,7 @@ be very strong, it will still only be a model. However, models with high
 predictive capacity do most of the time not seem simple to a human as
 seen throughout this book. In order to simplify a complex model we could
 use another model. These simplifying models are referred to as surrogate
-models. They imitate the black box prediction behaviour of a machine
+models. They imitate the black box prediction behavior of a machine
 learning model subject to a specific and important constraint: surrogate
 models are interpretable. For example, we may use a neural network to
 solve a classification task. While a neural network is anything but
@@ -6716,7 +6718,7 @@ A LIME explanation could be retrieved by the following algorithm:
   Retrieve predictions \(\hat{y}_{Z}\) for \(Z\) using the black box
   model \(f\).
 \item
-  Weight \(Z\) w.r.t. the proximity/neighbourhood to \(x\).
+  Weight \(Z\) w.r.t. the proximity/neighborhood to \(x\).
 \item
   Train an explainable weighted model \(g\) on \(Z\) and the associated
   predictions \(\hat{y}_{Z}\).
@@ -6724,7 +6726,7 @@ A LIME explanation could be retrieved by the following algorithm:
 
 Return: An explanation for the interpretable model \(g\).
 
-The visualisation below nicely depicts the described algorithm for a
+The visualization below nicely depicts the described algorithm for a
 two-dimensional classification problem based on simulated data. We start
 only with our data split into two classes: 1 and 0. Then, we fit a model
 that can perfectly distinguish between the two classes. This is
@@ -6732,7 +6734,7 @@ indicated by the sinus-shaped function drawn as a black curve. We do not
 perturb the data in this case. (However, we may argue that our
 perturbation strategy is to use the original data. We will more formally
 discuss perturbation later on.) Now, we choose the data point, which we
-want an explanation for. It is coloured in yellow. With respect to this
+want an explanation for. It is colored in yellow. With respect to this
 point, we weight our data by giving close observations higher weights.
 We illustrate this by the size of data points. Afterwards, we fit a
 classification model based on these weighted instances. This yields an
@@ -6757,7 +6759,7 @@ the model as a whole can be examined and validated by multiple
 \section{How LIME works in detail}\label{how-lime-works-in-detail}
 
 So far so good. However, the previous outline was not very specific and
-leaves (at least) three questions. First, what does neighbourhood refer
+leaves (at least) three questions. First, what does neighborhood refer
 to? Second, what properties should suitable explainers have? Third, what
 data do we use, why and how do we perturb this data?
 
@@ -6777,24 +6779,24 @@ loss-like fidelity term \(\mathcal{L}\left(f, g, \pi_x \right)\) and a
 complexity term \(\Omega\left(g\right)\). \(f\) refers to the black box
 model we want to explain and \(g\) to the explainer. \(G\) represents
 the complete hypothesis space of a given interpretable learner. The
-explanation has to deal with two trade-off terms when minimising: The
+explanation has to deal with two trade-off terms when minimizing: The
 first term \(\mathcal{L}\left(f, g, \pi_x \right)\) is responsible to
 deliver the optimal fit of \(g\) to the model \(f\) while a low
 \emph{loss} is desirable indicating high (local) \emph{fidelity}. The
 optimal fit is only found with respect to a proximity measure
-\(\pi_x(z)\) in the neighbourhood of \(x\).
+\(\pi_x(z)\) in the neighborhood of \(x\).
 
-\subsection{Neighbourhood}\label{neighbourhood}
+\subsection{Neighborhood}\label{neighborhood}
 
-This leads us to the first open question: What does neighbourhood refer
-to? Neighbourhood is a very vague term. This is for good reason because
-a priori it is not clear how to specify a neighbourhood properly.
+This leads us to the first open question: What does neighborhood refer
+to? neighborhood is a very vague term. This is for good reason because a
+priori it is not clear how to specify a neighborhood properly.
 Technically, there are many different options to deal with this issue.
 Weighting the observations w.r.t. their distance to the observation
 being explained seems like a good idea. This may be implemented as an
-arbitrarily parametrised kernel. However, this leaves in total many
-scientific degrees of freedom which makes the neighbourhood definition
-somewhat problematic. This neighbourhood issue will be discussed in more
+arbitrarily parametrized kernel. However, this leaves in total many
+scientific degrees of freedom which makes the neighborhood definition
+somewhat problematic. This neighborhood issue will be discussed in more
 detail in the next chapter.
 
 \subsection{What makes a good
@@ -6802,7 +6804,7 @@ explainer?}\label{what-makes-a-good-explainer}
 
 We already answered the second open question -- what properties suitable
 explainers should have -- in parts. We mentioned the interpretability
-property and outlined generalised linear models or decision trees as
+property and outlined generalized linear models or decision trees as
 examples. However, we did not discuss further desired properties of
 these models. Since they have strong assumptions, it is unlikely that
 they are capable of maintaining an optimal fit to the original black box
@@ -6830,15 +6832,15 @@ even yield predictions for instances not seen in the training data. This
 means that the original data does not sufficiently explore the feature
 space. Hence, we want to create a more complete \emph{grid} of the data
 and fill the feature space with new observations so that we can better
-study the behaviour of the black box model. Still, the data for the
+study the behavior of the black box model. Still, the data for the
 explainer should be related to the original data. Otherwise the
 explainer may be ill-placed in space having nothing in common with the
 original problem anymore. This is why we perturb the original data. But
 how does perturbation work? This is a priori not clear at all. For
-categorical features, perturbation may be realised by randomly changing
+categorical features, perturbation may be realized by randomly changing
 the categories of a random amount of features, or even recombining all
 possible levels of these. Numerical features may be drawn from a
-properly parametrised (normal) distribution. The perturbed data set,
+properly parametrized (normal) distribution. The perturbed data set,
 which is used to train the explainer, should be much larger than the
 original one and supposed to better represent the (possible) feature
 space, giving the surrogate model more anchor points -- especially in
@@ -6915,16 +6917,16 @@ to drastically change the underlying predictive model while keeping the
 same explainer \(g\) with the same complexity constraints.
 
 On the other hand, LIME being a very generic approach also means that
-many ``hyperparameters'', like the neighbourhood definition or the
+many ``hyperparameters'', like the neighborhood definition or the
 sampling/perturbation strategy, are arbitrary. Hence, it is likely that
 in some use cases LIME explanations heavily depend on changing the
 hyperparameters. In these cases, the explanations can hardly be trusted
 and should be treated with great care.
 
 The following two chapters will focus on two very significant
-hyperparameters: the neighbourhood definition and the sampling strategy.
+hyperparameters: the neighborhood definition and the sampling strategy.
 They will investigate how these affect the results of the method and
-their interpretability. We will emphasise the coefficient stability of
+their interpretability. We will emphasize the coefficient stability of
 LIME explainers in order to illustrate the trustworthiness of the
 results.
 
@@ -7208,7 +7210,7 @@ target \(y\) is described by:
 We set the true coefficients to be \(\beta_1 = 4\), \(\beta_2 = -3\),
 \(\beta_3 = 5\).
 
-We use linear regression (the true model) as a black-box model. Using
+We use linear regression (the true model) as a black box model. Using
 cross-validation, we confirm that the model has a high predictive
 capacity -- approaching the Bayes error. Not surprisingly, the linear
 model describes the association very well.
@@ -7586,7 +7588,7 @@ affects locality very strongly. As distances in higher-dimensional
 Euclidean space are increasingly less meaningful, the definition of
 locality is very poor with an increasing number of features.
 
-Summarising, we observe both effects being described in the literature
+Summarizing, we observe both effects being described in the literature
 also for our real data example: instability
 (\citet{alvarez2018robustness}) for small kernel widths and global
 surrogates (\citet{laugel2018defining}) for large ones. For simulated
@@ -7635,7 +7637,7 @@ instance to be explained.
 
 \subsection{Packages used}\label{id61}
 
-For our analysis, we used R (\citet{R-base}). For all black-box models,
+For our analysis, we used R (\citet{R-base}). For all black box models,
 we used the mlr package (\citet{R-mlr}) and the lime package
 (\citet{R-lime}) for the LIME explanations. All plots have been created
 using ggplot2 (\citet{R-ggplot2}).
@@ -7822,7 +7824,7 @@ example}\label{visualization-of-a-basic-example}
 To give more substance to the introduction, in figure \ref{fig:figbasic}
 one can see two LIME results of a simple numerical example. Both use the
 same settings except one uses a different sample seed than the other.
-The black-box model in blue is tried to be explained by the surrogate
+The black box model in blue is tried to be explained by the surrogate
 model as the red line. The black dots are the sampled values dealing as
 training data set for the surrogate model, which tries to explain our
 target point, the dot in yellow. The vertical bars are an indicator of
@@ -7851,7 +7853,7 @@ Sampling}\label{sketching-problems-of-sampling}
 
 To give an idea of the potential problems, a few artificial showcases
 are presented in the following. In figure \ref{fig:figbad} a sinus
-shaped black-box model is tried to be explained twice again with a
+shaped black box model is tried to be explained twice again with a
 different seed.
 
 \begin{figure}
@@ -7931,7 +7933,7 @@ explanation 100 times for a specific setting. Of the 100 weights of each
 feature in the explanations, the mean and the empirical 2.5\% and 97.5\%
 quantiles are calculated and depicted in the figures. Based on the
 quantiles we then plot the empirical 95\% confidence interval. As the
-black-box model, a random forest model with default parameters is used.
+black box model, a random forest model with default parameters is used.
 The reasoning here is, that random forests are very common in practice
 and their default parameters usually perform well without tuning. For
 the sampling, we choose to use kernel density estimation. The reason is
@@ -7960,18 +7962,18 @@ kernel density estimation copying that approximately.
 
 }
 
-\caption{Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- errorbars indicating the empirical 95\% confidence interval across repeated runs}\label{fig:figbostmeanoutlier}
+\caption{Weight coefficients of LIME applied to the mean data point in the left plot and an extreme outlier on the right plot -- error bars indicating the empirical 95\% confidence interval across repeated runs}\label{fig:figbostmeanoutlier}
 \end{figure}
 
 \subsubsection{Decision tree versus linear regression
 model}\label{decision-tree-versus-linear-regression-model}
 
-This scenario compares two different black-box models. The left plot in
+This scenario compares two different black box models. The left plot in
 figure \ref{fig:figbosttreelm} shows the weights explaining a decision
 tree, while the right one shows the case for a linear regression model.
 It is kind of expected of the linear model to have very stable weights,
 but the differences to the decision tree are still striking, suggesting
-the black-box model could have a huge influence on weight stability.
+the black box model could have a huge influence on weight stability.
 
 \begin{figure}
 
@@ -7979,7 +7981,7 @@ the black-box model could have a huge influence on weight stability.
 
 }
 
-\caption{LIME weights of a decision tree as black-box model versus a linear regression model}\label{fig:figbosttreelm}
+\caption{LIME weights of a decision tree as black box model versus a linear regression model}\label{fig:figbosttreelm}
 \end{figure}
 
 \subsubsection{Kernel density estimation versus
@@ -8052,7 +8054,7 @@ in the Boston Housing case, almost not visible.
 model}\label{decision-tree-versus-linear-regression-model-1}
 
 Again, we are comparing a decision tree with a linear regression model
-as the black-box model in figure \ref{fig:figbiketreelm}. The
+as the black box model in figure \ref{fig:figbiketreelm}. The
 differences are visible, but by far not as much as in the numerical
 case. This suggests we include this categorical data set in our
 experiments further down but expect the results will not be as clear cut
@@ -8064,7 +8066,7 @@ as in the numerical case.
 
 }
 
-\caption{LIME weights of a decision tree as black-box model versus a linear regression model}\label{fig:figbiketreelm}
+\caption{LIME weights of a decision tree as black box model versus a linear regression model}\label{fig:figbiketreelm}
 \end{figure}
 
 \section{Experiments regarding Sampling
@@ -8079,7 +8081,7 @@ observed:
   a target point in an area with higher sample denseness is more stable
   than an extreme outlier
 \item
-  different black-box models have highly different stableness
+  different black box models have highly different stableness
 \item
   different sampling options and numerical features compared to
   categorical ones also show different behavior
@@ -8109,7 +8111,7 @@ The experiment is designed as given by this algorithm:
   Start with only two features of the original data as the training
   data.
 \item
-  Train a black-box model (random forest with default parameters).
+  Train a black box model (random forest with default parameters).
 \item
   Ten randomly sampled data points of the original data set are
   explained repeatedly ten times.
@@ -8132,7 +8134,7 @@ tendency. If the curse of dimensionality would apply for our case, we
 definitely would not expect improving stability by adding new features.
 Thus, a curse of dimensionality can not be identified in our case and a
 high feature amount should not necessarily concern the user. As a
-further thought, since LIME models the black-box and not the original
+further thought, since LIME models the black box and not the original
 data, dimensionality in the dataset has only an indirect impact as what
 matters is how the model fits interactions between features.
 
@@ -8192,7 +8194,7 @@ sample sizes.
 
 Again, we run the modified algorithm of the experiment for all the
 possible sampling options at the Boston Housing and Rental Bike dataset.
-As a result, we receive the averaged standard deviation of all weights
+As a result, we receive the average standard deviation of all weights
 per sample size and sampling option. These are depicted in figure
 \ref{fig:fignperm} and show a clear and monotonous trend of more samples
 having a huge positive impact on the stability. Additionally, binning
@@ -8211,11 +8213,11 @@ We have seen before in figure \ref{fig:figsdp} feature dimension being
 relatively unrelated to weight stability, while the sample size is the
 total opposite -- does this make sense? After all if not the feature
 dimension, what else may cause a high sample requirement? As we have
-already seen in figure \ref{fig:figbosttreelm} the black-box model may
+already seen in figure \ref{fig:figbosttreelm} the black box model may
 be the phantom we are hunting. This motivates the last two experiments
 in this chapter.
 
-\subsection{Influence of black-box}\label{influence-of-black-box}
+\subsection{Influence of black box}\label{influence-of-black-box}
 
 The simulations already presented in figure \ref{fig:figbasic} and
 figure \ref{fig:figbad} suggest more volatility and less smoothness of
@@ -8223,7 +8225,7 @@ the prediction surface may influence weight stability. Demonstrating the
 problem through a slightly adjusted real case problem, we are using
 sampled Boston Housing data of sample size 20, and modeling only
 \(medv \sim lstat\). Because LIME does not know the original data, the
-resulting black-box fit seems like an impossible task to approximate
+resulting black box fit seems like an impossible task to approximate
 linearly in an appropriate manner with only small samples as seen in
 figure \ref{fig:figverybad}.
 
@@ -8236,7 +8238,7 @@ figure \ref{fig:figverybad}.
 \caption{LIME trying to explain an extremely volatily prediction surface. The prediction surface is an extreme overfit of a small subset of the Boston Housing data.}\label{fig:figverybad}
 \end{figure}
 
-\subsubsection{Black-box -- setup}\label{black-box-setup}
+\subsubsection{Black box -- setup}\label{black-box-setup}
 
 To receive meaningful results, we need comparable models. For this, we
 choose to pick a random forest as the model class and iterate over the
@@ -8267,7 +8269,7 @@ framework for our experiment:
   stop.
 \end{enumerate}
 
-\subsubsection{Black-box -- results}\label{black-box-results}
+\subsubsection{Black box -- results}\label{black-box-results}
 
 The results in figure \ref{fig:figsmooth} are unambiguous: It is shown
 clearly how important the smoothness of the model is for weight
@@ -8282,7 +8284,7 @@ As a small sidenote, binning is again consistently inferior.
 
 }
 
-\caption{Average standard deviation of the same settings as before versus the black-box model smoothness. As the black-box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10.}\label{fig:figsmooth}
+\caption{Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10.}\label{fig:figsmooth}
 \end{figure}
 
 We have just seen how important the smoothness is, but this would mean
@@ -8293,7 +8295,7 @@ smoothness is then often not given, so it would be nice to know of how
 much worse the stability can get in the case of extreme overfitting.
 This leads us to the last experiment.
 
-\subsubsection{Black-box overfit --
+\subsubsection{Black box overfit --
 setup}\label{black-box-overfit-setup}
 
 Before, we started with a very unsmooth model and gradually added more
@@ -8308,7 +8310,7 @@ error as it is a good indicator of when our boosting algorithm stops
 overfitting more (due to its nature of fitting residuals the test error
 cannot get worse after the training data is fitted perfectly).
 
-\subsubsection{Black-box overfit --
+\subsubsection{Black box overfit --
 results}\label{black-box-overfit-results}
 
 As we can see in figure \ref{fig:figoverfit}, as long as the XGBoost
@@ -8326,7 +8328,7 @@ stability.
 
 }
 
-\caption{Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black-box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.}\label{fig:figoverfit}
+\caption{Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.}\label{fig:figoverfit}
 \end{figure}
 
 \section{Outlook}\label{outlook-2}

@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-02-02" />
+<meta name="date" content="2020-02-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -244,7 +244,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
 <li class="chapter" data-level="12.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
 <li class="chapter" data-level="12.2" data-path="lime.html"><a href="lime.html#how-lime-works-in-detail"><i class="fa fa-check"></i><b>12.2</b> How LIME works in detail</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="lime.html"><a href="lime.html#neighbourhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighbourhood</a></li>
+<li class="chapter" data-level="12.2.1" data-path="lime.html"><a href="lime.html#neighborhood"><i class="fa fa-check"></i><b>12.2.1</b> Neighborhood</a></li>
 <li class="chapter" data-level="12.2.2" data-path="lime.html"><a href="lime.html#what-makes-a-good-explainer"><i class="fa fa-check"></i><b>12.2.2</b> What makes a good explainer?</a></li>
 <li class="chapter" data-level="12.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
 </ul></li>
@@ -278,7 +278,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.4" data-path="lime-sample.html"><a href="lime-sample.html#experiments-regarding-sampling-stability"><i class="fa fa-check"></i><b>14.4</b> Experiments regarding Sampling stability</a><ul>
 <li class="chapter" data-level="14.4.1" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-feature-dimension"><i class="fa fa-check"></i><b>14.4.1</b> Influence of feature dimension</a></li>
 <li class="chapter" data-level="14.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
-<li class="chapter" data-level="14.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black-box</a></li>
+<li class="chapter" data-level="14.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black box</a></li>
 </ul></li>
 <li class="chapter" data-level="14.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
 <li class="chapter" data-level="14.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
@@ -310,7 +310,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><em>Author: Jakob Bodensteiner</em></p>
 <p><em>Supervisor: Christian Scholbeck</em></p>
 <!-- TODO:  referencen auf Apley usw noch setzen  [@Apley2016, page 11], [@molnar2019]-->
-<p>This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots.</p>
+<p>This subchapter of ALE will focus on the comparison of ALE and PDP, especially on the influence of correlation in the underlying datasets. At first, the interpretation for the regular one dimensional (or 1D) ALE to the 1D PDP will be discussed. Thereafter two-dimensional ALEs will be introduced and their difference to 2D PDPs will be explained. Additionally, a runtime comparison will be shown and to conclude this chapter a real-world example will be analyzed with ALE, PDP and ICE plots.</p>
 <div id="comparison-one-feature" class="section level2">
 <h2><span class="header-section-number">6.1</span> Comparison one feature</h2>
 <p>So far in this book, one could already see a few examples of the PDP for one feature and its limitations. The ALE is kind of the solution for the biggest issue with the PDP. The ALE can interpret models predicting on correlated variables correctly, while the PDP may fail in this case. Before the two methods will be compared, here comes a short reminder regarding the interpretation.</p>
@@ -538,7 +538,7 @@ FIGURE 6.11: 2D PDP vs 2D ALE with added up 1st order effects of features <span 
 </div>
 
 <p>This plot <a href="ale-pdp.html#fig:ale2DaddedUpx1x2x3">6.11</a> shows exactly what happens in this case, when the 1st order effects of the ALE are added up to the 2nd order effects. One can see that although the connection between <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span> has been detected by the 1st order ALEs (figure <a href="ale-pdp.html#fig:alesx1x2x3">6.2</a>) and has not been by the 1D PDPs (figure <a href="ale-pdp.html#fig:pdpsx1x2x3">6.1</a>), the comparable 2D plots look pretty much the same.</p>
-<p>In these two examples, it seems like the 2D ALE is not that much better than the ALE. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.</p>
+<p>In these two examples, it seems like the 2D ALE is not much better than the 2D PDP. But making just a small change to the prediction function for unrealistic values (regarding the underlying data) exposes the sensitivity of the PDP estimation for extrapolation.</p>
 </div>
 <div id="example-1-modified---2d-comparison" class="section level4">
 <h4><span class="header-section-number">6.2.2.3</span> Example 1 modified - 2D comparison</h4>
@@ -558,7 +558,7 @@ FIGURE 6.12: 2D PDP vs 2D ALE with added up 1st order effects of features <span 
 </p>
 </div>
 
-<p>One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black-box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.</p>
+<p>One big advantage of the ALE in general over the PDP is, that it hardly extrapolates in the estimation, which is usually the case for the PDP with correlated features. And one can take a look at separated 1st and 2nd order effects, which can be very helpful, especially for real black box models with complicated links. Furthermore, in the next chapter, the runtime will turn out to be a strong advocate for the ALE, especially for bigger datasets.</p>
 </div>
 </div>
 </div>
