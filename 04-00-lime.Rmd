@@ -95,7 +95,7 @@ The explanation has to deal with two trade-off terms when minimizing:
 The first term $\mathcal{L}\left(f, g, \pi_x \right)$ is responsible to deliver the optimal fit of $g$ to the model $f$ while a low _loss_ is desirable indicating high (local) _fidelity_.
 The optimal fit is only found with respect to a proximity measure $\pi_x(z)$ in the neighborhood of $x$.
 
-### neighborhood
+### Neighborhood
 
 This leads us to the first open question:
 What does neighborhood refer to?
