@@ -51,7 +51,7 @@ After concluding, we explain how LIME was used and why in section \@ref(id6).
 When obtaining explanations with LIME, the neighborhood of an observation is determined when fitting the model by applying weights to the data.
 These weights are chosen w.r.t. the proximity to the observation to be explained.
 However, there is no natural law stating that local models have to be found this way.
-Alternatively, @craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve locally fidelity models.
+Alternatively, @craven1996 show that increasing the density of observations around the instance of interest is very helpful to achieve locally fidele models.
 Hence, locality could be obtained in many more different ways than weighting observations combined with global sampling as it is in LIME.
 After sampling, the data points are weighted w.r.t. their proximity to the observation to be explained.
 One possible alternative to this procedure might be to combine steps 2 (sampling) and 4 (weighting) of the LIME algorithm ^[Refer to the previous chapter.] to a local sampling.
