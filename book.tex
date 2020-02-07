@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-02-03}
+\date{\vspace{-2.5em}2020-02-07}
 
 \begin{document}
 \maketitle
@@ -7418,12 +7418,12 @@ small kernel which however also produces stable coefficients.
 Having investigated simulated data where we knew the ground truth, gave
 us a good intuition on how the kernel size affects the resulting
 explainer model. The neighborhood problem can be described briefly by
-the following. A (too) small kernel width creates unstable coefficients
-whilst a too large kernel width fits a global surrogate model. An
-optimal kernel size should balance these effects. We may formulate the
-problem as a minimization problem w.r.t. the kernel size. However, the
-minimization needs to consider the constraint that coefficients need to
-be stable.
+the following. A (too) small kernel width usually worsens coefficient
+stability whilst a too large kernel width fits a global surrogate model.
+An optimal kernel size should balance these effects. We may formulate
+the problem as a minimization problem w.r.t. the kernel size. However,
+the minimization needs to consider the constraint that coefficients need
+to be stable.
 
 \subsection{Real data}\label{id42}
 

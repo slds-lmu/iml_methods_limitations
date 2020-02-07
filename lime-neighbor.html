@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-02-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -449,7 +449,7 @@ FIGURE 13.10: Simulated data: Local coefficients for different kernel widths exp
 FIGURE 13.11: Simulated data: Local coefficients and confidence intervals for different kernel widths explaining non-linear relationship (for <span class="math inline">\(x_2\)</span>).
 </p>
 </div>
-<p>Having investigated simulated data where we knew the ground truth, gave us a good intuition on how the kernel size affects the resulting explainer model. The neighborhood problem can be described briefly by the following. A (too) small kernel width creates unstable coefficients whilst a too large kernel width fits a global surrogate model. An optimal kernel size should balance these effects. We may formulate the problem as a minimization problem w.r.t. the kernel size. However, the minimization needs to consider the constraint that coefficients need to be stable.</p>
+<p>Having investigated simulated data where we knew the ground truth, gave us a good intuition on how the kernel size affects the resulting explainer model. The neighborhood problem can be described briefly by the following. A (too) small kernel width usually worsens coefficient stability whilst a too large kernel width fits a global surrogate model. An optimal kernel size should balance these effects. We may formulate the problem as a minimization problem w.r.t. the kernel size. However, the minimization needs to consider the constraint that coefficients need to be stable.</p>
 </div>
 </div>
 <div id="id42" class="section level3">
