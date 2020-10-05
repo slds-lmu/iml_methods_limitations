@@ -165,7 +165,7 @@
 
 \title{Limitations of Interpretable Machine Learning Methods}
 \author{}
-\date{\vspace{-2.5em}2020-02-07}
+\date{\vspace{-2.5em}2020-10-05}
 
 \begin{document}
 \maketitle
@@ -486,7 +486,7 @@ More specifically, they do so by shedding light on the following issues
 \item
   Algorithm transparency - How does the algorithm create the model?
 \item
-  Global, kolistic model interpretability - How does the trained model
+  Global, holistic model interpretability - How does the trained model
   make predictions?
 \item
   Global model interpretability on a modular level - How do parts of the
@@ -1814,7 +1814,7 @@ book.
 
 \emph{Supervisor: Gunnar König}
 
-\section{Introduction}\label{introduction-1}
+\section{Introduction}\label{introduction}
 
 Machine learning methods excel at learning associations between features
 and the target. The supervised machine learning model estimates \(Y\)
@@ -2272,7 +2272,7 @@ necessary domain knowledge may be hard to attain.
 
 \emph{Supervisor: Christian Scholbeck}
 
-\section{Motivation}\label{motivation-1}
+\section{Motivation}\label{motivation}
 
 As seen in section 2 PDPs don't work well as soon as two or more
 features are correlated. This gives rise to the definition of ALEs.
@@ -4090,7 +4090,7 @@ category 1 to 12 instead of an increase, as in the ALE-plot with
 similarity-based order. This underlines how careful one should be when
 interpreting ALE-plots for categorical features.
 
-\subsection{Conclusion}\label{conclusion-1}
+\subsection{Conclusion}\label{conclusion}
 
 We have seen how sensitive the ALE (for categorical features) is for
 different orders of the category. Due to the lack of theoretical
@@ -5211,7 +5211,7 @@ derive a suitable interpretation of the machine learning algorithm, we
 recommend to have a look at other model-agnostic tools like PDP, ICE,
 ALE or LIME as well.
 
-\section{Summary}\label{summary-1}
+\section{Summary}\label{summary}
 
 Calculating Feature Importance for simple linear models is not strongly
 affected by correlation. However, the calculation of Feature Importance
@@ -6456,6 +6456,118 @@ still an overfit of the GBM.
 Now, we used the same data set but an overfitting GBM. You can find the
 corresponding plots below:
 
+\begin{verbatim}
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+\end{verbatim}
+
 \begin{figure}
 \centering
 \includegraphics{book_files/figure-latex/unnamed-chunk-50-1.pdf}
@@ -6463,6 +6575,118 @@ corresponding plots below:
 test data is the same as seen before in the well fitted case. The range
 of the test data is quite the same as before.}
 \end{figure}
+
+\begin{verbatim}
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+\end{verbatim}
 
 \includegraphics{book_files/figure-latex/unnamed-chunk-51-1.pdf} At
 first sight these two plots look very similar to the first two. The
@@ -6477,6 +6701,118 @@ actually is.
 The last 2 plots for the uncorrelated data set are the ones of an
 underfitting GBM:
 
+\begin{verbatim}
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+\end{verbatim}
+
 \begin{figure}
 \centering
 \includegraphics{book_files/figure-latex/unnamed-chunk-52-1.pdf}
@@ -6485,6 +6821,118 @@ on test data. The importance is now reduced with highest value at around
 1.6 in contrast to 2.4 before. Furthermore, x1 is the least important
 feature now.}
 \end{figure}
+
+\begin{verbatim}
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+
+## Warning in use.package("data.table"): data.table
+## cannot be used without R package bit64 version 0.9.7 or
+## higher. Please upgrade to take advangage of data.table
+## speedups.
+\end{verbatim}
 
 \includegraphics{book_files/figure-latex/unnamed-chunk-53-1.pdf} With
 the plots for an underfitting GBM it is noticeable that the range is
@@ -6624,7 +7072,7 @@ importance:
 \caption{Visualisation of the impact of correlation on the feature importance. As you have seen above, correlation is a problem regarding permutation feature importance but does not effect the decision regarding test vs. training data}\label{fig:unnamed-chunk-60}
 \end{figure}
 
-\section{Summary}\label{summary-2}
+\section{Summary}\label{summary}
 
 The Question what data set you use for calculation of the permutation
 feature importance still depends on what you are interested in:
@@ -6867,6 +7315,12 @@ extend this prediction offers a good fit on the black box model
 \end{verbatim}
 
 \begin{verbatim}
+## The following object is masked from 'package:generics':
+## 
+##     explain
+\end{verbatim}
+
+\begin{verbatim}
 ## The following object is masked from 'package:dplyr':
 ## 
 ##     explain
@@ -6907,7 +7361,7 @@ extend this prediction offers a good fit on the black box model
 \caption{Basic example of a LIME application. We create a black box model on the iris dataset without the first data point and then explain the prediction of this point with LIME.}\label{fig:unnamed-chunk-65}
 \end{figure}
 
-\section{Outlook}\label{outlook-1}
+\section{Outlook}\label{outlook}
 
 The definition of LIME still seems after all very rough and vague. This
 leaves us many scientific degrees of freedom when implementing it -- for
@@ -7770,7 +8224,7 @@ approximation. On the other hand, an issue like this was not encountered
 during the preparation of this work as most used learners are well
 regularized in space of low data denseness.
 
-\subsubsection{Categorical features}\label{categorical-features-1}
+\subsubsection{Categorical features}\label{categorical-features}
 
 Categorical features are handled more straight forward then numerical
 ones due to finite space. The R LIME package (\citet{thomasp85lime})
@@ -8331,7 +8785,7 @@ stability.
 \caption{Average standard deviation with the same settings as before versus the tree amount of the XGBoost model used as black box predictor. The black line indicates the train error rescaled linearly to fit between the plot boundaries.}\label{fig:figoverfit}
 \end{figure}
 
-\section{Outlook}\label{outlook-2}
+\section{Outlook}\label{outlook}
 
 So far all the sampling methods have been about drawing out of a
 distribution representing the whole space of each feature. This global
@@ -8375,7 +8829,7 @@ to the absence of implementation in the R LIME package
 of the experiments to reinforce the assertions just made, but further
 research is strongly recommended.
 
-\section{Conclusion}\label{conclusion-2}
+\section{Conclusion}\label{conclusion}
 
 In all cases of categorical and numerical data we investigated, weight
 stability issues can be found easily. But LIME explanations for

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 2 Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) | Limitations of Interpretable Machine Learning Methods</title>
   <meta name="description" content="Situations in which PDP, ALE, LIME, LOCO and feature importance fail." />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 2 Introduction to Partial Dependence Plots (PDP) and Individual Conditional Expectation (ICE) | Limitations of Interpretable Machine Learning Methods" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2020-02-07" />
+<meta name="date" content="2020-10-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -149,14 +149,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.5" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="pdp-causal.html"><a href="pdp-causal.html"><i class="fa fa-check"></i><b>4</b> PDP and Causal Interpretation</a><ul>
-<li class="chapter" data-level="4.1" data-path="pdp-causal.html"><a href="pdp-causal.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.1" data-path="introduction.html"><a href="introduction.html#introduction"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
 <li class="chapter" data-level="4.2" data-path="pdp-causal.html"><a href="pdp-causal.html#motivation"><i class="fa fa-check"></i><b>4.2</b> Motivation</a></li>
 <li class="chapter" data-level="4.3" data-path="pdp-causal.html"><a href="pdp-causal.html#causal-interpretability-interventions-and-directed-acyclical-graphs"><i class="fa fa-check"></i><b>4.3</b> Causal Interpretability: Interventions and Directed Acyclical Graphs</a></li>
 <li class="chapter" data-level="4.4" data-path="pdp-causal.html"><a href="pdp-causal.html#scenarios"><i class="fa fa-check"></i><b>4.4</b> Scenarios</a></li>
 <li class="chapter" data-level="4.5" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>4.5</b> Conclusion</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="ale.html"><a href="ale.html"><i class="fa fa-check"></i><b>5</b> Introduction to Accumulated Local Effects (ALE)</a><ul>
-<li class="chapter" data-level="5.1" data-path="ale.html"><a href="ale.html#motivation-1"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
+<li class="chapter" data-level="5.1" data-path="pdp-causal.html"><a href="pdp-causal.html#motivation"><i class="fa fa-check"></i><b>5.1</b> Motivation</a></li>
 <li class="chapter" data-level="5.2" data-path="ale.html"><a href="ale.html#ale-intro-formula"><i class="fa fa-check"></i><b>5.2</b> The Theoretical Formula</a><ul>
 <li class="chapter" data-level="5.2.1" data-path="ale.html"><a href="ale.html#centering"><i class="fa fa-check"></i><b>5.2.1</b> Centering</a></li>
 </ul></li>
@@ -203,7 +203,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.3.3" data-path="ale-misc.html"><a href="ale-misc.html#example-of-ale-with-categorical-feature"><i class="fa fa-check"></i><b>7.3.3</b> Example of ALE with categorical feature</a></li>
 <li class="chapter" data-level="7.3.4" data-path="ale-misc.html"><a href="ale-misc.html#interpretation"><i class="fa fa-check"></i><b>7.3.4</b> Interpretation</a></li>
 <li class="chapter" data-level="7.3.5" data-path="ale-misc.html"><a href="ale-misc.html#changes-of-the-ale-due-to-different-orders"><i class="fa fa-check"></i><b>7.3.5</b> Changes of the ALE due to different orders</a></li>
-<li class="chapter" data-level="7.3.6" data-path="ale-misc.html"><a href="ale-misc.html#conclusion-1"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
+<li class="chapter" data-level="7.3.6" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>7.3.6</b> Conclusion</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="pfi.html"><a href="pfi.html"><i class="fa fa-check"></i><b>8</b> Introduction to Feature Importance</a><ul>
@@ -217,7 +217,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="9.1.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#real-data"><i class="fa fa-check"></i><b>9.1.2</b> Real Data</a></li>
 </ul></li>
 <li class="chapter" data-level="9.2" data-path="pfi-correlated.html"><a href="pfi-correlated.html#alternative-measures-dealing-with-correlated-features"><i class="fa fa-check"></i><b>9.2</b> Alternative Measures Dealing with Correlated Features</a></li>
-<li class="chapter" data-level="9.3" data-path="pfi-correlated.html"><a href="pfi-correlated.html#summary-1"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
+<li class="chapter" data-level="9.3" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>9.3</b> Summary</a></li>
 <li class="chapter" data-level="9.4" data-path="pfi-correlated.html"><a href="pfi-correlated.html#note-to-the-reader"><i class="fa fa-check"></i><b>9.4</b> Note to the reader</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="pfi-partial.html"><a href="pfi-partial.html"><i class="fa fa-check"></i><b>10</b> Partial and Individual Permutation Feature Importance</a><ul>
@@ -230,8 +230,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.3" data-path="pfi-partial.html"><a href="pfi-partial.html#ch4"><i class="fa fa-check"></i><b>10.3</b> Real Data Application: Boston Housing</a></li>
 <li class="chapter" data-level="10.4" data-path="pfi-partial.html"><a href="pfi-partial.html#ch5"><i class="fa fa-check"></i><b>10.4</b> Discussion</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="pfi-data.html"><a href="pfi-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
-<li class="chapter" data-level="11.1" data-path="pfi-data.html"><a href="pfi-data.html#introduction-to-test-vs.training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs. Training Data</a></li>
+<li class="chapter" data-level="11" data-path="pfi-data.html"><a href="pfi-data.html"><i class="fa fa-check"></i><b>11</b> PFI: Training vs. Test Data</a><ul>
+<li class="chapter" data-level="11.1" data-path="pfi-data.html"><a href="pfi-data.html#introduction-to-test-vs.-training-data"><i class="fa fa-check"></i><b>11.1</b> Introduction to Test vs. Training Data</a></li>
 <li class="chapter" data-level="11.2" data-path="pfi-data.html"><a href="pfi-data.html#theoretical-discussion-for-test-and-training-data"><i class="fa fa-check"></i><b>11.2</b> Theoretical Discussion for Test and Training Data</a></li>
 <li class="chapter" data-level="11.3" data-path="pfi-data.html"><a href="pfi-data.html#reaction-to-model-behavior"><i class="fa fa-check"></i><b>11.3</b> Reaction to model behavior</a><ul>
 <li class="chapter" data-level="11.3.1" data-path="pfi-data.html"><a href="pfi-data.html#gradient-boosting-machines"><i class="fa fa-check"></i><b>11.3.1</b> Gradient Boosting Machines</a></li>
@@ -239,7 +239,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="11.3.3" data-path="pfi-data.html"><a href="pfi-data.html#results"><i class="fa fa-check"></i><b>11.3.3</b> Results</a></li>
 <li class="chapter" data-level="11.3.4" data-path="pfi-data.html"><a href="pfi-data.html#interpretation-of-the-results"><i class="fa fa-check"></i><b>11.3.4</b> Interpretation of the results</a></li>
 </ul></li>
-<li class="chapter" data-level="11.4" data-path="pfi-data.html"><a href="pfi-data.html#summary-2"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
+<li class="chapter" data-level="11.4" data-path="pdp-correlated.html"><a href="pdp-correlated.html#summary"><i class="fa fa-check"></i><b>11.4</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="lime.html"><a href="lime.html"><i class="fa fa-check"></i><b>12</b> Introduction to Local Interpretable Model-Agnostic Explanations (LIME)</a><ul>
 <li class="chapter" data-level="12.1" data-path="lime.html"><a href="lime.html#local-surrogate-models-and-lime"><i class="fa fa-check"></i><b>12.1</b> Local Surrogate Models and LIME</a></li>
@@ -249,7 +249,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.2.3" data-path="lime.html"><a href="lime.html#sampling-and-perturbation"><i class="fa fa-check"></i><b>12.2.3</b> Sampling and perturbation</a></li>
 </ul></li>
 <li class="chapter" data-level="12.3" data-path="lime.html"><a href="lime.html#example"><i class="fa fa-check"></i><b>12.3</b> Example</a></li>
-<li class="chapter" data-level="12.4" data-path="lime.html"><a href="lime.html#outlook-1"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
+<li class="chapter" data-level="12.4" data-path="ale-misc.html"><a href="ale-misc.html#outlook"><i class="fa fa-check"></i><b>12.4</b> Outlook</a></li>
 </ul></li>
 <li class="chapter" data-level="13" data-path="lime-neighbor.html"><a href="lime-neighbor.html"><i class="fa fa-check"></i><b>13</b> LIME and Neighborhood</a><ul>
 <li class="chapter" data-level="13.1" data-path="lime-neighbor.html"><a href="lime-neighbor.html#id2"><i class="fa fa-check"></i><b>13.1</b> The Neighborhood in LIME in more detail</a></li>
@@ -280,8 +280,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.4.2" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-sample-size"><i class="fa fa-check"></i><b>14.4.2</b> Influence of sample size</a></li>
 <li class="chapter" data-level="14.4.3" data-path="lime-sample.html"><a href="lime-sample.html#influence-of-black-box"><i class="fa fa-check"></i><b>14.4.3</b> Influence of black box</a></li>
 </ul></li>
-<li class="chapter" data-level="14.5" data-path="lime-sample.html"><a href="lime-sample.html#outlook-2"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
-<li class="chapter" data-level="14.6" data-path="lime-sample.html"><a href="lime-sample.html#conclusion-2"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
+<li class="chapter" data-level="14.5" data-path="ale-misc.html"><a href="ale-misc.html#outlook"><i class="fa fa-check"></i><b>14.5</b> Outlook</a></li>
+<li class="chapter" data-level="14.6" data-path="pdp-causal.html"><a href="pdp-causal.html#conclusion"><i class="fa fa-check"></i><b>14.6</b> Conclusion</a></li>
 </ul></li>
 <li class="chapter" data-level="15" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>15</b> Acknowledgements</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -311,25 +311,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><em>Supervisor: Gunnar König</em></p>
 <div id="partial-dependence-plots-pdp" class="section level2">
 <h2><span class="header-section-number">2.1</span> Partial Dependence Plots (PDP)</h2>
-<p>The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features’ impact on the predicted outcome. If the assumptions for the PDP are met, it can show the way a feature impacts an outcome variable. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s) <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
+<p>The Partial Dependence Plot (PDP) is a rather intuitive and easy-to-understand visualization of the features' impact on the predicted outcome. If the assumptions for the PDP are met, it can show the way a feature impacts an outcome variable. More precisely, mapping the marginal effect of the selected variable(s) uncovers the linear, monotonic or nonlinear relationship between the predicted response and the individual feature variable(s) <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
 <p>The underlying function can be described as follows:</p>
 <p>Let <span class="math inline">\(x_S\)</span> be the set of features of interest for the PDP and <span class="math inline">\(x_C\)</span> the complement set which contains all other features. While the general model function <span class="math inline">\(f(x) = f(x_S, x_C)\)</span> depends on all input variables, the partial dependence function marginalizes over the feature distribution in set C <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-hastie2013elements">2013</a>)</span>:</p>
 <p><span class="math display">\[f_{x_S}(x_S) = \mathbb{E}_{x_C}[f(x_S, x_C)]\]</span></p>
 <p>The partial dependence function can be estimated by averaging predictions with actual feature values of <span class="math inline">\(x_C\)</span> in the training data at given values of <span class="math inline">\(x_S\)</span> or, in other words, it computes the marginal effect of <span class="math inline">\(x_S\)</span> on the prediction. In order to obtain realistic results, a major assumption of the PDP is that the features in <span class="math inline">\(x_S\)</span> and <span class="math inline">\(x_C\)</span> are independent and thus uncorrelated.</p>
 <p><span class="math display">\[\hat{f}_{x_S}(x_S)=\frac{1}{n}\sum_{i=1}^{n}f(x_S, x^{(i)}_{C})\]</span></p>
-<p>An example of a PDP based on the ‘Titanic’ data set, which contains information on the fate of 2224 passengers and crew members during the Titanic’s maiden voyage, is given in figure <a href="pdp.html#fig:plot1">2.1</a>.</p>
+<p>An example of a PDP based on the 'Titanic' data set, which contains information on the fate of 2224 passengers and crew members during the Titanic's maiden voyage, is given in figure <a href="pdp.html#fig:plot1">2.1</a>.</p>
 <div class="figure" style="text-align: center"><span id="fig:plot1"></span>
 <img src="images/PDP_Plot_1.jpeg" alt="PDP for predicted survival probability and numeric feature variable 'Age'. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data." width="80%" />
 <p class="caption">
-FIGURE 2.1: PDP for predicted survival probability and numeric feature variable ‘Age’. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data.
+FIGURE 2.1: PDP for predicted survival probability and numeric feature variable 'Age'. The probability to survive sharply drops at a young age and more moderately afterwards. The rug on the x-axis illustrates the distribution of observed training data.
 </p>
 </div>
 <p>When a feature is categorical, rather than continuous, the partial dependence function is modeled separately for all of the K different classes of said feature. It maps the predictions for each respective class at given feature values of <span class="math inline">\(x_S\)</span> <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-hastie2013elements">2013</a>)</span>.</p>
-<p>For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed <span class="math inline">\(x_S\)</span>-values with the respective category and averaging the predictions. This procedure is repeated for each of the features’ categories <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>. As an example, figure <a href="pdp.html#fig:plot2">2.2</a> shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature ‘passenger class’.</p>
+<p>For such categorical features, the partial dependence function and the resulting plot are produced by replacing all observed <span class="math inline">\(x_S\)</span>-values with the respective category and averaging the predictions. This procedure is repeated for each of the features' categories <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>. As an example, figure <a href="pdp.html#fig:plot2">2.2</a> shows the partial dependence for the survival probability prediction for passengers on the Titanic and the categorical feature 'passenger class'.</p>
 <div class="figure" style="text-align: center"><span id="fig:plot2"></span>
 <img src="images/PDP_Plot_2.jpeg" alt="The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class." width="80%" />
 <p class="caption">
-FIGURE 2.2: The PDP for survival probability and categorical feature ‘passenger class’ reveals that passengers in lower classes had a lower probability to survive than those in a higher class.
+FIGURE 2.2: The PDP for survival probability and categorical feature ' passenger class' reveals that passengers in lower classes had a lower probability to survive than those in a higher class.
 </p>
 </div>
 <div id="advantages-and-limitations-of-partial-dependence-plots" class="section level3">
@@ -338,13 +338,13 @@ FIGURE 2.2: The PDP for survival probability and categorical feature ‘passenge
 <div class="figure" style="text-align: center"><span id="fig:plot3"></span>
 <img src="images/PDP_Plot_3.jpeg" alt="Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males." width="80%" />
 <p class="caption">
-FIGURE 2.3: Two-dimensional PDP for predicted survival probability and numerical feature ‘Age’, together with the categorical feature ‘Sex’. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.
+FIGURE 2.3: Two-dimensional PDP for predicted survival probability and numerical feature 'Age', together with the categorical feature 'Sex'. The PDP shows that while the survival probability for both genders declines as age increases, there is a difference between genders. It is clear that the decrease is much steeper for males.
 </p>
 </div>
 <div class="figure" style="text-align: center"><span id="fig:plot4"></span>
 <img src="images/PDP_Plot_4.jpeg" alt="Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare." width="80%" />
 <p class="caption">
-FIGURE 2.4: Two-dimensional PDP for predicted survival probability and numerical features ‘Age’ and ‘Fare’. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.
+FIGURE 2.4: Two-dimensional PDP for predicted survival probability and numerical features 'Age' and 'Fare'. The PDP illustrates that the survival probability of younger passengers is fairly uniform for varying fares, while adults travelling at a lower fare also had a much lower probability to survive compared to those that paid a high fare.
 </p>
 </div>
 <p>Drawing a PDP with one or two feature variables allows a straight-forward interpretation of the marginal effects. This holds true as long as the features are not correlated. Should this independence assumption be violated, the partial dependence function will produce unrealistic data points. For instance, a correlation between height and weight leading to a data point for someone taller than 2 meters weighing less than 50 kilos. Furthermore, opposite effects of heterogeneous subgroups might remain hidden through averaging the marginal effects, which could lead to wrong conclusions <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>.</p>
@@ -364,7 +364,7 @@ FIGURE 2.5: ICE plot of survival probability by Age. The yellow line represents 
 <div id="centered-ice-plot" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Centered ICE Plot</h3>
 <p>If the curves of an ICE plot are stacked or have a wide range of intercepts it can be difficult to observe heterogeneity in the model. The so-called centered ICE plot (c-ICE plot) is a simple solution to this problem. The curves are centered at a certain point in the feature and display only the difference in the prediction to this point <span class="citation">(Molnar <a href="#ref-molnar2019">2019</a>)</span>. After anchoring a location <span class="math inline">\(x^a\)</span> in the range of <span class="math inline">\(x_s\)</span> and connecting all prediction lines at that point, the new curves are defined as:</p>
-<p><span class="math display">\[\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)\]</span> Experience has shown that the most interpretable plots occur when the anchor point <span class="math inline">\(x^a\)</span> is chosen as minimum or maximum of the observed values. Figure <a href="pdp.html#fig:plot6">2.6</a> shows the effect of centering the ICE curves of survival probability by Age at the minimum of observed ages in the ‘Titanic’ data set.</p>
+<p><span class="math display">\[\hat{f}^{(i)}_{cent} = \hat{f^{(i)}} - \mathbf{1}\hat{f}(x^a,x^{(i)}_C)\]</span> Experience has shown that the most interpretable plots occur when the anchor point <span class="math inline">\(x^a\)</span> is chosen as minimum or maximum of the observed values. Figure <a href="pdp.html#fig:plot6">2.6</a> shows the effect of centering the ICE curves of survival probability by Age at the minimum of observed ages in the 'Titanic' data set.</p>
 <div class="figure" style="text-align: center"><span id="fig:plot6"></span>
 <img src="images/PDP_Plot_6.jpeg" alt="Centered ICE plot of survival probability by Age. All lines are fixed to 0 at the minimum observed age of 0.42. The y-axis shows the survival probability difference to age 0.42. Centrered ICE plot shows that compared to age 0.42, the predictions for most passengers decrease as age increases. However, there are quite a few passengers with opposite predictions." width="80%" />
 <p class="caption">
