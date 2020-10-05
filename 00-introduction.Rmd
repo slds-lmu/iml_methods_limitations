@@ -48,8 +48,8 @@ As discussed in the previous chapter, most machine learning algorithms produce b
 
 So what do these explanation systems do? As discussed before, interpretation methods for machine learning algorithms ensure causal relationships, robustness, reliability and establish trust and fairness. More specifically, they do so by shedding light on the following issues (see @molnar2019):
 
-* Algorithm transparency - How does the algorithm create the model? 
-* Global, kolistic model interpretability - How does the trained model make predictions?
+* Algorithm transparency - How does the algorithm create the model?
+* Global, holistic model interpretability - How does the trained model make predictions?
 * Global model interpretability on a modular level - How do parts of the model affect predictions?
 * Local interpretability for a single prediction - Why did the model make a certain prediction for an instance?
 * Local interpretability for a group of predictions - Why did the model make specific predictions for a group of instances?
