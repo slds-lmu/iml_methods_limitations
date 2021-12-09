@@ -410,7 +410,7 @@ The results in figure \@ref(fig:figsmooth) are unambiguous: It is shown clearly 
 Keep in mind the model was fitted on two very specific datasets, which means if we would pick more complex data, the line could take much longer to flatten out, and vice versa for less complex data.
 As a small sidenote, binning is again consistently inferior.
 
-```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
+```{r, figsmooth, eval = TRUE, echo = FALSE, fig.align = 'center', out.width = '99%', fig.cap = "Average standard deviation of the same settings as before versus the black box model smoothness. As the black box model class, a random forest was used with increasing parameters per iteration. The first tick in this graph is corresponding to a random forest with 1 trees and a minimum node size of 1. The number of trees in a random forest is increased by 10 and at the same time the minimum node size is increased by 1. Therefore the last tick in this graph is corresponding to a random forest with 91 trees and a minimum node size of 10."}
 
 knitr::include_graphics("images/sd_smoothness_presi2.png")
 
